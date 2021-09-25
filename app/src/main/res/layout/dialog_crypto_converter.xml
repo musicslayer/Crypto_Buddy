@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/crypto_converter_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/crypto_converter_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Crypto Converter" />
+
+    <TextView
+        android:id="@+id/crypto_converter_dialog_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_toolbar" />
+
+    <TextView
+        android:id="@+id/crypto_converter_dialog_fromTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="From:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_textView" />
+
+    <com.musicslayer.cryptobuddy.view.red.NumericEditText
+        android:id="@+id/crypto_converter_dialog_primaryEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_fromTextView" />
+
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/crypto_converter_dialog_primarySelectAndSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_primaryEditText" />
+
+    <TextView
+        android:id="@+id/crypto_converter_dialog_toTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_primarySelectAndSearchView" />
+
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/crypto_converter_dialog_secondarySelectAndSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_toTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/crypto_converter_dialog_convertButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_price_change_24"
+        android:text="Convert"
+        app:layout_constraintBottom_toBottomOf="@+id/crypto_converter_dialog_swapButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/crypto_converter_dialog_swapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        app:layout_constraintStart_toEndOf="@+id/crypto_converter_dialog_convertButton"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_secondarySelectAndSearchView"
+        app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

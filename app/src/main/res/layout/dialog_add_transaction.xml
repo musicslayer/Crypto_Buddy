@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_transaction_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/add_transaction_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Add Transaction" />
+
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/add_transaction_dialog_actionSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_toolbar">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
+    <com.musicslayer.cryptobuddy.view.red.NumericEditText
+        android:id="@+id/add_transaction_dialog_primaryEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_actionSpinner" />
+
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/add_transaction_dialog_primarySelectAndSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_primaryEditText" />
+
+    <TextView
+        android:id="@+id/add_transaction_dialog_forTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="For:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_primarySelectAndSearchView" />
+
+    <com.musicslayer.cryptobuddy.view.red.NumericEditText
+        android:id="@+id/add_transaction_dialog_secondaryEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_forTextView" />
+
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/add_transaction_dialog_secondarySelectAndSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_secondaryEditText" />
+
+    <TextView
+        android:id="@+id/add_transaction_dialog_transactionDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Transaction Date:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_secondarySelectAndSearchView" />
+
+    <RadioGroup
+        android:id="@+id/add_transaction_dialog_radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_transactionDateTextView">
+
+        <RadioButton
+            android:id="@+id/add_transaction_dialog_radioButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Now" />
+
+        <RadioButton
+            android:id="@+id/add_transaction_dialog_radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Custom" />
+
+        <RadioButton
+            android:id="@+id/add_transaction_dialog_radioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="None" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/add_transaction_dialog_dateTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_radioGroup" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_transaction_dialog_chooseDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24"
+        android:text="Choose Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_dateTimeTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_transaction_dialog_chooseTimeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_access_time_24"
+        android:text="Choose Time"
+        app:layout_constraintStart_toEndOf="@+id/add_transaction_dialog_chooseDateButton"
+        app:layout_constraintTop_toTopOf="@+id/add_transaction_dialog_chooseDateButton" />
+
+    <EditText
+        android:id="@+id/add_transaction_dialog_infoEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Optional Transaction Info"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_chooseDateButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_transaction_dialog_confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
+        android:text="Confirm"
+        app:layout_constraintBottom_toBottomOf="@+id/add_transaction_dialog_swapButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_transaction_dialog_swapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        app:layout_constraintStart_toEndOf="@+id/add_transaction_dialog_confirmButton"
+        app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_infoEditText"
+        app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

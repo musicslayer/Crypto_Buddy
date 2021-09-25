@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.musicslayer.cryptobuddy">
+
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA" android:required="false"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sms" />
+        </intent>
+    </queries>
+
+    <application
+        android:name="com.musicslayer.cryptobuddy.app.App"
+        android:label="@string/app_title"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CryptoBuddy"
+        android:icon="@mipmap/app_icon"
+        android:roundIcon="@mipmap/app_icon_round">
+
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-7875443444219421~2137021985"/>
+
+        <activity android:name=".activity.AboutActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.AddressExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.AddressPortfolioExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.AddressPortfolioViewerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.InAppPurchasesActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.MainActivity" android:screenOrientation="locked"
+            android:exported="true">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity>
+        <activity android:name=".activity.SettingsActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.TokenManagerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.TransactionExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.TransactionPortfolioExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.TransactionPortfolioViewerActivity" android:screenOrientation="locked"/>
+    </application>
+
+</manifest>

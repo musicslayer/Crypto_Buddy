@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choose_address_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/choose_address_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Choose Address" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/choose_address_dialog_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/choose_address_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/choose_address_dialog_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_toggleButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Coins + Tokens"
+        app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_toolbar" />
+
+    <TextView
+        android:id="@+id/choose_address_dialog_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="In-app purchase required to unlock tokens."
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_address_dialog_toggleButton" />
+
+    <EditText
+        android:id="@+id/choose_address_dialog_editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_messageTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_pasteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
+        android:text="Paste"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_editText" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_scanQRButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_qr_code_scanner_24"
+        android:text="Scan QR"
+        app:layout_constraintStart_toEndOf="@+id/choose_address_dialog_pasteButton"
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_editText" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_historyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_history_24"
+        android:text="History"
+        app:layout_constraintStart_toEndOf="@+id/choose_address_dialog_scanQRButton"
+        app:layout_constraintTop_toTopOf="@+id/choose_address_dialog_scanQRButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
+        android:text="Confirm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_pasteButton" />
+</androidx.constraintlayout.widget.ConstraintLayout>

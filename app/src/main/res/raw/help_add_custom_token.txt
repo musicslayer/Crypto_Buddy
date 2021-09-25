@@ -1,0 +1,6 @@
+When the app encounters a new token, it will attempt to add it to the database for you.
+However, if you wish to add a token yourself manually, you may do so here.
+
+For example, if you wish to query the price of a token the app has never encountered before, you will need to add the token yourself here.
+
+Be very careful to enter the correct information for your token to avoid errant calculations!

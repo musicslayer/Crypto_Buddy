@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/in_app_purchases_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/in_app_purchases_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="In-app Purchases"
+        app:title="@string/app_title" />
+
+    <ScrollView
+        android:id="@+id/in_app_purchases_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/in_app_purchases_toolbar">
+
+        <LinearLayout
+            android:id="@+id/in_app_purchases_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/in_app_purchases_removeAdsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove ads from this app." />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/in_app_purchases_removeAdsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_star_24"
+                android:text="Remove Ads: $0.99" />
+
+            <TextView
+                android:id="@+id/in_app_purchases_unlockTokensTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Allow app to recognize tokens." />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/in_app_purchases_unlockTokensButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unlock Tokens: $3.99"
+                app:drawableLeftCompat="@drawable/ic_baseline_star_24" />
+
+            <TextView
+                android:id="@+id/in_app_purchases_supportDeveloperTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Support the developer, purely out of the goodness of your heart. This does not unlock any additional functionality." />
+
+            <LinearLayout
+                android:id="@+id/in_app_purchases_linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/in_app_purchases_supportDeveloperButton1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:drawableLeftCompat="@drawable/ic_baseline_star_border_24"
+                    android:text="$0.99" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/in_app_purchases_supportDeveloperButton2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:drawableLeftCompat="@drawable/ic_baseline_star_border_24"
+                    android:text="$4.99" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/in_app_purchases_supportDeveloperButton3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:drawableLeftCompat="@drawable/ic_baseline_star_border_24"
+                    android:text="$24.99" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/in_app_purchases_totalSupportAmountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

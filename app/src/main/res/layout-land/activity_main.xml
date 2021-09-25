@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/app_title" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/main_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/main_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/main_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <LinearLayout
+        android:id="@+id/main_adLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_toolbar" />
+
+    <TableLayout
+        android:id="@+id/main_tableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_adLayout">
+
+        <TableRow
+            android:id="@+id/main_tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_transactionExplorerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_forward_24"
+                android:text="Transaction\nExplorer" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_transactionPortfolioViewerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
+                android:text="Transaction\nPortfolio" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/main_tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_addressExplorerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_forward_24"
+                android:text="Address\nExplorer" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_addressPortfolioViewerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
+                android:text="Address\nPortfolio" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/main_tableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_cryptoPricesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24"
+                android:text="Crypto\nPrices" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_cryptoConverterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24"
+                android:text="Crypto\nConverter" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/main_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Google Play services is not available. Some functionality may not work as expected."
+        android:textColor="#FF0000"
+        app:layout_constraintEnd_toEndOf="@+id/main_tableLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_tableLayout" />
+
+    <TableLayout
+        android:id="@+id/main_tableLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/main_halfWayHorizontal"
+        app:layout_constraintTop_toBottomOf="@+id/main_adLayout" >
+
+        <TableRow
+            android:id="@+id/main_tableRow4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_inAppPurchasesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_stars_24"
+                android:text="In-app\nPurchases" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_tokenManagerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Token\nManager"
+                app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/main_tableRowR"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteY="80dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_refundButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refund"
+                app:drawableLeftCompat="@drawable/ic_baseline_warning_red_24" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_halfWayHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

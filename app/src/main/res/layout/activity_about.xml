@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/about_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/about_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="About"
+        app:title="@string/app_title" />
+
+    <ScrollView
+        android:id="@+id/about_scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/about_toolbar">
+
+        <LinearLayout
+            android:id="@+id/about_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/about_contactHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Contact:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_contactText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_versionHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Version:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_versionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_privacyHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Privacy Policy:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_privacyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_assetsHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Supported Assets:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_assetsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_sourcesHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data Sources:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_sourcesText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_networksHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Supported Networks:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_networksText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

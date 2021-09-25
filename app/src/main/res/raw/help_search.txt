@@ -1,0 +1,5 @@
+All queries are case-insensitive.
+An empty query or a query containing all spaces shows no options.
+Otherwise, the query is broken into phrases of contiguous non-space characters.
+Options are shown only if they contain every phrase.
+Thus, the addition of phrases can further filter search options shown.

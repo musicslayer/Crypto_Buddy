@@ -1,0 +1,5 @@
+Manually enter transactions, real or hypothetical, which will be stored in the portfolio, and then get the net values of all assets involved, including a total USD value.
+
+Buttons left to right:
+--> Add new transaction to portfolio
+--> Get net values

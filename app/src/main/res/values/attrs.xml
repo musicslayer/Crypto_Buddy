@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Attributes must be lowercase as we want to use them for drawables -->
+    <attr name="border_color" format="color" />
+</resources>

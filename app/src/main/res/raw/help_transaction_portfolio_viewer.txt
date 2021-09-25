@@ -1,0 +1,3 @@
+Create and view transaction portfolios here. A transaction portfolio can contain multiple transactions, real or hypothetical.
+
+*All Portfolio data is stored in the app and may be deleted if you uninstall the app or clear the app data.
