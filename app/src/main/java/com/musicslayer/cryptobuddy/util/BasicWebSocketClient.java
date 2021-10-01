@@ -26,7 +26,7 @@ public class BasicWebSocketClient extends WebSocketClient {
     }
 
     @Override
-    public void onError(java.lang.Exception ex) {
-        Exception.processException(ex);
+    public void onError(Exception ex) {
+        ExceptionLogger.processException(ex);
     }
 }

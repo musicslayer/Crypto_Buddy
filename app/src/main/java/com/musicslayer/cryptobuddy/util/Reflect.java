@@ -11,8 +11,8 @@ public class Reflect {
             Class<T> clazz = (Class<T>)Class.forName(subclassName);
             object = clazz.getConstructor().newInstance();
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
 
         return object;
@@ -36,8 +36,8 @@ public class Reflect {
 
             object = clazz.getConstructor(argClassArray).newInstance(argArray);
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
 
         return object;

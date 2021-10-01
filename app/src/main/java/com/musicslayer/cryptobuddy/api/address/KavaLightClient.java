@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -83,8 +83,8 @@ public class KavaLightClient extends AddressAPI {
                 currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getCrypto()));
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 
@@ -139,7 +139,7 @@ public class KavaLightClient extends AddressAPI {
                 try {
                     fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
                 }
-                catch(java.lang.Exception ignored) {
+                catch(Exception ignored) {
                     fee = BigDecimal.ZERO;
                 }
 
@@ -247,7 +247,7 @@ public class KavaLightClient extends AddressAPI {
                 try {
                     fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
                 }
-                catch(java.lang.Exception ignored) {
+                catch(Exception ignored) {
                     fee = BigDecimal.ZERO;
                 }
 
@@ -389,7 +389,7 @@ public class KavaLightClient extends AddressAPI {
                 try {
                     fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
                 }
-                catch(java.lang.Exception ignored) {
+                catch(Exception ignored) {
                     fee = BigDecimal.ZERO;
                 }
 
@@ -438,8 +438,8 @@ public class KavaLightClient extends AddressAPI {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 

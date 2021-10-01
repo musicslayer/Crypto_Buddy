@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.api.price;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONObject;
@@ -73,8 +73,8 @@ public class CoinGecko extends PriceAPI {
 
                 usdPrice = json2.getString("usd");
             }
-            catch(java.lang.Exception e) {
-                Exception.processException(e);
+            catch(Exception e) {
+                ExceptionLogger.processException(e);
             }
         }
 
@@ -101,8 +101,8 @@ public class CoinGecko extends PriceAPI {
                 BigDecimal cap = new BigDecimal(json2.getString("usd_market_cap"));
                 usdMarketCap = cap.toPlainString();
             }
-            catch(java.lang.Exception e) {
-                Exception.processException(e);
+            catch(Exception e) {
+                ExceptionLogger.processException(e);
             }
         }
 

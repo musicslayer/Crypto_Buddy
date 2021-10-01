@@ -73,7 +73,7 @@ public class Token extends Crypto {
             String token_type = tokenJSON.getString("token_type");
             return new Token(key, name, display_name, scale, id, blockchain_id, token_type);
         }
-        catch(java.lang.Exception ignored) {
+        catch(Exception ignored) {
             return UnknownToken.createUnknownToken(null, null, null, 0, "?", "?", "?");
         }
     }

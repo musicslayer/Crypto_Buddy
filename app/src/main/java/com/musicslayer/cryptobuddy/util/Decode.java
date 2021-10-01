@@ -343,7 +343,7 @@ public class Decode {
         {
             encoder_encode(data, off, length, bOut);
         }
-        catch (java.lang.Exception e)
+        catch (Exception e)
         {
             throw new IllegalStateException("exception encoding Hex string: " + e.getMessage(), e);
         }

@@ -27,7 +27,7 @@ public class WavesTokenManager extends TokenManager {
             Token token = new Token(id, name, display_name, scale, id, getBlockchainID(), getTokenType());
             return token;
         }
-        catch(java.lang.Exception ignored) {
+        catch(Exception ignored) {
             return null;
         }
     }

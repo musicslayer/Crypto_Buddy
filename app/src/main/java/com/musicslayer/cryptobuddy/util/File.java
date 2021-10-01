@@ -25,7 +25,7 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            Exception.processException(e);
+            ExceptionLogger.processException(e);
         }
 
         return stringBuilder.toString();
@@ -48,7 +48,7 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            Exception.processException(e);
+            ExceptionLogger.processException(e);
         }
 
         return stringArrayList;

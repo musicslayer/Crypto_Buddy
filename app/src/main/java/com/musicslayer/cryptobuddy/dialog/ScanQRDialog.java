@@ -15,7 +15,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.util.Window;
 
@@ -77,7 +77,7 @@ public class ScanQRDialog extends BaseDialog {
                     cameraSource.start(cameraView.getHolder());
                 }
                 catch(IOException e) {
-                    Exception.processException(e);
+                    ExceptionLogger.processException(e);
                 }
             }
 

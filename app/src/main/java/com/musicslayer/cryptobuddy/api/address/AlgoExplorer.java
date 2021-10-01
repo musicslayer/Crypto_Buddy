@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -82,8 +82,8 @@ public class AlgoExplorer extends AddressAPI {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 
@@ -228,8 +228,8 @@ public class AlgoExplorer extends AddressAPI {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 

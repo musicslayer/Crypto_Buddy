@@ -7,10 +7,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.time.ZoneId;
 import java.time.format.FormatStyle;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+
+// TODO All of this should be cleaned up...
 
 public class Settings {
     public static FormatStyle setting_datetime;
@@ -25,6 +29,9 @@ public class Settings {
     public static Boolean setting_confirm;
     public static String setting_asset;
     public static Integer setting_max_transactions;
+    public static Locale setting_locale_numeric;
+    public static Locale setting_locale_datetime;
+    public static ZoneId setting_time_zone;
 
     public static int value_datetime = 0;
     public static int value_decimal = 0;
@@ -38,6 +45,9 @@ public class Settings {
     public static int value_confirm = 0;
     public static int value_asset = 0;
     public static int value_max_transactions = 0;
+    public static int value_locale_numeric = 0;
+    public static int value_locale_datetime = 0;
+    public static int value_time_zone = 0;
 
     public static HashMap<Integer, FormatStyle> map_datetime;
     static {
@@ -132,6 +142,31 @@ public class Settings {
         map_max_transactions.put(2, 5000);
     }
 
+    public static HashMap<Integer, Locale> map_locale_numeric;
+    static {
+        map_locale_numeric = new HashMap<>();
+        map_locale_numeric.put(0, new Locale("!", "!", "!")); // Match System.
+        map_locale_numeric.put(1, null);
+        map_locale_numeric.put(2, Locale.US);
+        map_locale_numeric.put(3, Locale.FRENCH);
+    }
+
+    public static HashMap<Integer, Locale> map_locale_datetime;
+    static {
+        map_locale_datetime = new HashMap<>();
+        map_locale_datetime.put(0, new Locale("!", "!", "!"));
+        map_locale_datetime.put(1, Locale.US);
+        map_locale_datetime.put(2, Locale.FRENCH);
+    }
+
+    public static HashMap<Integer, ZoneId> map_time_zone;
+    static {
+        map_time_zone = new HashMap<>();
+        map_time_zone.put(0, null);
+        map_time_zone.put(1, ZoneId.of("UTC"));
+        map_time_zone.put(2, ZoneId.of("America/New_York"));
+    }
+
     public static void setSetting(Context context, String settingName, int settingValue) {
         // If setting value has changed, make new value locally available now, and then write to persistent storage.
         switch(settingName) {
@@ -195,6 +230,21 @@ public class Settings {
                 value_max_transactions = settingValue;
                 setting_max_transactions = map_max_transactions.get(settingValue);
                 break;
+            case "locale_numeric":
+                if(value_locale_numeric == settingValue){return;}
+                value_locale_numeric = settingValue;
+                setting_locale_numeric = map_locale_numeric.get(settingValue);
+                break;
+            case "locale_datetime":
+                if(value_locale_datetime == settingValue){return;}
+                value_locale_datetime = settingValue;
+                setting_locale_datetime = map_locale_datetime.get(settingValue);
+                break;
+            case "time_zone":
+                if(value_time_zone == settingValue){return;}
+                value_time_zone = settingValue;
+                setting_time_zone = map_time_zone.get(settingValue);
+                break;
         }
 
         SharedPreferences settings = context.getSharedPreferences("settings_data", MODE_PRIVATE);
@@ -229,6 +279,12 @@ public class Settings {
                 return value_asset;
             case "max_transactions":
                 return value_max_transactions;
+            case "locale_numeric":
+                return value_locale_numeric;
+            case "locale_datetime":
+                return value_locale_datetime;
+            case "time_zone":
+                return value_time_zone;
         }
 
         return -1;
@@ -285,6 +341,18 @@ public class Settings {
         int loaded_max_transactions = settings.getInt("max_transactions", 0);
         setting_max_transactions = map_max_transactions.get(loaded_max_transactions);
         value_max_transactions = loaded_max_transactions;
+
+        int loaded_locale_numeric = settings.getInt("locale_numeric", 0);
+        setting_locale_numeric = map_locale_numeric.get(loaded_locale_numeric);
+        value_locale_numeric = loaded_locale_numeric;
+
+        int loaded_locale_datetime = settings.getInt("locale_datetime", 0);
+        setting_locale_datetime = map_locale_datetime.get(loaded_locale_datetime);
+        value_locale_datetime = loaded_locale_datetime;
+
+        int loaded_time_zone = settings.getInt("time_zone", 0);
+        setting_time_zone = map_time_zone.get(loaded_time_zone);
+        value_time_zone = loaded_time_zone;
     }
 
     public static void resetAllSettings(Context context) {
@@ -301,5 +369,8 @@ public class Settings {
         setSetting(context, "confirm", 0);
         setSetting(context, "asset", 0);
         setSetting(context, "max_transactions", 0);
+        setSetting(context, "locale_numeric", 0);
+        setSetting(context, "locale_datetime", 0);
+        setSetting(context, "time_zone", 0);
     }
 }

@@ -20,7 +20,7 @@ public class NumericEditText extends RedEditText {
             new BigDecimal(this.getText().toString());
             return true;
         }
-        catch(java.lang.Exception e) {
+        catch(Exception e) {
             return false;
         }
     }

@@ -41,13 +41,13 @@ public class REST {
             client.closeBlocking();
             result = client.RESULT;
         }
-        catch(java.lang.Exception e) {
+        catch(Exception e) {
             // Try once to close the client, but don't wait for it.
             if(client != null) {
                 client.close();
             }
 
-            Exception.processException(e);
+            ExceptionLogger.processException(e);
         }
 
         return result;
@@ -75,8 +75,8 @@ public class REST {
 
             result = REST.request(connection);
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
 
         return result;
@@ -112,8 +112,8 @@ public class REST {
 
             result = REST.request(connection);
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
 
         return result;
@@ -150,8 +150,8 @@ public class REST {
 
             result = REST.request(connection);
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
 
         return result;

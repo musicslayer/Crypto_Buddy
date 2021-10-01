@@ -61,7 +61,7 @@ public class CryptoAddress implements Serializable {
             try {
                 isValid = n.isValid(address);
             }
-            catch(java.lang.Exception ignored) {
+            catch(Exception ignored) {
                 continue;
             }
 

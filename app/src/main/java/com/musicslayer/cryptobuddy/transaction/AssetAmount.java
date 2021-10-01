@@ -1,18 +1,18 @@
 package com.musicslayer.cryptobuddy.transaction;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.LocaleManager;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-// TODO Support different number display formats
-// 123456.98
-// 123,456.98
-// 123.456,98
-// etc...
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class AssetAmount implements Serializable {
     public final static int MAXSCALE = 20;
@@ -96,13 +96,44 @@ public class AssetAmount implements Serializable {
                     s = amount.setScale(scale, RoundingMode.HALF_UP).toPlainString();
                 }
             }
+
+            // In all finite cases, we may apply a certain numeric appearance based on the setting.
+            Locale L = LocaleManager.getSettingLocaleNumeric();
+            if(L != null) {
+                BigDecimal D = new BigDecimal(s);
+                NumberFormat nf = NumberFormat.getInstance(L);
+                DecimalFormat df = ((DecimalFormat)nf);
+
+                String pattern = df.toLocalizedPattern();
+                char decimalSeparator_c = df.getDecimalFormatSymbols().getDecimalSeparator();
+                String decimalSeparator = String.valueOf(decimalSeparator_c);
+
+                int idx_decimal = pattern.lastIndexOf(decimalSeparator_c);
+                if(idx_decimal != -1) {
+                    // Insert the exact number of decimal places in the pattern that we need, despite what the Locale says.
+                    String pattern_front = pattern.substring(0, idx_decimal);
+                    String pattern_back;
+                    if(D.scale() == 0) {
+                        pattern_back = "";
+                    }
+                    else {
+                        pattern_back = String.format("%0" + D.scale() + "d", 0).replace("0", String.valueOf(df.getDecimalFormatSymbols().getZeroDigit()));
+                    }
+
+                    // Use "format" because some locales (ccp) have characters ('\uD804' 55300) that are altered by concatenation.
+                    pattern = String.format("%s%s%s", pattern_front, decimalSeparator, pattern_back);
+                    df.applyLocalizedPattern(pattern);
+                }
+
+                s = df.format(D);
+            }
         }
 
         return s;
     }
 
     public String toNumericScaledString(int scale, boolean hasSlidingScale) {
-        // Returns toString, but with a negative sign for a loss.
+        // Returns toScaledString, but with a negative sign for a loss.
         String s = this.toScaledString(scale, hasSlidingScale);
 
         if(isLoss) {

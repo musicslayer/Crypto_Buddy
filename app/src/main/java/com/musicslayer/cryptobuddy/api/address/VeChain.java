@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -84,8 +84,8 @@ public class VeChain extends AddressAPI {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 
@@ -252,8 +252,8 @@ public class VeChain extends AddressAPI {
                 if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 

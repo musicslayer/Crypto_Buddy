@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.util;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Calendar;
@@ -13,8 +12,8 @@ public class DateTime {
     public static String toDateString(java.util.Date date, FormatStyle style) {
         if(date == null) { return null; }
 
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(style, style).withZone(ZoneId.systemDefault());
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), TimeZoneManager.getSettingTimeZone());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(style, style).withZone(TimeZoneManager.getSettingTimeZone()).withLocale(LocaleManager.getSettingLocaleDatetime());
         return localDateTime.format(dateTimeFormatter);
     }
 

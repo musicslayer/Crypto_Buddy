@@ -14,7 +14,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Help;
 import com.musicslayer.cryptobuddy.util.REST;
 import com.musicslayer.cryptobuddy.view.TokenManagerView;
@@ -106,8 +106,8 @@ public class TokenManagerActivity extends BaseActivity {
                     try {
                         tokenAllJSONObject = new JSONObject(tokenAllJSON);
                     }
-                    catch(java.lang.Exception e) {
-                        Exception.processException(e);
+                    catch(Exception e) {
+                        ExceptionLogger.processException(e);
                         return;
                     }
 
@@ -123,8 +123,8 @@ public class TokenManagerActivity extends BaseActivity {
                         try {
                             tokenTypeJSON = tokenAllJSONObject.getJSONObject(settingsKey);
                         }
-                        catch(java.lang.Exception e) {
-                            Exception.processException(e);
+                        catch(Exception e) {
+                            ExceptionLogger.processException(e);
                             continue;
                         }
 

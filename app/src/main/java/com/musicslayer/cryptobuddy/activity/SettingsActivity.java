@@ -37,7 +37,10 @@ public class SettingsActivity extends BaseActivity {
         "orientation",
         "confirm",
         "asset",
-        "max_transactions"
+        "max_transactions",
+        "locale_numeric",
+        "locale_datetime",
+        "time_zone"
     };
 
     final String[] settingDisplayNames = {
@@ -52,7 +55,10 @@ public class SettingsActivity extends BaseActivity {
         "Orientation",
         "Confirmation",
         "Asset Display",
-        "Max Number of Transactions"
+        "Max Number of Transactions",
+        "Numeric Locale",
+        "Datetime Locale",
+        "Time Zone"
     };
 
     final String[][] settingOptions = {
@@ -67,7 +73,10 @@ public class SettingsActivity extends BaseActivity {
         {"Match System", "Landscape", "Portrait"},
         {"Use Confirmations", "Do Not Use Confirmations"},
         {"Use Full Asset Names", "Use Asset Symbols"},
-        {"500", "1000", "5000"}
+        {"500", "1000", "5000"},
+        {"Match System", "No Locale", "US", "FRENCH"},
+        {"Match System", "US", "FRENCH"},
+        {"Match System", "UTC", "EDT"}
     };
 
     final String[][] settingStrings = {
@@ -127,6 +136,22 @@ public class SettingsActivity extends BaseActivity {
             "Analyze up to 500 transactions per address.",
             "Analyze up to 1000 transactions per address.",
             "Analyze up to 5000 transactions per address.\n** May cause crashes **"
+        },
+        {
+            "Match system setting for locale when formatting numbers.",
+            "Do not use a locale when formatting numbers.\n(Java's \"BigDecimal\" class decides how numbers are formatted)",
+            "Use US locale when formatting numbers.",
+            "Use FRENCH locale when formatting numbers."
+        },
+        {
+            "Match system setting for locale when formatting datetimes.",
+            "Use US locale when formatting datetimes.",
+            "Use FRENCH locale when formatting datetimes."
+        },
+        {
+            "Match system setting for the time zone.",
+            "Use UTC time zone.",
+            "Use EDT time zone (UTC−04:00)."
         }
     };
 
@@ -149,7 +174,7 @@ public class SettingsActivity extends BaseActivity {
         LinearLayout L = findViewById(R.id.settings_linearLayout);
 
         BorderedSpinnerView bsv = findViewById(R.id.settings_category_spinner);
-        bsv.setOptions(new String[] {"Formatting", "API", "Appearance", "Other", "Reset"});
+        bsv.setOptions(new String[] {"Formatting", "Localization", "API", "Appearance", "Other", "Reset"});
         bsv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onNothingSelected(AdapterView<?> parent){}
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -163,16 +188,21 @@ public class SettingsActivity extends BaseActivity {
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[10], settingDisplayNames[10], settingOptions[10], settingStrings[10]));
                 }
                 else if(pos == 1) {
+                    L.addView(new SettingsView(SettingsActivity.this, settingNames[12], settingDisplayNames[12], settingOptions[12], settingStrings[12]));
+                    L.addView(new SettingsView(SettingsActivity.this, settingNames[13], settingDisplayNames[13], settingOptions[13], settingStrings[13]));
+                    L.addView(new SettingsView(SettingsActivity.this, settingNames[14], settingDisplayNames[14], settingOptions[14], settingStrings[14]));
+                }
+                else if(pos == 2) {
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[3], settingDisplayNames[3], settingOptions[3], settingStrings[3]));
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[4], settingDisplayNames[4], settingOptions[4], settingStrings[4]));
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[11], settingDisplayNames[11], settingOptions[11], settingStrings[11]));
                 }
-                else if(pos == 2) {
-                    L.addView(new DarkSettingsView(SettingsActivity.this, settingNames[6], settingDisplayNames[6], settingOptions[6], settingStrings[6]));
+                else if(pos == 3) {
                     L.addView(new MessageSettingsView(SettingsActivity.this, settingNames[7], settingDisplayNames[7], settingOptions[7], settingStrings[7]));
+                    L.addView(new DarkSettingsView(SettingsActivity.this, settingNames[6], settingDisplayNames[6], settingOptions[6], settingStrings[6]));
                     L.addView(new OrientationSettingsView(SettingsActivity.this, settingNames[8], settingDisplayNames[8], settingOptions[8], settingStrings[8]));
                 }
-                else if(pos == 3) {
+                else if(pos == 4) {
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[9], settingDisplayNames[9], settingOptions[9], settingStrings[9]));
                 }
                 else {

@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -30,7 +30,7 @@ public class TomoChainZTokenManager extends TokenManager {
             Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
             return token;
         }
-        catch(java.lang.Exception ignored) {
+        catch(Exception ignored) {
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class TomoChainZTokenManager extends TokenManager {
                 JSONObject json = new JSONObject(pageData);
                 done = json.getJSONArray("items").length() == 0;
             }
-            catch(java.lang.Exception ignored) {
+            catch(Exception ignored) {
                 return null;
             }
 
@@ -92,8 +92,8 @@ public class TomoChainZTokenManager extends TokenManager {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
         }
     }
 }

@@ -47,7 +47,7 @@ public class TransactionPortfolio {
                 String serialString = settings.getString("transaction_portfolio" + i, "");
                 settings_transaction_portfolio.add(TransactionPortfolioObj.deserialize(serialString));
             }
-            catch(java.lang.Exception ignored) {
+            catch(Exception ignored) {
                 // If there is any problem at all, don't add this one.
             }
         }

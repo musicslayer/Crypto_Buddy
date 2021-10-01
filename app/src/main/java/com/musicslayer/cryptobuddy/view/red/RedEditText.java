@@ -31,7 +31,7 @@ abstract public class RedEditText extends AppCompatEditText {
         try {
             isValid = condition();
         }
-        catch(java.lang.Exception ignored) {
+        catch(Exception ignored) {
             isValid = false;
         }
 

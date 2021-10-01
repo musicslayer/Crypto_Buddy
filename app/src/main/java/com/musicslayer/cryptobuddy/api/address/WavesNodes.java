@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.Exception;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -59,8 +59,8 @@ public class WavesNodes extends AddressAPI {
             b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
             currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new WAVES()));
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 
@@ -91,7 +91,7 @@ public class WavesNodes extends AddressAPI {
 
                         token = tokenManager.getOrCreateToken(key, name, display_name, scale, id);
                     }
-                    catch(java.lang.Exception ignored) {
+                    catch(Exception ignored) {
                         String id = tokenInfo.getString("assetId");
                         token = tokenManager.getOrLookupToken(baseURL,id, "?", "?", 0, id);
                     }
@@ -101,8 +101,8 @@ public class WavesNodes extends AddressAPI {
                     currentBalanceArrayList.add(new AssetQuantity(bb.toPlainString(), token));
                 }
             }
-            catch(java.lang.Exception e) {
-                Exception.processException(e);
+            catch(Exception e) {
+                ExceptionLogger.processException(e);
                 return null;
             }
         }
@@ -374,8 +374,8 @@ public class WavesNodes extends AddressAPI {
                 }
             }
         }
-        catch(java.lang.Exception e) {
-            Exception.processException(e);
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
             return null;
         }
 

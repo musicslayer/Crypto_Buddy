@@ -2,14 +2,12 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.util.Log;
 
-// TODO Just rename this ExceptionLogger!
-
-public class Exception {
-    public static void processException(java.lang.Exception e) {
+public class ExceptionLogger {
+    public static void processException(Exception e) {
         Log.e("Crypto Buddy ERROR", getExceptionText(e));
     }
 
-    public static String getExceptionText(java.lang.Exception e) {
+    public static String getExceptionText(Exception e) {
         StringBuilder s = new StringBuilder();
 
         s.append(e.getMessage());

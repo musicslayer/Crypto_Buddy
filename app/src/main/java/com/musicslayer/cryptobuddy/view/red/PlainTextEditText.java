@@ -17,7 +17,7 @@ public class PlainTextEditText extends RedEditText {
         try {
             return this.getText().toString().length() != 0;
         }
-        catch(java.lang.Exception e) {
+        catch(Exception e) {
             return false;
         }
     }
