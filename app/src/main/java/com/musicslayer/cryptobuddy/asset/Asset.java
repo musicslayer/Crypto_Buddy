@@ -8,12 +8,11 @@ import com.musicslayer.cryptobuddy.persistence.Settings;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-abstract public class Asset implements Serializable {
+abstract public class Asset {
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
     abstract public String getName(); // Usually same as key, but in some cases (i.e. TRON) it could be different.
     abstract public String getDisplayName();

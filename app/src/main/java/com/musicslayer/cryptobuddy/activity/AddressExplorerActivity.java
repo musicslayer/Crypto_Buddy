@@ -204,13 +204,13 @@ public class AddressExplorerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle bundle) {
         super.onSaveInstanceState(bundle);
-        bundle.putSerializable("addressDataArrayList", addressDataArrayList);
+        bundle.putString("addressDataArrayList", AddressData.serializeArray(addressDataArrayList));
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            addressDataArrayList = (ArrayList<AddressData>)bundle.getSerializable("addressDataArrayList");
+            addressDataArrayList = AddressData.deserializeArray(bundle.getString("addressDataArrayList"));
             updateLayout();
         }
 

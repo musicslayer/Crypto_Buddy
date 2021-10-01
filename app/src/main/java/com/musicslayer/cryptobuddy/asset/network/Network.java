@@ -9,13 +9,12 @@ import com.musicslayer.cryptobuddy.util.Reflect;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 // TODO For now, SegWit is always bc1/ltc1, but in the future the number could change. There are also different kinds of SegWit.
 
-abstract public class Network implements Serializable {
+abstract public class Network {
     abstract public boolean isMainnet();
     abstract public Crypto getCrypto();
     abstract public String getName();

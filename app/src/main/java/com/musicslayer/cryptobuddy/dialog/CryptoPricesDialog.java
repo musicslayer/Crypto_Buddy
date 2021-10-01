@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -17,8 +18,8 @@ import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 public class CryptoPricesDialog extends BaseDialog {
-    final PriceData[] priceData = new PriceData[1];
-    final Crypto[] crypto = new Crypto[1];
+    PriceData priceData;
+    Crypto crypto;
 
     public CryptoPricesDialog(Activity activity) {
         super(activity);
@@ -40,19 +41,19 @@ public class CryptoPricesDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                priceData[0] = PriceData.getPriceData(crypto[0]);
+                priceData = PriceData.getPriceData(crypto);
             }
         });
 
         progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(priceData[0].alertUser()) {
+                if(priceData.alertUser()) {
                     T.setText("");
                 }
                 else {
-                    AssetPrice assetPrice = priceData[0].getAssetPrice();
-                    AssetQuantity marketCapAssetQuantity = new AssetQuantity(priceData[0].usdMarketCap, new USD());
+                    AssetPrice assetPrice = priceData.getAssetPrice();
+                    AssetQuantity marketCapAssetQuantity = new AssetQuantity(priceData.usdMarketCap, new USD());
 
                     String text = "Forward Price = " + assetPrice.toString();
                     if("ForwardBackward".equals(Settings.setting_price)) {
@@ -69,7 +70,7 @@ public class CryptoPricesDialog extends BaseDialog {
         Button B = findViewById(R.id.crypto_prices_dialog_button);
         B.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                crypto[0] = (Crypto)ssv.getChosenAsset();
+                crypto = (Crypto)ssv.getChosenAsset();
                 progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");
             }
         });
@@ -80,16 +81,24 @@ public class CryptoPricesDialog extends BaseDialog {
         super.onSaveInstanceState();
 
         Bundle bundle = super.onSaveInstanceState();
-        bundle.putSerializable("priceData", priceData[0]);
-        bundle.putSerializable("crypto", crypto[0]);
+
+        String priceData_s = priceData == null ? "{}" : priceData.serialize();
+        bundle.putString("priceData", priceData_s);
+
+        String crypto_s = crypto == null ? "{}" : crypto.serialize();
+        bundle.putString("crypto", crypto_s);
+
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            priceData[0] = (PriceData)bundle.getSerializable("priceData");
-            crypto[0] = (Crypto)bundle.getSerializable("crypto");
+            String priceData_s = bundle.getString("priceData");
+            priceData = "{}".equals(priceData_s) ? null : PriceData.deserialize(priceData_s);
+
+            String crypto_s = bundle.getString("crypto");
+            crypto = "{}".equals(crypto_s) ? null : (Crypto) Asset.deserialize(crypto_s);
         }
 
         super.onRestoreInstanceState(bundle);

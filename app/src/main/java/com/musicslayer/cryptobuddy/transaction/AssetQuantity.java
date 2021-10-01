@@ -10,12 +10,11 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class AssetQuantity implements Serializable {
+public class AssetQuantity {
     public AssetAmount assetAmount;
     public Asset asset;
 

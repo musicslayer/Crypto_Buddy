@@ -4,12 +4,11 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 // TODO Actions for delegate, redelegate, undelegate? Burn?
 
-public class Action implements Serializable {
+public class Action {
     final public static ArrayList<String> actions;
     static {
         actions = new ArrayList<>();

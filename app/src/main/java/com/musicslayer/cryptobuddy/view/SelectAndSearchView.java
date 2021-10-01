@@ -392,7 +392,9 @@ public class SelectAndSearchView extends LinearLayout {
         bundle.putParcelable("superState", super.onSaveInstanceState());
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
         bundle.putString("lastButton", lastButton);
-        bundle.putSerializable("lastSearchAsset", lastSearchAsset);
+
+        String lastSearchAsset_s = lastSearchAsset == null ? "{}" : lastSearchAsset.serialize();
+        bundle.putString("lastSearchAsset", lastSearchAsset_s);
 
         return bundle;
     }
@@ -405,7 +407,9 @@ public class SelectAndSearchView extends LinearLayout {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
             lastButton = bundle.getString("lastButton");
-            lastSearchAsset = (Asset)bundle.getSerializable("lastSearchAsset");
+
+            String lastSearchAsset_s = bundle.getString("lastSearchAsset");
+            lastSearchAsset = "{}".equals(lastSearchAsset_s) ? null : Asset.deserialize(lastSearchAsset_s);
 
             restoreOptions(lastButton, lastSearchAsset);
             this.bsv.setSelection(bundle.getInt("selection"));

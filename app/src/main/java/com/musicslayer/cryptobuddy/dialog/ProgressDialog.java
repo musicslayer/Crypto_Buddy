@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.musicslayer.cryptobuddy.R;
 
 // TODO Can we display an indication of progress (54%, 3/10 records, etc...)
+// TODO We can write to settings, and then load from them, so that we do not have to restart the process if we tilt phone?
 
 // This is only meant to be used with ProgressDialogFragment.
 public class ProgressDialog extends BaseDialog {

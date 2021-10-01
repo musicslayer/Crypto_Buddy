@@ -6,10 +6,9 @@ import com.musicslayer.cryptobuddy.util.DateTime;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Timestamp implements Serializable {
+public class Timestamp {
     public Date date;
 
     public Timestamp(Date date) {

@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -19,9 +20,10 @@ import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 public class CryptoConverterDialog extends BaseDialog {
-    final PriceData[] priceData = new PriceData[2];
-    final Crypto[] cryptoPrimary = new Crypto[1];
-    final Crypto[] cryptoSecondary = new Crypto[1];
+    PriceData priceDataPrimary;
+    PriceData priceDataSecondary;
+    Crypto cryptoPrimary;
+    Crypto cryptoSecondary;
 
     public CryptoConverterDialog(Activity activity) {
         super(activity);
@@ -50,9 +52,9 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                priceData[0] = PriceData.getPriceData(cryptoPrimary[0]);
+                priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
                 if(((ProgressDialog)dialog).isCancelled) { return; }
-                priceData[1] = PriceData.getPriceData(cryptoSecondary[0]);
+                priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
             }
         });
 
@@ -60,16 +62,16 @@ public class CryptoConverterDialog extends BaseDialog {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 // We need two separate branches so the alert Toast shows correctly.
-                if(priceData[0].alertUser()) {
+                if(priceDataPrimary.alertUser()) {
                     T.setText("");
                 }
-                else if(priceData[1].alertUser()) {
+                else if(priceDataSecondary.alertUser()) {
                     T.setText("");
                 }
                 else {
-                    AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getText().toString(), cryptoPrimary[0]);
-                    AssetPrice primaryAssetPrice = priceData[0].getAssetPrice();
-                    AssetPrice secondaryAssetPrice = priceData[1].getAssetPrice();
+                    AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getText().toString(), cryptoPrimary);
+                    AssetPrice primaryAssetPrice = priceDataPrimary.getAssetPrice();
+                    AssetPrice secondaryAssetPrice = priceDataSecondary.getAssetPrice();
                     AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
                     String text = "Conversion:\n" + primaryAssetQuantity.toString() + " = " + secondaryAssetQuantity.toString() +
@@ -92,12 +94,12 @@ public class CryptoConverterDialog extends BaseDialog {
         Button B_CONVERT = findViewById(R.id.crypto_converter_dialog_convertButton);
         B_CONVERT.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                cryptoPrimary[0] = (Crypto)ssvPrimary.getChosenAsset();
-                cryptoSecondary[0] = (Crypto)ssvSecondary.getChosenAsset();
+                cryptoPrimary = (Crypto)ssvPrimary.getChosenAsset();
+                cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
 
                 boolean isValid = E_PRIMARYASSET.test();
 
-                if(cryptoPrimary[0] == cryptoSecondary[0]) {
+                if(cryptoPrimary == cryptoSecondary) {
                     Toast.showToast("cryptos_same");
                     return;
                 }
@@ -122,18 +124,36 @@ public class CryptoConverterDialog extends BaseDialog {
         super.onSaveInstanceState();
 
         Bundle bundle = super.onSaveInstanceState();
-        bundle.putSerializable("priceData", priceData[0]);
-        bundle.putSerializable("cryptoPrimary", cryptoPrimary[0]);
-        bundle.putSerializable("cryptoSecondary", cryptoSecondary[0]);
+
+        String priceDataPrimary_s = priceDataPrimary == null ? "{}" : priceDataPrimary.serialize();
+        bundle.putString("priceDataPrimary", priceDataPrimary_s);
+
+        String priceDataSecondary_s = priceDataSecondary == null ? "{}" : priceDataSecondary.serialize();
+        bundle.putString("priceDataSecondary", priceDataSecondary_s);
+
+        String cryptoPrimary_s = cryptoPrimary == null ? "{}" : cryptoPrimary.serialize();
+        bundle.putString("cryptoPrimary", cryptoPrimary_s);
+
+        String cryptoSecondary_s = cryptoSecondary == null ? "{}" : cryptoSecondary.serialize();
+        bundle.putString("cryptoSecondary", cryptoSecondary_s);
+
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            priceData[0] = (PriceData)bundle.getSerializable("priceData");
-            cryptoPrimary[0] = (Crypto)bundle.getSerializable("cryptoPrimary");
-            cryptoSecondary[0] = (Crypto)bundle.getSerializable("cryptoSecondary");
+            String priceDataPrimary_s = bundle.getString("priceDataPrimary");
+            priceDataPrimary = "{}".equals(priceDataPrimary_s) ? null : PriceData.deserialize(priceDataPrimary_s);
+
+            String priceDataSecondary_s = bundle.getString("priceDataSecondary");
+            priceDataSecondary = "{}".equals(priceDataSecondary_s) ? null : PriceData.deserialize(priceDataSecondary_s);
+
+            String cryptoPrimary_s = bundle.getString("cryptoPrimary");
+            cryptoPrimary = "{}".equals(cryptoPrimary_s) ? null : (Crypto) Asset.deserialize(cryptoPrimary_s);
+
+            String cryptoSecondary_s = bundle.getString("cryptoSecondary");
+            cryptoSecondary = "{}".equals(cryptoSecondary_s) ? null : (Crypto) Asset.deserialize(cryptoSecondary_s);
         }
 
         super.onRestoreInstanceState(bundle);

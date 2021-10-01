@@ -9,11 +9,10 @@ import com.musicslayer.cryptobuddy.persistence.Settings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 // A string address could belong to more than one network
-public class CryptoAddress implements Serializable {
+public class CryptoAddress {
     public String address;
     public Network network;
     public boolean includeTokens;

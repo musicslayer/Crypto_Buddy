@@ -99,7 +99,6 @@ public class DiscreteFilterDialog extends BaseDialog {
         super.onSaveInstanceState();
 
         Bundle bundle = super.onSaveInstanceState();
-        bundle.putSerializable("filter", filter);
 
         for(int i = 0; i < C.length; i++) {
             bundle.putBoolean("checkbox" + i, C[i].isChecked());
@@ -111,8 +110,6 @@ public class DiscreteFilterDialog extends BaseDialog {
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            filter = (DiscreteFilter)bundle.getSerializable("filter");
-
             C = new CheckBox[filter.choices.size()];
             for(int i = 0; i < filter.choices.size(); i++) {
                 C[i] = new CheckBox(this.activity);

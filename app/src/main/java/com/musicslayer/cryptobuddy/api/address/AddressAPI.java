@@ -11,8 +11,6 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -45,7 +43,12 @@ abstract public class AddressAPI extends API {
     abstract public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress);
 
     public static AddressAPI getAddressAPIFromKey(String key) {
-        return address_api_map.get(key);
+        AddressAPI addressAPI = address_api_map.get(key);
+        if(addressAPI == null) {
+            addressAPI = UnknownAddressAPI.createUnknownAddressAPI(key);
+        }
+
+        return addressAPI;
     }
 
     public boolean shouldIncludeTokens(CryptoAddress cryptoAddress) {
@@ -55,20 +58,5 @@ abstract public class AddressAPI extends API {
 
     public static int getMaxTransactions() {
         return Settings.setting_max_transactions;
-    }
-
-    public String serialize() {
-        return "{\"key\":\"" + getKey() + "\"}";
-    }
-
-    public static AddressAPI deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            String key = o.getString("key");
-            return AddressAPI.getAddressAPIFromKey(key);
-        }
-        catch(Exception e) {
-            return null;
-        }
     }
 }

@@ -176,8 +176,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         super.onSaveInstanceState(bundle);
         bundle.putString("PortfolioName", currentDeletePortfolioName);
 
-        bundle.putSerializable("cryptoAddressArrayList", cryptoAddressArrayList[0]);
-        bundle.putSerializable("addressDataArrayList", addressDataArrayList[0]);
+        bundle.putString("cryptoAddressArrayList", CryptoAddress.serializeArray(cryptoAddressArrayList[0]));
+        bundle.putString("addressDataArrayList", AddressData.serializeArray(addressDataArrayList[0]));
         bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
@@ -186,8 +186,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
 
-            cryptoAddressArrayList[0] = (ArrayList<CryptoAddress>)bundle.getSerializable("cryptoAddressArrayList");
-            addressDataArrayList[0] = (ArrayList<AddressData>)bundle.getSerializable("addressDataArrayList");
+            cryptoAddressArrayList[0] = CryptoAddress.deserializeArray(bundle.getString("cryptoAddressArrayList"));
+            addressDataArrayList[0] = AddressData.deserializeArray(bundle.getString("addressDataArrayList"));
             AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
 

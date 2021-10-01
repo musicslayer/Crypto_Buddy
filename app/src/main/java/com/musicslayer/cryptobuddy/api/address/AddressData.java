@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.DateTime;
@@ -8,14 +9,13 @@ import com.musicslayer.cryptobuddy.util.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 // TODO should fields store strings, or custom objects?
 // TODO addressData from API should tell us the date that the data is from.
 
-public class AddressData implements Serializable {
+public class AddressData {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;
@@ -47,8 +47,8 @@ public class AddressData implements Serializable {
         try {
             JSONObject o = new JSONObject(s);
             CryptoAddress cryptoAddress = CryptoAddress.deserialize(o.getJSONObject("cryptoAddress").toString());
-            AddressAPI addressAPI_currentBalance = AddressAPI.deserialize(o.getJSONObject("addressAPI_currentBalance").toString());
-            AddressAPI addressAPI_transactions = AddressAPI.deserialize(o.getJSONObject("addressAPI_transactions").toString());
+            AddressAPI addressAPI_currentBalance = (AddressAPI)API.deserialize(o.getJSONObject("addressAPI_currentBalance").toString());
+            AddressAPI addressAPI_transactions = (AddressAPI)API.deserialize(o.getJSONObject("addressAPI_transactions").toString());
             ArrayList<AssetQuantity> currentBalanceArrayList = AssetQuantity.deserializeArray(o.getJSONArray("currentBalanceArrayList").toString());
             ArrayList<Transaction> transactionArrayList = Transaction.deserializeArray(o.getJSONArray("transactionArrayList").toString());
             return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
@@ -85,8 +85,8 @@ public class AddressData implements Serializable {
     }
 
     public static AddressData getAddressData(CryptoAddress cryptoAddress) {
-        AddressAPI addressAPI_currentBalance_f = null;
-        AddressAPI addressAPI_transactions_f = null;
+        AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
         ArrayList<Transaction> transactionArrayList_f = null;
 
@@ -122,7 +122,7 @@ public class AddressData implements Serializable {
     }
 
     public boolean isComplete() {
-        return addressAPI_currentBalance != null && addressAPI_transactions != null && currentBalanceArrayList != null && transactionArrayList != null;
+        return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && !(addressAPI_transactions instanceof UnknownAddressAPI) && currentBalanceArrayList != null && transactionArrayList != null;
     }
 
     public boolean alertUser() {

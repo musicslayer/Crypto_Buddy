@@ -6,13 +6,12 @@ import com.musicslayer.cryptobuddy.filter.Filter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class Transaction implements Serializable {
+public class Transaction {
     public Action action;
     public AssetQuantity actionedAssetQuantity;
     public AssetQuantity otherAssetQuantity;

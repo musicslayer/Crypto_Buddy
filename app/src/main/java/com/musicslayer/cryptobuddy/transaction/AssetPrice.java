@@ -2,9 +2,7 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import java.io.Serializable;
-
-public class AssetPrice implements Serializable {
+public class AssetPrice {
     public AssetQuantity topAssetQuantity;
     public AssetQuantity bottomAssetQuantity;
 

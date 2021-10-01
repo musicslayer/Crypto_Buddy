@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.transaction;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
@@ -9,14 +7,13 @@ import com.musicslayer.cryptobuddy.util.LocaleManager;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class AssetAmount implements Serializable {
+public class AssetAmount {
     public final static int MAXSCALE = 20;
 
     public BigDecimal amount;

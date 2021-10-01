@@ -17,6 +17,8 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -373,8 +375,8 @@ abstract public class Table extends TableLayout {
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
-        bundle.putSerializable("transactions", transactionArrayList);
-        bundle.putSerializable("masked_transactions", maskedTransactionArrayList);
+        bundle.putString("transactions", Transaction.serializeArray(transactionArrayList));
+        bundle.putString("masked_transactions", Transaction.serializeArray(maskedTransactionArrayList));
         bundle.putSerializable("filters", filterArrayList);
         bundle.putIntegerArrayList("sortState", sortState);
 
@@ -392,8 +394,8 @@ abstract public class Table extends TableLayout {
 
             sortingColumn = bundle.getInt("sortingColumn");
             filterArrayList = (ArrayList<Filter>) bundle.getSerializable("filters");
-            transactionArrayList = (ArrayList<Transaction>) bundle.getSerializable("transactions");
-            maskedTransactionArrayList = (ArrayList<Transaction>) bundle.getSerializable("masked_transactions");
+            transactionArrayList = Transaction.deserializeArray(bundle.getString("transactions"));
+            maskedTransactionArrayList = Transaction.deserializeArray(bundle.getString("masked_transactions"));
             sortState = bundle.getIntegerArrayList("sortState");
 
             pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));

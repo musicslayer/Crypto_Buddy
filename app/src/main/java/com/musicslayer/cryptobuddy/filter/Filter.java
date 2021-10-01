@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 
-abstract public class Filter implements java.io.Serializable {
+abstract public class Filter {
     abstract public void updateFilterData(Object data);
     abstract public boolean isIncluded(String data);
     abstract public String getIncludedString();
