@@ -61,7 +61,12 @@ public class AddressHistory {
         for(int i = 0; i < size; i++) {
             try {
                 String serialString = settings.getString("address_history" + i, "");
-                settings_address_history.add(AddressHistoryObj.deserialize(serialString));
+                AddressHistoryObj addressHistoryObj = AddressHistoryObj.deserialize(serialString);
+
+                // If there is any problem at all, don't add this one.
+                if(addressHistoryObj != null) {
+                    settings_address_history.add(addressHistoryObj);
+                }
             }
             catch(Exception ignored) {
                 // If there is any problem at all, don't add this one.

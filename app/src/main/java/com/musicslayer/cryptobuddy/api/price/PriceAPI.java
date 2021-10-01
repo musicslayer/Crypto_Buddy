@@ -36,11 +36,7 @@ abstract public class PriceAPI extends API {
     abstract public String getUSDPrice(Crypto crypto);
     abstract public String getUSDMarketCap(Crypto crypto);
 
-    public static PriceAPI getPriceAPIFromName(String name) {
-        return price_api_map.get(name);
-    }
-
-    public static boolean isPriceAPI(String name) {
-        return price_api_map.containsKey(name);
+    public static PriceAPI getPriceAPIFromKey(String key) {
+        return price_api_map.get(key);
     }
 }

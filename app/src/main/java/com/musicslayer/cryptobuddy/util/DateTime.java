@@ -48,24 +48,4 @@ public class DateTime {
     public static Date getMaxDateTime() {
         return getDateTime(2099, Calendar.DECEMBER, 31, 23, 59, 59);
     }
-
-    public static String serialize(Date d) {
-        // Serialize a date as the number of milliseconds as a string.
-        if(d == null) {
-            return null;
-        }
-        else {
-            return Long.toString(d.getTime());
-        }
-    }
-
-    public static Date deserialize(String s) {
-        // Input string should parse to be a long value.
-        if(s == null || "null".equals(s)) {
-            return null;
-        }
-        else {
-            return new Date(Long.parseLong(s));
-        }
-    }
 }

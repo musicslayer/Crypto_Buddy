@@ -1,8 +1,12 @@
 package com.musicslayer.cryptobuddy.asset;
 
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -72,5 +76,47 @@ abstract public class Asset implements Serializable {
                 return Asset.compare(a, b);
             }
         });
+    }
+
+    public String serialize() {
+        // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
+        return "{\"assetType\":\"" + getAssetType() + "\",\"key\":\"" + getKey() + "\"}";
+    }
+
+    public static Asset deserialize(String s) {
+        // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
+        try {
+            JSONObject o = new JSONObject(s);
+            String assetType = o.getString("assetType");
+            String key = o.getString("key");
+            return Asset.getAsset(assetType, key);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
+    public String getAssetType() {
+        if(this instanceof Fiat) {
+            return "!FIAT!";
+        }
+        else if(this instanceof Coin) {
+            return "!COIN!";
+        }
+        else {
+            return ((Token)this).getTokenType();
+        }
+    }
+
+    public static Asset getAsset(String assetType, String key) {
+        if("!FIAT!".equals(assetType)) {
+            return Fiat.getFiatFromKey(key);
+        }
+        else if("!COIN!".equals(assetType)) {
+            return Coin.getCoinFromKey(key);
+        }
+        else {
+            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(key, null, null, 0, null);
+        }
     }
 }

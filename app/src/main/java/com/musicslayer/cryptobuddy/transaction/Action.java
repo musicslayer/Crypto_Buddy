@@ -2,6 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -112,5 +114,20 @@ public class Action implements Serializable {
         // Null is always smaller than a real action.
         if(isValidA & isValidB) { return a.compare(b); }
         else { return Boolean.compare(isValidA, isValidB); }
+    }
+
+    public String serialize() {
+        return "{\"actionString\":\"" + actionString + "\"}";
+    }
+
+    public static Action deserialize(String s) {
+        try {
+            JSONObject o = new JSONObject(s);
+            String actionString = o.getString("actionString");
+            return new Action(actionString);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 }

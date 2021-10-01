@@ -1,18 +1,12 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.network.Network;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.transaction.Action;
-import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,234 +24,54 @@ public class AddressData implements Serializable {
     final public ArrayList<Transaction> transactionArrayList;
 
     public String serialize() {
+        return "{\"cryptoAddress\":" + cryptoAddress.serialize() + ",\"addressAPI_currentBalance\":" + addressAPI_currentBalance.serialize() + ",\"addressAPI_transactions\":" + addressAPI_transactions.serialize() + ",\"currentBalanceArrayList\":" + AssetQuantity.serializeArray(currentBalanceArrayList) + ",\"transactionArrayList\":" + Transaction.serializeArray(transactionArrayList) + "}";
+    }
+
+    public static String serializeArray(ArrayList<AddressData> arrayList) {
         StringBuilder s = new StringBuilder();
+        s.append("[");
 
-        // cryptoAddress
-        s.append(cryptoAddress.address).append("|")
-            .append(cryptoAddress.network.getKey()).append("|")
-            .append(cryptoAddress.includeTokens);
+        for(int i = 0; i < arrayList.size(); i++) {
+            s.append(arrayList.get(i).serialize());
 
-        // addressAPI_currentBalance
-        if(addressAPI_currentBalance == null) {
-            s.append("\n")
-                .append("null");
-        }
-        else {
-            s.append("\n")
-                .append(addressAPI_currentBalance.getName());
-        }
-
-        // addressAPI_transactions
-        if(addressAPI_transactions == null) {
-            s.append("\n")
-                .append("null");
-        }
-        else {
-            s.append("\n")
-                .append(addressAPI_transactions.getName());
-        }
-
-        //currentBalanceArrayList
-        if(currentBalanceArrayList == null) {
-            s.append("\n")
-                .append("null");
-        }
-        else {
-            s.append("\n").append(currentBalanceArrayList.size());
-            for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-                String actionedAssetTokenTypeString = getTokenType(assetQuantity.asset);
-                String actionedAssetKeyString = assetQuantity.asset.getKey();
-                String actionedAssetAmountString = assetQuantity.assetAmount.amount.toString();
-
-                s.append("\n")
-                        .append(actionedAssetTokenTypeString).append("|")
-                        .append(actionedAssetKeyString).append("|")
-                        .append(actionedAssetAmountString);
+            if(i < arrayList.size() - 1) {
+                s.append(",");
             }
         }
 
-        //transactionArrayList
-        if(transactionArrayList == null) {
-            s.append("\n")
-                    .append("null");
-        }
-        else {
-            s.append("\n").append(transactionArrayList.size());
-            for(Transaction transaction : transactionArrayList) {
-                String actionString = transaction.action.toString();
-                String actionedAssetTokenTypeString = getTokenType(transaction.actionedAssetQuantity.asset);
-                String actionedAssetKeyString = transaction.actionedAssetQuantity.asset.getKey();
-                String actionedAssetAmountString = transaction.actionedAssetQuantity.assetAmount.amount.toString();
-
-                String otherAssetTokenTypeString;
-                String otherAssetKeyString;
-                String otherAssetAmountString;
-                if(transaction.otherAssetQuantity == null) {
-                    otherAssetTokenTypeString = "";
-                    otherAssetKeyString = "";
-                    otherAssetAmountString = "";
-                }
-                else {
-                    otherAssetTokenTypeString = getTokenType(transaction.otherAssetQuantity.asset);
-                    otherAssetKeyString = transaction.otherAssetQuantity.asset.getKey();
-                    otherAssetAmountString = transaction.otherAssetQuantity.assetAmount.amount.toString();
-                }
-
-                String timestampString = DateTime.serialize(transaction.timestamp.date);
-                String infoString = transaction.info;
-
-                s.append("\n")
-                        .append(actionString).append("|")
-                        .append(actionedAssetTokenTypeString).append("|")
-                        .append(actionedAssetKeyString).append("|")
-                        .append(actionedAssetAmountString).append("|")
-                        .append(otherAssetTokenTypeString).append("|")
-                        .append(otherAssetKeyString).append("|")
-                        .append(otherAssetAmountString).append("|")
-                        .append(timestampString).append("|")
-                        .append(infoString).append("|").append("END_MARKER");
-            }
-        }
-
+        s.append("]");
         return s.toString();
     }
 
     public static AddressData deserialize(String s) {
-        String[] sArray = s.split("\n");
-
-        String[] cryptoAddressStringArray = sArray[0].split("\\|");
-        CryptoAddress cryptoAddress = new CryptoAddress(cryptoAddressStringArray[0], Network.getNetworkFromKey(cryptoAddressStringArray[1]), Boolean.parseBoolean(cryptoAddressStringArray[2]));
-
-        AddressAPI addressAPI_currentBalance_f;
-        if("null".equals(sArray[1])) {
-            addressAPI_currentBalance_f = null;
+        try {
+            JSONObject o = new JSONObject(s);
+            CryptoAddress cryptoAddress = CryptoAddress.deserialize(o.getJSONObject("cryptoAddress").toString());
+            AddressAPI addressAPI_currentBalance = AddressAPI.deserialize(o.getJSONObject("addressAPI_currentBalance").toString());
+            AddressAPI addressAPI_transactions = AddressAPI.deserialize(o.getJSONObject("addressAPI_transactions").toString());
+            ArrayList<AssetQuantity> currentBalanceArrayList = AssetQuantity.deserializeArray(o.getJSONArray("currentBalanceArrayList").toString());
+            ArrayList<Transaction> transactionArrayList = Transaction.deserializeArray(o.getJSONArray("transactionArrayList").toString());
+            return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
         }
-        else {
-            addressAPI_currentBalance_f = AddressAPI.getAddressAPIFromName(sArray[1]);
+        catch(Exception e) {
+            return null;
         }
-
-        AddressAPI addressAPI_transactions_f;
-        if("null".equals(sArray[2])) {
-            addressAPI_transactions_f = null;
-        }
-        else {
-            addressAPI_transactions_f = AddressAPI.getAddressAPIFromName(sArray[2]);
-        }
-
-        ArrayList<AssetQuantity> currentBalanceArrayList_f;
-        int x = 4;
-        if("null".equals(sArray[3])) {
-            currentBalanceArrayList_f = null;
-        }
-        else {
-            currentBalanceArrayList_f = new ArrayList<>();
-            int size_currentBalanceArrayList = Integer.parseInt(sArray[3]);
-            for(int i = 0; i < size_currentBalanceArrayList; i++) {
-                String[] currentBalanceStringArray = sArray[x].split("\\|");
-
-                Asset asset = getAsset(currentBalanceStringArray[0], currentBalanceStringArray[1]);
-                AssetQuantity assetQuantity = new AssetQuantity(new AssetAmount(currentBalanceStringArray[2]), asset);
-                currentBalanceArrayList_f.add(assetQuantity);
-
-                x++;
-            }
-        }
-
-        ArrayList<Transaction> transactionArrayList_f;
-        if("null".equals(sArray[x])) {
-            transactionArrayList_f = null;
-        }
-        else {
-            transactionArrayList_f = new ArrayList<>();
-            int size_transactionArrayList = Integer.parseInt(sArray[x]);
-            x++;
-            for(int i = 0; i < size_transactionArrayList; i++) {
-                String[] transactionStringArray = sArray[x].split("\\|");
-
-                Action action = new Action(transactionStringArray[0]);
-
-                Asset asset = getAsset(transactionStringArray[1], transactionStringArray[2]);
-                AssetQuantity actionedAssetQuantity = new AssetQuantity(new AssetAmount(transactionStringArray[3]), asset);
-
-                AssetQuantity otherAssetQuantity;
-                if(transactionStringArray[4].isEmpty() && transactionStringArray[5].isEmpty()) {
-                    otherAssetQuantity = null;
-                }
-                else {
-                    Asset otherAsset = getAsset(transactionStringArray[4], transactionStringArray[5]);
-                    otherAssetQuantity = new AssetQuantity(new AssetAmount(transactionStringArray[6]), otherAsset);
-                }
-
-                Timestamp timestamp = new Timestamp(DateTime.deserialize(transactionStringArray[7]));
-                String info = transactionStringArray[8];
-
-                transactionArrayList_f.add(new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info));
-
-                x++;
-            }
-        }
-
-        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, DateTime.toDateString(new Date()), currentBalanceArrayList_f, transactionArrayList_f);
-    }
-
-    public static String serializeArray(ArrayList<AddressData> addressDataArrayList) {
-        StringBuilder s = new StringBuilder();
-        s.append(addressDataArrayList.size());
-        for(AddressData addressData : addressDataArrayList) {
-            String sA = addressData.serialize();
-
-            int numLines = 1;
-            for (int pos = sA.indexOf("\n"); pos >= 0; pos = sA.indexOf("\n", pos + 1)) {
-                numLines++;
-            }
-
-            s.append("\n").append(numLines).append("\n").append(sA);
-        }
-
-        return s.toString();
     }
 
     public static ArrayList<AddressData> deserializeArray(String s) {
-        String[] sArray = s.split("\n");
+        try {
+            ArrayList<AddressData> arrayList = new ArrayList<>();
 
-        int size_addressDataArrayList = Integer.parseInt(sArray[0]);
-        ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
-        int x = 1;
-        for(int i = 0; i < size_addressDataArrayList; i++) {
-            int numLines = Integer.parseInt(sArray[x]);
-            StringBuilder sA = new StringBuilder();
-            for(int j = 0; j < numLines; j++) {
-                x++;
-                sA.append(sArray[x]).append("\n");
+            JSONArray a = new JSONArray(s);
+            for(int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                arrayList.add(AddressData.deserialize(o.toString()));
             }
 
-            addressDataArrayList.add(AddressData.deserialize(sA.toString()));
-            x++;
+            return arrayList;
         }
-        return addressDataArrayList;
-    }
-
-    public static String getTokenType(Asset asset) {
-        if(asset instanceof Fiat) {
-            return "!FIAT!";
-        }
-        else if(asset instanceof Coin) {
-            return "!COIN!";
-        }
-        else {
-            return ((Token)asset).getTokenType();
-        }
-    }
-
-    public static Asset getAsset(String tokenType, String key) {
-        if("!FIAT!".equals(tokenType)) {
-            return Fiat.getFiatFromKey(key);
-        }
-        else if("!COIN!".equals(tokenType)) {
-            return Coin.getCoinFromKey(key);
-        }
-        else {
-            return TokenManager.getTokenManagerFromTokenType(tokenType).getToken(key, null, null, 0, null);
+        catch(Exception e) {
+            return null;
         }
     }
 

@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.transaction;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.filter.Filter;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -279,5 +282,66 @@ public class Transaction implements Serializable {
 
         AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount);
         map.put(assetQuantity.asset, newValue);
+    }
+
+    //Action action, AssetQuantity actionedAssetQuantity, AssetQuantity otherAssetQuantity, Timestamp timestamp, String info
+
+    public String serialize() {
+        // otherAssetQuantity may be null, so deal with that here.
+        String otherAssetQuantity_s = otherAssetQuantity == null ? "{}" : otherAssetQuantity.serialize();
+
+        return "{\"action\":" + action.serialize() + ",\"actionedAssetQuantity\":" + actionedAssetQuantity.serialize() + ",\"otherAssetQuantity\":" + otherAssetQuantity_s + ",\"timestamp\":" + timestamp.serialize() + ",\"info\":\"" + info + "\"}";
+    }
+
+    public static String serializeArray(ArrayList<Transaction> arrayList) {
+        StringBuilder s = new StringBuilder();
+        s.append("[");
+
+        for(int i = 0; i < arrayList.size(); i++) {
+            s.append(arrayList.get(i).serialize());
+
+            if(i < arrayList.size() - 1) {
+                s.append(",");
+            }
+        }
+
+        s.append("]");
+        return s.toString();
+    }
+
+    public static Transaction deserialize(String s) {
+        try {
+            JSONObject o = new JSONObject(s);
+            Action action = Action.deserialize(o.getJSONObject("action").toString());
+            AssetQuantity actionedAssetQuantity = AssetQuantity.deserialize(o.getJSONObject("actionedAssetQuantity").toString());
+
+            // otherAssetQuantity may be null, so deal with that here.
+            String otherAssetQuantity_s = o.getJSONObject("otherAssetQuantity").toString();
+            AssetQuantity otherAssetQuantity = "{}".equals(otherAssetQuantity_s) ? null : AssetQuantity.deserialize(otherAssetQuantity_s);
+
+            Timestamp timestamp = Timestamp.deserialize(o.getJSONObject("timestamp").toString());
+            String info = o.getString("info");
+            return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static ArrayList<Transaction> deserializeArray(String s) {
+        try {
+            ArrayList<Transaction> arrayList = new ArrayList<>();
+
+            JSONArray a = new JSONArray(s);
+            for(int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                arrayList.add(Transaction.deserialize(o.toString()));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 }

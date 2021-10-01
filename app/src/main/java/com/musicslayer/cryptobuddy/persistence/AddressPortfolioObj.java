@@ -1,7 +1,8 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.network.Network;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -27,31 +28,24 @@ public class AddressPortfolioObj {
     }
 
     public String serialize() {
-        StringBuilder s = new StringBuilder();
-        s.append(name);
-
-        for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
-            s.append("\n")
-                .append(cryptoAddress.address).append("|")
-                .append(cryptoAddress.network.getKey()).append("|")
-                .append(cryptoAddress.includeTokens);
-        }
-
-        return s.toString();
+        return "{\"name\":\"" + name + "\",\"cryptoAddressArrayList\":" + CryptoAddress.serializeArray(cryptoAddressArrayList) + "}";
     }
 
     public static AddressPortfolioObj deserialize(String s) {
-        String[] sArray = s.split("\n");
+        try {
+            JSONObject o = new JSONObject(s);
+            String name = o.getString("name");
+            AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
 
-        String name = sArray[0];
-        AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
+            ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.deserializeArray(o.getJSONArray("cryptoAddressArrayList").toString());
+            for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+                addressPortfolioObj.addData(cryptoAddress);
+            }
 
-        for(int i = 1; i < sArray.length; i++) {
-            String[] cryptoAddressStringArray = sArray[i].split("\\|");
-            CryptoAddress cryptoAddress = new CryptoAddress(cryptoAddressStringArray[0], Network.getNetworkFromKey(cryptoAddressStringArray[1]), Boolean.parseBoolean(cryptoAddressStringArray[2]));
-            addressPortfolioObj.addData(cryptoAddress);
+            return addressPortfolioObj;
         }
-
-        return addressPortfolioObj;
+        catch(Exception e) {
+            return null;
+        }
     }
 }

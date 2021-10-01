@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,5 +83,20 @@ abstract public class Network implements Serializable {
         // Null is always smaller than a real action.
         if(isValidA & isValidB) { return a.compare(b); }
         else { return Boolean.compare(isValidA, isValidB); }
+    }
+
+    public String serialize() {
+        return "{\"key\":\"" + getKey() + "\"}";
+    }
+
+    public static Network deserialize(String s) {
+        try {
+            JSONObject o = new JSONObject(s);
+            String key = o.getString("key");
+            return Network.getNetworkFromKey(key);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 }

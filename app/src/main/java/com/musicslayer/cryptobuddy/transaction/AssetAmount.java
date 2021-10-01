@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.LocaleManager;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -222,6 +224,21 @@ public class AssetAmount implements Serializable {
         }
         else {
             return new AssetAmount(amount.divide(other.amount, 50, RoundingMode.HALF_UP));
+        }
+    }
+
+    public String serialize() {
+        return "{\"amount\":\"" + amount.toString() + "\"}";
+    }
+
+    public static AssetAmount deserialize(String s) {
+        try {
+            JSONObject o = new JSONObject(s);
+            BigDecimal amount = new BigDecimal(o.getString("amount"));
+            return new AssetAmount(amount);
+        }
+        catch(Exception e) {
+            return null;
         }
     }
 }
