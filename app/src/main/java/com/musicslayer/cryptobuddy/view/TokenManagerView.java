@@ -14,6 +14,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
+import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
@@ -55,7 +56,7 @@ public class TokenManagerView extends TableRow {
                 updateTokensFixed(context);
             }
         });
-        progressFixedDialogFragment.restoreListeners(context, "progress_fixed");
+        progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
 
         ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDirectDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -70,34 +71,52 @@ public class TokenManagerView extends TableRow {
                 updateTokensDirect(context);
             }
         });
-        progressDirectDialogFragment.restoreListeners(context, "progress_direct");
+        progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
 
-        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType());
+        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), "");
         confirmDeleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
-                    tokenManager.resetDownloadedTokens();
-                    tokenManager.resetFoundTokens();
-                    tokenManager.resetCustomTokens();
-
-                    tokenManager.save(context, "downloaded");
-                    tokenManager.save(context, "found");
-                    tokenManager.save(context, "custom");
+                    String choice = ((ConfirmDeleteTokensDialog)dialog).choice;
+                    if("downloaded".equals(choice)) {
+                        tokenManager.resetDownloadedTokens();
+                        tokenManager.save(context, "downloaded");
+                    }
+                    else if("found".equals(choice)) {
+                        tokenManager.resetFoundTokens();
+                        tokenManager.save(context, "found");
+                    }
+                    else if("custom".equals(choice)) {
+                        tokenManager.resetCustomTokens();
+                        tokenManager.save(context, "custom");
+                    }
 
                     updateLayout(context);
                     Toast.showToast("tokens_deleted");
                 }
             }
         });
-        confirmDeleteTokensDialogFragment.restoreListeners(context, "delete");
+        confirmDeleteTokensDialogFragment.restoreListeners(context, "confirm_delete_" + tokenManager.getSettingsKey());
+
+        BaseDialogFragment deleteTokensDialogFragment = BaseDialogFragment.newInstance(DeleteTokensDialog.class, tokenManager.getTokenType(), tokenManager.canGetJSON());
+        deleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(((DeleteTokensDialog)dialog).isComplete) {
+                    confirmDeleteTokensDialogFragment.updateArguments(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), ((DeleteTokensDialog)dialog).user_CHOICE);
+                    confirmDeleteTokensDialogFragment.show(context, "confirm_delete_" + tokenManager.getSettingsKey());
+                }
+            }
+        });
+        deleteTokensDialogFragment.restoreListeners(context, "delete_" + tokenManager.getSettingsKey());
 
         B_DELETE = new AppCompatButton(context);
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
         B_DELETE.setText("Delete");
         B_DELETE.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                confirmDeleteTokensDialogFragment.show(context, "delete");
+                deleteTokensDialogFragment.show(context, "delete_" + tokenManager.getSettingsKey());
             }
         });
 
@@ -107,22 +126,22 @@ public class TokenManagerView extends TableRow {
             public void onDismiss(DialogInterface dialog) {
                 if(((DownloadTokensDialog)dialog).isComplete) {
                     if(((DownloadTokensDialog)dialog).isFixed) {
-                        progressFixedDialogFragment.show(context, "progress_fixed");
+                        progressFixedDialogFragment.show(context, "progress_fixed_" + tokenManager.getSettingsKey());
                     }
                     else {
-                        progressDirectDialogFragment.show(context, "progress_direct");
+                        progressDirectDialogFragment.show(context, "progress_direct_" + tokenManager.getSettingsKey());
                     }
                 }
             }
         });
-        downloadTokensDialogFragment.restoreListeners(context, "download");
+        downloadTokensDialogFragment.restoreListeners(context, "download_" + tokenManager.getSettingsKey());
 
         B_DOWNLOAD = new AppCompatButton(context);
         B_DOWNLOAD.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_download_24, 0, 0, 0);
         B_DOWNLOAD.setText("Download");
         B_DOWNLOAD.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                downloadTokensDialogFragment.show(context, "download");
+                downloadTokensDialogFragment.show(context, "download_" + tokenManager.getSettingsKey());
             }
         });
 
