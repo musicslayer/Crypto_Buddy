@@ -11,16 +11,23 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.Exception;
 import com.musicslayer.cryptobuddy.util.Help;
+import com.musicslayer.cryptobuddy.util.REST;
 import com.musicslayer.cryptobuddy.view.TokenManagerView;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class TokenManagerActivity extends BaseActivity {
+    public String tokenAllJSON = null;
+
     public int getAdLayoutViewID() {
         return R.id.token_manager_adLayout;
     }
@@ -84,30 +91,91 @@ public class TokenManagerActivity extends BaseActivity {
             }
         });
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        progressFixedDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                tokenAllJSON = REST.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
+            }
+        });
+        progressFixedDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(tokenAllJSON != null) {
+                    JSONObject tokenAllJSONObject;
+                    try {
+                        tokenAllJSONObject = new JSONObject(tokenAllJSON);
+                    }
+                    catch(java.lang.Exception e) {
+                        Exception.processException(e);
+                        return;
+                    }
+
+                    // Try each individually.
+                    for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                        String settingsKey = tokenManagerView.tokenManager.getSettingsKey();
+
+                        if(!tokenAllJSONObject.has(settingsKey)) {
+                            continue;
+                        }
+
+                        JSONObject tokenTypeJSON;
+                        try {
+                            tokenTypeJSON = tokenAllJSONObject.getJSONObject(settingsKey);
+                        }
+                        catch(java.lang.Exception e) {
+                            Exception.processException(e);
+                            continue;
+                        }
+
+                        tokenManagerView.tokenJSON = tokenTypeJSON.toString();
+                        tokenManagerView.updateTokensFixed(TokenManagerActivity.this);
+                    }
+                }
+            }
+        });
+        progressFixedDialogFragment.restoreListeners(this, "progress_fixed");
+
+        ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        progressDirectDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.queryTokens(TokenManagerActivity.this);
+                    tokenManagerView.queryTokensDirect(TokenManagerActivity.this);
                 }
             }
         });
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDirectDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.updateTokens(TokenManagerActivity.this);
+                    tokenManagerView.updateTokensDirect(TokenManagerActivity.this);
                 }
             }
         });
-        progressDialogFragment.restoreListeners(this, "progress");
+        progressDirectDialogFragment.restoreListeners(this, "progress_direct");
+
+        BaseDialogFragment downloadTokensDialogFragment = BaseDialogFragment.newInstance(DownloadTokensDialog.class, "All");
+        downloadTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(((DownloadTokensDialog)dialog).isComplete) {
+                    if(((DownloadTokensDialog)dialog).isFixed) {
+                        progressFixedDialogFragment.show(TokenManagerActivity.this, "progress_fixed");
+                    }
+                    else {
+                        progressDirectDialogFragment.show(TokenManagerActivity.this, "progress_direct");
+                    }
+                }
+            }
+        });
+        downloadTokensDialogFragment.restoreListeners(this, "download");
 
         Button B_MassUpdate = findViewById(R.id.token_manager_massUpdateButton);
         B_MassUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialogFragment.show(TokenManagerActivity.this, "progress");
+                downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");
             }
         });
     }

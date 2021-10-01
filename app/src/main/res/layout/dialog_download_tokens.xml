@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/download_tokens_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/download_tokens_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Download Tokens" />
+
+    <TextView
+        android:id="@+id/download_tokens_dialog_fixedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download tokens from a fixed list maintained by this app's developer. This is much faster, but only updated periodically."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_tokens_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_tokens_dialog_fixedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fixed List"
+        app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_tokens_dialog_fixedTextView" />
+
+    <TextView
+        android:id="@+id/download_tokens_dialog_directTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Download tokens directly from APIs accessing official sources. This is up to date, but may be significantly slower."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_tokens_dialog_fixedButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_tokens_dialog_directButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Direct"
+        app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_tokens_dialog_directTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

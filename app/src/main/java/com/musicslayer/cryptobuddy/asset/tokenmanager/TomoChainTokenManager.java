@@ -79,6 +79,11 @@ public class TomoChainTokenManager extends TokenManager {
                     String name = json.getString("symbol");
                     String display_name = json.getString("name");
 
+                    // Tokens must have a nonempty name and display name.
+                    if("".equals(name) || "".equals(display_name)) {
+                        continue;
+                    }
+
                     int scale = json.getInt("decimals");
 
                     String id = json.getString("hash"); // Contract

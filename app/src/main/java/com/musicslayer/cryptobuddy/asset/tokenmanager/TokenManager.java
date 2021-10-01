@@ -7,7 +7,9 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
+import com.musicslayer.cryptobuddy.util.Exception;
 import com.musicslayer.cryptobuddy.util.File;
+import com.musicslayer.cryptobuddy.util.REST;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
 import org.json.JSONArray;
@@ -444,5 +446,32 @@ abstract public class TokenManager {
     public void load(Context context, String source) {
         String s = TokenList.get(context, getSettingsKey(), source);
         deserializeFromJSON(s, source);
+    }
+
+    public String getFixedJSON() {
+        return REST.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
+    }
+
+    public void parseFixed(String tokenJSON) {
+        try {
+            JSONObject jsonObject = new JSONObject(tokenJSON);
+            JSONArray jsonArray = jsonObject.getJSONArray("tokens");
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                String key = json.getString("key");
+                String name = json.getString("name");
+                String display_name = json.getString("display_name");
+                int scale = json.getInt("scale");
+                String id = json.getString("id");
+
+
+                Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+                addDownloadedToken(token);
+            }
+        }
+        catch(java.lang.Exception e) {
+            Exception.processException(e);
+        }
     }
 }

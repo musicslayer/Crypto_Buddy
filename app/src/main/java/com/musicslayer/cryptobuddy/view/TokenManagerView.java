@@ -14,6 +14,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
+import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.Toast;
@@ -41,20 +42,35 @@ public class TokenManagerView extends TableRow {
 
         T = new TextView(context);
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        progressFixedDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                queryTokens(context);
+                queryTokensFixed(context);
             }
         });
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressFixedDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                updateTokens(context);
+                updateTokensFixed(context);
             }
         });
-        progressDialogFragment.restoreListeners(context, "progress");
+        progressFixedDialogFragment.restoreListeners(context, "progress_fixed");
+
+        ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        progressDirectDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                queryTokensDirect(context);
+            }
+        });
+        progressDirectDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                updateTokensDirect(context);
+            }
+        });
+        progressDirectDialogFragment.restoreListeners(context, "progress_direct");
 
         BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType());
         confirmDeleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -85,12 +101,28 @@ public class TokenManagerView extends TableRow {
             }
         });
 
+        BaseDialogFragment downloadTokensDialogFragment = BaseDialogFragment.newInstance(DownloadTokensDialog.class, tokenManager.getTokenType());
+        downloadTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(((DownloadTokensDialog)dialog).isComplete) {
+                    if(((DownloadTokensDialog)dialog).isFixed) {
+                        progressFixedDialogFragment.show(context, "progress_fixed");
+                    }
+                    else {
+                        progressDirectDialogFragment.show(context, "progress_direct");
+                    }
+                }
+            }
+        });
+        downloadTokensDialogFragment.restoreListeners(context, "download");
+
         B_DOWNLOAD = new AppCompatButton(context);
         B_DOWNLOAD.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_download_24, 0, 0, 0);
         B_DOWNLOAD.setText("Download");
         B_DOWNLOAD.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                progressDialogFragment.show(context, "progress");
+                downloadTokensDialogFragment.show(context, "download");
             }
         });
 
@@ -114,11 +146,25 @@ public class TokenManagerView extends TableRow {
         }
     }
 
-    public void queryTokens(Context context) {
+    public void queryTokensFixed(Context context) {
+        tokenJSON = tokenManager.getFixedJSON();
+    }
+
+    public void updateTokensFixed(Context context) {
+        if(tokenJSON != null) {
+            tokenManager.resetDownloadedTokens();
+            tokenManager.parseFixed(tokenJSON);
+            tokenManager.save(context, "downloaded");
+
+            updateLayout(context);
+        }
+    }
+
+    public void queryTokensDirect(Context context) {
         tokenJSON = tokenManager.getJSON();
     }
 
-    public void updateTokens(Context context) {
+    public void updateTokensDirect(Context context) {
         if(tokenJSON != null) {
             tokenManager.resetDownloadedTokens();
             tokenManager.parse(tokenJSON);
