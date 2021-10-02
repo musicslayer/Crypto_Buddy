@@ -84,8 +84,11 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"assetAmount\":" + Serialization.serialize(assetAmount) + ",\"asset\":" + Serialization.serialize(asset) + "}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("assetAmount", new JSONObject(Serialization.serialize(assetAmount)))
+            .put("asset", new JSONObject(Serialization.serialize(asset)))
+            .toString();
     }
 
     public static AssetQuantity deserializeFromJSON1(String s) throws org.json.JSONException {

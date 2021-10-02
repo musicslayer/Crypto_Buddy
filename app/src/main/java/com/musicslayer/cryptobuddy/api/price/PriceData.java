@@ -25,8 +25,14 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"crypto\":" + Serialization.serialize(crypto) + ",\"priceAPI_usdPrice\":" + Serialization.serialize(priceAPI_usdPrice) + ",\"priceAPI_usdMarketCap\":" + Serialization.serialize(priceAPI_usdMarketCap) + ",\"usdPrice\":\"" + usdPrice + "\",\"usdMarketCap\":\"" + usdMarketCap + "\"}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("crypto", new JSONObject(Serialization.serialize(crypto)))
+            .put("priceAPI_usdPrice", new JSONObject(Serialization.serialize(priceAPI_usdPrice)))
+            .put("priceAPI_usdMarketCap", new JSONObject(Serialization.serialize(priceAPI_usdMarketCap)))
+            .put("usdPrice", Serialization.string_serialize(usdPrice))
+            .put("usdMarketCap", Serialization.string_serialize(usdMarketCap))
+            .toString();
     }
 
     public static PriceData deserializeFromJSON1(String s) throws org.json.JSONException {
@@ -34,8 +40,8 @@ public class PriceData implements Serialization.SerializableToJSON {
         Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toString(), Crypto.class);
         PriceAPI priceAPI_usdPrice = Serialization.deserialize(o.getJSONObject("priceAPI_usdPrice").toString(), PriceAPI.class);
         PriceAPI priceAPI_usdMarketCap = Serialization.deserialize(o.getJSONObject("priceAPI_usdMarketCap").toString(), PriceAPI.class);
-        String usdPrice = o.getString("usdPrice");
-        String usdMarketCap = o.getString("usdMarketCap");
+        String usdPrice = Serialization.string_deserialize(o.getString("usdPrice"));
+        String usdMarketCap = Serialization.string_deserialize(o.getString("usdMarketCap"));
         return new PriceData(crypto, priceAPI_usdPrice, priceAPI_usdMarketCap, usdPrice, usdMarketCap, DateTime.toDateString(new Date()));
     }
 

@@ -80,16 +80,19 @@ abstract public class Asset implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
+    public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-        return "{\"assetType\":\"" + getAssetType() + "\",\"key\":\"" + getKey() + "\"}";
+        return new JSONObject()
+            .put("assetType", Serialization.string_serialize(getAssetType()))
+            .put("key", Serialization.string_serialize(getKey()))
+            .toString();
     }
 
     public static Asset deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
         JSONObject o = new JSONObject(s);
-        String assetType = o.getString("assetType");
-        String key = o.getString("key");
+        String assetType = Serialization.string_deserialize(o.getString("assetType"));
+        String key = Serialization.string_deserialize(o.getString("key"));
         return Asset.getAsset(assetType, key);
     }
 

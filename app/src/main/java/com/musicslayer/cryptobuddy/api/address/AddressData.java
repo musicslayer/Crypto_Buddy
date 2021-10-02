@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -24,8 +25,14 @@ public class AddressData implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + ",\"addressAPI_currentBalance\":" + Serialization.serialize(addressAPI_currentBalance) + ",\"addressAPI_transactions\":" + Serialization.serialize(addressAPI_transactions) + ",\"currentBalanceArrayList\":" + Serialization.serializeArrayList(currentBalanceArrayList) + ",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("cryptoAddress", new JSONObject(Serialization.serialize(cryptoAddress)))
+            .put("addressAPI_currentBalance", new JSONObject(Serialization.serialize(addressAPI_currentBalance)))
+            .put("addressAPI_transactions", new JSONObject(Serialization.serialize(addressAPI_transactions)))
+            .put("currentBalanceArrayList", new JSONArray(Serialization.serializeArrayList(currentBalanceArrayList)))
+            .put("transactionArrayList", new JSONArray(Serialization.serializeArrayList(transactionArrayList)))
+            .toString();
     }
 
     public static AddressData deserializeFromJSON1(String s) throws org.json.JSONException {

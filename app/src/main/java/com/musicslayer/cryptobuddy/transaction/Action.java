@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.Serialization;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -119,13 +120,15 @@ public class Action implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"actionString\":\"" + actionString + "\"}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("actionString", Serialization.string_serialize(actionString))
+            .toString();
     }
 
     public static Action deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        String actionString = o.getString("actionString");
+        String actionString = Serialization.string_deserialize(o.getString("actionString"));
         return new Action(actionString);
     }
 }

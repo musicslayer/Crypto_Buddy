@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -41,13 +42,15 @@ public class Timestamp implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"date\":\"" + Long.toString(date.getTime()) + "\"}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("date", Serialization.date_serialize(date))
+            .toString();
     }
 
     public static Timestamp deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        Date date = new Date(Long.parseLong(o.getString("date")));
+        Date date = Serialization.date_deserialize(o.getString("date"));
         return new Timestamp(date);
     }
 }

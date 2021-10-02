@@ -227,13 +227,15 @@ public class AssetAmount implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"amount\":\"" + amount.toString() + "\"}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("amount", Serialization.bigdecimal_serialize(amount))
+            .toString();
     }
 
     public static AssetAmount deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        BigDecimal amount = new BigDecimal(o.getString("amount"));
+        BigDecimal amount = Serialization.bigdecimal_deserialize(o.getString("amount"));
         return new AssetAmount(amount);
     }
 }

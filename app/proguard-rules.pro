@@ -15,4 +15,7 @@
 -keepclassmembers class * extends com.musicslayer.cryptobuddy.dialog.BaseDialog {
     public <init>(...);
 }
+-keepclassmembers class * {
+    public static *** deserializeFromJSON*(java.lang.String);
+}
 

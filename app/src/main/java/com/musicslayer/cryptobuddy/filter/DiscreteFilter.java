@@ -1,6 +1,10 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
+import com.musicslayer.cryptobuddy.util.Serialization;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -9,12 +13,33 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_choices = new ArrayList<>();
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
-    public void updateFilterData(Object data) {
-        ArrayList<String> newChoices = (ArrayList<String>)data;
+    public String serializeToJSON_sub() throws org.json.JSONException {
+        return new JSONObject()
+            .put("filterType", Serialization.string_serialize("!DISCRETE!"))
+            .put("choices", new JSONArray(Serialization.string_serializeArrayList(choices)))
+            .put("user_choices", new JSONArray(Serialization.string_serializeArrayList(user_choices)))
+            .put("user_not_choices", new JSONArray(Serialization.string_serializeArrayList(user_not_choices)))
+            .toString();
+    }
+
+    public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArray("choices").toString());
+        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_choices").toString());
+        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_not_choices").toString());
+
+        DiscreteFilter discreteFilter = new DiscreteFilter();
+        discreteFilter.choices = choices;
+        discreteFilter.user_choices = user_choices;
+        discreteFilter.user_not_choices = user_not_choices;
+        return discreteFilter;
+    }
+
+    public void updateFilterData(ArrayList<String> data) {
         ArrayList<String> choicesToRemove = new ArrayList<>();
 
         for(String c : choices) {
-            if(!newChoices.contains(c)) {
+            if(!data.contains(c)) {
                 choicesToRemove.add(c);
                 this.user_choices.remove(c);
             }
@@ -24,7 +49,7 @@ public class DiscreteFilter extends Filter {
             this.choices.remove(r);
         }
 
-        for(String c : newChoices) {
+        for(String c : data) {
             if(!choices.contains(c)) {
                 this.choices.add(c);
                 this.user_choices.add(c);

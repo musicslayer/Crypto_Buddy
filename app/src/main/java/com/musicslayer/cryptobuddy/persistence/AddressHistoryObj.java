@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AddressHistoryObj implements Serialization.SerializableToJSON {
@@ -27,8 +28,10 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + "}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("cryptoAddress", Serialization.serialize(cryptoAddress))
+            .toString();
     }
 
     public static AddressHistoryObj deserializeFromJSON1(String s) throws org.json.JSONException {

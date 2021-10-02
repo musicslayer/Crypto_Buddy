@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -26,13 +27,16 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"name\":\"" + name + "\",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("name", Serialization.string_serialize(name))
+            .put("transactionArrayList", new JSONArray(Serialization.serializeArrayList(transactionArrayList)))
+            .toString();
     }
 
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        String name = o.getString("name");
+        String name = Serialization.string_deserialize(o.getString("name"));
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
 
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toString(), Transaction.class);

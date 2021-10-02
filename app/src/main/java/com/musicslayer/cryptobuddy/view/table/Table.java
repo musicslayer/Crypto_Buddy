@@ -79,7 +79,7 @@ abstract public class Table extends TableLayout {
         numColumns++;
         this.columnTypes.add(columnType);
         this.columnHeaders.add(columnHeader);
-        this.filterArrayList.add(Filter.fromType(filterType, columnType));
+        this.filterArrayList.add(Filter.fromType(filterType));
         this.sortState.add(initialSortState);
 
         // Sort by the most recent column if it has a sorting state for "Descending" or "Ascending".
@@ -376,7 +376,7 @@ abstract public class Table extends TableLayout {
         bundle.putInt("sortingColumn", sortingColumn);
         bundle.putString("transactions", Serialization.serializeArrayList(transactionArrayList));
         bundle.putString("masked_transactions", Serialization.serializeArrayList(maskedTransactionArrayList));
-        bundle.putSerializable("filters", filterArrayList);
+        bundle.putString("filters", Serialization.serializeArrayList(filterArrayList));
         bundle.putIntegerArrayList("sortState", sortState);
 
         return bundle;
@@ -392,7 +392,7 @@ abstract public class Table extends TableLayout {
             state = bundle.getParcelable("superState");
 
             sortingColumn = bundle.getInt("sortingColumn");
-            filterArrayList = (ArrayList<Filter>) bundle.getSerializable("filters");
+            filterArrayList = Serialization.deserializeArrayList(bundle.getString("filters"), Filter.class);
             transactionArrayList = Serialization.deserializeArrayList(bundle.getString("transactions"), Transaction.class);
             maskedTransactionArrayList = Serialization.deserializeArrayList(bundle.getString("masked_transactions"), Transaction.class);
             sortState = bundle.getIntegerArrayList("sortState");

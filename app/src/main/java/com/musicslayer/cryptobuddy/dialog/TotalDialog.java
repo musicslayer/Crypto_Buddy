@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.ArrayList;
@@ -28,8 +29,7 @@ public class TotalDialog extends BaseDialog {
     ArrayList<Transaction> transactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
-
-    final HashMap<Asset, AssetAmount>[] newPriceMap = new HashMap[1];
+    HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
 
     public TotalDialog(Activity activity, ArrayList<Transaction> transactionArrayList) {
         super(activity);
@@ -49,7 +49,7 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                newPriceMap[0] = new HashMap<>();
+                newPriceMap = new HashMap<>();
 
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
                 Asset.sortAscendingByType(keySet);
@@ -59,7 +59,7 @@ public class TotalDialog extends BaseDialog {
 
                     if(asset instanceof Fiat) {
                         // For now, USD is the only fiat, and it's price is 1 by definition.
-                        newPriceMap[0].put(asset, new AssetAmount("1"));
+                        newPriceMap.put(asset, new AssetAmount("1"));
                     }
                     else if(asset instanceof Crypto) {
                         Crypto crypto = (Crypto)asset;
@@ -67,7 +67,7 @@ public class TotalDialog extends BaseDialog {
 
                         // We only need price data.
                         if(priceData.priceAPI_usdPrice != null) {
-                            newPriceMap[0].put(crypto, new AssetAmount(priceData.usdPrice));
+                            newPriceMap.put(crypto, new AssetAmount(priceData.usdPrice));
                         }
                     }
                 }
@@ -77,13 +77,13 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(newPriceMap[0].size() != deltaMap.size()) {
+                if(newPriceMap.size() != deltaMap.size()) {
                     Toast.showToast("no_price_data");
                 }
 
                 priceMap.clear();
-                for(Asset asset : newPriceMap[0].keySet()) {
-                    priceMap.put(asset, newPriceMap[0].get(asset));
+                for(Asset asset : newPriceMap.keySet()) {
+                    priceMap.put(asset, newPriceMap.get(asset));
                 }
 
                 updateLayout();
@@ -152,14 +152,14 @@ public class TotalDialog extends BaseDialog {
         super.onSaveInstanceState();
 
         Bundle bundle = super.onSaveInstanceState();
-        bundle.putSerializable("priceMap", priceMap);
+        bundle.putString("priceMap", Serialization.serializeHashMap(priceMap));
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            priceMap = (HashMap<Asset, AssetAmount>)bundle.getSerializable("priceMap");
+            priceMap = Serialization.deserializeHashMap(bundle.getString("priceMap"), Asset.class, AssetAmount.class);
         }
 
         super.onRestoreInstanceState(bundle);

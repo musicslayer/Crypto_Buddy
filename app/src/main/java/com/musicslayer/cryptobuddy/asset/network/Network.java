@@ -87,13 +87,15 @@ abstract public class Network implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"key\":\"" + getKey() + "\"}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("key", Serialization.string_serialize(getKey()))
+            .toString();
     }
 
     public static Network deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        String key = o.getString("key");
+        String key = Serialization.string_deserialize(o.getString("key"));
         return Network.getNetworkFromKey(key);
     }
 }

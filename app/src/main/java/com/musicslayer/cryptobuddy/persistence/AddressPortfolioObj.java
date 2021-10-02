@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,16 +31,19 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
-        return "{\"name\":\"" + name + "\",\"cryptoAddressArrayList\":" + Serialization.serializeArrayList(cryptoAddressArrayList) + "}";
+    public String serializeToJSON() throws org.json.JSONException {
+        return new JSONObject()
+            .put("name", Serialization.string_serialize(name))
+            .put("cryptoAddressArrayList", new JSONArray(Serialization.serializeArrayList(cryptoAddressArrayList)))
+            .toString();
     }
 
     public static AddressPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
-        String name = o.getString("name");
+        String name = Serialization.string_deserialize(o.getString("name"));
         AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
 
-        ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.deserializeArray(o.getJSONArray("cryptoAddressArrayList").toString());
+        ArrayList<CryptoAddress> cryptoAddressArrayList = Serialization.deserializeArrayList(o.getJSONArray("cryptoAddressArrayList").toString(), CryptoAddress.class);
         if(cryptoAddressArrayList != null) {
             for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
                 addressPortfolioObj.addData(cryptoAddress);

@@ -17,16 +17,19 @@ abstract public class API implements Serialization.SerializableToJSON {
 
     public String serializationVersion() { return "1"; }
 
-    public String serializeToJSON() {
+    public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
-        return "{\"apiType\":\"" + getAPIType() + "\",\"key\":\"" + getKey() + "\"}";
+        return new JSONObject()
+            .put("apiType", Serialization.string_serialize(getAPIType()))
+            .put("key", Serialization.string_serialize(getKey()))
+            .toString();
     }
 
     public static API deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         JSONObject o = new JSONObject(s);
-        String apiType = o.getString("apiType");
-        String key = o.getString("key");
+        String apiType = Serialization.string_deserialize(o.getString("apiType"));
+        String key = Serialization.string_deserialize(o.getString("key"));
         return API.getAPI(apiType, key);
     }
 

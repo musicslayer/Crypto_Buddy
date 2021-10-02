@@ -10,7 +10,7 @@ public class ExceptionLogger {
     public static String getExceptionText(Exception e) {
         StringBuilder s = new StringBuilder();
 
-        s.append(e.getMessage());
+        s.append(e.toString());
 
         StackTraceElement[] stackArray = e.getStackTrace();
         for(StackTraceElement stack : stackArray) {
