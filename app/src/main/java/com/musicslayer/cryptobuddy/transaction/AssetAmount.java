@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.LocaleManager;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
@@ -13,7 +14,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class AssetAmount {
+public class AssetAmount implements Serialization.SerializableToJSON {
     public final static int MAXSCALE = 20;
 
     public BigDecimal amount;
@@ -224,18 +225,13 @@ public class AssetAmount {
         }
     }
 
-    public String serialize() {
+    public String serializeToJSON() {
         return "{\"amount\":\"" + amount.toString() + "\"}";
     }
 
-    public static AssetAmount deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            BigDecimal amount = new BigDecimal(o.getString("amount"));
-            return new AssetAmount(amount);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static AssetAmount deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        BigDecimal amount = new BigDecimal(o.getString("amount"));
+        return new AssetAmount(amount);
     }
 }

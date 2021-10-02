@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.filter.Filter;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class Transaction {
+public class Transaction implements Serialization.SerializableToJSON {
     public Action action;
     public AssetQuantity actionedAssetQuantity;
     public AssetQuantity otherAssetQuantity;
@@ -283,64 +283,24 @@ public class Transaction {
         map.put(assetQuantity.asset, newValue);
     }
 
-    //Action action, AssetQuantity actionedAssetQuantity, AssetQuantity otherAssetQuantity, Timestamp timestamp, String info
-
-    public String serialize() {
+    public String serializeToJSON() {
         // otherAssetQuantity may be null, so deal with that here.
-        String otherAssetQuantity_s = otherAssetQuantity == null ? "{}" : otherAssetQuantity.serialize();
+        String otherAssetQuantity_s = otherAssetQuantity == null ? "{}" : Serialization.serialize(otherAssetQuantity);
 
-        return "{\"action\":" + action.serialize() + ",\"actionedAssetQuantity\":" + actionedAssetQuantity.serialize() + ",\"otherAssetQuantity\":" + otherAssetQuantity_s + ",\"timestamp\":" + timestamp.serialize() + ",\"info\":\"" + info + "\"}";
+        return "{\"action\":" + Serialization.serialize(action) + ",\"actionedAssetQuantity\":" + Serialization.serialize(actionedAssetQuantity) + ",\"otherAssetQuantity\":" + otherAssetQuantity_s + ",\"timestamp\":" + Serialization.serialize(timestamp) + ",\"info\":\"" + info + "\"}";
     }
 
-    public static String serializeArray(ArrayList<Transaction> arrayList) {
-        StringBuilder s = new StringBuilder();
-        s.append("[");
+    public static Transaction deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        Action action = Serialization.deserialize(o.getJSONObject("action").toString(), Action.class);
+        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObject("actionedAssetQuantity").toString(), AssetQuantity.class);
 
-        for(int i = 0; i < arrayList.size(); i++) {
-            s.append(arrayList.get(i).serialize());
+        // otherAssetQuantity may be null, so deal with that here.
+        String otherAssetQuantity_s = o.getJSONObject("otherAssetQuantity").toString();
+        AssetQuantity otherAssetQuantity = "{}".equals(otherAssetQuantity_s) ? null : Serialization.deserialize(otherAssetQuantity_s, AssetQuantity.class);
 
-            if(i < arrayList.size() - 1) {
-                s.append(",");
-            }
-        }
-
-        s.append("]");
-        return s.toString();
-    }
-
-    public static Transaction deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            Action action = Action.deserialize(o.getJSONObject("action").toString());
-            AssetQuantity actionedAssetQuantity = AssetQuantity.deserialize(o.getJSONObject("actionedAssetQuantity").toString());
-
-            // otherAssetQuantity may be null, so deal with that here.
-            String otherAssetQuantity_s = o.getJSONObject("otherAssetQuantity").toString();
-            AssetQuantity otherAssetQuantity = "{}".equals(otherAssetQuantity_s) ? null : AssetQuantity.deserialize(otherAssetQuantity_s);
-
-            Timestamp timestamp = Timestamp.deserialize(o.getJSONObject("timestamp").toString());
-            String info = o.getString("info");
-            return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-
-    public static ArrayList<Transaction> deserializeArray(String s) {
-        try {
-            ArrayList<Transaction> arrayList = new ArrayList<>();
-
-            JSONArray a = new JSONArray(s);
-            for(int i = 0; i < a.length(); i++) {
-                JSONObject o = a.getJSONObject(i);
-                arrayList.add(Transaction.deserialize(o.toString()));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            return null;
-        }
+        Timestamp timestamp = Serialization.deserialize(o.getJSONObject("timestamp").toString(), Timestamp.class);
+        String info = o.getString("info");
+        return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }
 }

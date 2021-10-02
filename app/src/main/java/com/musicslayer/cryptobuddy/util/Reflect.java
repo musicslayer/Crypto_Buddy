@@ -2,16 +2,60 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.app.Activity;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+@SuppressWarnings("unchecked")
 public class Reflect {
-    // Assume no-arg constructor exists.
-    public static <T> T constructSubclassInstanceFromName(String subclassName) {
+    public static <T, U> U callStaticMethod(Class<T> clazz, String staticMethodName, Object... args) {
+        U object = null;
+
+        try {
+            Object[] argArray = new Object[args.length];
+            Class<?>[] argClassArray = new Class<?>[args.length];
+
+            for(int i = 0; i < args.length; i++) {
+                argArray[i] = args[i];
+                argClassArray[i] = args[i].getClass();
+            }
+
+            Method m = clazz.getMethod(staticMethodName, argClassArray);
+            object = (U)m.invoke(null, argArray);
+        }
+        catch(IllegalAccessException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InvocationTargetException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(NoSuchMethodException e) {
+            ExceptionLogger.processException(e);
+        }
+
+        return object;
+    }
+
+    public static <T> T constructClassInstanceFromName(String className) {
         T object = null;
 
         try {
-            Class<T> clazz = (Class<T>)Class.forName(subclassName);
+            // Assume no-arg constructor exists.
+            Class<T> clazz = (Class<T>)Class.forName(className);
             object = clazz.getConstructor().newInstance();
         }
-        catch(Exception e) {
+        catch(ClassNotFoundException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(IllegalAccessException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InstantiationException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InvocationTargetException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(NoSuchMethodException e) {
             ExceptionLogger.processException(e);
         }
 
@@ -36,7 +80,16 @@ public class Reflect {
 
             object = clazz.getConstructor(argClassArray).newInstance(argArray);
         }
-        catch(Exception e) {
+        catch(IllegalAccessException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InstantiationException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InvocationTargetException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(NoSuchMethodException e) {
             ExceptionLogger.processException(e);
         }
 

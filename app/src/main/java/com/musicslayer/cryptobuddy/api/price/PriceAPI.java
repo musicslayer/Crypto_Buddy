@@ -25,7 +25,7 @@ abstract public class PriceAPI extends API {
         price_api_display_names = new ArrayList<>();
 
         for(String priceName : price_api_names) {
-            PriceAPI priceAPI = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.api.price." + priceName);
+            PriceAPI priceAPI = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.api.price." + priceName);
             price_apis.add(priceAPI);
             price_api_map.put(priceName, priceAPI);
             price_api_display_names.add(priceAPI.getDisplayName());

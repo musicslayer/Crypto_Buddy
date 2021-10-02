@@ -3,12 +3,13 @@ package com.musicslayer.cryptobuddy.transaction;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
 import java.util.Date;
 
-public class Timestamp {
+public class Timestamp implements Serialization.SerializableToJSON {
     public Date date;
 
     public Timestamp(Date date) {
@@ -38,18 +39,13 @@ public class Timestamp {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serialize() {
+    public String serializeToJSON() {
         return "{\"date\":\"" + Long.toString(date.getTime()) + "\"}";
     }
 
-    public static Timestamp deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            Date date = new Date(Long.parseLong(o.getString("date")));
-            return new Timestamp(date);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static Timestamp deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        Date date = new Date(Long.parseLong(o.getString("date")));
+        return new Timestamp(date);
     }
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.Serialization;
+
 public class AddressPortfolio {
     public static ArrayList<AddressPortfolioObj> settings_address_portfolio = new ArrayList<>();
 
@@ -30,7 +32,7 @@ public class AddressPortfolio {
 
         for(int i = 0; i < size; i++) {
             AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
-            editor.putString("address_portfolio" + i, addressPortfolioObj.serialize());
+            editor.putString("address_portfolio" + i, Serialization.serialize(addressPortfolioObj));
         }
 
         editor.apply();
@@ -45,7 +47,7 @@ public class AddressPortfolio {
         for(int i = 0; i < size; i++) {
             try {
                 String serialString = settings.getString("address_portfolio" + i, "");
-                AddressPortfolioObj addressPortfolioObj = AddressPortfolioObj.deserialize(serialString);
+                AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
 
                 // If there is any problem at all, don't add this one.
                 if(addressPortfolioObj != null) {

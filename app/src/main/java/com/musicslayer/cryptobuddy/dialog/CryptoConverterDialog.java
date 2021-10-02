@@ -8,13 +8,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
@@ -125,16 +125,16 @@ public class CryptoConverterDialog extends BaseDialog {
 
         Bundle bundle = super.onSaveInstanceState();
 
-        String priceDataPrimary_s = priceDataPrimary == null ? "{}" : priceDataPrimary.serialize();
+        String priceDataPrimary_s = priceDataPrimary == null ? "{}" : Serialization.serialize(priceDataPrimary);
         bundle.putString("priceDataPrimary", priceDataPrimary_s);
 
-        String priceDataSecondary_s = priceDataSecondary == null ? "{}" : priceDataSecondary.serialize();
+        String priceDataSecondary_s = priceDataSecondary == null ? "{}" : Serialization.serialize(priceDataSecondary);
         bundle.putString("priceDataSecondary", priceDataSecondary_s);
 
-        String cryptoPrimary_s = cryptoPrimary == null ? "{}" : cryptoPrimary.serialize();
+        String cryptoPrimary_s = cryptoPrimary == null ? "{}" : Serialization.serialize(cryptoPrimary);
         bundle.putString("cryptoPrimary", cryptoPrimary_s);
 
-        String cryptoSecondary_s = cryptoSecondary == null ? "{}" : cryptoSecondary.serialize();
+        String cryptoSecondary_s = cryptoSecondary == null ? "{}" : Serialization.serialize(cryptoSecondary);
         bundle.putString("cryptoSecondary", cryptoSecondary_s);
 
         return bundle;
@@ -144,16 +144,16 @@ public class CryptoConverterDialog extends BaseDialog {
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
             String priceDataPrimary_s = bundle.getString("priceDataPrimary");
-            priceDataPrimary = "{}".equals(priceDataPrimary_s) ? null : PriceData.deserialize(priceDataPrimary_s);
+            priceDataPrimary = "{}".equals(priceDataPrimary_s) ? null : Serialization.deserialize(priceDataPrimary_s, PriceData.class);
 
             String priceDataSecondary_s = bundle.getString("priceDataSecondary");
-            priceDataSecondary = "{}".equals(priceDataSecondary_s) ? null : PriceData.deserialize(priceDataSecondary_s);
+            priceDataSecondary = "{}".equals(priceDataSecondary_s) ? null : Serialization.deserialize(priceDataSecondary_s, PriceData.class);
 
             String cryptoPrimary_s = bundle.getString("cryptoPrimary");
-            cryptoPrimary = "{}".equals(cryptoPrimary_s) ? null : (Crypto) Asset.deserialize(cryptoPrimary_s);
+            cryptoPrimary = "{}".equals(cryptoPrimary_s) ? null : Serialization.deserialize(cryptoPrimary_s, Crypto.class);
 
             String cryptoSecondary_s = bundle.getString("cryptoSecondary");
-            cryptoSecondary = "{}".equals(cryptoSecondary_s) ? null : (Crypto) Asset.deserialize(cryptoSecondary_s);
+            cryptoSecondary = "{}".equals(cryptoSecondary_s) ? null : Serialization.deserialize(cryptoSecondary_s, Crypto.class);
         }
 
         super.onRestoreInstanceState(bundle);

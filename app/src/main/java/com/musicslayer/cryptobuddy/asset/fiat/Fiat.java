@@ -27,7 +27,7 @@ abstract public class Fiat extends Asset {
         fiat_combo_names = new ArrayList<>();
 
         for(String fiatName : fiat_names) {
-            Fiat fiat = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiat." + fiatName);
+            Fiat fiat = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiat." + fiatName);
             fiats.add(fiat);
             fiat_map.put(fiatName, fiat);
             fiat_display_names.add(fiat.getDisplayName());

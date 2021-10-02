@@ -2,13 +2,15 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.util.Serialization;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 // TODO Actions for delegate, redelegate, undelegate? Burn?
 
-public class Action {
+public class Action implements Serialization.SerializableToJSON {
     final public static ArrayList<String> actions;
     static {
         actions = new ArrayList<>();
@@ -115,18 +117,13 @@ public class Action {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serialize() {
+    public String serializeToJSON() {
         return "{\"actionString\":\"" + actionString + "\"}";
     }
 
-    public static Action deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            String actionString = o.getString("actionString");
-            return new Action(actionString);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static Action deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        String actionString = o.getString("actionString");
+        return new Action(actionString);
     }
 }

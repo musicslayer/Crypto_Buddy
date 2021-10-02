@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.Serialization;
+
 public class TransactionPortfolio {
     public static ArrayList<TransactionPortfolioObj> settings_transaction_portfolio = new ArrayList<>();
 
@@ -30,7 +32,7 @@ public class TransactionPortfolio {
 
         for(int i = 0; i < size; i++) {
             TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
-            editor.putString("transaction_portfolio" + i, transactionPortfolioObj.serialize());
+            editor.putString("transaction_portfolio" + i, Serialization.serialize(transactionPortfolioObj));
         }
 
         editor.apply();
@@ -45,7 +47,7 @@ public class TransactionPortfolio {
         for(int i = 0; i < size; i++) {
             try {
                 String serialString = settings.getString("transaction_portfolio" + i, "");
-                TransactionPortfolioObj transactionPortfolioObj = TransactionPortfolioObj.deserialize(serialString);
+                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
 
                 // If there is any problem at all, don't add this one.
                 if(transactionPortfolioObj != null) {

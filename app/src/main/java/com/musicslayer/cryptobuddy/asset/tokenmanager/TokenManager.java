@@ -65,7 +65,7 @@ abstract public class TokenManager {
 
         tokenManagers_names = File.readFileIntoLines(context, R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
-            TokenManager tokenManager = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
+            TokenManager tokenManager = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
@@ -353,14 +353,14 @@ abstract public class TokenManager {
         return displayNames;
     }
 
-    public String serializeToJSON(String source) {
+    public String serializeToJSONX(String source) {
         StringBuilder s = new StringBuilder("[");
 
         if("downloaded".equals(source)) {
             for(int i = 0; i < downloaded_tokens.size(); i++) {
                 Token token = downloaded_tokens.get(i);
 
-                s.append(token.serializeToJSON());
+                s.append(token.serializeToJSONX());
 
                 if(i < downloaded_tokens.size() - 1) {
                     s.append(",");
@@ -371,7 +371,7 @@ abstract public class TokenManager {
             for(int i = 0; i < found_tokens.size(); i++) {
                 Token token = found_tokens.get(i);
 
-                s.append(token.serializeToJSON());
+                s.append(token.serializeToJSONX());
 
                 if(i < found_tokens.size() - 1) {
                     s.append(",");
@@ -382,7 +382,7 @@ abstract public class TokenManager {
             for(int i = 0; i < custom_tokens.size(); i++) {
                 Token token = custom_tokens.get(i);
 
-                s.append(token.serializeToJSON());
+                s.append(token.serializeToJSONX());
 
                 if(i < custom_tokens.size() - 1) {
                     s.append(",");
@@ -396,26 +396,26 @@ abstract public class TokenManager {
     }
 
     // Don't actually create a new instance, just fill in tokens in this existing instance.
-    public void deserializeFromJSON(String s, String source) {
+    public void deserializeFromJSONX(String s, String source) {
         try {
             JSONArray json = new JSONArray(s);
 
             if("downloaded".equals(source)) {
                 for(int i = 0; i < json.length(); i++) {
                     JSONObject tokenJSON = json.getJSONObject(i);
-                    addDownloadedToken(Token.deserializeFromJSON(tokenJSON));
+                    addDownloadedToken(Token.deserializeFromJSONX(tokenJSON));
                 }
             }
             else if("found".equals(source)) {
                 for(int i = 0; i < json.length(); i++) {
                     JSONObject tokenJSON = json.getJSONObject(i);
-                    addFoundToken(Token.deserializeFromJSON(tokenJSON));
+                    addFoundToken(Token.deserializeFromJSONX(tokenJSON));
                 }
             }
             else if("custom".equals(source)) {
                 for(int i = 0; i < json.length(); i++) {
                     JSONObject tokenJSON = json.getJSONObject(i);
-                    addCustomToken(Token.deserializeFromJSON(tokenJSON));
+                    addCustomToken(Token.deserializeFromJSONX(tokenJSON));
                 }
             }
         }
@@ -434,7 +434,7 @@ abstract public class TokenManager {
     }
 
     public void save(Context context, String source) {
-        TokenList.set(context, getSettingsKey(), source, serializeToJSON(source));
+        TokenList.set(context, getSettingsKey(), source, serializeToJSONX(source));
     }
 
     public static void loadAll(Context context, String source) {
@@ -445,7 +445,7 @@ abstract public class TokenManager {
 
     public void load(Context context, String source) {
         String s = TokenList.get(context, getSettingsKey(), source);
-        deserializeFromJSON(s, source);
+        deserializeFromJSONX(s, source);
     }
 
     public String getFixedJSON() {

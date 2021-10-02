@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,7 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 // A string address could belong to more than one network
-public class CryptoAddress {
+public class CryptoAddress implements Serialization.SerializableToJSON {
     public String address;
     public Network network;
     public boolean includeTokens;
@@ -74,37 +75,16 @@ public class CryptoAddress {
         return cryptoAddressArrayList;
     }
 
-    public String serialize() {
-        return "{\"address\":\"" + address + "\",\"network\":" + network.serialize() + ",\"includeTokens\":\"" + Boolean.toString(includeTokens) + "\"}";
+    public String serializeToJSON() {
+        return "{\"address\":\"" + address + "\",\"network\":" + Serialization.serialize(network) + ",\"includeTokens\":\"" + Boolean.toString(includeTokens) + "\"}";
     }
 
-    public static String serializeArray(ArrayList<CryptoAddress> arrayList) {
-        StringBuilder s = new StringBuilder();
-        s.append("[");
-
-        for(int i = 0; i < arrayList.size(); i++) {
-            s.append(arrayList.get(i).serialize());
-
-            if(i < arrayList.size() - 1) {
-                s.append(",");
-            }
-        }
-
-        s.append("]");
-        return s.toString();
-    }
-
-    public static CryptoAddress deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            String address = o.getString("address");
-            Network network = Network.deserialize(o.getJSONObject("network").toString());
-            boolean includeTokens = Boolean.parseBoolean(o.getString("includeTokens"));
-            return new CryptoAddress(address, network, includeTokens);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static CryptoAddress deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        String address = o.getString("address");
+        Network network = Serialization.deserialize(o.getJSONObject("network").toString(), Network.class);
+        boolean includeTokens = Boolean.parseBoolean(o.getString("includeTokens"));
+        return new CryptoAddress(address, network, includeTokens);
     }
 
     public static ArrayList<CryptoAddress> deserializeArray(String s) {
@@ -114,7 +94,7 @@ public class CryptoAddress {
             JSONArray a = new JSONArray(s);
             for(int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
-                arrayList.add(CryptoAddress.deserialize(o.toString()));
+                arrayList.add(Serialization.deserialize(o.toString(), CryptoAddress.class));
             }
 
             return arrayList;

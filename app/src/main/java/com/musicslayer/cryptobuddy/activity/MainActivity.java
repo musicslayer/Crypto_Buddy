@@ -31,6 +31,7 @@ import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.util.Help;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.Date;
@@ -113,7 +114,7 @@ public class MainActivity extends BaseActivity {
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
                 //intent.putExtra("AddressData", addressData[0]);
-                intent.putExtra("AddressData", addressData[0].serialize());
+                intent.putExtra("AddressData", Serialization.serialize(addressData[0]));
                 MainActivity.this.startActivity(intent);
             }
         });

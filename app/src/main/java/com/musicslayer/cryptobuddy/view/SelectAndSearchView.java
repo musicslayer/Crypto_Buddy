@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.ArrayList;
@@ -393,7 +394,7 @@ public class SelectAndSearchView extends LinearLayout {
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
         bundle.putString("lastButton", lastButton);
 
-        String lastSearchAsset_s = lastSearchAsset == null ? "{}" : lastSearchAsset.serialize();
+        String lastSearchAsset_s = lastSearchAsset == null ? "{}" : Serialization.serialize(lastSearchAsset);
         bundle.putString("lastSearchAsset", lastSearchAsset_s);
 
         return bundle;
@@ -409,7 +410,7 @@ public class SelectAndSearchView extends LinearLayout {
             lastButton = bundle.getString("lastButton");
 
             String lastSearchAsset_s = bundle.getString("lastSearchAsset");
-            lastSearchAsset = "{}".equals(lastSearchAsset_s) ? null : Asset.deserialize(lastSearchAsset_s);
+            lastSearchAsset = "{}".equals(lastSearchAsset_s) ? null : Serialization.deserialize(lastSearchAsset_s, Asset.class);
 
             restoreOptions(lastButton, lastSearchAsset);
             this.bsv.setSelection(bundle.getInt("selection"));

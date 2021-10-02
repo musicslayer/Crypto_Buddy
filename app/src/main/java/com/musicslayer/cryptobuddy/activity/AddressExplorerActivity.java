@@ -29,6 +29,7 @@ import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.Help;
 import com.musicslayer.cryptobuddy.util.Info;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
@@ -66,8 +67,7 @@ public class AddressExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        //AddressData addressData = (AddressData)getIntent().getSerializableExtra("AddressData");
-        AddressData addressData = AddressData.deserialize(getIntent().getStringExtra("AddressData"));
+        AddressData addressData = Serialization.deserialize(getIntent().getStringExtra("AddressData"), AddressData.class);
         addressDataArrayList.add(addressData);
 
         boolean includeTokens = addressData.cryptoAddress.includeTokens;
@@ -204,13 +204,13 @@ public class AddressExplorerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle bundle) {
         super.onSaveInstanceState(bundle);
-        bundle.putString("addressDataArrayList", AddressData.serializeArray(addressDataArrayList));
+        bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList));
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
-            addressDataArrayList = AddressData.deserializeArray(bundle.getString("addressDataArrayList"));
+            addressDataArrayList = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
             updateLayout();
         }
 

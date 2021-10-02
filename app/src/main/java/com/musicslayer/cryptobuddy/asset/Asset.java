@@ -5,6 +5,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-abstract public class Asset {
+abstract public class Asset implements Serialization.SerializableToJSON {
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
     abstract public String getName(); // Usually same as key, but in some cases (i.e. TRON) it could be different.
     abstract public String getDisplayName();
@@ -77,22 +78,17 @@ abstract public class Asset {
         });
     }
 
-    public String serialize() {
+    public String serializeToJSON() {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
         return "{\"assetType\":\"" + getAssetType() + "\",\"key\":\"" + getKey() + "\"}";
     }
 
-    public static Asset deserialize(String s) {
+    public static Asset deserializeFromJSON(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-        try {
-            JSONObject o = new JSONObject(s);
-            String assetType = o.getString("assetType");
-            String key = o.getString("key");
-            return Asset.getAsset(assetType, key);
-        }
-        catch(Exception e) {
-            return null;
-        }
+        JSONObject o = new JSONObject(s);
+        String assetType = o.getString("assetType");
+        String key = o.getString("key");
+        return Asset.getAsset(assetType, key);
     }
 
     public String getAssetType() {

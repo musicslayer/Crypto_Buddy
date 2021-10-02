@@ -1,12 +1,11 @@
 package com.musicslayer.cryptobuddy.api.price;
 
-import com.musicslayer.cryptobuddy.api.API;
-import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import org.json.JSONObject;
@@ -15,7 +14,7 @@ import java.util.Date;
 
 // TODO should fields store strings, or custom objects?
 
-public class PriceData {
+public class PriceData implements Serialization.SerializableToJSON {
     public Crypto crypto;
     public PriceAPI priceAPI_usdPrice;
     public PriceAPI priceAPI_usdMarketCap;
@@ -24,23 +23,18 @@ public class PriceData {
     //public String timestamp;
     // TODO priceData from API should tell us the date that the data is from.
 
-    public String serialize() {
-        return "{\"crypto\":" + crypto.serialize() + ",\"priceAPI_usdPrice\":" + priceAPI_usdPrice.serialize() + ",\"priceAPI_usdMarketCap\":" + priceAPI_usdMarketCap.serialize() + ",\"usdPrice\":\"" + usdPrice + "\",\"usdMarketCap\":\"" + usdMarketCap + "\"}";
+    public String serializeToJSON() {
+        return "{\"crypto\":" + Serialization.serialize(crypto) + ",\"priceAPI_usdPrice\":" + Serialization.serialize(priceAPI_usdPrice) + ",\"priceAPI_usdMarketCap\":" + Serialization.serialize(priceAPI_usdMarketCap) + ",\"usdPrice\":\"" + usdPrice + "\",\"usdMarketCap\":\"" + usdMarketCap + "\"}";
     }
 
-    public static PriceData deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            Crypto crypto = (Crypto)Asset.deserialize(o.getJSONObject("crypto").toString());
-            PriceAPI priceAPI_usdPrice = (PriceAPI)API.deserialize(o.getJSONObject("priceAPI_usdPrice").toString());
-            PriceAPI priceAPI_usdMarketCap = (PriceAPI)API.deserialize(o.getJSONObject("priceAPI_usdMarketCap").toString());
-            String usdPrice = o.getString("usdPrice");
-            String usdMarketCap = o.getString("usdMarketCap");
-            return new PriceData(crypto, priceAPI_usdPrice, priceAPI_usdMarketCap, usdPrice, usdMarketCap, DateTime.toDateString(new Date()));
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static PriceData deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toString(), Crypto.class);
+        PriceAPI priceAPI_usdPrice = Serialization.deserialize(o.getJSONObject("priceAPI_usdPrice").toString(), PriceAPI.class);
+        PriceAPI priceAPI_usdMarketCap = Serialization.deserialize(o.getJSONObject("priceAPI_usdMarketCap").toString(), PriceAPI.class);
+        String usdPrice = o.getString("usdPrice");
+        String usdMarketCap = o.getString("usdMarketCap");
+        return new PriceData(crypto, priceAPI_usdPrice, priceAPI_usdMarketCap, usdPrice, usdMarketCap, DateTime.toDateString(new Date()));
     }
 
     public PriceData(Crypto crypto, PriceAPI priceAPI_usdPrice, PriceAPI priceAPI_usdMarketCap, String usdPrice, String usdMarketCap, String timestamp) {

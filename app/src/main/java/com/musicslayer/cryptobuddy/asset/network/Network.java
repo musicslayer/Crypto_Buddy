@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
 
 // TODO For now, SegWit is always bc1/ltc1, but in the future the number could change. There are also different kinds of SegWit.
 
-abstract public class Network {
+abstract public class Network implements Serialization.SerializableToJSON {
     abstract public boolean isMainnet();
     abstract public Crypto getCrypto();
     abstract public String getName();
@@ -44,7 +45,7 @@ abstract public class Network {
         network_display_names = new ArrayList<>();
 
         for(String networkName : network_names) {
-            Network network = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.asset.network." + networkName);
+            Network network = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.network." + networkName);
             networks.add(network);
             network_map.put(networkName, network);
             network_display_names.add(network.getDisplayName());
@@ -84,18 +85,13 @@ abstract public class Network {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serialize() {
+    public String serializeToJSON() {
         return "{\"key\":\"" + getKey() + "\"}";
     }
 
-    public static Network deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            String key = o.getString("key");
-            return Network.getNetworkFromKey(key);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static Network deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        String key = o.getString("key");
+        return Network.getNetworkFromKey(key);
     }
 }

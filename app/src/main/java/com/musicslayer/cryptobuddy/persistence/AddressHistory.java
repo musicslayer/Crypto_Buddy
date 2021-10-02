@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.Serialization;
+
 public class AddressHistory {
     final public static int HISTORYLIMIT = 10;
     public static ArrayList<AddressHistoryObj> settings_address_history = new ArrayList<>();
@@ -46,7 +48,7 @@ public class AddressHistory {
 
         for(int i = 0; i < size; i++) {
             AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
-            editor.putString("address_history" + i, addressHistoryObj.serialize());
+            editor.putString("address_history" + i, Serialization.serialize(addressHistoryObj));
         }
 
         editor.apply();
@@ -61,7 +63,7 @@ public class AddressHistory {
         for(int i = 0; i < size; i++) {
             try {
                 String serialString = settings.getString("address_history" + i, "");
-                AddressHistoryObj addressHistoryObj = AddressHistoryObj.deserialize(serialString);
+                AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
 
                 // If there is any problem at all, don't add this one.
                 if(addressHistoryObj != null) {

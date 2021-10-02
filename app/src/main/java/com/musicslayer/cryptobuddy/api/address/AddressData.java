@@ -1,12 +1,11 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Date;
 // TODO should fields store strings, or custom objects?
 // TODO addressData from API should tell us the date that the data is from.
 
-public class AddressData {
+public class AddressData implements Serialization.SerializableToJSON {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;
@@ -23,56 +22,18 @@ public class AddressData {
     final public ArrayList<AssetQuantity> currentBalanceArrayList; //BD
     final public ArrayList<Transaction> transactionArrayList;
 
-    public String serialize() {
-        return "{\"cryptoAddress\":" + cryptoAddress.serialize() + ",\"addressAPI_currentBalance\":" + addressAPI_currentBalance.serialize() + ",\"addressAPI_transactions\":" + addressAPI_transactions.serialize() + ",\"currentBalanceArrayList\":" + AssetQuantity.serializeArray(currentBalanceArrayList) + ",\"transactionArrayList\":" + Transaction.serializeArray(transactionArrayList) + "}";
+    public String serializeToJSON() {
+        return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + ",\"addressAPI_currentBalance\":" + Serialization.serialize(addressAPI_currentBalance) + ",\"addressAPI_transactions\":" + Serialization.serialize(addressAPI_transactions) + ",\"currentBalanceArrayList\":" + Serialization.serializeArrayList(currentBalanceArrayList) + ",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
     }
 
-    public static String serializeArray(ArrayList<AddressData> arrayList) {
-        StringBuilder s = new StringBuilder();
-        s.append("[");
-
-        for(int i = 0; i < arrayList.size(); i++) {
-            s.append(arrayList.get(i).serialize());
-
-            if(i < arrayList.size() - 1) {
-                s.append(",");
-            }
-        }
-
-        s.append("]");
-        return s.toString();
-    }
-
-    public static AddressData deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            CryptoAddress cryptoAddress = CryptoAddress.deserialize(o.getJSONObject("cryptoAddress").toString());
-            AddressAPI addressAPI_currentBalance = (AddressAPI)API.deserialize(o.getJSONObject("addressAPI_currentBalance").toString());
-            AddressAPI addressAPI_transactions = (AddressAPI)API.deserialize(o.getJSONObject("addressAPI_transactions").toString());
-            ArrayList<AssetQuantity> currentBalanceArrayList = AssetQuantity.deserializeArray(o.getJSONArray("currentBalanceArrayList").toString());
-            ArrayList<Transaction> transactionArrayList = Transaction.deserializeArray(o.getJSONArray("transactionArrayList").toString());
-            return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
-        }
-        catch(Exception e) {
-            return null;
-        }
-    }
-
-    public static ArrayList<AddressData> deserializeArray(String s) {
-        try {
-            ArrayList<AddressData> arrayList = new ArrayList<>();
-
-            JSONArray a = new JSONArray(s);
-            for(int i = 0; i < a.length(); i++) {
-                JSONObject o = a.getJSONObject(i);
-                arrayList.add(AddressData.deserialize(o.toString()));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static AddressData deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toString(), CryptoAddress.class);
+        AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObject("addressAPI_currentBalance").toString(), AddressAPI.class);
+        AddressAPI addressAPI_transactions = Serialization.deserialize(o.getJSONObject("addressAPI_transactions").toString(), AddressAPI.class);
+        ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArray("currentBalanceArrayList").toString(), AssetQuantity.class);
+        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toString(), Transaction.class);
+        return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
     }
 
     public AddressData(CryptoAddress cryptoAddress, AddressAPI addressAPI_currentBalance, AddressAPI addressAPI_transactions, String date, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList) {

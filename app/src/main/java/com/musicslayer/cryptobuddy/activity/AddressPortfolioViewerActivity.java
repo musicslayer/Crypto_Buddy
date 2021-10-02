@@ -25,6 +25,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.Help;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
                 intent.putExtra("AddressPortfolioName",  AddressPortfolioObjName[0]);
                 //intent.putExtra("AddressData_Array",  addressDataArrayList[0]);
-                intent.putExtra("AddressData_Array", AddressData.serializeArray(addressDataArrayList[0]));
+                intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList[0]));
                 AddressPortfolioViewerActivity.this.startActivity(intent);
             }
         });
@@ -176,8 +177,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         super.onSaveInstanceState(bundle);
         bundle.putString("PortfolioName", currentDeletePortfolioName);
 
-        bundle.putString("cryptoAddressArrayList", CryptoAddress.serializeArray(cryptoAddressArrayList[0]));
-        bundle.putString("addressDataArrayList", AddressData.serializeArray(addressDataArrayList[0]));
+        bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
+        bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList[0]));
         bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
@@ -186,8 +187,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
 
-            cryptoAddressArrayList[0] = CryptoAddress.deserializeArray(bundle.getString("cryptoAddressArrayList"));
-            addressDataArrayList[0] = AddressData.deserializeArray(bundle.getString("addressDataArrayList"));
+            cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
+            addressDataArrayList[0] = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
             AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
 

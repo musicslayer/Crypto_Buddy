@@ -27,7 +27,7 @@ abstract public class Coin extends Crypto {
         coin_combo_names = new ArrayList<>();
 
         for(String coinName : coin_names) {
-            Coin coin = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.asset.crypto.coin." + coinName);
+            Coin coin = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.crypto.coin." + coinName);
             coins.add(coin);
             coin_map.put(coinName, coin);
             coin_display_names.add(coin.getDisplayName());

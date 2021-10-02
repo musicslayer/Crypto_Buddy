@@ -2,10 +2,11 @@ package com.musicslayer.cryptobuddy.api;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
-abstract public class API {
+abstract public class API implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.
     public String getKey() {
         return getName();
@@ -14,22 +15,17 @@ abstract public class API {
     abstract public String getName();
     abstract public String getDisplayName();
 
-    public String serialize() {
+    public String serializeToJSON() {
         // We have to do this based on type, rather than just the properties.
         return "{\"apiType\":\"" + getAPIType() + "\",\"key\":\"" + getKey() + "\"}";
     }
 
-    public static API deserialize(String s) {
+    public static API deserializeFromJSON(String s) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
-        try {
-            JSONObject o = new JSONObject(s);
-            String apiType = o.getString("apiType");
-            String key = o.getString("key");
-            return API.getAPI(apiType, key);
-        }
-        catch(Exception e) {
-            return null;
-        }
+        JSONObject o = new JSONObject(s);
+        String apiType = o.getString("apiType");
+        String key = o.getString("key");
+        return API.getAPI(apiType, key);
     }
 
     public String getAPIType() {

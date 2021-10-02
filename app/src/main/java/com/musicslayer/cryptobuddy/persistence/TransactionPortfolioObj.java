@@ -1,12 +1,13 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class TransactionPortfolioObj {
+public class TransactionPortfolioObj implements Serialization.SerializableToJSON {
     public String name;
     public ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
@@ -23,25 +24,22 @@ public class TransactionPortfolioObj {
         transactionArrayList.add(transaction);
     }
 
-    public String serialize() {
-        return "{\"name\":\"" + name + "\",\"transactionArrayList\":" + Transaction.serializeArray(transactionArrayList) + "}";
+    public String serializeToJSON() {
+        return "{\"name\":\"" + name + "\",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
     }
 
-    public static TransactionPortfolioObj deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            String name = o.getString("name");
-            TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
+    public static TransactionPortfolioObj deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        String name = o.getString("name");
+        TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
 
-            ArrayList<Transaction> transactionArrayList = Transaction.deserializeArray(o.getJSONArray("transactionArrayList").toString());
+        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toString(), Transaction.class);
+        if(transactionArrayList != null) {
             for(Transaction transaction : transactionArrayList) {
                 transactionPortfolioObj.addData(transaction);
             }
+        }
 
-            return transactionPortfolioObj;
-        }
-        catch(Exception e) {
-            return null;
-        }
+        return transactionPortfolioObj;
     }
 }

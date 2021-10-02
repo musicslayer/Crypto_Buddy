@@ -31,7 +31,7 @@ abstract public class AddressAPI extends API {
         address_api_display_names = new ArrayList<>();
 
         for(String addressName : address_api_names) {
-            AddressAPI addressAPI = Reflect.constructSubclassInstanceFromName("com.musicslayer.cryptobuddy.api.address." + addressName);
+            AddressAPI addressAPI = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.api.address." + addressName);
             address_apis.add(addressAPI);
             address_api_map.put(addressName, addressAPI);
             address_api_display_names.add(addressAPI.getDisplayName());

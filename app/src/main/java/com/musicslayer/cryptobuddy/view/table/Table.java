@@ -17,12 +17,11 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.ArrayList;
@@ -375,8 +374,8 @@ abstract public class Table extends TableLayout {
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
-        bundle.putString("transactions", Transaction.serializeArray(transactionArrayList));
-        bundle.putString("masked_transactions", Transaction.serializeArray(maskedTransactionArrayList));
+        bundle.putString("transactions", Serialization.serializeArrayList(transactionArrayList));
+        bundle.putString("masked_transactions", Serialization.serializeArrayList(maskedTransactionArrayList));
         bundle.putSerializable("filters", filterArrayList);
         bundle.putIntegerArrayList("sortState", sortState);
 
@@ -394,8 +393,8 @@ abstract public class Table extends TableLayout {
 
             sortingColumn = bundle.getInt("sortingColumn");
             filterArrayList = (ArrayList<Filter>) bundle.getSerializable("filters");
-            transactionArrayList = Transaction.deserializeArray(bundle.getString("transactions"));
-            maskedTransactionArrayList = Transaction.deserializeArray(bundle.getString("masked_transactions"));
+            transactionArrayList = Serialization.deserializeArrayList(bundle.getString("transactions"), Transaction.class);
+            maskedTransactionArrayList = Serialization.deserializeArrayList(bundle.getString("masked_transactions"), Transaction.class);
             sortState = bundle.getIntegerArrayList("sortState");
 
             pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));

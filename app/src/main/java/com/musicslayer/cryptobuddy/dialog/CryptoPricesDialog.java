@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -15,6 +14,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 public class CryptoPricesDialog extends BaseDialog {
@@ -82,10 +82,10 @@ public class CryptoPricesDialog extends BaseDialog {
 
         Bundle bundle = super.onSaveInstanceState();
 
-        String priceData_s = priceData == null ? "{}" : priceData.serialize();
+        String priceData_s = priceData == null ? "{}" : Serialization.serialize(priceData);
         bundle.putString("priceData", priceData_s);
 
-        String crypto_s = crypto == null ? "{}" : crypto.serialize();
+        String crypto_s = crypto == null ? "{}" : Serialization.serialize(crypto);
         bundle.putString("crypto", crypto_s);
 
         return bundle;
@@ -95,10 +95,10 @@ public class CryptoPricesDialog extends BaseDialog {
     public void onRestoreInstanceState(Bundle bundle) {
         if(bundle != null) {
             String priceData_s = bundle.getString("priceData");
-            priceData = "{}".equals(priceData_s) ? null : PriceData.deserialize(priceData_s);
+            priceData = "{}".equals(priceData_s) ? null : Serialization.deserialize(priceData_s, PriceData.class);
 
             String crypto_s = bundle.getString("crypto");
-            crypto = "{}".equals(crypto_s) ? null : (Crypto) Asset.deserialize(crypto_s);
+            crypto = "{}".equals(crypto_s) ? null : Serialization.deserialize(crypto_s, Crypto.class);
         }
 
         super.onRestoreInstanceState(bundle);

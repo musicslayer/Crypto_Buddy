@@ -50,7 +50,7 @@ public class Token extends Crypto {
         return s + " (" + token_type + ")";
     }
 
-    public String serializeToJSON() {
+    public String serializeToJSONX() {
         return "{" +
             "\"key\":\"" + key.replace("\"", "\\\"") + "\"," +
             "\"name\":\"" + original_name.replace("\"", "\\\"") + "\"," +
@@ -62,7 +62,7 @@ public class Token extends Crypto {
             "}";
     }
 
-    public static Token deserializeFromJSON(JSONObject tokenJSON) {
+    public static Token deserializeFromJSONX(JSONObject tokenJSON) {
         try {
             String key = tokenJSON.getString("key");
             String name = tokenJSON.getString("name");

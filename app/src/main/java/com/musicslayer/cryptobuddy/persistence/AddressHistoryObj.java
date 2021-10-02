@@ -3,10 +3,11 @@ package com.musicslayer.cryptobuddy.persistence;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
 import org.json.JSONObject;
 
-public class AddressHistoryObj {
+public class AddressHistoryObj implements Serialization.SerializableToJSON {
     public CryptoAddress cryptoAddress;
 
     public AddressHistoryObj(CryptoAddress cryptoAddress) {
@@ -24,18 +25,13 @@ public class AddressHistoryObj {
         return (other instanceof AddressHistoryObj) && cryptoAddress.equals(((AddressHistoryObj) other).cryptoAddress);
     }
 
-    public String serialize() {
-        return "{\"cryptoAddress\":" + cryptoAddress.serialize() + "}";
+    public String serializeToJSON() {
+        return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + "}";
     }
 
-    public static AddressHistoryObj deserialize(String s) {
-        try {
-            JSONObject o = new JSONObject(s);
-            CryptoAddress cryptoAddress = CryptoAddress.deserialize(o.getJSONObject("cryptoAddress").toString());
-            return new AddressHistoryObj(cryptoAddress);
-        }
-        catch(Exception e) {
-            return null;
-        }
+    public static AddressHistoryObj deserializeFromJSON(String s) throws org.json.JSONException {
+        JSONObject o = new JSONObject(s);
+        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toString(), CryptoAddress.class);
+        return new AddressHistoryObj(cryptoAddress);
     }
 }
