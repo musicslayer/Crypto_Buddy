@@ -24,11 +24,13 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
         transactionArrayList.add(transaction);
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"name\":\"" + name + "\",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
     }
 
-    public static TransactionPortfolioObj deserializeFromJSON(String s) throws org.json.JSONException {
+    public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         String name = o.getString("name");
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);

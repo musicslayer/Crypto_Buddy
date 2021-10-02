@@ -23,11 +23,13 @@ public class PriceData implements Serialization.SerializableToJSON {
     //public String timestamp;
     // TODO priceData from API should tell us the date that the data is from.
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"crypto\":" + Serialization.serialize(crypto) + ",\"priceAPI_usdPrice\":" + Serialization.serialize(priceAPI_usdPrice) + ",\"priceAPI_usdMarketCap\":" + Serialization.serialize(priceAPI_usdMarketCap) + ",\"usdPrice\":\"" + usdPrice + "\",\"usdMarketCap\":\"" + usdMarketCap + "\"}";
     }
 
-    public static PriceData deserializeFromJSON(String s) throws org.json.JSONException {
+    public static PriceData deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toString(), Crypto.class);
         PriceAPI priceAPI_usdPrice = Serialization.deserialize(o.getJSONObject("priceAPI_usdPrice").toString(), PriceAPI.class);

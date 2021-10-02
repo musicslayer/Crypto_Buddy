@@ -75,11 +75,13 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
         return cryptoAddressArrayList;
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"address\":\"" + address + "\",\"network\":" + Serialization.serialize(network) + ",\"includeTokens\":\"" + Boolean.toString(includeTokens) + "\"}";
     }
 
-    public static CryptoAddress deserializeFromJSON(String s) throws org.json.JSONException {
+    public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         String address = o.getString("address");
         Network network = Serialization.deserialize(o.getJSONObject("network").toString(), Network.class);

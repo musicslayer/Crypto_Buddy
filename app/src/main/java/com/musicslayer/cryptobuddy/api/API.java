@@ -15,12 +15,14 @@ abstract public class API implements Serialization.SerializableToJSON {
     abstract public String getName();
     abstract public String getDisplayName();
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         // We have to do this based on type, rather than just the properties.
         return "{\"apiType\":\"" + getAPIType() + "\",\"key\":\"" + getKey() + "\"}";
     }
 
-    public static API deserializeFromJSON(String s) throws org.json.JSONException {
+    public static API deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         JSONObject o = new JSONObject(s);
         String apiType = o.getString("apiType");

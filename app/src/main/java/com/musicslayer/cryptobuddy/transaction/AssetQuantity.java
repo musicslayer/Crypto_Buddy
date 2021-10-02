@@ -82,11 +82,13 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
         });
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"assetAmount\":" + Serialization.serialize(assetAmount) + ",\"asset\":" + Serialization.serialize(asset) + "}";
     }
 
-    public static AssetQuantity deserializeFromJSON(String s) throws org.json.JSONException {
+    public static AssetQuantity deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         AssetAmount assetAmount = Serialization.deserialize(o.getJSONObject("assetAmount").toString(), AssetAmount.class);
         Asset asset = Serialization.deserialize(o.getJSONObject("asset").toString(), Asset.class);

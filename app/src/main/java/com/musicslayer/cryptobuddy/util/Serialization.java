@@ -1,30 +1,51 @@
 package com.musicslayer.cryptobuddy.util;
 
-// TODO Have versions of serialization here?
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Serialization<T> {
+public class Serialization {
+    // Use an integer string to keep track of different data formats.
+    public final static String SERIALIZATION_VERSION_MARKER = "!SERIALIZATION_VERSION!";
+
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
+        String serializationVersion(); // Can be different for every individual class that implements this interface.
         String serializeToJSON();
-
-        // Classes that implement this interface should implement this themselves.
-        static <T extends SerializableToJSON> T deserializeFromJSON(String s) throws org.json.JSONException {
-            return null;
-        }
     }
 
     public static <T extends SerializableToJSON> String serialize(T obj) {
-        return obj.serializeToJSON();
+        String s = obj.serializeToJSON();
+
+        // Add the version to every individual object that we serialize, or error if we cannot.
+        try {
+            JSONObject o = new JSONObject(s);
+            o.put(SERIALIZATION_VERSION_MARKER, obj.serializationVersion());
+            s = o.toString();
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            throw new IllegalStateException();
+        }
+
+        return s;
     }
 
     public static <T extends SerializableToJSON> T deserialize(String s, Class<T> clazz) {
+        // First try to get the version number. If we cannot, then error.
+        String version;
         try {
-            return Reflect.callStaticMethod(clazz, "deserializeFromJSON", s);
+            JSONObject o = new JSONObject(s);
+            version = o.getString(SERIALIZATION_VERSION_MARKER);
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            throw new IllegalStateException();
+        }
+
+        try {
+            return Reflect.callStaticMethod(clazz, "deserializeFromJSON" + version, s);
         }
         catch(Exception e) {
             return null;

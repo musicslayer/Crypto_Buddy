@@ -39,11 +39,13 @@ public class Timestamp implements Serialization.SerializableToJSON {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"date\":\"" + Long.toString(date.getTime()) + "\"}";
     }
 
-    public static Timestamp deserializeFromJSON(String s) throws org.json.JSONException {
+    public static Timestamp deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         Date date = new Date(Long.parseLong(o.getString("date")));
         return new Timestamp(date);

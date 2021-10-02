@@ -25,11 +25,13 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
         return (other instanceof AddressHistoryObj) && cryptoAddress.equals(((AddressHistoryObj) other).cryptoAddress);
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + "}";
     }
 
-    public static AddressHistoryObj deserializeFromJSON(String s) throws org.json.JSONException {
+    public static AddressHistoryObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toString(), CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);

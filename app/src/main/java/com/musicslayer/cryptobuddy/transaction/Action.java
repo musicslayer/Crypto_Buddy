@@ -117,11 +117,13 @@ public class Action implements Serialization.SerializableToJSON {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"actionString\":\"" + actionString + "\"}";
     }
 
-    public static Action deserializeFromJSON(String s) throws org.json.JSONException {
+    public static Action deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         String actionString = o.getString("actionString");
         return new Action(actionString);

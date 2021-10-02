@@ -28,11 +28,13 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON {
         return cryptoAddressArrayList.contains(cryptoAddress);
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"name\":\"" + name + "\",\"cryptoAddressArrayList\":" + Serialization.serializeArrayList(cryptoAddressArrayList) + "}";
     }
 
-    public static AddressPortfolioObj deserializeFromJSON(String s) throws org.json.JSONException {
+    public static AddressPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         String name = o.getString("name");
         AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);

@@ -22,11 +22,13 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public ArrayList<AssetQuantity> currentBalanceArrayList; //BD
     final public ArrayList<Transaction> transactionArrayList;
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"cryptoAddress\":" + Serialization.serialize(cryptoAddress) + ",\"addressAPI_currentBalance\":" + Serialization.serialize(addressAPI_currentBalance) + ",\"addressAPI_transactions\":" + Serialization.serialize(addressAPI_transactions) + ",\"currentBalanceArrayList\":" + Serialization.serializeArrayList(currentBalanceArrayList) + ",\"transactionArrayList\":" + Serialization.serializeArrayList(transactionArrayList) + "}";
     }
 
-    public static AddressData deserializeFromJSON(String s) throws org.json.JSONException {
+    public static AddressData deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toString(), CryptoAddress.class);
         AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObject("addressAPI_currentBalance").toString(), AddressAPI.class);

@@ -85,11 +85,13 @@ abstract public class Network implements Serialization.SerializableToJSON {
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         return "{\"key\":\"" + getKey() + "\"}";
     }
 
-    public static Network deserializeFromJSON(String s) throws org.json.JSONException {
+    public static Network deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         String key = o.getString("key");
         return Network.getNetworkFromKey(key);

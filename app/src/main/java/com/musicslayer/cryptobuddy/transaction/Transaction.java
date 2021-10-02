@@ -283,6 +283,8 @@ public class Transaction implements Serialization.SerializableToJSON {
         map.put(assetQuantity.asset, newValue);
     }
 
+    public String serializationVersion() { return "1"; }
+
     public String serializeToJSON() {
         // otherAssetQuantity may be null, so deal with that here.
         String otherAssetQuantity_s = otherAssetQuantity == null ? "{}" : Serialization.serialize(otherAssetQuantity);
@@ -290,7 +292,7 @@ public class Transaction implements Serialization.SerializableToJSON {
         return "{\"action\":" + Serialization.serialize(action) + ",\"actionedAssetQuantity\":" + Serialization.serialize(actionedAssetQuantity) + ",\"otherAssetQuantity\":" + otherAssetQuantity_s + ",\"timestamp\":" + Serialization.serialize(timestamp) + ",\"info\":\"" + info + "\"}";
     }
 
-    public static Transaction deserializeFromJSON(String s) throws org.json.JSONException {
+    public static Transaction deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONObject o = new JSONObject(s);
         Action action = Serialization.deserialize(o.getJSONObject("action").toString(), Action.class);
         AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObject("actionedAssetQuantity").toString(), AssetQuantity.class);
