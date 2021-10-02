@@ -28,18 +28,18 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("name", Serialization.string_serialize(name))
-            .put("transactionArrayList", new JSONArray(Serialization.serializeArrayList(transactionArrayList)))
-            .toString();
+            .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .toStringOrNull();
     }
 
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
 
-        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toString(), Transaction.class);
+        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toStringOrNull(), Transaction.class);
         if(transactionArrayList != null) {
             for(Transaction transaction : transactionArrayList) {
                 transactionPortfolioObj.addData(transaction);

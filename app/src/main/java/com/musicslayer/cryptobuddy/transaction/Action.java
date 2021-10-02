@@ -121,13 +121,13 @@ public class Action implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("actionString", Serialization.string_serialize(actionString))
-            .toString();
+            .toStringOrNull();
     }
 
     public static Action deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String actionString = Serialization.string_deserialize(o.getString("actionString"));
         return new Action(actionString);
     }

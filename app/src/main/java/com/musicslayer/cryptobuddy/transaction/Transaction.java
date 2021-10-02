@@ -287,21 +287,21 @@ public class Transaction implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
-            .put("action", new JSONObject(Serialization.serialize(action)))
-            .put("actionedAssetQuantity", new JSONObject(Serialization.serialize(actionedAssetQuantity)))
-            .put("otherAssetQuantity", new JSONObject(Serialization.serialize(otherAssetQuantity)))
-            .put("timestamp", new JSONObject(Serialization.serialize(timestamp)))
+        return new Serialization.JSONObjectWithNull()
+            .put("action", new Serialization.JSONObjectWithNull(Serialization.serialize(action)))
+            .put("actionedAssetQuantity", new Serialization.JSONObjectWithNull(Serialization.serialize(actionedAssetQuantity)))
+            .put("otherAssetQuantity", new Serialization.JSONObjectWithNull(Serialization.serialize(otherAssetQuantity)))
+            .put("timestamp", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp)))
             .put("info", Serialization.string_serialize(info))
-            .toString();
+            .toStringOrNull();
     }
 
     public static Transaction deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
-        Action action = Serialization.deserialize(o.getJSONObject("action").toString(), Action.class);
-        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObject("actionedAssetQuantity").toString(), AssetQuantity.class);
-        AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObject("otherAssetQuantity").toString(), AssetQuantity.class);
-        Timestamp timestamp = Serialization.deserialize(o.getJSONObject("timestamp").toString(), Timestamp.class);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        Action action = Serialization.deserialize(o.getJSONObject("action").toStringOrNull(), Action.class);
+        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObject("actionedAssetQuantity").toStringOrNull(), AssetQuantity.class);
+        AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObject("otherAssetQuantity").toStringOrNull(), AssetQuantity.class);
+        Timestamp timestamp = Serialization.deserialize(o.getJSONObject("timestamp").toStringOrNull(), Timestamp.class);
         String info = Serialization.string_deserialize(o.getString("info"));
         return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }

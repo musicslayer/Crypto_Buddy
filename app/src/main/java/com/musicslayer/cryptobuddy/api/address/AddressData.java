@@ -26,22 +26,22 @@ public class AddressData implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
-            .put("cryptoAddress", new JSONObject(Serialization.serialize(cryptoAddress)))
-            .put("addressAPI_currentBalance", new JSONObject(Serialization.serialize(addressAPI_currentBalance)))
-            .put("addressAPI_transactions", new JSONObject(Serialization.serialize(addressAPI_transactions)))
-            .put("currentBalanceArrayList", new JSONArray(Serialization.serializeArrayList(currentBalanceArrayList)))
-            .put("transactionArrayList", new JSONArray(Serialization.serializeArrayList(transactionArrayList)))
-            .toString();
+        return new Serialization.JSONObjectWithNull()
+            .put("cryptoAddress", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoAddress)))
+            .put("addressAPI_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(addressAPI_currentBalance)))
+            .put("addressAPI_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(addressAPI_transactions)))
+            .put("currentBalanceArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
+            .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .toStringOrNull();
     }
 
     public static AddressData deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
-        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toString(), CryptoAddress.class);
-        AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObject("addressAPI_currentBalance").toString(), AddressAPI.class);
-        AddressAPI addressAPI_transactions = Serialization.deserialize(o.getJSONObject("addressAPI_transactions").toString(), AddressAPI.class);
-        ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArray("currentBalanceArrayList").toString(), AssetQuantity.class);
-        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toString(), Transaction.class);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toStringOrNull(), CryptoAddress.class);
+        AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObject("addressAPI_currentBalance").toStringOrNull(), AddressAPI.class);
+        AddressAPI addressAPI_transactions = Serialization.deserialize(o.getJSONObject("addressAPI_transactions").toStringOrNull(), AddressAPI.class);
+        ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArray("currentBalanceArrayList").toStringOrNull(), AssetQuantity.class);
+        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toStringOrNull(), Transaction.class);
         return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
     }
 

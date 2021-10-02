@@ -14,19 +14,19 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("filterType", Serialization.string_serialize("!DISCRETE!"))
-            .put("choices", new JSONArray(Serialization.string_serializeArrayList(choices)))
-            .put("user_choices", new JSONArray(Serialization.string_serializeArrayList(user_choices)))
-            .put("user_not_choices", new JSONArray(Serialization.string_serializeArrayList(user_not_choices)))
-            .toString();
+            .put("choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(choices)))
+            .put("user_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_choices)))
+            .put("user_not_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_not_choices)))
+            .toStringOrNull();
     }
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
-        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArray("choices").toString());
-        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_choices").toString());
-        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_not_choices").toString());
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArray("choices").toStringOrNull());
+        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_choices").toStringOrNull());
+        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_not_choices").toStringOrNull());
 
         DiscreteFilter discreteFilter = new DiscreteFilter();
         discreteFilter.choices = choices;

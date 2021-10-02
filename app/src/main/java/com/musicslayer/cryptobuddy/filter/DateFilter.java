@@ -14,15 +14,15 @@ public class DateFilter extends Filter {
     public Date user_endDate;
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("filterType", Serialization.string_serialize("!DATE!"))
             .put("user_startDate", Serialization.date_serialize(user_startDate))
             .put("user_endDate", Serialization.date_serialize(user_endDate))
-            .toString();
+            .toStringOrNull();
     }
 
     public static DateFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         Date user_startDate = Serialization.date_deserialize(o.getString("user_startDate"));
         Date user_endDate = Serialization.date_deserialize(o.getString("user_endDate"));
 

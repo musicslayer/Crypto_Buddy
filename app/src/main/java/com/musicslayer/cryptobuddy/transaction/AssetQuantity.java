@@ -85,16 +85,16 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
-            .put("assetAmount", new JSONObject(Serialization.serialize(assetAmount)))
-            .put("asset", new JSONObject(Serialization.serialize(asset)))
-            .toString();
+        return new Serialization.JSONObjectWithNull()
+            .put("assetAmount", new Serialization.JSONObjectWithNull(Serialization.serialize(assetAmount)))
+            .put("asset", new Serialization.JSONObjectWithNull(Serialization.serialize(asset)))
+            .toStringOrNull();
     }
 
     public static AssetQuantity deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
-        AssetAmount assetAmount = Serialization.deserialize(o.getJSONObject("assetAmount").toString(), AssetAmount.class);
-        Asset asset = Serialization.deserialize(o.getJSONObject("asset").toString(), Asset.class);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        AssetAmount assetAmount = Serialization.deserialize(o.getJSONObject("assetAmount").toStringOrNull(), AssetAmount.class);
+        Asset asset = Serialization.deserialize(o.getJSONObject("asset").toStringOrNull(), Asset.class);
         return new AssetQuantity(assetAmount, asset);
     }
 }

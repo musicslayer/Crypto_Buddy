@@ -45,17 +45,12 @@ public class AddressPortfolio {
         int size = settings.getInt("address_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
-            try {
-                String serialString = settings.getString("address_portfolio" + i, "");
-                AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
+            String serialString = settings.getString("address_portfolio" + i, "");
+            AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
 
-                // If there is any problem at all, don't add this one.
-                if(addressPortfolioObj != null) {
-                    settings_address_portfolio.add(addressPortfolioObj);
-                }
-            }
-            catch(Exception ignored) {
-                // If there is any problem at all, don't add this one.
+            // If there is any problem at all, don't add this one.
+            if(addressPortfolioObj != null) {
+                settings_address_portfolio.add(addressPortfolioObj);
             }
         }
 

@@ -88,13 +88,13 @@ abstract public class Network implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
-            .toString();
+            .toStringOrNull();
     }
 
     public static Network deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         return Network.getNetworkFromKey(key);
     }

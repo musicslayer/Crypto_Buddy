@@ -78,17 +78,17 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("address", Serialization.string_serialize(address))
-            .put("network", new JSONObject(Serialization.serialize(network)))
+            .put("network", new Serialization.JSONObjectWithNull(Serialization.serialize(network)))
             .put("includeTokens", Serialization.boolean_serialize(includeTokens))
-            .toString();
+            .toStringOrNull();
     }
 
     public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String address = Serialization.string_deserialize(o.getString("address"));
-        Network network = Serialization.deserialize(o.getJSONObject("network").toString(), Network.class);
+        Network network = Serialization.deserialize(o.getJSONObject("network").toStringOrNull(), Network.class);
         boolean includeTokens = Serialization.boolean_deserialize(o.getString("includeTokens"));
         return new CryptoAddress(address, network, includeTokens);
     }

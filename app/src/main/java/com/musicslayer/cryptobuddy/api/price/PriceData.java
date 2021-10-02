@@ -26,20 +26,20 @@ public class PriceData implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
-            .put("crypto", new JSONObject(Serialization.serialize(crypto)))
-            .put("priceAPI_usdPrice", new JSONObject(Serialization.serialize(priceAPI_usdPrice)))
-            .put("priceAPI_usdMarketCap", new JSONObject(Serialization.serialize(priceAPI_usdMarketCap)))
+        return new Serialization.JSONObjectWithNull()
+            .put("crypto", new Serialization.JSONObjectWithNull(Serialization.serialize(crypto)))
+            .put("priceAPI_usdPrice", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_usdPrice)))
+            .put("priceAPI_usdMarketCap", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_usdMarketCap)))
             .put("usdPrice", Serialization.string_serialize(usdPrice))
             .put("usdMarketCap", Serialization.string_serialize(usdMarketCap))
-            .toString();
+            .toStringOrNull();
     }
 
     public static PriceData deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
-        Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toString(), Crypto.class);
-        PriceAPI priceAPI_usdPrice = Serialization.deserialize(o.getJSONObject("priceAPI_usdPrice").toString(), PriceAPI.class);
-        PriceAPI priceAPI_usdMarketCap = Serialization.deserialize(o.getJSONObject("priceAPI_usdMarketCap").toString(), PriceAPI.class);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toStringOrNull(), Crypto.class);
+        PriceAPI priceAPI_usdPrice = Serialization.deserialize(o.getJSONObject("priceAPI_usdPrice").toStringOrNull(), PriceAPI.class);
+        PriceAPI priceAPI_usdMarketCap = Serialization.deserialize(o.getJSONObject("priceAPI_usdMarketCap").toStringOrNull(), PriceAPI.class);
         String usdPrice = Serialization.string_deserialize(o.getString("usdPrice"));
         String usdMarketCap = Serialization.string_deserialize(o.getString("usdMarketCap"));
         return new PriceData(crypto, priceAPI_usdPrice, priceAPI_usdMarketCap, usdPrice, usdMarketCap, DateTime.toDateString(new Date()));

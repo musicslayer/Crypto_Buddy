@@ -45,17 +45,12 @@ public class TransactionPortfolio {
         int size = settings.getInt("transaction_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
-            try {
-                String serialString = settings.getString("transaction_portfolio" + i, "");
-                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
+            String serialString = settings.getString("transaction_portfolio" + i, "");
+            TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
 
-                // If there is any problem at all, don't add this one.
-                if(transactionPortfolioObj != null) {
-                    settings_transaction_portfolio.add(transactionPortfolioObj);
-                }
-            }
-            catch(Exception ignored) {
-                // If there is any problem at all, don't add this one.
+            // If there is any problem at all, don't add this one.
+            if(transactionPortfolioObj != null) {
+                settings_transaction_portfolio.add(transactionPortfolioObj);
             }
         }
 

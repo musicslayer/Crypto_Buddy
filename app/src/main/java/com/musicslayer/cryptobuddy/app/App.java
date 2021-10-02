@@ -29,7 +29,7 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        // TODO Right now, if deserialization errors, we just blank everything. In the future, we could have well-defined and versioned data formats.
+        // TODO if there is any problem, tell user and offer chance to wipe everything, email developer, etc...
 
         Settings.loadAllSettings(this);
         Toast.loadAllToasts(this);
@@ -39,15 +39,14 @@ public class App extends MultiDexApplication {
         AddressAPI.initialize(this);
         PriceAPI.initialize(this);
         Purchases.loadAllPurchases(this);
+        PrivacyPolicy.loadAllData(this);
+        Review.loadAllData(this);
 
         TokenManager.initialize(this); // * Deserializes
         if(!Purchases.isUnlockTokensPurchased) {
             // If the user has not purchased (or they have refunded) "Unlock Tokens", we reset the token lists.
             TokenList.resetAllData(this);
         }
-
-        PrivacyPolicy.loadAllData(this);
-        Review.loadAllData(this);
 
         AddressHistory.loadAllData(this); // * Deserializes
         AddressPortfolio.loadAllData(this); // * Deserializes

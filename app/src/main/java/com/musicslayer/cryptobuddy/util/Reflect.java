@@ -7,32 +7,18 @@ import java.lang.reflect.Method;
 
 @SuppressWarnings("unchecked")
 public class Reflect {
-    public static <T, U> U callStaticMethod(Class<T> clazz, String staticMethodName, Object... args) {
-        U object = null;
+    public static <T, U> U callStaticMethodOrError(Class<T> clazz, String staticMethodName, Object... args) throws Exception {
+        // Do not catch errors.
+        Object[] argArray = new Object[args.length];
+        Class<?>[] argClassArray = new Class<?>[args.length];
 
-        try {
-            Object[] argArray = new Object[args.length];
-            Class<?>[] argClassArray = new Class<?>[args.length];
-
-            for(int i = 0; i < args.length; i++) {
-                argArray[i] = args[i];
-                argClassArray[i] = args[i].getClass();
-            }
-
-            Method m = clazz.getMethod(staticMethodName, argClassArray);
-            object = (U)m.invoke(null, argArray);
-        }
-        catch(IllegalAccessException e) {
-            ExceptionLogger.processException(e);
-        }
-        catch(InvocationTargetException e) {
-            ExceptionLogger.processException(e);
-        }
-        catch(NoSuchMethodException e) {
-            ExceptionLogger.processException(e);
+        for(int i = 0; i < args.length; i++) {
+            argArray[i] = args[i];
+            argClassArray[i] = args[i].getClass();
         }
 
-        return object;
+        Method m = clazz.getMethod(staticMethodName, argClassArray);
+        return (U)m.invoke(null, argArray);
     }
 
     public static <T> T constructClassInstanceFromName(String className) {

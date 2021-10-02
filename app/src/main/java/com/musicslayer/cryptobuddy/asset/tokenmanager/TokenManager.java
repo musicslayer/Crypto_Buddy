@@ -419,8 +419,9 @@ abstract public class TokenManager {
                 }
             }
         }
-        catch(Exception ignored) {
+        catch(Exception e) {
             // If there is any problem at all, just wipe everything clean.
+            ExceptionLogger.processException(e);
             resetDownloadedTokens();
             resetFoundTokens();
             resetCustomTokens();

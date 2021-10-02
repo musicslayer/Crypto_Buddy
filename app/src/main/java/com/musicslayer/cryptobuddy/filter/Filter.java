@@ -23,7 +23,7 @@ abstract public class Filter implements Serialization.SerializableToJSON {
     }
 
     public static Filter deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String filterType = Serialization.string_deserialize(o.getString("filterType"));
         if("!DISCRETE!".equals(filterType)) {
             return DiscreteFilter.deserializeFromJSON_sub(s);

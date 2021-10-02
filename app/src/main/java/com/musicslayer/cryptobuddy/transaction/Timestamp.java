@@ -43,13 +43,13 @@ public class Timestamp implements Serialization.SerializableToJSON {
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONObject()
+        return new Serialization.JSONObjectWithNull()
             .put("date", Serialization.date_serialize(date))
-            .toString();
+            .toStringOrNull();
     }
 
     public static Timestamp deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONObject o = new JSONObject(s);
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         Date date = Serialization.date_deserialize(o.getString("date"));
         return new Timestamp(date);
     }
