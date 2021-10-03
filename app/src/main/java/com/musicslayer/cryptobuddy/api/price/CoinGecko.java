@@ -3,6 +3,8 @@ package com.musicslayer.cryptobuddy.api.price;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.asset.fiat.USD;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
@@ -54,11 +56,10 @@ public class CoinGecko extends PriceAPI {
         return true;
     }
 
-    public String getUSDPrice(Crypto crypto) {
-        String usdPrice = null;
+    public AssetQuantity getPrice(Crypto crypto) {
+        AssetQuantity price = null;
 
         String priceDataJSON = null;
-
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
             priceDataJSON = REST.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
@@ -71,18 +72,21 @@ public class CoinGecko extends PriceAPI {
                 JSONObject json = new JSONObject(priceDataJSON);
                 JSONObject json2 = json.getJSONObject(crypto.getID());
 
-                usdPrice = json2.getString("usd");
+                BigDecimal d = new BigDecimal(json2.getString("usd"));
+
+                // For now, just use USD.
+                price = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
                 ExceptionLogger.processException(e);
             }
         }
 
-        return usdPrice;
+        return price;
     }
 
-    public String getUSDMarketCap(Crypto crypto) {
-        String usdMarketCap = null;
+    public AssetQuantity getMarketCap(Crypto crypto) {
+        AssetQuantity marketCap = null;
 
         String priceDataJSON = null;
 
@@ -98,14 +102,16 @@ public class CoinGecko extends PriceAPI {
                 JSONObject json = new JSONObject(priceDataJSON);
                 JSONObject json2 = json.getJSONObject(crypto.getID());
 
-                BigDecimal cap = new BigDecimal(json2.getString("usd_market_cap"));
-                usdMarketCap = cap.toPlainString();
+                BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
+
+                // For now, just use USD.
+                marketCap = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
                 ExceptionLogger.processException(e);
             }
         }
 
-        return usdMarketCap;
+        return marketCap;
     }
 }

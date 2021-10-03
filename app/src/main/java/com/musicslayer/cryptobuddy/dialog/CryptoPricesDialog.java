@@ -52,8 +52,8 @@ public class CryptoPricesDialog extends BaseDialog {
                     T.setText("");
                 }
                 else {
-                    AssetPrice assetPrice = priceData.getAssetPrice();
-                    AssetQuantity marketCapAssetQuantity = new AssetQuantity(priceData.usdMarketCap, new USD());
+                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);
+                    AssetQuantity marketCapAssetQuantity = priceData.marketCap;
 
                     String text = "Forward Price = " + assetPrice.toString();
                     if("ForwardBackward".equals(Settings.setting_price)) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -82,5 +83,14 @@ public class AddressHistory {
         editor.clear();
         editor.putInt("address_history_size", 0);
         editor.apply();
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_address_history.size(); i++) {
+            AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(addressHistoryObj));
+        }
+        return hashMap;
     }
 }

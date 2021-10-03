@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -88,5 +89,14 @@ public class TransactionPortfolio {
         editor.clear();
         editor.putInt("transaction_portfolio_size", 0);
         editor.apply();
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
+            TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(transactionPortfolioObj));
+        }
+        return hashMap;
     }
 }

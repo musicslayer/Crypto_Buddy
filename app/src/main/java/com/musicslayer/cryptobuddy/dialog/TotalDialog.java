@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
+import com.musicslayer.cryptobuddy.api.price.UnknownPriceAPI;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -66,8 +67,8 @@ public class TotalDialog extends BaseDialog {
                         PriceData priceData = PriceData.getPriceData(crypto);
 
                         // We only need price data.
-                        if(priceData.priceAPI_usdPrice != null) {
-                            newPriceMap.put(crypto, new AssetAmount(priceData.usdPrice));
+                        if(priceData.isComplete()) {
+                            newPriceMap.put(crypto, priceData.price.assetAmount);
                         }
                     }
                 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -46,5 +47,11 @@ public class Review {
 
         editor.clear();
         editor.apply();
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("settings_review_time", Long.toString(settings_review_time));
+        return hashMap;
     }
 }

@@ -6,8 +6,6 @@ import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.LocaleManager;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -114,14 +112,15 @@ public class AssetAmount implements Serialization.SerializableToJSON {
                     String pattern_front = pattern.substring(0, idx_decimal);
                     String pattern_back;
                     if(D.scale() == 0) {
+                        // Don't keep decimal point.
                         pattern_back = "";
                     }
                     else {
-                        pattern_back = String.format("%0" + D.scale() + "d", 0).replace("0", String.valueOf(df.getDecimalFormatSymbols().getZeroDigit()));
+                        pattern_back = decimalSeparator + String.format("%0" + D.scale() + "d", 0).replace("0", String.valueOf(df.getDecimalFormatSymbols().getZeroDigit()));
                     }
 
                     // Use "format" because some locales (ccp) have characters ('\uD804' 55300) that are altered by concatenation.
-                    pattern = String.format("%s%s%s", pattern_front, decimalSeparator, pattern_back);
+                    pattern = String.format("%s%s", pattern_front, pattern_back);
                     df.applyLocalizedPattern(pattern);
                 }
 
@@ -230,12 +229,21 @@ public class AssetAmount implements Serialization.SerializableToJSON {
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
             .put("amount", Serialization.bigdecimal_serialize(amount))
+            .put("isLoss", Serialization.boolean_serialize(isLoss))
+            .put("isInfinity", Serialization.boolean_serialize(isInfinity))
             .toStringOrNull();
     }
 
     public static AssetAmount deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         BigDecimal amount = Serialization.bigdecimal_deserialize(o.getString("amount"));
-        return new AssetAmount(amount);
+        boolean isLoss = Serialization.boolean_deserialize(o.getString("isLoss"));
+        boolean isInfinity = Serialization.boolean_deserialize(o.getString("isInfinity"));
+
+        AssetAmount a = new AssetAmount(amount);
+        a.isLoss = isLoss;
+        a.isInfinity = isInfinity;
+
+        return a;
     }
 }

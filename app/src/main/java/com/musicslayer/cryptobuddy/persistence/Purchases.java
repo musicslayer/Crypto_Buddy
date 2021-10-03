@@ -7,6 +7,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
+import java.util.HashMap;
+
 public class Purchases {
     public static boolean isRemoveAdsPurchased;
     public static boolean isUnlockTokensPurchased;
@@ -66,5 +68,13 @@ public class Purchases {
         isRemoveAdsPurchased = settings.getBoolean("purchases_remove_ads", false);
         isUnlockTokensPurchased = settings.getBoolean("purchases_unlock_tokens", false);
         totalSupportAmount = settings.getInt("purchases_total_support_amount", 0);
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("isRemoveAdsPurchased", Boolean.toString(isRemoveAdsPurchased));
+        hashMap.put("isUnlockTokensPurchased", Boolean.toString(isUnlockTokensPurchased));
+        hashMap.put("totalSupportAmount", Integer.toString(totalSupportAmount));
+        return hashMap;
     }
 }

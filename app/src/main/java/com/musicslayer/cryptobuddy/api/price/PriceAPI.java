@@ -5,6 +5,7 @@ import android.content.Context;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
@@ -33,8 +34,8 @@ abstract public class PriceAPI extends API {
     }
 
     abstract public boolean isSupported(Crypto crypto);
-    abstract public String getUSDPrice(Crypto crypto);
-    abstract public String getUSDMarketCap(Crypto crypto);
+    abstract public AssetQuantity getPrice(Crypto crypto);
+    abstract public AssetQuantity getMarketCap(Crypto crypto);
 
     public static PriceAPI getPriceAPIFromKey(String key) {
         PriceAPI priceAPI = price_api_map.get(key);

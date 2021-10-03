@@ -373,4 +373,24 @@ public class Settings {
         setSetting(context, "locale_datetime", 0);
         setSetting(context, "time_zone", 0);
     }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("datetime", Integer.toString(value_datetime));
+        hashMap.put("decimal", Integer.toString(value_decimal));
+        hashMap.put("price", Integer.toString(value_price));
+        hashMap.put("network", Integer.toString(value_network));
+        hashMap.put("timeout", Integer.toString(value_timeout));
+        hashMap.put("loss", Integer.toString(value_loss));
+        hashMap.put("dark", Integer.toString(value_dark));
+        hashMap.put("message", Integer.toString(value_message));
+        hashMap.put("orientation", Integer.toString(value_orientation));
+        hashMap.put("confirm", Integer.toString(value_confirm));
+        hashMap.put("asset", Integer.toString(value_asset));
+        hashMap.put("max_transactions", Integer.toString(value_max_transactions));
+        hashMap.put("locale_numeric", Integer.toString(value_locale_numeric));
+        hashMap.put("locale_datetime", Integer.toString(value_locale_datetime));
+        hashMap.put("time_zone", Integer.toString(value_time_zone));
+        return hashMap;
+    }
 }

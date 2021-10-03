@@ -1,6 +1,8 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
 public class UnknownPriceAPI extends PriceAPI {
     String key;
@@ -26,8 +28,8 @@ public class UnknownPriceAPI extends PriceAPI {
     }
 
     public boolean isSupported(Crypto crypto) { return false; }
-    public String getUSDPrice(Crypto crypto) { return "?"; }
-    public String getUSDMarketCap(Crypto crypto) { return "?"; }
+    public AssetQuantity getPrice(Crypto crypto) { return new AssetQuantity("1", UnknownFiat.createUnknownFiat(null)); }
+    public AssetQuantity getMarketCap(Crypto crypto) { return new AssetQuantity("1", UnknownFiat.createUnknownFiat(null)); }
 
     public static UnknownPriceAPI createUnknownPriceAPI(String key) {
         return new UnknownPriceAPI(key);

@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO should fields store strings, or custom objects?
 // TODO addressData from API should tell us the date that the data is from.
 
 public class AddressData implements Serialization.SerializableToJSON {
@@ -20,7 +19,7 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;
     //final public String date;
-    final public ArrayList<AssetQuantity> currentBalanceArrayList; //BD
+    final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
 
     public String serializationVersion() { return "1"; }

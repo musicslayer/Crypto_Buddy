@@ -3,9 +3,6 @@ package com.musicslayer.cryptobuddy.persistence;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class TransactionPortfolioObj implements Serialization.SerializableToJSON {
@@ -37,14 +34,10 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
-        TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
-
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toStringOrNull(), Transaction.class);
-        if(transactionArrayList != null) {
-            for(Transaction transaction : transactionArrayList) {
-                transactionPortfolioObj.addData(transaction);
-            }
-        }
+
+        TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
+        transactionPortfolioObj.transactionArrayList = transactionArrayList;
 
         return transactionPortfolioObj;
     }

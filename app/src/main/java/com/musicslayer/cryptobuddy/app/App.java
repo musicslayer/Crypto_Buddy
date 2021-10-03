@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.app;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
@@ -20,6 +22,8 @@ import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
+import com.musicslayer.cryptobuddy.util.DataDump;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 public class App extends MultiDexApplication {
@@ -29,28 +33,37 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        // TODO if there is any problem, tell user and offer chance to wipe everything, email developer, etc...
+        // Try loading all the persistent data, and tell user if we cannot.
+        // Note that there should be no tolerance for error in any of these functions,
+        // so this should only fail if the data was corrupted somehow.
+        try {
+            Settings.loadAllSettings(this);
+            Toast.loadAllToasts(this);
+            Fiat.initialize(this);
+            Coin.initialize(this);
+            Network.initialize(this);
+            AddressAPI.initialize(this);
+            PriceAPI.initialize(this);
+            Purchases.loadAllPurchases(this);
+            PrivacyPolicy.loadAllData(this);
+            Review.loadAllData(this);
 
-        Settings.loadAllSettings(this);
-        Toast.loadAllToasts(this);
-        Fiat.initialize(this);
-        Coin.initialize(this);
-        Network.initialize(this);
-        AddressAPI.initialize(this);
-        PriceAPI.initialize(this);
-        Purchases.loadAllPurchases(this);
-        PrivacyPolicy.loadAllData(this);
-        Review.loadAllData(this);
+            TokenManager.initialize(this); // * Deserializes, but uses a separate system which catches errors.
+            if(!Purchases.isUnlockTokensPurchased) {
+                // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
+                TokenList.resetAllData(this);
+            }
 
-        TokenManager.initialize(this); // * Deserializes
-        if(!Purchases.isUnlockTokensPurchased) {
-            // If the user has not purchased (or they have refunded) "Unlock Tokens", we reset the token lists.
-            TokenList.resetAllData(this);
+            AddressHistory.loadAllData(this); // * Deserializes
+            AddressPortfolio.loadAllData(this); // * Deserializes
+            TransactionPortfolio.loadAllData(this); // * Deserializes
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            Log.e("Crypto Buddy", DataDump.getAllData());
         }
 
-        AddressHistory.loadAllData(this); // * Deserializes
-        AddressPortfolio.loadAllData(this); // * Deserializes
-        TransactionPortfolio.loadAllData(this); // * Deserializes
+        Log.e("Crypto Buddy", DataDump.getAllData());
 
         // Needed for older Android versions
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

@@ -18,4 +18,7 @@
 -keepclassmembers class * {
     public static *** deserializeFromJSON*(java.lang.String);
 }
+-keepclassmembers class * {
+    public static *** getDataDump();
+}
 

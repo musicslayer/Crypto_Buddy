@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import java.util.HashMap;
+
 public class PrivacyPolicy {
     public static boolean settings_privacy_policy = false; // Did user agree to the privacy policy?
 
@@ -32,5 +34,11 @@ public class PrivacyPolicy {
         editor.clear();
         editor.putBoolean("privacy_policy", false);
         editor.apply();
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("settings_privacy_policy", Boolean.toString(settings_privacy_policy));
+        return hashMap;
     }
 }

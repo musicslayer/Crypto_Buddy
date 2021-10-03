@@ -70,8 +70,8 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
                 else {
                     AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getText().toString(), cryptoPrimary);
-                    AssetPrice primaryAssetPrice = priceDataPrimary.getAssetPrice();
-                    AssetPrice secondaryAssetPrice = priceDataSecondary.getAssetPrice();
+                    AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataPrimary.crypto), priceDataPrimary.price);
+                    AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataSecondary.crypto), priceDataSecondary.price);
                     AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
                     String text = "Conversion:\n" + primaryAssetQuantity.toString() + " = " + secondaryAssetQuantity.toString() +

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -88,5 +89,14 @@ public class AddressPortfolio {
         editor.clear();
         editor.putInt("address_portfolio_size", 0);
         editor.apply();
+    }
+
+    public static HashMap<String, String> getDataDump() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_address_portfolio.size(); i++) {
+            AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(addressPortfolioObj));
+        }
+        return hashMap;
     }
 }

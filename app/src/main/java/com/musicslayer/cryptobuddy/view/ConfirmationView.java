@@ -39,6 +39,7 @@ public class ConfirmationView extends LinearLayout {
     public void makeLayoutConfirmation(Context context) {
         this.setOrientation(LinearLayout.VERTICAL);
 
+        // We don't need high quality randomness, we just need something that the user has to confirm.
         Random rand = new Random();
         randomCode = new int[] {rand.nextInt(10), rand.nextInt(10), rand.nextInt(10), rand.nextInt(10)};
 
@@ -77,8 +78,6 @@ public class ConfirmationView extends LinearLayout {
                 }
             });
         }
-
-
 
         LinearLayout L1 = new LinearLayout(context);
         LinearLayout L2 = new LinearLayout(context);
