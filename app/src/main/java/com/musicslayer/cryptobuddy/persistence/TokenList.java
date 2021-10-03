@@ -5,6 +5,13 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
 public class TokenList {
     public final static String DEFAULT = "[]"; // Empty JSON Array
 
@@ -43,9 +50,60 @@ public class TokenList {
         editor.apply();
     }
 
+    public static HashMap<String, String> getAllData() {
+        // This method is non-standard because of how TokenList and TokenManager interact.
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("token_list_data_downloaded", getDownloadedTokenString());
+        hashMap.put("token_list_data_found", getFoundTokenString());
+        hashMap.put("token_list_data_custom", getCustomTokenString());
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
         resetDownloadedTokens(context);
         resetFoundTokens(context);
         resetCustomTokens(context);
+    }
+
+    private static String getDownloadedTokenString() {
+        StringBuilder s = new StringBuilder();
+        s.append("Downloaded Tokens:");
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            s.append("\n    ").append(tokenManager.getKey());
+            for(Token token : tokenManager.downloaded_tokens) {
+                s.append("\n      ").append(token.serializeToJSONX());
+            }
+        }
+
+        return s.toString();
+    }
+
+    private static String getFoundTokenString() {
+        StringBuilder s = new StringBuilder();
+        s.append("Found Tokens:");
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            s.append("\n    ").append(tokenManager.getKey());
+            for(Token token : tokenManager.found_tokens) {
+                s.append("\n      ").append(token.serializeToJSONX());
+            }
+        }
+
+        return s.toString();
+    }
+
+    private static String getCustomTokenString() {
+        StringBuilder s = new StringBuilder();
+        s.append("Custom Tokens:");
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            s.append("\n    ").append(tokenManager.getKey());
+            for(Token token : tokenManager.custom_tokens) {
+                s.append("\n      ").append(token.serializeToJSONX());
+            }
+        }
+
+        return s.toString();
     }
 }

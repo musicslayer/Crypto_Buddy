@@ -8,9 +8,12 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
 public class TransactionPortfolio {
+    // Store the raw strings too in case we need them in a data dump.
+    public static ArrayList<String> settings_transaction_portfolio_raw = new ArrayList<>();
     public static ArrayList<TransactionPortfolioObj> settings_transaction_portfolio = new ArrayList<>();
 
     public static boolean isSaved(String name) {
@@ -47,6 +50,8 @@ public class TransactionPortfolio {
 
         for(int i = 0; i < size; i++) {
             String serialString = settings.getString("transaction_portfolio" + i, "");
+            settings_transaction_portfolio_raw.add(serialString);
+
             TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
 
             // If there is any problem at all, don't add this one.
@@ -82,10 +87,21 @@ public class TransactionPortfolio {
 
     public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
-            TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
-            hashMap.put(Integer.toString(i), Serialization.serialize(transactionPortfolioObj));
+        for(int i = 0; i < settings_transaction_portfolio_raw.size(); i++) {
+            hashMap.put("RAW" + i, settings_transaction_portfolio_raw.get(i));
         }
+
+        // We want the raw data even if this next piece errors.
+        try {
+            for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
+                TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
+                hashMap.put("OBJ" + i, Serialization.serialize(transactionPortfolioObj));
+            }
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+        }
+
         return hashMap;
     }
 

@@ -8,10 +8,14 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
 public class AddressHistory {
     final public static int HISTORYLIMIT = 10;
+
+    // Store the raw strings too in case we need them in a data dump.
+    public static ArrayList<String> settings_address_history_raw = new ArrayList<>();
     public static ArrayList<AddressHistoryObj> settings_address_history = new ArrayList<>();
 
     public static boolean isSaved(AddressHistoryObj addressHistoryObj) {
@@ -63,6 +67,8 @@ public class AddressHistory {
 
         for(int i = 0; i < size; i++) {
             String serialString = settings.getString("address_history" + i, "");
+            settings_address_history_raw.add(serialString);
+
             AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
 
             // If there is any problem at all, don't add this one.
@@ -76,10 +82,21 @@ public class AddressHistory {
 
     public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_address_history.size(); i++) {
-            AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
-            hashMap.put(Integer.toString(i), Serialization.serialize(addressHistoryObj));
+        for(int i = 0; i < settings_address_history_raw.size(); i++) {
+            hashMap.put("RAW" + i, settings_address_history_raw.get(i));
         }
+
+        // We want the raw data even if this next piece errors.
+        try {
+            for(int i = 0; i < settings_address_history.size(); i++) {
+                AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
+                hashMap.put("OBJ" + i, Serialization.serialize(addressHistoryObj));
+            }
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+        }
+
         return hashMap;
     }
 

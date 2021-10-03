@@ -60,8 +60,10 @@ public class App extends MultiDexApplication {
         }
         catch(Exception e) {
             ExceptionLogger.processException(e);
-            Log.e("Crypto Buddy", DataDump.getAllData());
+            Log.e("Crypto Buddy", DataDump.getAllData(null));
         }
+
+        // Log.e("Crypto Buddy", DataDump.getAllData(null));
 
         // Needed for older Android versions
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

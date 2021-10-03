@@ -20,12 +20,12 @@ public class Persistence {
         persistentClassMap.put("Purchases", Purchases.class);
         persistentClassMap.put("Review", Review.class);
         persistentClassMap.put("Settings", Settings.class);
+        persistentClassMap.put("TokenList", TokenList.class);
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }
 
     public static HashMap<String, HashMap<String, String>> getAllData() {
         // Return a representation of all the persistent data stored in the app.
-        // TokenList has too much data so omit that one.
         HashMap<String, HashMap<String, String>> allDataMap = new HashMap<>();
 
         // Individually, try to add each piece of data.
@@ -39,15 +39,19 @@ public class Persistence {
             }
             catch(Exception e) {
                 try {
+                    // Put a default entry in here, and then try to replace with error information.
+                    // If this code errors, then just give up!
+                    HashMap<String, String> noInfoMap = new HashMap<>();
+                    noInfoMap.put("!ERROR!", "!NO_INFO!");
+                    allDataMap.put(key, noInfoMap);
+
                     ExceptionLogger.processException(e);
 
-                    // Put one special key with error information.
                     HashMap<String, String> errorMap = new HashMap<>();
                     errorMap.put("!ERROR!", ExceptionLogger.getExceptionText(e));
-                    allDataMap.put("AddressHistory", errorMap);
+                    allDataMap.put(key, errorMap);
                 }
                 catch(Exception ignored) {
-                    // Even the error logging code failed! Just give up at this point.
                 }
             }
         }
@@ -58,6 +62,7 @@ public class Persistence {
     public static void resetAllData(Context context) {
         // Resets all stored persistent data in the app. App should be just like a new install.
         // Individually, try to reset each piece of data.
+        // Note that each "resetData" method should erase both active and stored data.
         ArrayList<String> keys = new ArrayList<>(persistentClassMap.keySet());
         for(String key : keys) {
             try {
