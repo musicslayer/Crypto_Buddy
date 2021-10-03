@@ -5,9 +5,6 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.Date;
 
 public class Timestamp implements Serialization.SerializableToJSON {

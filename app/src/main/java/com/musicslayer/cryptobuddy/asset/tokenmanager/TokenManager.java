@@ -183,14 +183,9 @@ abstract public class TokenManager {
             downloaded_token_map.put(key, token);
 
             int idx = downloaded_tokens.indexOf(token);
-            downloaded_tokens.remove(idx);
-            downloaded_tokens.add(idx, token);
-
-            downloaded_token_names.remove(idx);
-            downloaded_token_names.add(idx, token.getName());
-
-            downloaded_token_display_names.remove(idx);
-            downloaded_token_display_names.add(idx, token.getDisplayName());
+            downloaded_tokens.set(idx, token);
+            downloaded_token_names.set(idx, token.getName());
+            downloaded_token_display_names.set(idx, token.getDisplayName());
         }
     }
 
@@ -210,14 +205,9 @@ abstract public class TokenManager {
             found_token_map.put(key, token);
 
             int idx = found_tokens.indexOf(token);
-            found_tokens.remove(idx);
-            found_tokens.add(idx, token);
-
-            found_token_names.remove(idx);
-            found_token_names.add(idx, token.getName());
-
-            found_token_display_names.remove(idx);
-            found_token_display_names.add(idx, token.getDisplayName());
+            found_tokens.set(idx, token);
+            found_token_names.set(idx, token.getName());
+            found_token_display_names.set(idx, token.getDisplayName());
         }
     }
 
@@ -237,14 +227,9 @@ abstract public class TokenManager {
             custom_token_map.put(key, token);
 
             int idx = custom_tokens.indexOf(token);
-            custom_tokens.remove(idx);
-            custom_tokens.add(idx, token);
-
-            custom_token_names.remove(idx);
-            custom_token_names.add(idx, token.getName());
-
-            custom_token_display_names.remove(idx);
-            custom_token_display_names.add(idx, token.getDisplayName());
+            custom_tokens.set(idx, token);
+            custom_token_names.set(idx, token.getName());
+            custom_token_display_names.set(idx, token.getDisplayName());
         }
     }
 

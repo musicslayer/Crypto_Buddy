@@ -74,6 +74,15 @@ public class AddressHistory {
         saveAllData(context);
     }
 
+    public static HashMap<String, String> getAllData() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_address_history.size(); i++) {
+            AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(addressHistoryObj));
+        }
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
         settings_address_history = new ArrayList<>();
 
@@ -81,16 +90,6 @@ public class AddressHistory {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
-        editor.putInt("address_history_size", 0);
         editor.apply();
-    }
-
-    public static HashMap<String, String> getDataDump() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_address_history.size(); i++) {
-            AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
-            hashMap.put(Integer.toString(i), Serialization.serialize(addressHistoryObj));
-        }
-        return hashMap;
     }
 }

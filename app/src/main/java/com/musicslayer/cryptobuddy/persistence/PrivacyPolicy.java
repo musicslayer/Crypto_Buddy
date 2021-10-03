@@ -24,7 +24,12 @@ public class PrivacyPolicy {
         settings_privacy_policy = settings.getBoolean("privacy_policy", false);
     }
 
-    // Used for debugging and testing
+    public static HashMap<String, String> getAllData() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("settings_privacy_policy", Boolean.toString(settings_privacy_policy));
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
         settings_privacy_policy = false;
 
@@ -32,13 +37,6 @@ public class PrivacyPolicy {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
-        editor.putBoolean("privacy_policy", false);
         editor.apply();
-    }
-
-    public static HashMap<String, String> getDataDump() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("settings_privacy_policy", Boolean.toString(settings_privacy_policy));
-        return hashMap;
     }
 }

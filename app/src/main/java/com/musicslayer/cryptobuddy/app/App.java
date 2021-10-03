@@ -63,8 +63,6 @@ public class App extends MultiDexApplication {
             Log.e("Crypto Buddy", DataDump.getAllData());
         }
 
-        Log.e("Crypto Buddy", DataDump.getAllData());
-
         // Needed for older Android versions
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         try {

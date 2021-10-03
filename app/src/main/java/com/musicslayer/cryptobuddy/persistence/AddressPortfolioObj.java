@@ -3,9 +3,6 @@ package com.musicslayer.cryptobuddy.persistence;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class AddressPortfolioObj implements Serialization.SerializableToJSON {

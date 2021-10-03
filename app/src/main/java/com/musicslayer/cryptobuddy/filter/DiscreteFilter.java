@@ -3,9 +3,6 @@ package com.musicslayer.cryptobuddy.filter;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class DiscreteFilter extends Filter {

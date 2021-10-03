@@ -20,6 +20,7 @@ import com.musicslayer.cryptobuddy.view.setting.MessageSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.OrientationSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteAllPortfoliosSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.ResetAllSettingsSettingsView;
+import com.musicslayer.cryptobuddy.view.setting.ResetEverythingSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.SettingsView;
 
 import java.time.format.FormatStyle;
@@ -215,6 +216,9 @@ public class SettingsActivity extends BaseActivity {
                         L.addView(new DeleteFoundTokensSettingsView(SettingsActivity.this));
                         L.addView(new DeleteCustomTokensSettingsView(SettingsActivity.this));
                     }
+
+                    // This must be last, as it resets everything.
+                    L.addView(new ResetEverythingSettingsView(SettingsActivity.this));
                 }
             }
         });

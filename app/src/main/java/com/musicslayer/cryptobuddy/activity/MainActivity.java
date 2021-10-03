@@ -221,7 +221,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void checkReview() {
-        if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) { // 5 Days, and the user must have already agreed to the Privacy Policy
+        // Check after 5 Days, and the user must have already agreed to the Privacy Policy
+        if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
             BaseDialogFragment reviewDialogFragment = BaseDialogFragment.newInstance(ReviewDialog.class);
             reviewDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override

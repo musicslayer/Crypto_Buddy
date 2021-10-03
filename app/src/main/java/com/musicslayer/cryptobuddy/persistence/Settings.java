@@ -355,26 +355,7 @@ public class Settings {
         value_time_zone = loaded_time_zone;
     }
 
-    public static void resetAllSettings(Context context) {
-        // Change all settings to their default value.
-        setSetting(context, "datetime", 0);
-        setSetting(context, "decimal", 0);
-        setSetting(context, "price", 0);
-        setSetting(context, "network", 0);
-        setSetting(context, "timeout", 0);
-        setSetting(context, "loss", 0);
-        setSetting(context, "dark", 0);
-        setSetting(context, "message", 0);
-        setSetting(context, "orientation", 0);
-        setSetting(context, "confirm", 0);
-        setSetting(context, "asset", 0);
-        setSetting(context, "max_transactions", 0);
-        setSetting(context, "locale_numeric", 0);
-        setSetting(context, "locale_datetime", 0);
-        setSetting(context, "time_zone", 0);
-    }
-
-    public static HashMap<String, String> getDataDump() {
+    public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("datetime", Integer.toString(value_datetime));
         hashMap.put("decimal", Integer.toString(value_decimal));
@@ -392,5 +373,13 @@ public class Settings {
         hashMap.put("locale_datetime", Integer.toString(value_locale_datetime));
         hashMap.put("time_zone", Integer.toString(value_time_zone));
         return hashMap;
+    }
+
+    public static void resetAllData(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("settings_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.clear();
+        editor.apply();
     }
 }

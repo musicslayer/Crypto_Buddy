@@ -16,9 +16,12 @@
     public <init>(...);
 }
 -keepclassmembers class * {
-    public static *** deserializeFromJSON*(java.lang.String);
+    public static *** deserializeFromJSON*(...);
 }
 -keepclassmembers class * {
-    public static *** getDataDump();
+    public static *** getAllData(...);
+}
+-keepclassmembers class * {
+    public static *** resetAllData(...);
 }
 

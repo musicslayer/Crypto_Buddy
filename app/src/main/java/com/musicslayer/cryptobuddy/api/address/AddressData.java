@@ -6,9 +6,6 @@ import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 

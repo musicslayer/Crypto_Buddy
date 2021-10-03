@@ -38,20 +38,19 @@ public class Review {
         settings_review_time = settings.getLong("review_time", new Date().getTime());
     }
 
-    // Used for debugging and testing
+    public static HashMap<String, String> getAllData() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("settings_review_time", Long.toString(settings_review_time));
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
-        settings_review_time = Long.MAX_VALUE;
+        settings_review_time = new Date().getTime();
 
         SharedPreferences settings = context.getSharedPreferences("review_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
         editor.apply();
-    }
-
-    public static HashMap<String, String> getDataDump() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("settings_review_time", Long.toString(settings_review_time));
-        return hashMap;
     }
 }

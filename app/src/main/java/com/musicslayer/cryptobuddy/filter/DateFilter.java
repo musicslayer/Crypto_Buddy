@@ -4,8 +4,6 @@ import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 

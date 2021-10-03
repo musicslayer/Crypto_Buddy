@@ -1,13 +1,14 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @SuppressWarnings("unchecked")
 public class Reflect {
-    public static <T, U> U callStaticMethodOrError(Class<T> clazz, String staticMethodName, Object... args) throws Exception {
+    public static <T, U> U callStaticMethodOrError(Class<T> clazz, String staticMethodName, Object... args) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         // Do not catch errors.
         Object[] argArray = new Object[args.length];
         Class<?>[] argClassArray = new Class<?>[args.length];
@@ -80,5 +81,11 @@ public class Reflect {
         }
 
         return object;
+    }
+
+    public static <T> void callResetAllData(Class<T> clazz, Context context) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        // Return type is void, and the only argument is the Context object.
+        Method m = clazz.getMethod("resetAllData", Context.class);
+        m.invoke(null, context);
     }
 }

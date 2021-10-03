@@ -8,8 +8,6 @@ import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.Reflect;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

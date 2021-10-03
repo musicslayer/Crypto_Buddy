@@ -2,6 +2,8 @@ package com.musicslayer.cryptobuddy.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,13 +13,18 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.util.Serialization;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ConfirmationView extends LinearLayout {
-    int[] randomCode;
-    int[] lastDigits = new int[] {-1, -1, -1, -1};
+    ArrayList<Integer> randomCode;
+    ArrayList<Integer> lastDigits;
     int buttonSize = 150;
+
+    // By default we require 4 digits, but extra sensitive things can increase this number.
+    int numDigits = 4;
 
     private ConfirmationView.ConfirmationListener confirmationListener;
 
@@ -27,6 +34,16 @@ public class ConfirmationView extends LinearLayout {
 
     public ConfirmationView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        makeLayout(context);
+    }
+
+    public void setNumDigits(Context context, int numDigits) {
+        this.numDigits = numDigits;
+        this.removeAllViews();
+        makeLayout(context);
+    }
+
+    public void makeLayout(Context context) {
         if(Settings.setting_confirm) {
             this.makeLayoutConfirmation(context);
         }
@@ -39,9 +56,17 @@ public class ConfirmationView extends LinearLayout {
     public void makeLayoutConfirmation(Context context) {
         this.setOrientation(LinearLayout.VERTICAL);
 
+        lastDigits = new ArrayList<>();
+        for(int i = 0; i < numDigits; i++) {
+            lastDigits.add(-1);
+        }
+
         // We don't need high quality randomness, we just need something that the user has to confirm.
         Random rand = new Random();
-        randomCode = new int[] {rand.nextInt(10), rand.nextInt(10), rand.nextInt(10), rand.nextInt(10)};
+        randomCode = new ArrayList<>();
+        for(int i = 0; i < numDigits; i++) {
+            randomCode.add(rand.nextInt(10));
+        }
 
         TextView messageText = new TextView(context);
         messageText.setText("Confirm by pressing these buttons in sequence: " + getIntArrayText(randomCode));
@@ -68,10 +93,10 @@ public class ConfirmationView extends LinearLayout {
             B[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    lastDigits[0] = lastDigits[1];
-                    lastDigits[1] = lastDigits[2];
-                    lastDigits[2] = lastDigits[3];
-                    lastDigits[3] = ii;
+                    for(int i = 0; i < numDigits - 1; i++) {
+                        lastDigits.set(i, lastDigits.get(i + 1));
+                    }
+                    lastDigits.set(numDigits - 1, ii);
 
                     lastDigitsText.setText(getIntArrayText(lastDigits));
                     checkConfirmation();
@@ -136,14 +161,14 @@ public class ConfirmationView extends LinearLayout {
     }
 
     public void checkConfirmation() {
-        if(confirmationListener != null && (randomCode[0] == lastDigits[0]) && (randomCode[1] == lastDigits[1]) && (randomCode[2] == lastDigits[2]) && (randomCode[3] == lastDigits[3])) {
+        if(confirmationListener != null && randomCode.equals(lastDigits)) {
             confirmationListener.onConfirmation(this);
         }
     }
 
-    public String getIntArrayText(int[] array) {
+    public String getIntArrayText(ArrayList<Integer> arrayList) {
         StringBuilder s = new StringBuilder();
-        for(int i : array) {
+        for(int i : arrayList) {
             if(i == -1) {
                 s.append("*");
             }
@@ -160,5 +185,33 @@ public class ConfirmationView extends LinearLayout {
 
     abstract public static class ConfirmationListener {
         abstract public void onConfirmation(ConfirmationView confirmationView);
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+
+        bundle.putString("randomCode", Serialization.int_serializeArrayList(randomCode));
+        bundle.putString("lastDigits", Serialization.int_serializeArrayList(lastDigits));
+        bundle.putInt("numDigits", numDigits);
+
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state)
+    {
+        if (state instanceof Bundle) // implicit null check
+        {
+            Bundle bundle = (Bundle) state;
+            state = bundle.getParcelable("superState");
+
+            randomCode = Serialization.int_deserializeArrayList(bundle.getString("randomCode"));
+            lastDigits = Serialization.int_deserializeArrayList(bundle.getString("lastDigits"));
+            numDigits = bundle.getInt("numDigits");
+        }
+        super.onRestoreInstanceState(state);
     }
 }

@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 // TODO Actions for delegate, redelegate, undelegate? Burn?

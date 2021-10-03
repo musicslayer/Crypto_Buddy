@@ -80,6 +80,15 @@ public class TransactionPortfolio {
         return null;
     }
 
+    public static HashMap<String, String> getAllData() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
+            TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(transactionPortfolioObj));
+        }
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
         settings_transaction_portfolio = new ArrayList<>();
 
@@ -87,16 +96,6 @@ public class TransactionPortfolio {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
-        editor.putInt("transaction_portfolio_size", 0);
         editor.apply();
-    }
-
-    public static HashMap<String, String> getDataDump() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
-            TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
-            hashMap.put(Integer.toString(i), Serialization.serialize(transactionPortfolioObj));
-        }
-        return hashMap;
     }
 }

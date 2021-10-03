@@ -27,7 +27,7 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
-            .put("cryptoAddress", Serialization.serialize(cryptoAddress))
+            .put("cryptoAddress", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoAddress)))
             .toStringOrNull();
     }
 

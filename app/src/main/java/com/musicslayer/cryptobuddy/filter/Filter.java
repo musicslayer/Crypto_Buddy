@@ -3,8 +3,6 @@ package com.musicslayer.cryptobuddy.filter;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 abstract public class Filter implements Serialization.SerializableToJSON {

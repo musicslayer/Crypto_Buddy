@@ -11,7 +11,8 @@ import java.util.HashMap;
 // Note Serialization has to be perfect, or we throw errors. There are no "default" values here.
 
 public class Serialization {
-    public final static String SERIALIZATION_VERSION_MARKER = "!SERIALIZATION_VERSION!";
+    // Keep this short because it will appear on every piece of stored data.
+    public final static String SERIALIZATION_VERSION_MARKER = "!V!";
 
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
@@ -263,14 +264,21 @@ public class Serialization {
         return s; // Same output for null and non-null
     }
 
-    public static String string_serializeArrayList(ArrayList<String> arrayList) throws org.json.JSONException {
+    public static String string_serializeArrayList(ArrayList<String> arrayList) {
         if(arrayList == null) { return null; }
 
-        JSONArrayWithNull a = new JSONArrayWithNull();
-        for(String s : arrayList) {
-            a.put(Serialization.string_serialize(s));
+        try{
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(String s : arrayList) {
+                a.put(Serialization.string_serialize(s));
+            }
+
+            return a.toStringOrNull();
         }
-        return a.toStringOrNull();
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            throw new IllegalStateException();
+        }
     }
 
     public static ArrayList<String> string_deserializeArrayList(String s) {
@@ -299,6 +307,51 @@ public class Serialization {
 
     public static boolean boolean_deserialize(String s) {
         return Boolean.parseBoolean(string_deserialize(s));
+    }
+
+    public static String int_serialize(int i) {
+        return string_serialize(Integer.toString(i));
+    }
+
+    public static int int_deserialize(String s) {
+        return Integer.parseInt(string_deserialize(s));
+    }
+
+    public static String int_serializeArrayList(ArrayList<Integer> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(int i : arrayList) {
+                a.put(Serialization.int_serialize(i));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            throw new IllegalStateException();
+        }
+    }
+
+    public static ArrayList<Integer> int_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Integer> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.int_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            throw new IllegalStateException();
+        }
     }
 
     public static String date_serialize(Date obj) {

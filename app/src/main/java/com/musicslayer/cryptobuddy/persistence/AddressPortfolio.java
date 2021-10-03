@@ -80,6 +80,15 @@ public class AddressPortfolio {
         return null;
     }
 
+    public static HashMap<String, String> getAllData() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_address_portfolio.size(); i++) {
+            AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
+            hashMap.put(Integer.toString(i), Serialization.serialize(addressPortfolioObj));
+        }
+        return hashMap;
+    }
+
     public static void resetAllData(Context context) {
         settings_address_portfolio = new ArrayList<>();
 
@@ -87,16 +96,6 @@ public class AddressPortfolio {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
-        editor.putInt("address_portfolio_size", 0);
         editor.apply();
-    }
-
-    public static HashMap<String, String> getDataDump() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_address_portfolio.size(); i++) {
-            AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
-            hashMap.put(Integer.toString(i), Serialization.serialize(addressPortfolioObj));
-        }
-        return hashMap;
     }
 }

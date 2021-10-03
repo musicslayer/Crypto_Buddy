@@ -4,8 +4,6 @@ import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
-import org.json.JSONObject;
-
 abstract public class API implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.
     public String getKey() {

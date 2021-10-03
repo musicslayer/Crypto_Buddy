@@ -70,11 +70,23 @@ public class Purchases {
         totalSupportAmount = settings.getInt("purchases_total_support_amount", 0);
     }
 
-    public static HashMap<String, String> getDataDump() {
+    public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("isRemoveAdsPurchased", Boolean.toString(isRemoveAdsPurchased));
         hashMap.put("isUnlockTokensPurchased", Boolean.toString(isUnlockTokensPurchased));
         hashMap.put("totalSupportAmount", Integer.toString(totalSupportAmount));
         return hashMap;
+    }
+
+    public static void resetAllData(Context context) {
+        isRemoveAdsPurchased = false;
+        isUnlockTokensPurchased = false;
+        totalSupportAmount = 0;
+
+        SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.clear();
+        editor.apply();
     }
 }
