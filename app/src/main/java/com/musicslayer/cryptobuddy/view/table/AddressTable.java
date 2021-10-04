@@ -23,30 +23,30 @@ public class AddressTable extends Table {
     public AddressTable(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        this.addColumn("action", "Action","discrete", 1);
-        this.addColumn("quantity", "Asset", "discrete", 1);
-        this.addColumn("timestamp", "Timestamp", "date", 0);
-        this.addColumn("info", "Info", "discrete", 1);
+        this.addColumn(context,"action", "Action","discrete", 1);
+        this.addColumn(context,"quantity", "Asset", "discrete", 1);
+        this.addColumn(context,"timestamp", "Timestamp", "date", 0);
+        this.addColumn(context,"info", "Info", "discrete", 1);
     }
 
-    public void addRowsFromAddressDataArray(ArrayList<AddressData> addressDataArrayList) {
+    public void addRowsFromAddressDataArray(Context context, ArrayList<AddressData> addressDataArrayList) {
         boolean isAny = false;
         for(AddressData addressData : addressDataArrayList) {
             if(addressData.addressAPI_transactions != null && addressData.transactionArrayList != null) {
                 isAny = true;
-                addRowsImpl(addressData.transactionArrayList);
+                addRowsImpl(context, addressData.transactionArrayList);
             }
         }
 
         if(isAny) {
-            finishRows();
+            finishRows(context);
         }
     }
 
-    public void addRowsFromAddressData(AddressData addressData) {
+    public void addRowsFromAddressData(Context context, AddressData addressData) {
         if(addressData.addressAPI_transactions != null && addressData.transactionArrayList != null) {
-            addRowsImpl(addressData.transactionArrayList);
-            finishRows();
+            addRowsImpl(context, addressData.transactionArrayList);
+            finishRows(context);
         }
     }
 

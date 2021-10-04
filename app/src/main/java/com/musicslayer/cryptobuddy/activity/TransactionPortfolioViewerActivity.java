@@ -59,7 +59,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(TransactionPortfolio.isSaved(name)) {
-                        Toast.showToast("portfolio_name_used");
+                        Toast.showToast(TransactionPortfolioViewerActivity.this,"portfolio_name_used");
                     }
                     else {
                         TransactionPortfolio.addPortfolio(TransactionPortfolioViewerActivity.this, new TransactionPortfolioObj(name));

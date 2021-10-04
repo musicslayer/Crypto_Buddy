@@ -38,7 +38,7 @@ public class DeleteAllPortfoliosSettingsView extends LinearLayout {
                 if(((ConfirmDeleteAllPortfoliosDialog)dialog).isComplete) {
                     AddressPortfolio.resetAllData(context);
                     TransactionPortfolio.resetAllData(context);
-                    Toast.showToast("reset_portfolios");
+                    Toast.showToast(context,"reset_portfolios");
                 }
             }
         });

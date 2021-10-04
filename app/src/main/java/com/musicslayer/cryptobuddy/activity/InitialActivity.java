@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.activity;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
@@ -35,26 +36,28 @@ public class InitialActivity extends BaseActivity {
         // Don't actually show anything. Just do initialization code and then launch MainActivity.
 
         // Try loading all the persistent data.
-        Settings.loadAllSettings(this);
-        Toast.loadAllToasts(this);
-        Fiat.initialize(this);
-        Coin.initialize(this);
-        Network.initialize(this);
-        AddressAPI.initialize(this);
-        PriceAPI.initialize(this);
-        Purchases.loadAllPurchases(this);
-        PrivacyPolicy.loadAllData(this);
-        Review.loadAllData(this);
+        Context applicationContext = getApplicationContext();
 
-        TokenManager.initialize(this); // * Deserializes, but uses a separate system which catches errors.
+        Settings.loadAllSettings(applicationContext);
+        Toast.loadAllToasts(applicationContext);
+        Fiat.initialize(applicationContext);
+        Coin.initialize(applicationContext);
+        Network.initialize(applicationContext);
+        AddressAPI.initialize(applicationContext);
+        PriceAPI.initialize(applicationContext);
+        Purchases.loadAllPurchases(applicationContext);
+        PrivacyPolicy.loadAllData(applicationContext);
+        Review.loadAllData(applicationContext);
+
+        TokenManager.initialize(applicationContext); // * Deserializes, but uses a separate system which catches errors.
         if(!Purchases.isUnlockTokensPurchased) {
             // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
-            TokenList.resetAllData(this);
+            TokenList.resetAllData(applicationContext);
         }
 
-        AddressHistory.loadAllData(this); // * Deserializes
-        AddressPortfolio.loadAllData(this); // * Deserializes
-        TransactionPortfolio.loadAllData(this); // * Deserializes
+        AddressHistory.loadAllData(applicationContext); // * Deserializes
+        AddressPortfolio.loadAllData(applicationContext); // * Deserializes
+        TransactionPortfolio.loadAllData(applicationContext); // * Deserializes
 
         App.isAppInitialized = true;
 

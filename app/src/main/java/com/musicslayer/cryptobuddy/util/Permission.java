@@ -18,22 +18,22 @@ public class Permission {
         }
 
         if(ConnectionResult.SERVICE_MISSING == g) {
-            Toast.showToast("google_play_missing");
+            Toast.showToast(activity,"google_play_missing");
         }
         else if(ConnectionResult.SERVICE_UPDATING == g) {
-            Toast.showToast("google_play_updating");
+            Toast.showToast(activity,"google_play_updating");
         }
         else if(ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED == g) {
-            Toast.showToast("google_play_needs_update");
+            Toast.showToast(activity,"google_play_needs_update");
         }
         else if(ConnectionResult.SERVICE_DISABLED == g) {
-            Toast.showToast("google_play_disabled");
+            Toast.showToast(activity,"google_play_disabled");
         }
         else if(ConnectionResult.SERVICE_INVALID == g) {
-            Toast.showToast("google_play_invalid");
+            Toast.showToast(activity,"google_play_invalid");
         }
         else {
-            Toast.showToast("unknown_google_play_error");
+            Toast.showToast(activity,"unknown_google_play_error");
         }
 
         return false;
@@ -42,7 +42,7 @@ public class Permission {
     public static boolean requestCameraPermission(Activity activity) {
         // Older versions cannot run the app unless the permission has already been granted, so only check for newer versions.
         if(Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Toast.showToast("no_camera_permission");
+            Toast.showToast(activity,"no_camera_permission");
             activity.requestPermissions(new String[] { Manifest.permission.CAMERA }, 0);
             return false;
         }

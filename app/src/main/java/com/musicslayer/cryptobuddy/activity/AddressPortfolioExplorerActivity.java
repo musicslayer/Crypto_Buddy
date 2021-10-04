@@ -140,7 +140,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         add_progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                addressData[0].alertUser();
+                if(!addressData[0].isComplete()) {
+                    Toast.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
+                }
 
                 addressPortfolioObj.addData(cryptoAddress[0]);
                 AddressPortfolio.saveAllData(AddressPortfolioExplorerActivity.this);
@@ -149,7 +151,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 updateLayout();
 
                 if(filterIndex != -1) {
-                    Toast.showToast("new_address_filtered");
+                    Toast.showToast(AddressPortfolioExplorerActivity.this,"new_address_filtered");
                 }
             }
         });
@@ -164,7 +166,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
                     if(addressPortfolioObj.isSaved(cryptoAddress[0])) {
-                        Toast.showToast("address_in_portfolio");
+                        Toast.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
                     }
                     else {
                         add_progressDialogFragment.show(AddressPortfolioExplorerActivity.this, "progress_add");
@@ -238,12 +240,18 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         refresh_progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData.alertUser(newAddressDataArrayList[0]);
+                for(AddressData addressData : newAddressDataArrayList[0]) {
+                    if(!addressData.isComplete()) {
+                        // Only alert once. Others would be redundant.
+                        Toast.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
+                        break;
+                    }
+                }
 
                 addressDataArrayList.clear();
                 addressDataArrayList.addAll(newAddressDataArrayList[0]);
                 updateLayout();
-                Toast.showToast("refresh");
+                Toast.showToast(AddressPortfolioExplorerActivity.this,"refresh");
             }
         });
         refresh_progressDialogFragment.restoreListeners(this, "progress_refresh");
@@ -273,11 +281,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
         if(filterIndex == -1) {
             T.setText("Portfolio = " + addressPortfolioObj.name);
-            table.addRowsFromAddressDataArray(addressDataArrayList);
+            table.addRowsFromAddressDataArray(this, addressDataArrayList);
         }
         else {
             T.setText("Portfolio = " + addressPortfolioObj.name + "\nAddress = " + addressPortfolioObj.cryptoAddressArrayList.get(filterIndex).toString());
-            table.addRowsFromAddressData(addressDataArrayList.get(filterIndex));
+            table.addRowsFromAddressData(this, addressDataArrayList.get(filterIndex));
         }
     }
 

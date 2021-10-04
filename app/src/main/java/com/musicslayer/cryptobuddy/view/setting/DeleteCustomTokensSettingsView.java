@@ -38,7 +38,7 @@ public class DeleteCustomTokensSettingsView extends LinearLayout {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     TokenList.resetCustomTokens(context);
                     TokenManager.resetAllCustomTokens();
-                    Toast.showToast("reset_custom_tokens");
+                    Toast.showToast(context,"reset_custom_tokens");
                 }
             }
         });

@@ -38,7 +38,7 @@ public class ResetAllSettingsSettingsView extends LinearLayout {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
                     Settings.resetAllData(context);
                     ((Activity)context).recreate();
-                    Toast.showToast("reset_settings");
+                    Toast.showToast(context,"reset_settings");
                 }
             }
         });

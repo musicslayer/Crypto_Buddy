@@ -109,7 +109,9 @@ public class MainActivity extends BaseActivity {
         progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                addressData[0].alertUser();
+                if(!addressData[0].isComplete()) {
+                    Toast.showToast(MainActivity.this,"no_address_data");
+                }
 
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
 
@@ -187,7 +189,7 @@ public class MainActivity extends BaseActivity {
                     finish();
                 }
                 else {
-                    Toast.showToast("unlock_tokens_required");
+                    Toast.showToast(MainActivity.this,"unlock_tokens_required");
                 }
             }
         });
@@ -199,7 +201,7 @@ public class MainActivity extends BaseActivity {
         B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InAppPurchase.refund(getApplicationContext());
+                InAppPurchase.refund(MainActivity.this);
             }
         });
     }

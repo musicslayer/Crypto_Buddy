@@ -26,7 +26,7 @@ abstract public class CrashOnMenuItemClickListener implements PopupMenu.OnMenuIt
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.newInstance(CrashDialog.class, e).show(activity, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
         }
 
         return true;

@@ -29,7 +29,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.newInstance(CrashDialog.class, e).show(activity, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
         }
     }
 
@@ -40,7 +40,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.newInstance(CrashDialog.class, e).show(activity, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
         }
     }
 }

@@ -38,7 +38,7 @@ public class DeleteDownloadedTokensSettingsView extends LinearLayout {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     TokenList.resetDownloadedTokens(context);
                     TokenManager.resetAllDownloadedTokens();
-                    Toast.showToast("reset_downloaded_tokens");
+                    Toast.showToast(context,"reset_downloaded_tokens");
                 }
             }
         });

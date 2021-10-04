@@ -163,7 +163,7 @@ public class SelectAndSearchView extends LinearLayout {
             public void onClickImpl(View v) {
                 // Show list of token types, or tell user there are none.
                 if(TokenManager.getAllTokens().isEmpty()) {
-                    Toast.showToast("no_tokens");
+                    Toast.showToast(context,"no_tokens");
                 }
                 else {
                     PopupMenu popup = new PopupMenu(context, B_TOKEN);

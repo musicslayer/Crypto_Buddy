@@ -135,14 +135,14 @@ public class ChooseAddressDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 String address = E_ADDRESS.getText().toString();
                 if(address.isEmpty()) {
-                    Toast.showToast("empty_address");
+                    Toast.showToast(activity,"empty_address");
                     return;
                 }
 
                 ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.getAllValidCryptoAddress(address, includeTokens);
 
                 if(cryptoAddressArrayList.isEmpty()) {
-                    Toast.showToast("unrecognized_address");
+                    Toast.showToast(activity,"unrecognized_address");
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);

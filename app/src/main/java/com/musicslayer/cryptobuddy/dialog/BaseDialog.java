@@ -57,12 +57,7 @@ abstract public class BaseDialog extends Dialog {
 
         // In dialogs, we want the dialog that crashed to have already been dismissed before trying to show CrashDialog.
         if(crashException != null && !(this instanceof CrashDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
-            try {
-                CrashDialogFragment.newInstance(CrashDialog.class, crashException).show(activity, "crash");
-            }
-            catch(Exception ignored) {
-                // Sometimes we get an error from the FragmentManager, but CrashDialog should still show anyway.
-            }
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 

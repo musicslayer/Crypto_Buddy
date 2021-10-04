@@ -64,14 +64,7 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                // We need two separate branches so the alert Toast shows correctly.
-                if(priceDataPrimary.alertUser()) {
-                    T.setText("");
-                }
-                else if(priceDataSecondary.alertUser()) {
-                    T.setText("");
-                }
-                else {
+                if(priceDataPrimary.isComplete() && priceDataSecondary.isComplete()) {
                     AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getText().toString(), cryptoPrimary);
                     AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataPrimary.crypto), priceDataPrimary.price);
                     AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataSecondary.crypto), priceDataSecondary.price);
@@ -90,6 +83,10 @@ public class CryptoConverterDialog extends BaseDialog {
 
                     T.setText(text);
                 }
+                else {
+                    T.setText("");
+                    Toast.showToast(activity,"no_price_data");
+                }
             }
         });
         progressDialogFragment.restoreListeners(this.activity, "progress");
@@ -103,7 +100,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 boolean isValid = E_PRIMARYASSET.test();
 
                 if(cryptoPrimary == cryptoSecondary) {
-                    Toast.showToast("cryptos_same");
+                    Toast.showToast(activity,"cryptos_same");
                     return;
                 }
 

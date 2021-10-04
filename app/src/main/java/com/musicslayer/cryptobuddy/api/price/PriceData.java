@@ -4,7 +4,6 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.Date;
 
@@ -86,17 +85,5 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     public boolean isComplete() {
         return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && price != null && marketCap != null;
-    }
-
-    public boolean alertUser() {
-        // Show a toast if some information could not be found.
-        // Return true if any toast was shown, or false if nothing had to be shown.
-        if(isComplete()) {
-            return false;
-        }
-        else {
-            Toast.showToast("no_price_data");
-            return true;
-        }
     }
 }

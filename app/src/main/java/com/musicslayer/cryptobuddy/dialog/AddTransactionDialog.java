@@ -206,7 +206,7 @@ public class AddTransactionDialog extends BaseDialog {
                 boolean isValid2 = E_PRIMARYASSET.test() & E_SECONDARYASSET.test();
 
                 if(action.numAssets() == 2 && ssvPrimary.getChosenAsset() == ssvSecondary.getChosenAsset()) {
-                    Toast.showToast("assets_same");
+                    Toast.showToast(activity,"assets_same");
                     return;
                 }
 

@@ -90,26 +90,4 @@ public class AddressData implements Serialization.SerializableToJSON {
     public boolean isComplete() {
         return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && !(addressAPI_transactions instanceof UnknownAddressAPI) && currentBalanceArrayList != null && transactionArrayList != null;
     }
-
-    public boolean alertUser() {
-        // Show a toast if some information could not be found.
-        // Return true if any toast was shown, or false if nothing had to be shown.
-        if(isComplete()) {
-            return false;
-        }
-        else {
-            Toast.showToast("no_address_data");
-            return true;
-        }
-    }
-
-    public static void alertUser(ArrayList<AddressData> addressDataArrayList) {
-        // Show a toast if some information could bot be found.
-        for(AddressData addressData : addressDataArrayList) {
-            if(addressData.alertUser()) {
-                // Only alert once. Others would be redundant.
-                break;
-            }
-        }
-    }
 }

@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 public class CryptoPricesDialog extends BaseDialog {
@@ -50,10 +51,7 @@ public class CryptoPricesDialog extends BaseDialog {
         progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(priceData.alertUser()) {
-                    T.setText("");
-                }
-                else {
+                if(priceData.isComplete()) {
                     AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);
                     AssetQuantity marketCapAssetQuantity = priceData.marketCap;
 
@@ -64,6 +62,10 @@ public class CryptoPricesDialog extends BaseDialog {
                     text = text + "\nMarket Cap = " + marketCapAssetQuantity.toString() + "\nData Source = CoinGecko API V3";
 
                     T.setText(text);
+                }
+                else {
+                    T.setText("");
+                    Toast.showToast(activity,"no_price_data");
                 }
             }
         });

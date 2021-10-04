@@ -138,12 +138,14 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                newAddressData[0].alertUser();
+                if(!newAddressData[0].isComplete()) {
+                    Toast.showToast(AddressExplorerActivity.this,"no_address_data");
+                }
 
                 addressDataArrayList.clear();
                 addressDataArrayList.add(newAddressData[0]);
                 updateLayout();
-                Toast.showToast("refresh");
+                Toast.showToast(AddressExplorerActivity.this,"refresh");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
@@ -173,7 +175,7 @@ public class AddressExplorerActivity extends BaseActivity {
         TextView T = findViewById(R.id.address_explorer_infoTextView);
         T.setText("Address = " + addressDataArrayList.get(0).cryptoAddress.toString());
 
-        table.addRowsFromAddressDataArray(addressDataArrayList);
+        table.addRowsFromAddressDataArray(this, addressDataArrayList);
     }
 
     @Override

@@ -2,26 +2,25 @@ package com.musicslayer.cryptobuddy.crash;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 
 import com.musicslayer.cryptobuddy.dialog.CrashDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
-abstract public class CrashOnShowListener implements DialogInterface.OnShowListener {
-    abstract public void onShowImpl(DialogInterface dialog);
+abstract public class CrashRunnable implements Runnable {
+    abstract public void runImpl();
 
     public Activity activity;
 
-    public CrashOnShowListener(Context context) {
+    public CrashRunnable(Context context) {
         this.activity = ContextUtil.getActivity(context);
     }
 
     @Override
-    public void onShow(DialogInterface dialog) {
+    public void run() {
         try {
-            onShowImpl(dialog);
+            runImpl();
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);

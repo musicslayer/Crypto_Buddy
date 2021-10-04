@@ -72,7 +72,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(AddressPortfolio.isSaved(name)) {
-                        Toast.showToast("portfolio_name_used");
+                        Toast.showToast(AddressPortfolioViewerActivity.this,"portfolio_name_used");
                     }
                     else {
                         AddressPortfolio.addPortfolio(AddressPortfolioViewerActivity.this, new AddressPortfolioObj(name));
@@ -125,7 +125,13 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData.alertUser(addressDataArrayList[0]);
+                for(AddressData addressData : addressDataArrayList[0]) {
+                    if(!addressData.isComplete()) {
+                        // Only alert once. Others would be redundant.
+                        Toast.showToast(AddressPortfolioViewerActivity.this,"no_address_data");
+                        break;
+                    }
+                }
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
                 Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);

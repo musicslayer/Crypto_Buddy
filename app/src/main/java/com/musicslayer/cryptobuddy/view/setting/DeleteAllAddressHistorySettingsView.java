@@ -36,7 +36,7 @@ public class DeleteAllAddressHistorySettingsView extends LinearLayout {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
                     AddressHistory.resetAllData(context);
-                    Toast.showToast("reset_stored_addresses");
+                    Toast.showToast(context,"reset_stored_addresses");
                 }
             }
         });

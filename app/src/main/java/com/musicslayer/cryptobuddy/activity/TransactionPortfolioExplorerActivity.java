@@ -84,7 +84,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
                     transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
                     TransactionPortfolio.saveAllData(TransactionPortfolioExplorerActivity.this);
 
-                    table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
+                    table.addRow(TransactionPortfolioExplorerActivity.this, ((AddTransactionDialog) dialog).user_TRANSACTION);
                 }
             }
         });
@@ -106,7 +106,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        table.addRows(transactionPortfolioObj.transactionArrayList);
+        table.addRows(this, transactionPortfolioObj.transactionArrayList);
     }
 
     @Override

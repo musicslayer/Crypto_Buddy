@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,6 +10,15 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
 public class CrashDialogFragment extends BaseDialogFragment {
+    public static void showCrashDialogFragment(Class<?> clazz, Exception e, Activity activity, String tag) {
+        // Even in cases where CrashDialog would successfully show, sometimes exceptions are thrown which we can ignore.
+        try {
+            CrashDialogFragment.newInstance(clazz, e).show(activity, tag);
+        }
+        catch(Exception ignored) {
+        }
+    }
+
     public static CrashDialogFragment newInstance(Class<?> clazz, Exception e) {
         // Always use one argument.
         Bundle bundle = new Bundle();

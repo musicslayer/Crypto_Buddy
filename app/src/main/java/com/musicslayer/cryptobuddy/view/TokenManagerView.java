@@ -96,7 +96,7 @@ public class TokenManagerView extends TableRow {
                     }
 
                     updateLayout(context);
-                    Toast.showToast("tokens_deleted");
+                    Toast.showToast(context,"tokens_deleted");
                 }
             }
         });

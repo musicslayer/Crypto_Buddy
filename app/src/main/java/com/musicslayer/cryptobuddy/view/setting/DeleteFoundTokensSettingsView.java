@@ -38,7 +38,7 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     TokenList.resetFoundTokens(context);
                     TokenManager.resetAllFoundTokens();
-                    Toast.showToast("reset_found_tokens");
+                    Toast.showToast(context,"reset_found_tokens");
                 }
             }
         });

@@ -31,7 +31,7 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.newInstance(CrashDialog.class, e).show(activity, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
         }
     }
 }

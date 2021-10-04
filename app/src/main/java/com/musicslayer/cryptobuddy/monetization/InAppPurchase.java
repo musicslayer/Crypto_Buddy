@@ -108,7 +108,7 @@ public class InAppPurchase {
 
     public static void purchase(Activity activity, List<String> skuList) {
         if(!billingClient.isReady()) {
-            Toast.showToast("billing_connection_retry");
+            Toast.showToast(activity,"billing_connection_retry");
             InAppPurchase.initialize(activity);
             return;
         }
@@ -125,7 +125,7 @@ public class InAppPurchase {
                     billingClient.launchBillingFlow(activity, billingFlowParams);
                 }
                 else {
-                    Toast.showToast("billing_problem");
+                    Toast.showToast(activity,"billing_problem");
                 }
             }
         });
@@ -158,10 +158,10 @@ public class InAppPurchase {
             @Override
             public void onAcknowledgePurchaseResponseImpl(@NonNull BillingResult billingResult) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    Toast.showToast(toastKey + "_purchase");
+                    Toast.showToast(context,toastKey + "_purchase");
                 }
                 else {
-                    Toast.showToast("acknowledge_problem");
+                    Toast.showToast(context,"acknowledge_problem");
                 }
             }
         });
@@ -178,7 +178,7 @@ public class InAppPurchase {
             @Override
             public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
                 if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                    Toast.showToast("support_developers_purchase");
+                    Toast.showToast(context,"support_developers_purchase");
                 }
             }
         });
@@ -187,12 +187,12 @@ public class InAppPurchase {
     // Internal use only!
     public static void refund(Context context) {
         if(!billingClient.isReady()) {
-            Toast.showToast("billing_connection_retry");
+            Toast.showToast(context,"billing_connection_retry");
             InAppPurchase.initialize(context);
             return;
         }
 
-        Toast.showToast("refund_purchases");
+        Toast.showToast(context,"refund_purchases");
 
         billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
             @Override
@@ -208,7 +208,7 @@ public class InAppPurchase {
                         billingClient.consumeAsync(params.build(), new CrashConsumeResponseListener(context) {
                             @Override
                             public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
-                                Toast.showToast("refund_purchase_complete");
+                                Toast.showToast(context,"refund_purchase_complete");
                             }
                         });
                     }

@@ -25,13 +25,13 @@ public class TransactionTable extends Table {
     public TransactionTable(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        this.addColumn("action", "Action", "discrete", 1);
-        this.addColumn("quantity", "Actioned Asset", "discrete", 1);
-        this.addColumn("other_quantity", "Other Asset",  "discrete", 1);
-        this.addColumn("price", "Forward Price", "discrete", 1);
-        if(shouldAddBackwardsPrice()) { this.addColumn("other_price", "Backward Price", "discrete", 1); }
-        this.addColumn("timestamp", "Timestamp", "date", 0);
-        this.addColumn("info", "Info", "discrete", 1);
+        this.addColumn(context,"action", "Action", "discrete", 1);
+        this.addColumn(context,"quantity", "Actioned Asset", "discrete", 1);
+        this.addColumn(context,"other_quantity", "Other Asset",  "discrete", 1);
+        this.addColumn(context,"price", "Forward Price", "discrete", 1);
+        if(shouldAddBackwardsPrice()) { this.addColumn(context,"other_price", "Backward Price", "discrete", 1); }
+        this.addColumn(context,"timestamp", "Timestamp", "date", 0);
+        this.addColumn(context,"info", "Info", "discrete", 1);
     }
 
     static class TransactionRow extends BaseRow {

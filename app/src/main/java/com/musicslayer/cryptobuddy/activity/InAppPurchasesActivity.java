@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 
@@ -33,9 +34,9 @@ public class InAppPurchasesActivity extends BaseActivity {
             @Override
             public void onInAppPurchase() {
                 // Needed if the purchase update happened on another thread.
-                runOnUiThread(new Runnable() {
+                runOnUiThread(new CrashRunnable(InAppPurchasesActivity.this) {
                     @Override
-                    public void run() {
+                    public void runImpl() {
                         updateLayout();
                     }
                 });

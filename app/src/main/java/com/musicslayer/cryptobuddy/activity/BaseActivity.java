@@ -35,7 +35,7 @@ abstract public class BaseActivity extends AppCompatActivity {
                 });
 
                 // Keep trying in every activity if the first call during initialization was not successful.
-                InAppPurchase.initialize(getApplicationContext());
+                InAppPurchase.initialize(this);
             }
 
             createLayout();
@@ -45,7 +45,7 @@ abstract public class BaseActivity extends AppCompatActivity {
             ThrowableLogger.processThrowable(e);
 
             // In activities, create CrashDialog now while the FragmentManager is still valid.
-            CrashDialogFragment.newInstance(CrashDialog.class, e).show(this, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, this, "crash");
         }
     }
 

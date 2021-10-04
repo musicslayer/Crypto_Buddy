@@ -48,7 +48,7 @@ public class MessageSettingsView extends LinearLayout {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);
                 Settings.setSetting(context, settingName, pos);
-                Toast.loadAllToasts(context);
+                Toast.loadAllToasts(context.getApplicationContext());
             }
         });
 
@@ -59,10 +59,10 @@ public class MessageSettingsView extends LinearLayout {
         B_MessageTest.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 if(Settings.setting_message == android.widget.Toast.LENGTH_SHORT) {
-                    Toast.showToast("setting_message_test_short");
+                    Toast.showToast(context,"setting_message_test_short");
                 }
                 else {
-                    Toast.showToast("setting_message_test_long");
+                    Toast.showToast(context,"setting_message_test_long");
                 }
             }
         });

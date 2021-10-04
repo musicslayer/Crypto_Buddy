@@ -36,7 +36,7 @@ public class ResetEverythingSettingsView extends LinearLayout {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
                     Persistence.resetAllData(context);
-                    Toast.showToast("reset_everything");
+                    Toast.showToast(context,"reset_everything");
                 }
             }
         });

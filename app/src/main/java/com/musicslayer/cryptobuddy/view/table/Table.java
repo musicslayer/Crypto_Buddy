@@ -31,9 +31,6 @@ import java.util.ArrayList;
 abstract public class Table extends TableLayout {
     abstract public BaseRow getRow(Context context, Transaction transaction);
 
-    // TODO We shouldn't need to store this...?
-    Context context;
-
     // Number of rows before the user input.
     final int numHeaderRows = 3;
 
@@ -68,7 +65,6 @@ abstract public class Table extends TableLayout {
 
     public Table(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.context = context;
 
         this.setOrientation(LinearLayout.VERTICAL);
         this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -78,7 +74,7 @@ abstract public class Table extends TableLayout {
         this.addView(new BaseHeaderRow(context));
     }
 
-    public void addColumn(String columnType, String columnHeader, String filterType, int initialSortState) {
+    public void addColumn(Context context, String columnType, String columnHeader, String filterType, int initialSortState) {
         numColumns++;
         this.columnTypes.add(columnType);
         this.columnHeaders.add(columnHeader);
@@ -88,58 +84,58 @@ abstract public class Table extends TableLayout {
         // Sort by the most recent column if it has a sorting state for "Descending" or "Ascending".
         if(initialSortState != 1) {
             sortingColumn = numColumns - 1;
-            doSort();
+            doSort(context);
         }
 
-        redrawHeaderRows();
+        redrawHeaderRows(context);
     }
 
-    public void addRows(ArrayList<Transaction> transactionArrayList) {
+    public void addRows(Context context, ArrayList<Transaction> transactionArrayList) {
         // Add all rows, and then do sorting and filtering.
-        addRowsImpl(transactionArrayList);
-        finishRows();
+        addRowsImpl(context, transactionArrayList);
+        finishRows(context);
     }
 
-    public void addRow(Transaction transaction) {
-        addRowImpl(transaction);
-        finishRows();
+    public void addRow(Context context, Transaction transaction) {
+        addRowImpl(context, transaction);
+        finishRows(context);
 
         if(transaction.isFiltered(filterArrayList, columnTypes)) {
-            Toast.showToast("new_transaction_filtered");
+            Toast.showToast(context,"new_transaction_filtered");
         }
     }
 
-    public void addRowsImpl(ArrayList<Transaction> transactionArrayList) {
+    public void addRowsImpl(Context context, ArrayList<Transaction> transactionArrayList) {
         int minIdx = pageView == null ? 0 : pageView.getMinIdx();
         int maxIdx = pageView == null ? TablePageView.numItemsPerPage - 1 : pageView.getMaxIdx();
 
         for(int i = 0; i < transactionArrayList.size(); i++) {
             // Only draw current page of rows. If null, assume it's the first page.
             if(i >= minIdx && i <= maxIdx) {
-                drawRow(transactionArrayList.get(i));
+                drawRow(context, transactionArrayList.get(i));
             }
             this.transactionArrayList.add(transactionArrayList.get(i));
             maskedTransactionArrayList.add(transactionArrayList.get(i));
         }
     }
 
-    public void addRowImpl(Transaction transaction) {
-        drawRow(transaction);
+    public void addRowImpl(Context context, Transaction transaction) {
+        drawRow(context, transaction);
         this.transactionArrayList.add(transaction);
         maskedTransactionArrayList.add(transaction);
     }
 
     // Anything that adds rows should call this to finish the process.
     // These are expensive operations that should only be done once all new rows are added to the table.
-    public void finishRows() {
-        doSort();
+    public void finishRows(Context context) {
+        doSort(context);
         updateFilters();
-        filterTable();
+        filterTable(context);
 
         pageView.setNumItems(maskedTransactionArrayList.size());
     }
 
-    public void drawRow(Transaction transaction) {
+    public void drawRow(Context context, Transaction transaction) {
         this.addView(getRow(context, transaction));
     }
 
@@ -188,9 +184,9 @@ abstract public class Table extends TableLayout {
                         @Override
                         public void onDismissImpl(DialogInterface dialog) {
                             if(((BaseDialog)dialog).isComplete) {
-                                filterTable();
+                                filterTable(context);
                                 t[ii].setText(filterArrayList.get(ii).getIncludedString());
-                                redrawHeaderRows();
+                                redrawHeaderRows(context);
                             }
                         }
                     });
@@ -245,7 +241,7 @@ abstract public class Table extends TableLayout {
                                     b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
                                     sortState.set(j, 0);
                                 }
-                                doSort();
+                                doSort(context);
                             }
                         }
                     }
@@ -295,7 +291,7 @@ abstract public class Table extends TableLayout {
         }
     }
 
-    public void filterTable() {
+    public void filterTable(Context context) {
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
         for(Transaction t : maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
@@ -307,7 +303,7 @@ abstract public class Table extends TableLayout {
             pageView.setNumItems(newTransactionArrayList.size());
         }
 
-        redrawRows(newTransactionArrayList);
+        redrawRows(context, newTransactionArrayList);
     }
 
     public ArrayList<Transaction> getFilteredMaskedTransactionArrayList() {
@@ -320,7 +316,7 @@ abstract public class Table extends TableLayout {
         return newTransactionArrayList;
     }
 
-    public void doSort() {
+    public void doSort(Context context) {
         if(sortState.get(sortingColumn) == 0) {
             Transaction.sortDescendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
@@ -328,7 +324,7 @@ abstract public class Table extends TableLayout {
             Transaction.sortAscendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
 
-        filterTable();
+        filterTable(context);
     }
 
     public void resetTable() {
@@ -341,7 +337,7 @@ abstract public class Table extends TableLayout {
         pageView.setNumItems(0);
     }
 
-    public void redrawHeaderRows() {
+    public void redrawHeaderRows(Context context) {
         ViewGroup group = this;
         group.removeViews(0, numHeaderRows);
 
@@ -350,11 +346,11 @@ abstract public class Table extends TableLayout {
         this.addView(new BaseHeaderRow(context), 2);
     }
 
-    public void redrawRows() {
-        redrawRows(transactionArrayList);
+    public void redrawRows(Context context) {
+        redrawRows(context, transactionArrayList);
     }
 
-    public void redrawRows(ArrayList<Transaction> newTransactionArrayList) {
+    public void redrawRows(Context context, ArrayList<Transaction> newTransactionArrayList) {
         ViewGroup group = this;
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
 
@@ -363,7 +359,7 @@ abstract public class Table extends TableLayout {
         int maxIdx = pageView == null ? TablePageView.numItemsPerPage - 1 : pageView.getMaxIdx();
         for(int i = 0; i < newTransactionArrayList.size(); i++) {
             if(i >= minIdx && i <= maxIdx) {
-                drawRow(newTransactionArrayList.get(i));
+                drawRow(context, newTransactionArrayList.get(i));
             }
         }
     }
@@ -404,12 +400,14 @@ abstract public class Table extends TableLayout {
             pageView.setNumItems(maskedTransactionArrayList.size());
 
             // Remove and add the filter and sort row
+            Context context = getContext();
+
             ViewGroup group = this;
             group.removeViews(0, 2);
             group.addView(new BaseFilterRow(context), 0);
             group.addView(new BaseSortRow(context), 1);
 
-            filterTable();
+            filterTable(context);
         }
         super.onRestoreInstanceState(state);
     }
@@ -471,7 +469,7 @@ abstract public class Table extends TableLayout {
                     if(currentPage != 1) {
                         currentPage = 1;
                         updateLayout();
-                        inner_table.filterTable();
+                        inner_table.filterTable(context);
                     }
                 }
             });
@@ -484,7 +482,7 @@ abstract public class Table extends TableLayout {
                     if(currentPage > 1) {
                         currentPage--;
                         updateLayout();
-                        inner_table.filterTable();
+                        inner_table.filterTable(context);
                     }
                 }
             });
@@ -501,7 +499,7 @@ abstract public class Table extends TableLayout {
                     if(currentPage < lastPage) {
                         currentPage++;
                         updateLayout();
-                        inner_table.filterTable();
+                        inner_table.filterTable(context);
                     }
                 }
             });
@@ -514,7 +512,7 @@ abstract public class Table extends TableLayout {
                     if(currentPage != lastPage) {
                         currentPage = lastPage;
                         updateLayout();
-                        inner_table.filterTable();
+                        inner_table.filterTable(context);
                     }
                 }
             });

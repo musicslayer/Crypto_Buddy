@@ -81,7 +81,7 @@ public class TotalDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(newPriceMap.size() != deltaMap.size()) {
-                    Toast.showToast("no_price_data");
+                    Toast.showToast(activity,"no_price_data");
                 }
 
                 priceMap.clear();

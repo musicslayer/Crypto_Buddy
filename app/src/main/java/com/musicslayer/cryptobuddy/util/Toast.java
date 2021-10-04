@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
 import java.util.HashMap;
@@ -93,15 +94,15 @@ public class Toast {
         }
     }
 
-    public static void showToast(String key) {
+    public static void showToast(Context context, String key) {
         android.widget.Toast toast = toastMap.get(key);
 
         if(toast != null) {
             // Toasts must always be shown on the UI Thread.
             // Use Looper so that we do not need access to the activity.
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+            new Handler(Looper.getMainLooper()).post(new CrashRunnable(context) {
                 @Override
-                public void run() {
+                public void runImpl() {
                     // At some point, Android changed toast behavior. getView being null is the only way to tell which behavior we will see.
                     if(toast.getView() == null) {
                         // New behavior - We cannot check if the toast is showing, but it is always OK to cancel and (re)show the toast.

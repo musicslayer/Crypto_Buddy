@@ -44,7 +44,7 @@ public class ReviewDialog extends BaseDialog {
                     activity.startActivity(reviewIntent);
                 }
                 else {
-                    Toast.showToast("review");
+                    Toast.showToast(activity,"review");
                 }
 
                 // Either button sets "isComplete" to true. We just want to make sure the user selected something.
