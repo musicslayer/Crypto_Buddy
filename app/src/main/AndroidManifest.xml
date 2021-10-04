@@ -24,7 +24,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CryptoBuddy"
         android:icon="@mipmap/app_icon"
-        android:roundIcon="@mipmap/app_icon_round">
+        android:roundIcon="@mipmap/app_icon_round"
+        android:allowBackup="false">
+
+        <provider
+            android:name="com.musicslayer.cryptobuddy.provider.CachedFileProvider"
+            android:authorities="com.musicslayer.cryptobuddy.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+        </provider>
 
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-7875443444219421~2137021985"/>

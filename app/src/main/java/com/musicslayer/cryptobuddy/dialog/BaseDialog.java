@@ -10,6 +10,7 @@ import android.widget.ScrollView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Window;
 
 // TODO Many common dialogs can be merged.
@@ -19,6 +20,9 @@ abstract public class BaseDialog extends Dialog {
 
     // Tells whether the user deliberately completed this instance.
     public boolean isComplete = false;
+
+    // Non-null if a crash occurred.
+    public Exception crashException;
 
     abstract public void createLayout();
     abstract public int getBaseViewID();
@@ -33,10 +37,37 @@ abstract public class BaseDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Needed for older versions of Android.
-        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        try {
+            // Needed for older versions of Android.
+            requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
 
-        createLayout();
+            createLayout();
+        }
+        catch(Exception e) {
+            crashException = e;
+            try {
+                ExceptionLogger.processException(e);
+            }
+            catch(Exception ignored) {
+            }
+
+            this.dismiss();
+        }
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+
+        // In dialogs, we want the dialog that crashed to have already been dismissed before trying to show CrashDialog.
+        if(crashException != null && !(this instanceof CrashDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+            try {
+                CrashDialogFragment.newInstance(CrashDialog.class, crashException).show(activity, "crash");
+            }
+            catch(Exception ignored) {
+                // Sometimes we get an error from the FragmentManager, but CrashDialog should still show anyway.
+            }
+        }
     }
 
     @Override

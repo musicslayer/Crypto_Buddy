@@ -2,10 +2,15 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 
+import com.musicslayer.cryptobuddy.app.App;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+
+import shadow.org.apache.commons.io.FileUtils;
 
 public class File {
     public static String readFile(Context context, int id) {
@@ -52,5 +57,20 @@ public class File {
         }
 
         return stringArrayList;
+    }
+
+    public static java.io.File writeFile(Context context, String s) {
+        // Returns a tempfile with the String written to it.
+        java.io.File file;
+        try {
+            file = java.io.File.createTempFile("CrashLog", null, context.getCacheDir());
+            FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
+        }
+        catch(Exception e) {
+            ExceptionLogger.processException(e);
+            file = null;
+        }
+
+        return file;
     }
 }

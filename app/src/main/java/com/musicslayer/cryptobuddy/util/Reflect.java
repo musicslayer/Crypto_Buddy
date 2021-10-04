@@ -83,6 +83,29 @@ public class Reflect {
         return object;
     }
 
+    public static <T> T constructCrashDialogInstance(Class<T> clazz, Activity activity, Exception exception) {
+        // Hardcode the Exception arguments to deal with subclasses.
+        T object = null;
+
+        try {
+            object = clazz.getConstructor(Activity.class, Exception.class).newInstance(activity, exception);
+        }
+        catch(IllegalAccessException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InstantiationException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(InvocationTargetException e) {
+            ExceptionLogger.processException(e);
+        }
+        catch(NoSuchMethodException e) {
+            ExceptionLogger.processException(e);
+        }
+
+        return object;
+    }
+
     public static <T> void callResetAllData(Class<T> clazz, Context context) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         // Return type is void, and the only argument is the Context object.
         Method m = clazz.getMethod("resetAllData", Context.class);

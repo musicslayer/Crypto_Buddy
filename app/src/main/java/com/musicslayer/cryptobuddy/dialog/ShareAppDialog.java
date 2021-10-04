@@ -22,7 +22,7 @@ public class ShareAppDialog extends BaseDialog {
         Button B_EMAIL = findViewById(R.id.share_app_dialog_emailButton);
         B_EMAIL.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Message.sendEmail(ShareAppDialog.this.activity, "", "Crypto Buddy - Your friend wants to recommend this app to you!", "Hey! You should check out this new app I found called Crypto Buddy!\n\nhttp://play.google.com/store/apps/details?id=com.musicslayer.cryptobuddy");
+                Message.sendEmail(ShareAppDialog.this.activity, "", "Crypto Buddy - Your friend wants to recommend this app to you!", "Hey! You should check out this new app I found called Crypto Buddy!\n\nhttp://play.google.com/store/apps/details?id=com.musicslayer.cryptobuddy", null);
             }
         });
 

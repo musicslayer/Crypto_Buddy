@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdView;
+import com.musicslayer.cryptobuddy.dialog.CrashDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.Appearance;
+import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 
 abstract public class BaseActivity extends AppCompatActivity {
     abstract public void createLayout();
@@ -20,17 +23,31 @@ abstract public class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Appearance.setAppearance(this);
+        try {
+            Appearance.setAppearance(this);
 
-        InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
-            @Override
-            public void onInAppPurchase() {
+            InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
+                @Override
+                public void onInAppPurchase() {
+                }
+            });
+
+            // Keep trying in every activity if the first call during initialization was not successful.
+            InAppPurchase.initialize(getApplicationContext());
+
+            createLayout();
+            adjustActivity();
+        }
+        catch(Exception e) {
+            try {
+                ExceptionLogger.processException(e);
             }
-        });
-        InAppPurchase.initialize(getApplicationContext()); // Keep trying if the call in App class was not successful.
+            catch(Exception ignored) {
+            }
 
-        createLayout();
-        adjustActivity();
+            // In activities, create CrashDialog now while the FragmentManager is still valid.
+            CrashDialogFragment.newInstance(CrashDialog.class, e).show(this, "crash");
+        }
     }
 
     public void adjustActivity() {

@@ -22,7 +22,7 @@ public class ReportFeedbackDialog extends BaseDialog {
         Button B_EMAIL = findViewById(R.id.report_feedback_dialog_button);
         B_EMAIL.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Message.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Bug Report/Feedback", "");
+                Message.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Bug Report/Feedback", "", null);
             }
         });
     }

@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.app;
 
-import android.util.Log;
-
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
@@ -22,7 +20,6 @@ import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.util.DataDump;
 import com.musicslayer.cryptobuddy.util.ExceptionLogger;
 import com.musicslayer.cryptobuddy.util.Toast;
 
@@ -33,10 +30,20 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        // Try loading all the persistent data, and tell user if we cannot.
-        // Note that there should be no tolerance for error in any of these functions,
-        // so this should only fail if the data was corrupted somehow.
+        // The code below must be especially crash free because we cannot use CrashDialog here.
         try {
+            ProviderInstaller.installIfNeeded(this);
+        } catch (GooglePlayServicesRepairableException ignored) {
+            isGooglePlayAvailable = false;
+        } catch (GooglePlayServicesNotAvailableException ignored) {
+            isGooglePlayAvailable = false;
+        }
+
+        try {
+            // Needed for older Android versions
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+            // Try loading all the persistent data.
             Settings.loadAllSettings(this);
             Toast.loadAllToasts(this);
             Fiat.initialize(this);
@@ -59,20 +66,11 @@ public class App extends MultiDexApplication {
             TransactionPortfolio.loadAllData(this); // * Deserializes
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
-            Log.e("Crypto Buddy", DataDump.getAllData(null));
-        }
-
-        // Log.e("Crypto Buddy", DataDump.getAllData(null));
-
-        // Needed for older Android versions
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        try {
-            ProviderInstaller.installIfNeeded(this);
-        } catch (GooglePlayServicesRepairableException e) {
-            isGooglePlayAvailable = false;
-        } catch (GooglePlayServicesNotAvailableException e) {
-            isGooglePlayAvailable = false;
+            try {
+                ExceptionLogger.processException(e);
+            }
+            catch(Exception ignored) {
+            }
         }
     }
 }

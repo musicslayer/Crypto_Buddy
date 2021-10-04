@@ -43,6 +43,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         }).start();
     }
 
+    @Override
     public void doDismiss(@NonNull DialogInterface dialog) {
         // Unlike in the superclass, here we do not want to use the onDismiss listener.
         // Instead, any dialog that gets dismissed needs to be cancelled.
