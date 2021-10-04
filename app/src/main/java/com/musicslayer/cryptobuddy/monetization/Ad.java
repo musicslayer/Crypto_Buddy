@@ -9,16 +9,16 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnInitializationCompleteListener;
 
 public class Ad {
     public static boolean areAdsLoaded = false;
 
     public static void initializeAds(Context context) {
         if(!areAdsLoaded) {
-            MobileAds.initialize(context, new OnInitializationCompleteListener() {
+            MobileAds.initialize(context, new CrashOnInitializationCompleteListener(context) {
                 @Override
-                public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
+                public void onInitializationCompleteImpl(@NonNull InitializationStatus initializationStatus) {
                     areAdsLoaded = true;
                 }
             });

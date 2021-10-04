@@ -31,19 +31,19 @@ public class Reflect {
             object = clazz.getConstructor().newInstance();
         }
         catch(ClassNotFoundException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(IllegalAccessException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InstantiationException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InvocationTargetException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(NoSuchMethodException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return object;
@@ -68,16 +68,16 @@ public class Reflect {
             object = clazz.getConstructor(argClassArray).newInstance(argArray);
         }
         catch(IllegalAccessException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InstantiationException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InvocationTargetException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(NoSuchMethodException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return object;
@@ -91,16 +91,16 @@ public class Reflect {
             object = clazz.getConstructor(Activity.class, Exception.class).newInstance(activity, exception);
         }
         catch(IllegalAccessException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InstantiationException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(InvocationTargetException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
         catch(NoSuchMethodException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return object;

@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -162,8 +163,8 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     public void createLayout () {
@@ -176,9 +177,9 @@ public class SettingsActivity extends BaseActivity {
 
         BorderedSpinnerView bsv = findViewById(R.id.settings_category_spinner);
         bsv.setOptions(new String[] {"Formatting", "Localization", "API", "Appearance", "Other", "Reset"});
-        bsv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent){}
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        bsv.setOnItemSelectedListener(new CrashOnItemSelectedListener(this) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 L.removeAllViews();
 
                 if(pos == 0) {

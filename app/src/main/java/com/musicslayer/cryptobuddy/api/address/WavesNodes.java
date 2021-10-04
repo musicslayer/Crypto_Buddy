@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -60,7 +60,7 @@ public class WavesNodes extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new WAVES()));
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             return null;
         }
 
@@ -102,7 +102,7 @@ public class WavesNodes extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ExceptionLogger.processException(e);
+                ThrowableLogger.processThrowable(e);
                 return null;
             }
         }
@@ -375,7 +375,7 @@ public class WavesNodes extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             return null;
         }
 

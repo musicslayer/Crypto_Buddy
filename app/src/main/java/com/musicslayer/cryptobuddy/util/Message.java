@@ -39,7 +39,7 @@ public class Message {
         ComponentName emailApp = emailIntent.resolveActivity(activity.getPackageManager());
         ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
         if(emailApp != null && !emailApp.equals(unsupportedAction)) {
-            activity.startActivityForResult(emailIntent, 0);
+            activity.startActivity(emailIntent);
         }
         else {
             Toast.showToast("email");

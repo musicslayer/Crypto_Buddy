@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
+import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
 public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
@@ -74,8 +75,9 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
 
     public void show(Context context, String tag) {
         if(!isAdded()) {
-            this.show(getFragmentManager(context), tag);
-            getFragmentManager(context).executePendingTransactions();
+            FragmentManager fm = getFragmentManager(context);
+            this.show(fm, tag);
+            fm.executePendingTransactions();
         }
     }
 
@@ -101,10 +103,6 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public static FragmentManager getFragmentManager(Context context) {
-        while (!(context instanceof BaseActivity) && context instanceof ContextWrapper) {
-            context = ((ContextWrapper) context).getBaseContext();
-        }
-
-        return ((BaseActivity)context).getSupportFragmentManager();
+        return ((BaseActivity)ContextUtil.getActivity(context)).getSupportFragmentManager();
     }
 }

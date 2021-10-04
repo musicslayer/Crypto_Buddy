@@ -10,7 +10,7 @@ import android.widget.ScrollView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Window;
 
 // TODO Many common dialogs can be merged.
@@ -45,11 +45,7 @@ abstract public class BaseDialog extends Dialog {
         }
         catch(Exception e) {
             crashException = e;
-            try {
-                ExceptionLogger.processException(e);
-            }
-            catch(Exception ignored) {
-            }
+            ThrowableLogger.processThrowable(e);
 
             this.dismiss();
         }

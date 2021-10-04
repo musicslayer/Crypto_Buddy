@@ -2,8 +2,6 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.app.App;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +28,7 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return stringBuilder.toString();
@@ -53,7 +51,7 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return stringArrayList;
@@ -67,7 +65,7 @@ public class File {
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             file = null;
         }
 

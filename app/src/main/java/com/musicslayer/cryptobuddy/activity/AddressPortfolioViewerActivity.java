@@ -16,6 +16,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
@@ -43,8 +46,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     public void createLayout () {
@@ -54,17 +57,17 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.address_portfolio_viewer_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(AddressPortfolioViewerActivity.this, R.raw.help_address_portfolio_viewer);
             }
         });
 
         BaseDialogFragment createPortfolioDialogFragment = BaseDialogFragment.newInstance(CreatePortfolioDialog.class);
-        createPortfolioDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        createPortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((CreatePortfolioDialog)dialog).isComplete) {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
@@ -81,9 +84,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         createPortfolioDialogFragment.restoreListeners(this, "create");
 
         Button bCreate = findViewById(R.id.address_portfolio_viewer_addButton);
-        bCreate.setOnClickListener(new View.OnClickListener() {
+        bCreate.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 createPortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "create");
             }
         });
@@ -96,9 +99,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         table.removeAllViews();
 
         BaseDialogFragment confirmDeletePortfolioDialogFragment = BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class);
-        confirmDeletePortfolioDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
                     AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, AddressPortfolio.getFromName(currentDeletePortfolioName));
                     updateLayout();
@@ -108,9 +111,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
                     if(((ProgressDialog)dialog).isCancelled) { return; }
                     addressDataArrayList[0].add(AddressData.getAddressData(cryptoAddress));
@@ -119,12 +122,10 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 AddressData.alertUser(addressDataArrayList[0]);
-
-                finish();
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
                 Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
@@ -132,6 +133,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 //intent.putExtra("AddressData_Array",  addressDataArrayList[0]);
                 intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList[0]));
                 AddressPortfolioViewerActivity.this.startActivity(intent);
+
+                finish();
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
@@ -141,9 +144,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B.setText(addressPortfolioObj.name);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
-            B.setOnClickListener(new View.OnClickListener() {
+            B.setOnClickListener(new CrashOnClickListener(this) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
                     addressDataArrayList[0] = new ArrayList<>();
                     AddressPortfolioObjName[0] = addressPortfolioObj.name;
@@ -155,9 +158,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             AppCompatButton B_DELETE = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B_DELETE.setText("Delete");
             B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-            B_DELETE.setOnClickListener(new View.OnClickListener() {
+            B_DELETE.setOnClickListener(new CrashOnClickListener(this) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     currentDeletePortfolioName = addressPortfolioObj.name;
                     confirmDeletePortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "delete");
                 }

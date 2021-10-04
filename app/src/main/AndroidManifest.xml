@@ -42,10 +42,11 @@
         <activity android:name=".activity.AddressPortfolioExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.AddressPortfolioViewerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.InAppPurchasesActivity" android:screenOrientation="locked"/>
-        <activity android:name=".activity.MainActivity" android:screenOrientation="locked"
+        <activity android:name=".activity.InitialActivity" android:screenOrientation="locked"
             android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
         </activity>
+        <activity android:name=".activity.MainActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.SettingsActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.TokenManagerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.TransactionExplorerActivity" android:screenOrientation="locked"/>

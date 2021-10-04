@@ -10,6 +10,9 @@ import android.widget.ImageButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.util.Help;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -33,18 +36,18 @@ public class AddCustomTokenDialog extends BaseDialog {
         setContentView(R.layout.dialog_add_custom_token);
 
         ImageButton helpButton = findViewById(R.id.add_custom_token_dialog_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(AddCustomTokenDialog.this.activity, R.raw.help_add_custom_token);
             }
         });
 
         BorderedSpinnerView bsv = findViewById(R.id.add_custom_token_dialog_tokenTypeSpinner);
         bsv.setOptions(TokenManager.tokenManagers_token_types);
-        bsv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent){}
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        bsv.setOnItemSelectedListener(new CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 chosenTokenManager = TokenManager.getTokenManagerFromTokenType(TokenManager.tokenManagers_token_types.get(pos));
             }
         });
@@ -54,9 +57,9 @@ public class AddCustomTokenDialog extends BaseDialog {
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_token_dialog_symbolEditText);
         Int2EditText E_DECIMALS = findViewById(R.id.add_custom_token_dialog_decimalsEditText);
 
-        DialogInterface.OnDismissListener replaceCustomTokenDialogFragmentListener = new OnDismissListener() {
+        DialogInterface.OnDismissListener replaceCustomTokenDialogFragmentListener = new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
                     chosenTokenManager.save(AddCustomTokenDialog.this.activity, "custom");
@@ -69,9 +72,9 @@ public class AddCustomTokenDialog extends BaseDialog {
         };
 
         Button B_Confirm = findViewById(R.id.add_custom_token_dialog_confirmButton);
-        B_Confirm.setOnClickListener(new View.OnClickListener() {
+        B_Confirm.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 // Don't short circuit - we need to test everything.
                 boolean isValid = E_ID.test() & E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 

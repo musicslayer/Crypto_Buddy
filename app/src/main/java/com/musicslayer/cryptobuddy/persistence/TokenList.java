@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class TokenList {

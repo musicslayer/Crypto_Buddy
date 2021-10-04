@@ -14,6 +14,8 @@ import androidx.appcompat.widget.SearchView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnQueryTextListener;
 import com.musicslayer.cryptobuddy.util.Help;
 
 import java.util.ArrayList;
@@ -82,9 +84,9 @@ public class SearchDialog extends BaseDialog {
         setContentView(R.layout.dialog_search);
 
         ImageButton helpButton = findViewById(R.id.search_dialog_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(SearchDialog.this.activity, R.raw.help_search);
             }
         });
@@ -92,8 +94,8 @@ public class SearchDialog extends BaseDialog {
         table = findViewById(R.id.search_dialog_tableLayout);
 
         Button B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_TOGGLE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 isNames = !isNames;
                 updateLayout();
                 updateList();
@@ -103,14 +105,14 @@ public class SearchDialog extends BaseDialog {
         SearchView searchView = findViewById(R.id.search_dialog_searchView);
         searchView.setQueryHint("Start typing to show options.");
         searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new CrashOnQueryTextListener(this.activity) {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmitImpl(String query) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChangeImpl(String newText) {
                 searchText = newText;
                 updateList();
                 return false;
@@ -176,8 +178,8 @@ public class SearchDialog extends BaseDialog {
                 AppCompatButton B = new AppCompatButton(this.activity);
                 B.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                 B.setText(options_SORTED.get(oIDX_F));
-                B.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
+                B.setOnClickListener(new CrashOnClickListener(SearchDialog.this.activity) {
+                    public void onClickImpl(View v) {
                         // Sort assetArrayList in the same way as the options we used so that the index lines up.
                         if(isNames) {
                             Collections.sort(assetArrayList, new Comparator<Asset>() {

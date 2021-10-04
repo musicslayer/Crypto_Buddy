@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONArray;
@@ -89,7 +89,7 @@ public class ADATokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
     }
 }

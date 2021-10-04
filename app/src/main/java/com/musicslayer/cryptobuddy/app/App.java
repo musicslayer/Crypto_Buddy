@@ -6,31 +6,17 @@ import androidx.multidex.MultiDexApplication;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
-import com.musicslayer.cryptobuddy.api.address.AddressAPI;
-import com.musicslayer.cryptobuddy.api.price.PriceAPI;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.network.Network;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.persistence.AddressHistory;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.Review;
-import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.persistence.TokenList;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
+// The code in this class must be especially crash free because we cannot use CrashDialog here.
 public class App extends MultiDexApplication {
     public static boolean isGooglePlayAvailable = true;
+    public static boolean isAppInitialized = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // The code below must be especially crash free because we cannot use CrashDialog here.
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (GooglePlayServicesRepairableException ignored) {
@@ -42,35 +28,9 @@ public class App extends MultiDexApplication {
         try {
             // Needed for older Android versions
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-
-            // Try loading all the persistent data.
-            Settings.loadAllSettings(this);
-            Toast.loadAllToasts(this);
-            Fiat.initialize(this);
-            Coin.initialize(this);
-            Network.initialize(this);
-            AddressAPI.initialize(this);
-            PriceAPI.initialize(this);
-            Purchases.loadAllPurchases(this);
-            PrivacyPolicy.loadAllData(this);
-            Review.loadAllData(this);
-
-            TokenManager.initialize(this); // * Deserializes, but uses a separate system which catches errors.
-            if(!Purchases.isUnlockTokensPurchased) {
-                // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
-                TokenList.resetAllData(this);
-            }
-
-            AddressHistory.loadAllData(this); // * Deserializes
-            AddressPortfolio.loadAllData(this); // * Deserializes
-            TransactionPortfolio.loadAllData(this); // * Deserializes
         }
         catch(Exception e) {
-            try {
-                ExceptionLogger.processException(e);
-            }
-            catch(Exception ignored) {
-            }
+            ThrowableLogger.processThrowable(e);
         }
     }
 }

@@ -18,6 +18,9 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnMenuItemClickListener;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -131,8 +134,8 @@ public class SelectAndSearchView extends LinearLayout {
         B_FIAT = new AppCompatButton(context);
         B_FIAT.setText("FIAT");
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_FIAT.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_FIAT.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 setOptionsFiat();
             }
         });
@@ -147,8 +150,8 @@ public class SelectAndSearchView extends LinearLayout {
         B_COIN = new AppCompatButton(context);
         B_COIN.setText("COIN");
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_COIN.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_COIN.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 setOptionsCoin();
             }
         });
@@ -156,8 +159,8 @@ public class SelectAndSearchView extends LinearLayout {
         B_TOKEN = new AppCompatButton(context);
         B_TOKEN.setText("TOKEN");
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_TOKEN.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_TOKEN.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 // Show list of token types, or tell user there are none.
                 if(TokenManager.getAllTokens().isEmpty()) {
                     Toast.showToast("no_tokens");
@@ -178,8 +181,8 @@ public class SelectAndSearchView extends LinearLayout {
                         popup.getMenu().add(o);
                     }
 
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
+                    popup.setOnMenuItemClickListener(new CrashOnMenuItemClickListener(context) {
+                        public boolean onMenuItemClickImpl(MenuItem item) {
                             // Since we exclude token types with 0 items, we cannot rely on index position.
                             setOptionsToken(item.toString());
                             return true;
@@ -193,9 +196,9 @@ public class SelectAndSearchView extends LinearLayout {
         bsv = new BorderedSpinnerView(context);
 
         searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames());
-        searchAssetDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        searchAssetDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((SearchDialog)dialog).isComplete) {
                     // Just show the one chosen option.
                     setOptionsSearch(((SearchDialog)dialog).user_OPTION);
@@ -207,8 +210,8 @@ public class SelectAndSearchView extends LinearLayout {
         B_SEARCH = new AppCompatButton(context);
         B_SEARCH.setText("");
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
-        B_SEARCH.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_SEARCH.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 searchAssetDialogFragment.show(context, "search");
             }
         });

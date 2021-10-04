@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
 public class AddressPortfolio {
@@ -99,7 +99,7 @@ public class AddressPortfolio {
             }
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return hashMap;

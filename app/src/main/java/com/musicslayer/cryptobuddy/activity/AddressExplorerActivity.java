@@ -16,6 +16,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
@@ -56,12 +59,12 @@ public class AddressExplorerActivity extends BaseActivity {
         setContentView(R.layout.activity_address_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmBackDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    finish();
                     startActivity(new Intent(AddressExplorerActivity.this, MainActivity.class));
+                    finish();
                 }
             }
         });
@@ -84,9 +87,9 @@ public class AddressExplorerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton infoButton = findViewById(R.id.address_explorer_cryptoInfoButton);
-        infoButton.setOnClickListener(new View.OnClickListener() {
+        infoButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Info.showInfo(AddressExplorerActivity.this, addressDataArrayList);
             }
         });
@@ -96,9 +99,9 @@ public class AddressExplorerActivity extends BaseActivity {
         }
 
         ImageButton helpButton = findViewById(R.id.address_explorer_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(AddressExplorerActivity.this, R.raw.help_address_explorer);
             }
         });
@@ -109,32 +112,32 @@ public class AddressExplorerActivity extends BaseActivity {
         table.pageView.updateLayout();
 
         FloatingActionButton fab_info = findViewById(R.id.address_explorer_infoButton);
-        fab_info.setOnClickListener(new View.OnClickListener() {
+        fab_info.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(AddressInfoDialog.class, addressDataArrayList).show(AddressExplorerActivity.this, "info");
             }
         });
 
         FloatingActionButton fab_total = findViewById(R.id.address_explorer_totalButton);
-        fab_total.setOnClickListener(new View.OnClickListener() {
+        fab_total.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(AddressExplorerActivity.this, "total");
             }
         });
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 newAddressData[0] = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
                 TokenManager.saveAll(AddressExplorerActivity.this, "found");
             }
         });
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 newAddressData[0].alertUser();
 
                 addressDataArrayList.clear();
@@ -146,17 +149,17 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.restoreListeners(this, "progress");
 
         FloatingActionButton fab_refresh = findViewById(R.id.address_explorer_refreshButton);
-        fab_refresh.setOnClickListener(new View.OnClickListener() {
+        fab_refresh.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 progressDialogFragment.show(AddressExplorerActivity.this, "progress");
             }
         });
 
         FloatingActionButton fab_qrcode = findViewById(R.id.address_explorer_qrCodeButton);
-        fab_qrcode.setOnClickListener(new View.OnClickListener() {
+        fab_qrcode.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressDataArrayList).show(AddressExplorerActivity.this, "qrcode");
             }
         });

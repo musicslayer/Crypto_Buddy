@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 
 public class ChooseTimeDialog extends BaseDialog {
     public int user_HOUR;
@@ -38,8 +39,8 @@ public class ChooseTimeDialog extends BaseDialog {
         timePickerLinearLayout.addView(timePicker);
 
         Button B_CONFIRM = findViewById(R.id.choose_time_dialog_confirmButton);
-        B_CONFIRM.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CONFIRM.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 isComplete = true;
 
                 // These methods are deprecated, but needed to support older Android versions.
@@ -52,8 +53,8 @@ public class ChooseTimeDialog extends BaseDialog {
         });
 
         Button B_TOGGLE = findViewById(R.id.choose_time_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_TOGGLE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 is24 = !is24;
 
                 // setIs24HourView doesn't perform operations in the correct order, so we need to get/set the time ourselves

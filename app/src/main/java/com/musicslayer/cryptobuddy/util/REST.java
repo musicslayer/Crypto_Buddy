@@ -47,7 +47,7 @@ public class REST {
                 client.close();
             }
 
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return result;
@@ -76,7 +76,7 @@ public class REST {
             result = REST.request(connection);
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return result;
@@ -113,7 +113,7 @@ public class REST {
             result = REST.request(connection);
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return result;
@@ -151,7 +151,7 @@ public class REST {
             result = REST.request(connection);
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
 
         return result;

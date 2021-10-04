@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 
 public class DownloadTokensDialog extends BaseDialog {
     public String tokenString;
@@ -28,9 +29,9 @@ public class DownloadTokensDialog extends BaseDialog {
         toolbar.setTitle("Download " + tokenString + " Tokens");
 
         Button B_FIXED = findViewById(R.id.download_tokens_dialog_fixedButton);
-        B_FIXED.setOnClickListener(new View.OnClickListener() {
+        B_FIXED.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 isFixed = true;
                 isComplete = true;
                 dismiss();
@@ -38,9 +39,9 @@ public class DownloadTokensDialog extends BaseDialog {
         });
 
         Button B_DIRECT = findViewById(R.id.download_tokens_dialog_directButton);
-        B_DIRECT.setOnClickListener(new View.OnClickListener() {
+        B_DIRECT.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 isFixed = false;
                 isComplete = true;
                 dismiss();

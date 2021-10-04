@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -42,12 +44,12 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         setContentView(R.layout.activity_transaction_portfolio_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmBackDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    finish();
                     startActivity(new Intent(TransactionPortfolioExplorerActivity.this, TransactionPortfolioViewerActivity.class));
+                    finish();
                 }
             }
         });
@@ -62,9 +64,9 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         T.setText("Portfolio = " + transactionPortfolioObj.name);
 
         ImageButton helpButton = findViewById(R.id.transaction_portfolio_explorer_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(TransactionPortfolioExplorerActivity.this, R.raw.help_transaction_portfolio_explorer);
             }
         });
@@ -75,9 +77,9 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         table.pageView.updateLayout();
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
-        addTransactionDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        addTransactionDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
                     transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
                     TransactionPortfolio.saveAllData(TransactionPortfolioExplorerActivity.this);
@@ -89,17 +91,17 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         addTransactionDialogFragment.restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_portfolio_explorer_addButton);
-        fab_add.setOnClickListener(new View.OnClickListener() {
+        fab_add.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 addTransactionDialogFragment.show(TransactionPortfolioExplorerActivity.this, "transaction");
             }
         });
 
         FloatingActionButton fab_total = findViewById(R.id.transaction_portfolio_explorer_totalButton);
-        fab_total.setOnClickListener(new View.OnClickListener() {
+        fab_total.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionPortfolioExplorerActivity.this, "total");
             }
         });

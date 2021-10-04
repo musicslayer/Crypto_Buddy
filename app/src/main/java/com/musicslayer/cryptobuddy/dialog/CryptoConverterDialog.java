@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
@@ -49,18 +52,18 @@ public class CryptoConverterDialog extends BaseDialog {
         ssvSecondary.setOptionsCoin();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this.activity) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
                 if(((ProgressDialog)dialog).isCancelled) { return; }
                 priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 // We need two separate branches so the alert Toast shows correctly.
                 if(priceDataPrimary.alertUser()) {
                     T.setText("");
@@ -92,8 +95,8 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.restoreListeners(this.activity, "progress");
 
         Button B_CONVERT = findViewById(R.id.crypto_converter_dialog_convertButton);
-        B_CONVERT.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CONVERT.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 cryptoPrimary = (Crypto)ssvPrimary.getChosenAsset();
                 cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
 
@@ -111,9 +114,9 @@ public class CryptoConverterDialog extends BaseDialog {
         });
 
         FloatingActionButton fab_swap = findViewById(R.id.crypto_converter_dialog_swapButton);
-        fab_swap.setOnClickListener(new View.OnClickListener() {
+        fab_swap.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 SelectAndSearchView.swap(ssvPrimary, ssvSecondary);
             }
         });

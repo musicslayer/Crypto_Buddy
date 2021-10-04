@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 public class CreatePortfolioDialog extends BaseDialog {
@@ -22,11 +23,10 @@ public class CreatePortfolioDialog extends BaseDialog {
         setContentView(R.layout.dialog_create_portfolio);
 
         final PlainTextEditText E = findViewById(R.id.create_portfolio_dialog_editText);
-        //E.test();
 
         Button B_CREATE = findViewById(R.id.create_portfolio_dialog_createButton);
-        B_CREATE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CREATE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 if(E.test()) {
                     user_NAME = E.getText().toString();
 

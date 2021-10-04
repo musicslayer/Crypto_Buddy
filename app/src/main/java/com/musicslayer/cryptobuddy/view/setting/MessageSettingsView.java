@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -41,9 +43,9 @@ public class MessageSettingsView extends LinearLayout {
         prefText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         prefText.setText(settingDescriptions[Settings.getSettingValue(settingName)]);
 
-        bsv.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent){}
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        bsv.spinner.setOnItemSelectedListener(new CrashOnItemSelectedListener(context) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);
                 Settings.setSetting(context, settingName, pos);
                 Toast.loadAllToasts(context);
@@ -54,8 +56,8 @@ public class MessageSettingsView extends LinearLayout {
 
         final AppCompatButton B_MessageTest = new AppCompatButton(context);
         B_MessageTest.setText("Message Test");
-        B_MessageTest.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_MessageTest.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 if(Settings.setting_message == android.widget.Toast.LENGTH_SHORT) {
                     Toast.showToast("setting_message_test_short");
                 }

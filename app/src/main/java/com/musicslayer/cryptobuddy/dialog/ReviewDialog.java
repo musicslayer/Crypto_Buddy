@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 public class ReviewDialog extends BaseDialog {
@@ -30,8 +31,8 @@ public class ReviewDialog extends BaseDialog {
         setContentView(R.layout.dialog_review);
 
         Button B_YES = findViewById(R.id.review_dialog_dialog_yesButton);
-        B_YES.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_YES.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 // This can use Google Play app or the web browser.
                 Intent reviewIntent = new Intent();
                 reviewIntent.setAction(Intent.ACTION_VIEW);
@@ -53,9 +54,9 @@ public class ReviewDialog extends BaseDialog {
         });
 
         Button B_NO = findViewById(R.id.review_dialog_dialog_noButton);
-        B_NO.setOnClickListener(new View.OnClickListener() {
+        B_NO.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 // Either button sets "isComplete" to true. We just want to make sure the user selected something.
                 isComplete = true;
                 dismiss();
@@ -63,9 +64,9 @@ public class ReviewDialog extends BaseDialog {
         });
 
         Button B_LATER = findViewById(R.id.review_dialog_dialog_laterButton);
-        B_LATER.setOnClickListener(new View.OnClickListener() {
+        B_LATER.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 // Either button sets "isComplete" to true. We just want to make sure the user selected something.
                 user_LATER = true;
 

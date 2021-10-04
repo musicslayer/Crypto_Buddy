@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Serialization;
 
@@ -90,9 +91,9 @@ public class ConfirmationView extends LinearLayout {
             B[i] = new AppCompatButton(context);
             B[i].setText(Integer.toString(i));
             B[i].setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
-            B[i].setOnClickListener(new View.OnClickListener() {
+            B[i].setOnClickListener(new CrashOnClickListener(context) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     for(int i = 0; i < numDigits - 1; i++) {
                         lastDigits.set(i, lastDigits.get(i + 1));
                     }
@@ -148,9 +149,9 @@ public class ConfirmationView extends LinearLayout {
         B.setText("Confirm");
         B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
         B.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        B.setOnClickListener(new View.OnClickListener() {
+        B.setOnClickListener(new CrashOnClickListener(context) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 if(confirmationListener != null) {
                     confirmationListener.onConfirmation(ConfirmationView.this);
                 }

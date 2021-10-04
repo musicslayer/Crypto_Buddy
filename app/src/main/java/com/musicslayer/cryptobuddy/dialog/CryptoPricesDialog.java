@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
@@ -37,16 +40,16 @@ public class CryptoPricesDialog extends BaseDialog {
         ssv.setOptionsCoin();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this.activity) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 priceData = PriceData.getPriceData(crypto);
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(priceData.alertUser()) {
                     T.setText("");
                 }
@@ -67,8 +70,8 @@ public class CryptoPricesDialog extends BaseDialog {
         progressDialogFragment.restoreListeners(this.activity, "progress");
 
         Button B = findViewById(R.id.crypto_prices_dialog_button);
-        B.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 crypto = (Crypto)ssv.getChosenAsset();
                 progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");
             }

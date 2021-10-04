@@ -128,7 +128,7 @@ public class Serialization {
             s = obj.serializeToJSON();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
 
@@ -139,7 +139,7 @@ public class Serialization {
             s = o.toStringOrNull();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
 
@@ -156,7 +156,7 @@ public class Serialization {
             version = o.getString(SERIALIZATION_VERSION_MARKER);
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
 
@@ -164,7 +164,7 @@ public class Serialization {
             return Reflect.callStaticMethodOrError(clazzT, "deserializeFromJSON" + version, s);
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -181,7 +181,7 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -201,7 +201,7 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -224,7 +224,7 @@ public class Serialization {
                 .toStringOrNull();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -250,7 +250,7 @@ public class Serialization {
             return hashMap;
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -276,7 +276,7 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -296,7 +296,7 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -329,7 +329,7 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }
@@ -349,7 +349,7 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             throw new IllegalStateException();
         }
     }

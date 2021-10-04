@@ -6,19 +6,20 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
-import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.musicslayer.cryptobuddy.crash.CrashAcknowledgePurchaseResponseListener;
+import com.musicslayer.cryptobuddy.crash.CrashBillingClientStateListener;
+import com.musicslayer.cryptobuddy.crash.CrashConsumeResponseListener;
+import com.musicslayer.cryptobuddy.crash.CrashPurchasesResponseListener;
+import com.musicslayer.cryptobuddy.crash.CrashPurchasesUpdatedListener;
+import com.musicslayer.cryptobuddy.crash.CrashSkuDetailsResponseListener;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.Toast;
 
@@ -30,7 +31,7 @@ import java.util.List;
 
 public class InAppPurchase {
     public static BillingClient billingClient;
-    private static InAppPurchase.InAppPurchaseListener inAppPurchaseListener;
+    public static InAppPurchase.InAppPurchaseListener inAppPurchaseListener;
 
     public static void setInAppPurchaseListener(InAppPurchase.InAppPurchaseListener inAppPurchaseListener) {
         InAppPurchase.inAppPurchaseListener = inAppPurchaseListener;
@@ -38,9 +39,9 @@ public class InAppPurchase {
 
     public static void initialize(Context context) {
         if(billingClient == null || !billingClient.isReady()) {
-            PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
+            PurchasesUpdatedListener purchasesUpdatedListener = new CrashPurchasesUpdatedListener(context) {
                 @Override
-                public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
+                public void onPurchasesUpdatedImpl(BillingResult billingResult, List<Purchase> purchases) {
                     if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         for(Purchase purchase : purchases) {
                             if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
@@ -48,7 +49,7 @@ public class InAppPurchase {
                                     grantPurchase(context, id);
                                 }
 
-                                InAppPurchase.acknowledgeOrConsume(purchase);
+                                InAppPurchase.acknowledgeOrConsume(context, purchase);
                             }
                         }
                     }
@@ -60,16 +61,16 @@ public class InAppPurchase {
                 .enablePendingPurchases()
                 .build();
 
-            billingClient.startConnection(new BillingClientStateListener() {
+            billingClient.startConnection(new CrashBillingClientStateListener(context) {
                 @Override
-                public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+                public void onBillingSetupFinishedImpl(@NonNull BillingResult billingResult) {
                     if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                         InAppPurchase.updateAllPurchases(context);
                     }
                 }
 
                 @Override
-                public void onBillingServiceDisconnected() {
+                public void onBillingServiceDisconnectedImpl() {
                 }
             });
         }
@@ -115,9 +116,9 @@ public class InAppPurchase {
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
 
-        billingClient.querySkuDetailsAsync(params.build(), new SkuDetailsResponseListener() {
+        billingClient.querySkuDetailsAsync(params.build(), new CrashSkuDetailsResponseListener(activity) {
             @Override
-            public void onSkuDetailsResponse(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
+            public void onSkuDetailsResponseImpl(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && skuDetailsList != null && skuDetailsList.size() > 0) {
                     // In the future, we could offer a bundle of skus to the user to purchase all at once, but for now we know that there is only one sku.
                     BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList.get(0)).build();
@@ -130,7 +131,7 @@ public class InAppPurchase {
         });
     }
 
-    public static void acknowledgeOrConsume(Purchase purchase) {
+    public static void acknowledgeOrConsume(Context context, Purchase purchase) {
         // One-time items are just acknowledged.
         // Consumable items will be both consumed and acknowledged so they can be purchased again.
         if(!purchase.isAcknowledged() && purchase.getSkus().size() > 0) {
@@ -138,24 +139,24 @@ public class InAppPurchase {
             // We just need to check the first one to figure out which category it falls in.
             String id = purchase.getSkus().get(0);
             if("remove_ads".equals(id) || "unlock_tokens".equals(id)) {
-                acknowledge(purchase);
+                acknowledge(context, purchase);
             }
             else if("support_developer_1".equals(id) || "support_developer_2".equals(id) || "support_developer_3".equals(id)) {
-                consume(purchase);
+                consume(context, purchase);
             }
         }
     }
 
-    public static void acknowledge(Purchase purchase) {
+    public static void acknowledge(Context context, Purchase purchase) {
         AcknowledgePurchaseParams acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                 .setPurchaseToken(purchase.getPurchaseToken())
                 .build();
 
         final String toastKey = purchase.getSkus().get(0);
 
-        billingClient.acknowledgePurchase(acknowledgePurchaseParams, new AcknowledgePurchaseResponseListener() {
+        billingClient.acknowledgePurchase(acknowledgePurchaseParams, new CrashAcknowledgePurchaseResponseListener(context) {
             @Override
-            public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
+            public void onAcknowledgePurchaseResponseImpl(@NonNull BillingResult billingResult) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     Toast.showToast(toastKey + "_purchase");
                 }
@@ -166,16 +167,16 @@ public class InAppPurchase {
         });
     }
 
-    public static void consume(Purchase purchase) {
+    public static void consume(Context context, Purchase purchase) {
         ConsumeParams consumeParams =
             ConsumeParams.newBuilder()
             .setPurchaseToken(purchase.getPurchaseToken())
             .build();
 
         // This will also do an implicit acknowledgement.
-        billingClient.consumeAsync(consumeParams, new ConsumeResponseListener() {
+        billingClient.consumeAsync(consumeParams, new CrashConsumeResponseListener(context) {
             @Override
-            public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
+            public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
                 if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     Toast.showToast("support_developers_purchase");
                 }
@@ -193,9 +194,9 @@ public class InAppPurchase {
 
         Toast.showToast("refund_purchases");
 
-        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
+        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
             @Override
-            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
+            public void onQueryPurchasesResponseImpl(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     for(Purchase purchase : purchases) {
                         for(String id : purchase.getSkus()) {
@@ -204,9 +205,9 @@ public class InAppPurchase {
 
                         ConsumeParams.Builder params = ConsumeParams.newBuilder();
                         params.setPurchaseToken(purchase.getPurchaseToken());
-                        billingClient.consumeAsync(params.build(), new ConsumeResponseListener() {
+                        billingClient.consumeAsync(params.build(), new CrashConsumeResponseListener(context) {
                             @Override
-                            public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
+                            public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
                                 Toast.showToast("refund_purchase_complete");
                             }
                         });
@@ -251,9 +252,9 @@ public class InAppPurchase {
             return;
         }
 
-        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
+        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
             @Override
-            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
+            public void onQueryPurchasesResponseImpl(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     HashMap<String, Integer> productMap = getProductMap();
                     ArrayList<Purchase> toAcknowledgeList = new ArrayList<>();
@@ -285,7 +286,7 @@ public class InAppPurchase {
                     }
 
                     for(Purchase purchase : toAcknowledgeList) {
-                        InAppPurchase.acknowledgeOrConsume(purchase);
+                        InAppPurchase.acknowledgeOrConsume(context, purchase);
                     }
                 }
             }

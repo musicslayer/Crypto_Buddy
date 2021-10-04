@@ -10,6 +10,8 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
@@ -30,9 +32,9 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
         T_Reset.setText("Delete all found tokens from the app's database.");
 
         BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "Found", "");
-        confirmDeleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     TokenList.resetFoundTokens(context);
                     TokenManager.resetAllFoundTokens();
@@ -46,8 +48,8 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
         B_DELETE.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         B_DELETE.setText("Delete All Found Tokens");
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
-        B_DELETE.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_DELETE.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 confirmDeleteTokensDialogFragment.show(context, "delete");
             }
         });

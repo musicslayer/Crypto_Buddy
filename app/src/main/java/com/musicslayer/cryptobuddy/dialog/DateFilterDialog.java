@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.filter.DateFilter;
 import com.musicslayer.cryptobuddy.util.DateTime;
 
@@ -37,16 +39,16 @@ public class DateFilterDialog extends BaseDialog {
         setContentView(R.layout.dialog_date_filter);
 
         Button B_FILTER = findViewById(R.id.date_filter_dialog_applyFilterButton);
-        B_FILTER.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_FILTER.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 isComplete = true;
                 dismiss();
             }
         });
 
         Button B_CLEAR = findViewById(R.id.date_filter_dialog_clearDatesButton);
-        B_CLEAR.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CLEAR.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 filter.user_startDate = null;
                 filter.user_endDate = null;
                 updateLayout();
@@ -54,9 +56,9 @@ public class DateFilterDialog extends BaseDialog {
         });
 
         BaseDialogFragment chooseStartDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
-        chooseStartDateDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseStartDateDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
                     int year  = ((ChooseDateDialog) dialog).user_YEAR;
                     int month = ((ChooseDateDialog) dialog).user_MONTH;
@@ -74,16 +76,16 @@ public class DateFilterDialog extends BaseDialog {
         chooseStartDateDialogFragment.restoreListeners(this.activity, "start_date");
 
         Button B_START_DATE = findViewById(R.id.date_filter_dialog_startDateButton);
-        B_START_DATE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_START_DATE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseStartDateDialogFragment.show(DateFilterDialog.this.activity, "start_date");
             }
         });
 
         BaseDialogFragment chooseStartTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
-        chooseStartTimeDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseStartTimeDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
                     int hour = ((ChooseTimeDialog) dialog).user_HOUR;
                     int minute = ((ChooseTimeDialog) dialog).user_MINUTE;
@@ -101,16 +103,16 @@ public class DateFilterDialog extends BaseDialog {
         chooseStartTimeDialogFragment.restoreListeners(this.activity, "start_time");
 
         Button B_START_TIME = findViewById(R.id.date_filter_dialog_startTimeButton);
-        B_START_TIME.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_START_TIME.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseStartTimeDialogFragment.show(DateFilterDialog.this.activity, "start_time");
             }
         });
 
         BaseDialogFragment chooseEndDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
-        chooseEndDateDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseEndDateDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
                     int year  = ((ChooseDateDialog) dialog).user_YEAR;
                     int month = ((ChooseDateDialog) dialog).user_MONTH;
@@ -128,16 +130,16 @@ public class DateFilterDialog extends BaseDialog {
         chooseEndDateDialogFragment.restoreListeners(this.activity, "end_date");
 
         Button B_END_DATE = findViewById(R.id.date_filter_dialog_endDateButton);
-        B_END_DATE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_END_DATE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseEndDateDialogFragment.show(DateFilterDialog.this.activity, "end_date");
             }
         });
 
         BaseDialogFragment chooseEndTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
-        chooseEndTimeDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseEndTimeDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
                     int hour = ((ChooseTimeDialog) dialog).user_HOUR;
                     int minute = ((ChooseTimeDialog) dialog).user_MINUTE;
@@ -155,8 +157,8 @@ public class DateFilterDialog extends BaseDialog {
         chooseEndTimeDialogFragment.restoreListeners(this.activity, "end_time");
 
         Button B_END_TIME = findViewById(R.id.date_filter_dialog_endTimeButton);
-        B_END_TIME.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_END_TIME.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseEndTimeDialogFragment.show(DateFilterDialog.this.activity, "end_time");
             }
         });

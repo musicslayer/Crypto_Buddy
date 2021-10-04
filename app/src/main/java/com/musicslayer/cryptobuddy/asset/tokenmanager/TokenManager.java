@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.File;
 import com.musicslayer.cryptobuddy.util.REST;
 import com.musicslayer.cryptobuddy.util.Reflect;
@@ -406,7 +406,7 @@ abstract public class TokenManager {
         }
         catch(Exception e) {
             // If there is any problem at all, just wipe everything clean.
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
             resetDownloadedTokens();
             resetFoundTokens();
             resetCustomTokens();
@@ -457,7 +457,7 @@ abstract public class TokenManager {
             }
         }
         catch(Exception e) {
-            ExceptionLogger.processException(e);
+            ThrowableLogger.processThrowable(e);
         }
     }
 }

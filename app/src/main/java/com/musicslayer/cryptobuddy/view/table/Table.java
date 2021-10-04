@@ -17,6 +17,8 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 abstract public class Table extends TableLayout {
     abstract public BaseRow getRow(Context context, Transaction transaction);
 
+    // TODO We shouldn't need to store this...?
     Context context;
 
     // Number of rows before the user input.
@@ -181,9 +184,9 @@ abstract public class Table extends TableLayout {
                     t[i].setText(filterArrayList.get(i).getIncludedString());
 
                     BaseDialogFragment filterDialogFragment = f.getGenericDialogFragment();
-                    filterDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    filterDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
                         @Override
-                        public void onDismiss(DialogInterface dialog) {
+                        public void onDismissImpl(DialogInterface dialog) {
                             if(((BaseDialog)dialog).isComplete) {
                                 filterTable();
                                 t[ii].setText(filterArrayList.get(ii).getIncludedString());
@@ -193,9 +196,9 @@ abstract public class Table extends TableLayout {
                     });
                     filterDialogFragment.restoreListeners(context, "filter" + ii);
 
-                    b[i].setOnClickListener(new View.OnClickListener() {
+                    b[i].setOnClickListener(new CrashOnClickListener(context) {
                         @Override
-                        public void onClick(View view) {
+                        public void onClickImpl(View view) {
                             filterDialogFragment.show(context, "filter" + ii);
                         }
                     });
@@ -223,9 +226,9 @@ abstract public class Table extends TableLayout {
                 b[i].setText("Sort");
                 b[i].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, sortIcons[sortState.get(i)], 0);
 
-                b[i].setOnClickListener(new View.OnClickListener() {
+                b[i].setOnClickListener(new CrashOnClickListener(context) {
                     @Override
-                    public void onClick(View view) {
+                    public void onClickImpl(View view) {
                         sortingColumn = ii;
 
                         for(int j = 0; j < numColumns; j++) {
@@ -462,9 +465,9 @@ abstract public class Table extends TableLayout {
         public void makeLayout(Context context) {
             fab_first = new FloatingActionButton(context);
             fab_first.setImageResource(R.drawable.ic_baseline_first_page_24);
-            fab_first.setOnClickListener(new View.OnClickListener() {
+            fab_first.setOnClickListener(new CrashOnClickListener(context) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     if(currentPage != 1) {
                         currentPage = 1;
                         updateLayout();
@@ -475,9 +478,9 @@ abstract public class Table extends TableLayout {
 
             fab_left = new FloatingActionButton(context);
             fab_left.setImageResource(R.drawable.ic_baseline_chevron_left_24);
-            fab_left.setOnClickListener(new View.OnClickListener() {
+            fab_left.setOnClickListener(new CrashOnClickListener(context) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     if(currentPage > 1) {
                         currentPage--;
                         updateLayout();
@@ -492,9 +495,9 @@ abstract public class Table extends TableLayout {
 
             fab_right = new FloatingActionButton(context);
             fab_right.setImageResource(R.drawable.ic_baseline_chevron_right_24);
-            fab_right.setOnClickListener(new View.OnClickListener() {
+            fab_right.setOnClickListener(new CrashOnClickListener(context) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     if(currentPage < lastPage) {
                         currentPage++;
                         updateLayout();
@@ -505,9 +508,9 @@ abstract public class Table extends TableLayout {
 
             fab_last = new FloatingActionButton(context);
             fab_last.setImageResource(R.drawable.ic_baseline_last_page_24);
-            fab_last.setOnClickListener(new View.OnClickListener() {
+            fab_last.setOnClickListener(new CrashOnClickListener(context) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     if(currentPage != lastPage) {
                         currentPage = lastPage;
                         updateLayout();

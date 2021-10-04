@@ -27,8 +27,8 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     @Override

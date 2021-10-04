@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -74,9 +77,9 @@ public class AddTransactionDialog extends BaseDialog {
         T_DATE_CHOICE.setText(nowString);
 
         BaseDialogFragment chooseDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
-        chooseDateDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseDateDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
                     int year  = ((ChooseDateDialog) dialog).user_YEAR;
                     int month = ((ChooseDateDialog) dialog).user_MONTH;
@@ -97,16 +100,16 @@ public class AddTransactionDialog extends BaseDialog {
         chooseDateDialogFragment.restoreListeners(this.activity, "date");
 
         Button B_CHOOSEDATE = findViewById(R.id.add_transaction_dialog_chooseDateButton);
-        B_CHOOSEDATE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CHOOSEDATE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseDateDialogFragment.show(AddTransactionDialog.this.activity, "date");
             }
         });
 
         BaseDialogFragment chooseTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
-        chooseTimeDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseTimeDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
                     int hour = ((ChooseTimeDialog) dialog).user_HOUR;
                     int minute = ((ChooseTimeDialog) dialog).user_MINUTE;
@@ -126,8 +129,8 @@ public class AddTransactionDialog extends BaseDialog {
         chooseTimeDialogFragment.restoreListeners(this.activity, "time");
 
         Button B_CHOOSETIME = findViewById(R.id.add_transaction_dialog_chooseTimeButton);
-        B_CHOOSETIME.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CHOOSETIME.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 chooseTimeDialogFragment.show(AddTransactionDialog.this.activity, "time");
             }
         });
@@ -155,8 +158,8 @@ public class AddTransactionDialog extends BaseDialog {
         RadioButton[] rb = new RadioButton[3];
 
         rb[0] = findViewById(R.id.add_transaction_dialog_radioButton1);
-        rb[0].setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        rb[0].setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.INVISIBLE);
                 B_CHOOSETIME.setVisibility(View.INVISIBLE);
                 T_DATE_CHOICE.setText(nowString);
@@ -167,8 +170,8 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         rb[1] = findViewById(R.id.add_transaction_dialog_radioButton2);
-        rb[1].setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        rb[1].setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.VISIBLE);
                 B_CHOOSETIME.setVisibility(View.VISIBLE);
                 T_DATE_CHOICE.setText(LASTCUSTOMDATE_TEXT);
@@ -179,8 +182,8 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         rb[2] = findViewById(R.id.add_transaction_dialog_radioButton3);
-        rb[2].setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        rb[2].setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.INVISIBLE);
                 B_CHOOSETIME.setVisibility(View.INVISIBLE);
                 T_DATE_CHOICE.setText("-");
@@ -194,8 +197,8 @@ public class AddTransactionDialog extends BaseDialog {
         rb[LAST_CHECK].callOnClick();
 
         Button B_CONFIRM = findViewById(R.id.add_transaction_dialog_confirmButton);
-        B_CONFIRM.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B_CONFIRM.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 Action action = new Action(Action.actions.get(bsv_action.spinner.getSelectedItemPosition()));
 
                 // Don't short circuit - we want to test everything.
@@ -233,9 +236,9 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         FloatingActionButton fab_swap = findViewById(R.id.add_transaction_dialog_swapButton);
-        fab_swap.setOnClickListener(new View.OnClickListener() {
+        fab_swap.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 SelectAndSearchView.swap(ssvPrimary, ssvSecondary);
 
                 String textPrimary = E_PRIMARYASSET.getText().toString();
@@ -246,9 +249,9 @@ public class AddTransactionDialog extends BaseDialog {
             }
         });
 
-        bsv_action.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent){}
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        bsv_action.setOnItemSelectedListener(new CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 if(pos == 0 || pos == 1) {
                     T.setVisibility(View.VISIBLE);
                     E_SECONDARYASSET.setVisibility(View.VISIBLE);

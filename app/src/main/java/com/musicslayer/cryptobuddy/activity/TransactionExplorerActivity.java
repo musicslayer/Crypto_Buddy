@@ -11,6 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetTableDialog;
@@ -38,12 +40,12 @@ public class TransactionExplorerActivity extends BaseActivity {
         setContentView(R.layout.activity_transaction_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmBackDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    finish();
                     startActivity(new Intent(TransactionExplorerActivity.this, MainActivity.class));
+                    finish();
                 }
             }
         });
@@ -53,9 +55,9 @@ public class TransactionExplorerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.transaction_explorer_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(TransactionExplorerActivity.this, R.raw.help_transaction_explorer);
             }
         });
@@ -66,9 +68,9 @@ public class TransactionExplorerActivity extends BaseActivity {
         table.pageView.updateLayout();
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
-        addTransactionDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        addTransactionDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
                     table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
                 }
@@ -77,25 +79,25 @@ public class TransactionExplorerActivity extends BaseActivity {
         addTransactionDialogFragment.restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_explorer_addButton);
-        fab_add.setOnClickListener(new View.OnClickListener() {
+        fab_add.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 addTransactionDialogFragment.show(TransactionExplorerActivity.this, "transaction");
             }
         });
 
         FloatingActionButton fab_total = findViewById(R.id.transaction_explorer_totalButton);
-        fab_total.setOnClickListener(new View.OnClickListener() {
+        fab_total.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionExplorerActivity.this, "total");
             }
         });
 
         BaseDialogFragment confirmResetTableDialogFragment = BaseDialogFragment.newInstance(ConfirmResetTableDialog.class);
-        confirmResetTableDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmResetTableDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetTableDialog)dialog).isComplete) {
                     table.resetTable();
                 }
@@ -104,9 +106,9 @@ public class TransactionExplorerActivity extends BaseActivity {
         confirmResetTableDialogFragment.restoreListeners(this, "reset");
 
         FloatingActionButton fab_reset = findViewById(R.id.transaction_explorer_resetButton);
-        fab_reset.setOnClickListener(new View.OnClickListener() {
+        fab_reset.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 confirmResetTableDialogFragment.show(TransactionExplorerActivity.this, "reset");
             }
         });

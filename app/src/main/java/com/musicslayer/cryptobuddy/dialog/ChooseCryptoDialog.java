@@ -7,6 +7,7 @@ import android.widget.Button;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.network.Network;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
@@ -50,8 +51,8 @@ public class ChooseCryptoDialog extends BaseDialog {
         bsv.setOptions(options);
 
         Button B = findViewById(R.id.choose_crypto_dialog_button);
-        B.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        B.setOnClickListener(new CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
                 user_CRYPTOADDRESS = sortedCryptoAddressArrayList.get(bsv.spinner.getSelectedItemPosition());
 
                 isComplete = true;

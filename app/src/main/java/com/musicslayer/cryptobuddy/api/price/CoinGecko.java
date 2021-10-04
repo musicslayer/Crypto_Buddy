@@ -5,7 +5,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.REST;
 
 import org.json.JSONObject;
@@ -78,7 +78,7 @@ public class CoinGecko extends PriceAPI {
                 price = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
-                ExceptionLogger.processException(e);
+                ThrowableLogger.processThrowable(e);
             }
         }
 
@@ -108,7 +108,7 @@ public class CoinGecko extends PriceAPI {
                 marketCap = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
-                ExceptionLogger.processException(e);
+                ThrowableLogger.processThrowable(e);
             }
         }
 

@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.persistence;
 
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
 import java.util.ArrayList;
@@ -45,10 +45,10 @@ public class Persistence {
                     noInfoMap.put("!ERROR!", "!NO_INFO!");
                     allDataMap.put(key, noInfoMap);
 
-                    ExceptionLogger.processException(e);
+                    ThrowableLogger.processThrowable(e);
 
                     HashMap<String, String> errorMap = new HashMap<>();
-                    errorMap.put("!ERROR!", ExceptionLogger.getExceptionText(e));
+                    errorMap.put("!ERROR!", ThrowableLogger.getThrowableText(e));
                     allDataMap.put(key, errorMap);
                 }
                 catch(Exception ignored) {
@@ -72,7 +72,7 @@ public class Persistence {
                 Reflect.callResetAllData(value, context);
             }
             catch(Exception e) {
-                ExceptionLogger.processException(e);
+                ThrowableLogger.processThrowable(e);
             }
         }
     }

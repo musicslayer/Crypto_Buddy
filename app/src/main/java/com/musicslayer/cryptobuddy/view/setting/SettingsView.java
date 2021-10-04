@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
@@ -39,9 +40,9 @@ public class SettingsView extends LinearLayout {
         prefText.setText(settingDescriptions[Settings.getSettingValue(settingName)]);
 
 
-        bsv.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent){}
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        bsv.spinner.setOnItemSelectedListener(new CrashOnItemSelectedListener(context) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);
                 Settings.setSetting(context, settingName, pos);
             }

@@ -16,6 +16,9 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
@@ -67,48 +70,46 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.main_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(MainActivity.this, R.raw.help_main);
             }
         });
 
         Button B_TRANSACTION_EXPLORER = findViewById(R.id.main_transactionExplorerButton);
-        B_TRANSACTION_EXPLORER.setOnClickListener(new View.OnClickListener() {
+        B_TRANSACTION_EXPLORER.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
-                MainActivity.this.finish();
-
+            public void onClickImpl(View view) {
                 Intent intent = new Intent(MainActivity.this, TransactionExplorerActivity.class);
                 MainActivity.this.startActivity(intent);
+
+                MainActivity.this.finish();
             }
         });
 
         Button B_TRANSACTION_PORTFOLIO = findViewById(R.id.main_transactionPortfolioViewerButton);
-        B_TRANSACTION_PORTFOLIO.setOnClickListener(new View.OnClickListener() {
+        B_TRANSACTION_PORTFOLIO.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
-                finish();
+            public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, TransactionPortfolioViewerActivity.class));
+                finish();
             }
         });
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
                 TokenManager.saveAll(MainActivity.this, "found");
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 addressData[0].alertUser();
-
-                MainActivity.this.finish();
 
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
 
@@ -116,14 +117,16 @@ public class MainActivity extends BaseActivity {
                 //intent.putExtra("AddressData", addressData[0]);
                 intent.putExtra("AddressData", Serialization.serialize(addressData[0]));
                 MainActivity.this.startActivity(intent);
+
+                MainActivity.this.finish();
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
-        chooseAddressDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        chooseAddressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
                     cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
@@ -134,54 +137,54 @@ public class MainActivity extends BaseActivity {
         chooseAddressDialogFragment.restoreListeners(this, "address");
 
         Button B_ADDRESS_EXPLORER = findViewById(R.id.main_addressExplorerButton);
-        B_ADDRESS_EXPLORER.setOnClickListener(new View.OnClickListener() {
+        B_ADDRESS_EXPLORER.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 chooseAddressDialogFragment.show(MainActivity.this, "address");
             }
         });
 
         Button B_ADDRESS_PORTFOLIO = findViewById(R.id.main_addressPortfolioViewerButton);
-        B_ADDRESS_PORTFOLIO.setOnClickListener(new View.OnClickListener() {
+        B_ADDRESS_PORTFOLIO.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
-                finish();
+            public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, AddressPortfolioViewerActivity.class));
+                finish();
             }
         });
 
         Button bCryptoPrices = findViewById(R.id.main_cryptoPricesButton);
-        bCryptoPrices.setOnClickListener(new View.OnClickListener() {
+        bCryptoPrices.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(MainActivity.this, "price");
             }
         });
 
         Button bCryptoPriceConverter = findViewById(R.id.main_cryptoConverterButton);
-        bCryptoPriceConverter.setOnClickListener(new View.OnClickListener() {
+        bCryptoPriceConverter.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(MainActivity.this, "converter");
             }
         });
 
         Button B_INAPP = findViewById(R.id.main_inAppPurchasesButton);
-        B_INAPP.setOnClickListener(new View.OnClickListener() {
+        B_INAPP.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
-                finish();
+            public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
+                finish();
             }
         });
 
         Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
-        B_TokenManager.setOnClickListener(new View.OnClickListener() {
+        B_TokenManager.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 if(Purchases.isUnlockTokensPurchased) {
-                    finish();
                     startActivity(new Intent(MainActivity.this, TokenManagerActivity.class));
+                    finish();
                 }
                 else {
                     Toast.showToast("unlock_tokens_required");
@@ -193,9 +196,9 @@ public class MainActivity extends BaseActivity {
         Button B_REFUND = findViewById(R.id.main_refundButton);
         //B_REFUND.setVisibility(View.GONE);
 
-        B_REFUND.setOnClickListener(new View.OnClickListener() {
+        B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 InAppPurchase.refund(getApplicationContext());
             }
         });
@@ -204,9 +207,9 @@ public class MainActivity extends BaseActivity {
     public void checkPrivacyPolicy() {
         if(!PrivacyPolicy.settings_privacy_policy) {
             BaseDialogFragment privacyPolicyDialogFragment = BaseDialogFragment.newInstance(PrivacyPolicyDialog.class);
-            privacyPolicyDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            privacyPolicyDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
                 @Override
-                public void onDismiss(DialogInterface dialog) {
+                public void onDismissImpl(DialogInterface dialog) {
                     if(((PrivacyPolicyDialog)dialog).isComplete) {
                         finish();
                     }
@@ -224,9 +227,9 @@ public class MainActivity extends BaseActivity {
         // Check after 5 Days, and the user must have already agreed to the Privacy Policy
         if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
             BaseDialogFragment reviewDialogFragment = BaseDialogFragment.newInstance(ReviewDialog.class);
-            reviewDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            reviewDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
                 @Override
-                public void onDismiss(DialogInterface dialog) {
+                public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {
                         if(((ReviewDialog)dialog).user_LATER) {
                             Review.setReviewTime(MainActivity.this);
@@ -259,13 +262,13 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == 1) {
-            finish();
             startActivity(new Intent(MainActivity.this, AboutActivity.class));
+            finish();
             return true;
         }
         else if (id == 2) {
-            finish();
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            finish();
             return true;
         }
         else if (id == 3) {

@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteAllPortfoliosDialog extends BaseDialog {
@@ -29,9 +30,9 @@ public class ConfirmDeleteAllPortfoliosDialog extends BaseDialog {
         });
 
         Button B_CANCEL = findViewById(R.id.confirm_delete_all_portfolios_dialog_cancelButton);
-        B_CANCEL.setOnClickListener(new View.OnClickListener() {
+        B_CANCEL.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 dismiss();
             }
         });

@@ -14,6 +14,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
@@ -31,8 +33,8 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     public void createLayout () {
@@ -42,19 +44,17 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.transaction_portfolio_viewer_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(TransactionPortfolioViewerActivity.this, R.raw.help_transaction_portfolio_viewer);
             }
         });
 
-        TableLayout table = findViewById(R.id.choose_history_dialog_tableLayout);
-
         BaseDialogFragment createPortfolioDialogFragment = BaseDialogFragment.newInstance(CreatePortfolioDialog.class);
-        createPortfolioDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        createPortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((CreatePortfolioDialog)dialog).isComplete) {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
@@ -71,9 +71,9 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         createPortfolioDialogFragment.restoreListeners(this, "create");
 
         Button bCreate = findViewById(R.id.transaction_portfolio_viewer_addButton);
-        bCreate.setOnClickListener(new View.OnClickListener() {
+        bCreate.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 createPortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "create");
             }
         });
@@ -86,9 +86,9 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         table.removeAllViews();
 
         BaseDialogFragment confirmDeletePortfolioDialogFragment = BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class);
-        confirmDeletePortfolioDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
                     TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, TransactionPortfolio.getFromName(currentDeletePortfolioName));
                     updateLayout();
@@ -102,23 +102,23 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             AppCompatButton B = new AppCompatButton(TransactionPortfolioViewerActivity.this);
             B.setText(transactionPortfolioObj.name);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
-            B.setOnClickListener(new View.OnClickListener() {
+            B.setOnClickListener(new CrashOnClickListener(this) {
                 @Override
-                public void onClick(View view) {
-                    finish();
-
+                public void onClickImpl(View view) {
                     Intent intent = new Intent(TransactionPortfolioViewerActivity.this, TransactionPortfolioExplorerActivity.class);
                     intent.putExtra("TransactionPortfolioName",  transactionPortfolioObj.name);
                     TransactionPortfolioViewerActivity.this.startActivity(intent);
+
+                    finish();
                 }
             });
 
             AppCompatButton B_DELETE = new AppCompatButton(TransactionPortfolioViewerActivity.this);
             B_DELETE.setText("Delete");
             B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-            B_DELETE.setOnClickListener(new View.OnClickListener() {
+            B_DELETE.setOnClickListener(new CrashOnClickListener(this) {
                 @Override
-                public void onClick(View view) {
+                public void onClickImpl(View view) {
                     currentDeletePortfolioName = transactionPortfolioObj.name;
                     confirmDeletePortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "delete");
                 }

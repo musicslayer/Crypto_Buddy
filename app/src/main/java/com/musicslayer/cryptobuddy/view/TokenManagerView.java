@@ -12,6 +12,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -44,39 +47,39 @@ public class TokenManagerView extends TableRow {
         T = new TextView(context);
 
         ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressFixedDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressFixedDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 queryTokensFixed(context);
             }
         });
-        progressFixedDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressFixedDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 updateTokensFixed(context);
             }
         });
         progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
 
         ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDirectDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDirectDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 queryTokensDirect(context);
             }
         });
-        progressDirectDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDirectDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 updateTokensDirect(context);
             }
         });
         progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), "");
-        confirmDeleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     String choice = ((ConfirmDeleteTokensDialog)dialog).choice;
                     if("downloaded".equals(choice)) {
@@ -100,9 +103,9 @@ public class TokenManagerView extends TableRow {
         confirmDeleteTokensDialogFragment.restoreListeners(context, "confirm_delete_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment deleteTokensDialogFragment = BaseDialogFragment.newInstance(DeleteTokensDialog.class, tokenManager.getTokenType(), tokenManager.canGetJSON());
-        deleteTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        deleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteTokensDialog)dialog).isComplete) {
                     confirmDeleteTokensDialogFragment.updateArguments(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), ((DeleteTokensDialog)dialog).user_CHOICE);
                     confirmDeleteTokensDialogFragment.show(context, "confirm_delete_" + tokenManager.getSettingsKey());
@@ -114,16 +117,16 @@ public class TokenManagerView extends TableRow {
         B_DELETE = new AppCompatButton(context);
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
         B_DELETE.setText("Delete");
-        B_DELETE.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_DELETE.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 deleteTokensDialogFragment.show(context, "delete_" + tokenManager.getSettingsKey());
             }
         });
 
         BaseDialogFragment downloadTokensDialogFragment = BaseDialogFragment.newInstance(DownloadTokensDialog.class, tokenManager.getTokenType());
-        downloadTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        downloadTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((DownloadTokensDialog)dialog).isComplete) {
                     if(((DownloadTokensDialog)dialog).isFixed) {
                         progressFixedDialogFragment.show(context, "progress_fixed_" + tokenManager.getSettingsKey());
@@ -139,8 +142,8 @@ public class TokenManagerView extends TableRow {
         B_DOWNLOAD = new AppCompatButton(context);
         B_DOWNLOAD.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_download_24, 0, 0, 0);
         B_DOWNLOAD.setText("Download");
-        B_DOWNLOAD.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        B_DOWNLOAD.setOnClickListener(new CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
                 downloadTokensDialogFragment.show(context, "download_" + tokenManager.getSettingsKey());
             }
         });

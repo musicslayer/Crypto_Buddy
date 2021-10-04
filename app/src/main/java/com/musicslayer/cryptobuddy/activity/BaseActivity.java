@@ -7,13 +7,14 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdView;
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.dialog.CrashDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.Appearance;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
 abstract public class BaseActivity extends AppCompatActivity {
     abstract public void createLayout();
@@ -24,26 +25,24 @@ abstract public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         try {
-            Appearance.setAppearance(this);
+            if(App.isAppInitialized) {
+                Appearance.setAppearance(this);
 
-            InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
-                @Override
-                public void onInAppPurchase() {
-                }
-            });
+                InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
+                    @Override
+                    public void onInAppPurchase() {
+                    }
+                });
 
-            // Keep trying in every activity if the first call during initialization was not successful.
-            InAppPurchase.initialize(getApplicationContext());
+                // Keep trying in every activity if the first call during initialization was not successful.
+                InAppPurchase.initialize(getApplicationContext());
+            }
 
             createLayout();
             adjustActivity();
         }
         catch(Exception e) {
-            try {
-                ExceptionLogger.processException(e);
-            }
-            catch(Exception ignored) {
-            }
+            ThrowableLogger.processThrowable(e);
 
             // In activities, create CrashDialog now while the FragmentManager is still valid.
             CrashDialogFragment.newInstance(CrashDialog.class, e).show(this, "crash");

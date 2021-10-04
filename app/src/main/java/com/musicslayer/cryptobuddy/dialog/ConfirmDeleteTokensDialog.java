@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteTokensDialog extends BaseDialog {
@@ -41,9 +42,9 @@ public class ConfirmDeleteTokensDialog extends BaseDialog {
         });
 
         Button B_CANCEL = findViewById(R.id.confirm_delete_tokens_dialog_cancelButton);
-        B_CANCEL.setOnClickListener(new View.OnClickListener() {
+        B_CANCEL.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
-            public void onClick(View v) {
+            public void onClickImpl(View v) {
                 dismiss();
             }
         });

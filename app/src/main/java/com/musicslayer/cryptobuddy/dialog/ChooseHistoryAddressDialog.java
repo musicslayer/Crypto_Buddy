@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 
@@ -33,8 +34,8 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
         for(AddressHistoryObj a : AddressHistory.settings_address_history) {
             AppCompatButton B = new AppCompatButton(this.activity);
             B.setText(a.toString());
-            B.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+            B.setOnClickListener(new CrashOnClickListener(this.activity) {
+                public void onClickImpl(View v) {
                     AddressHistory.addAddress(ChooseHistoryAddressDialog.this.activity, a);
                     user_CRYPTOADDRESS = a.cryptoAddress;
 

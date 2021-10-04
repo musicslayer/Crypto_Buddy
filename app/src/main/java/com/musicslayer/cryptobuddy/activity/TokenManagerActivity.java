@@ -9,12 +9,15 @@ import android.widget.TableLayout;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
 import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.ExceptionLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Help;
 import com.musicslayer.cryptobuddy.util.REST;
 import com.musicslayer.cryptobuddy.view.TokenManagerView;
@@ -34,17 +37,17 @@ public class TokenManagerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     public void createLayout () {
         setContentView(R.layout.activity_token_manager);
 
         ImageButton helpButton = findViewById(R.id.token_manager_helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 Help.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
             }
         });
@@ -70,9 +73,9 @@ public class TokenManagerActivity extends BaseActivity {
         }
 
         BaseDialogFragment addCustomTokenDialogFragment = BaseDialogFragment.newInstance(AddCustomTokenDialog.class);
-        addCustomTokenDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        addCustomTokenDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((AddCustomTokenDialog)dialog).isComplete) {
                     // We don't know which view was changed, so just update all of them.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
@@ -84,30 +87,30 @@ public class TokenManagerActivity extends BaseActivity {
         addCustomTokenDialogFragment.restoreListeners(this, "add_custom_token");
 
         Button B_CustomToken = findViewById(R.id.token_manager_customTokenButton);
-        B_CustomToken.setOnClickListener(new View.OnClickListener() {
+        B_CustomToken.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 addCustomTokenDialogFragment.show(TokenManagerActivity.this, "add_custom_token");
             }
         });
 
         ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressFixedDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressFixedDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 tokenAllJSON = REST.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
             }
         });
-        progressFixedDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressFixedDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(tokenAllJSON != null) {
                     JSONObject tokenAllJSONObject;
                     try {
                         tokenAllJSONObject = new JSONObject(tokenAllJSON);
                     }
                     catch(Exception e) {
-                        ExceptionLogger.processException(e);
+                        ThrowableLogger.processThrowable(e);
                         return;
                     }
 
@@ -124,7 +127,7 @@ public class TokenManagerActivity extends BaseActivity {
                             tokenTypeJSON = tokenAllJSONObject.getJSONObject(settingsKey);
                         }
                         catch(Exception e) {
-                            ExceptionLogger.processException(e);
+                            ThrowableLogger.processThrowable(e);
                             continue;
                         }
 
@@ -137,17 +140,17 @@ public class TokenManagerActivity extends BaseActivity {
         progressFixedDialogFragment.restoreListeners(this, "progress_fixed");
 
         ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDirectDialogFragment.setOnShowListener(new DialogInterface.OnShowListener() {
+        progressDirectDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
-            public void onShow(DialogInterface dialog) {
+            public void onShowImpl(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                     tokenManagerView.queryTokensDirect(TokenManagerActivity.this);
                 }
             }
         });
-        progressDirectDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        progressDirectDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                     tokenManagerView.updateTokensDirect(TokenManagerActivity.this);
                 }
@@ -156,9 +159,9 @@ public class TokenManagerActivity extends BaseActivity {
         progressDirectDialogFragment.restoreListeners(this, "progress_direct");
 
         BaseDialogFragment downloadTokensDialogFragment = BaseDialogFragment.newInstance(DownloadTokensDialog.class, "All");
-        downloadTokensDialogFragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        downloadTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismissImpl(DialogInterface dialog) {
                 if(((DownloadTokensDialog)dialog).isComplete) {
                     if(((DownloadTokensDialog)dialog).isFixed) {
                         progressFixedDialogFragment.show(TokenManagerActivity.this, "progress_fixed");
@@ -172,9 +175,9 @@ public class TokenManagerActivity extends BaseActivity {
         downloadTokensDialogFragment.restoreListeners(this, "download");
 
         Button B_MassUpdate = findViewById(R.id.token_manager_massUpdateButton);
-        B_MassUpdate.setOnClickListener(new View.OnClickListener() {
+        B_MassUpdate.setOnClickListener(new CrashOnClickListener(this) {
             @Override
-            public void onClick(View view) {
+            public void onClickImpl(View view) {
                 downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");
             }
         });
