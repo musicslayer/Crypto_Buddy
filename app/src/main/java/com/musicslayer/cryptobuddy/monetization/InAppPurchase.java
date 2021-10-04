@@ -233,19 +233,6 @@ public class InAppPurchase {
         }
     }
 
-    public static HashMap<String, Integer> getProductMap() {
-        HashMap<String, Integer> productMap = new HashMap<>();
-
-        // -1 = revoke, 0 = do nothing, 1 = grant.
-        productMap.put("remove_ads", -1);
-        productMap.put("unlock_tokens", -1);
-        productMap.put("support_developer_1", -1);
-        productMap.put("support_developer_2", -1);
-        productMap.put("support_developer_3", -1);
-
-        return productMap;
-    }
-
     private static void updateAllPurchases(Context context) {
         if(!billingClient.isReady()) {
             InAppPurchase.initialize(context);
@@ -256,31 +243,34 @@ public class InAppPurchase {
             @Override
             public void onQueryPurchasesResponseImpl(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                    HashMap<String, Integer> productMap = getProductMap();
                     ArrayList<Purchase> toAcknowledgeList = new ArrayList<>();
+
+                    // The default null value means revoke.
+                    // Place "NO-OP" to do nothing, or "GRANT" to grant.
+                    HashMap<String, String> productMap = new HashMap<>();
 
                     // Any Purchase not present means it was never purchased, or is refunded and not currently active.
                     for(Purchase purchase : purchases) {
                         if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
                             // Grant all purchases, and add to list of things we need to acknowledge if we haven't already.
                             for(String id : purchase.getSkus()) {
-                                productMap.put(id, 1);
+                                productMap.put(id, "GRANT");
                             }
                             toAcknowledgeList.add(purchase);
                         }
                         else {
                             // Do nothing for any transient or indeterminate purchase state.
                             for(String id : purchase.getSkus()) {
-                                productMap.put(id, 0);
+                                productMap.put(id, "NO-OP");
                             }
                         }
                     }
 
                     for(String id : productMap.keySet()) {
-                        if(productMap.get(id) == -1) {
+                        if(productMap.get(id) == null) {
                             revokePurchase(context, id);
                         }
-                        else if(productMap.get(id) == 1) {
+                        else if("GRANT".equals(productMap.get(id))) {
                             grantPurchase(context, id);
                         }
                     }
