@@ -175,7 +175,7 @@ public class MainActivity extends BaseActivity {
         B_INAPP.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
+                startActivity(new Intent(MainActivity.this, null));
                 finish();
             }
         });
@@ -194,16 +194,18 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        // Internal use only!
         Button B_REFUND = findViewById(R.id.main_refundButton);
-        //B_REFUND.setVisibility(View.GONE);
-
-        B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                InAppPurchase.refund(MainActivity.this);
-            }
-        });
+        if(App.DEBUG) {
+            B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    InAppPurchase.refund(MainActivity.this);
+                }
+            });
+        }
+        else {
+            B_REFUND.setVisibility(View.GONE);
+        }
     }
 
     public void checkPrivacyPolicy() {
@@ -219,7 +221,7 @@ public class MainActivity extends BaseActivity {
             });
             privacyPolicyDialogFragment.restoreListeners(this, "privacy_policy");
 
-            if(!privacyPolicyDialogFragment.isShowing(this, "privacy_policy")) {
+            if(privacyPolicyDialogFragment.isNotShowing(this, "privacy_policy")) {
                 privacyPolicyDialogFragment.show(this, "privacy_policy");
             }
         }
@@ -244,7 +246,7 @@ public class MainActivity extends BaseActivity {
             });
             reviewDialogFragment.restoreListeners(this, "review");
 
-            if(!reviewDialogFragment.isShowing(this, "review")) {
+            if(reviewDialogFragment.isNotShowing(this, "review")) {
                 reviewDialogFragment.show(this, "review");
             }
         }

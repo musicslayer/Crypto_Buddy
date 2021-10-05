@@ -42,7 +42,7 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
                 }
             }
         });
-        confirmDeleteTokensDialogFragment.restoreListeners(context, "delete");
+        confirmDeleteTokensDialogFragment.restoreListeners(context, "reset_delete_found_tokens_settings_view");
 
         final AppCompatButton B_DELETE = new AppCompatButton(context);
         B_DELETE.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -50,7 +50,7 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETE.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteTokensDialogFragment.show(context, "delete");
+                confirmDeleteTokensDialogFragment.show(context, "reset_delete_found_tokens_settings_view");
             }
         });
 

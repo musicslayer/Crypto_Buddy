@@ -42,7 +42,7 @@ public class DeleteAllPortfoliosSettingsView extends LinearLayout {
                 }
             }
         });
-        confirmDeleteAllPortfoliosDialogFragment.restoreListeners(context, "delete_all");
+        confirmDeleteAllPortfoliosDialogFragment.restoreListeners(context, "delete_all_portfolios_settings_view");
 
         final AppCompatButton B_DELETEALL = new AppCompatButton(context);
         B_DELETEALL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -50,7 +50,7 @@ public class DeleteAllPortfoliosSettingsView extends LinearLayout {
         B_DELETEALL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETEALL.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteAllPortfoliosDialogFragment.show(context, "delete_all");
+                confirmDeleteAllPortfoliosDialogFragment.show(context, "delete_all_portfolios_settings_view");
             }
         });
 

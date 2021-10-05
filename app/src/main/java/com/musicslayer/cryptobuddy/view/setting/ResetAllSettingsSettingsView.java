@@ -42,7 +42,7 @@ public class ResetAllSettingsSettingsView extends LinearLayout {
                 }
             }
         });
-        confirmResetSettingsDialogFragment.restoreListeners(context, "reset");
+        confirmResetSettingsDialogFragment.restoreListeners(context, "reset_reset_all_settings_view");
 
         final AppCompatButton B_Reset = new AppCompatButton(context);
         B_Reset.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -50,7 +50,7 @@ public class ResetAllSettingsSettingsView extends LinearLayout {
         B_Reset.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_Reset.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmResetSettingsDialogFragment.show(context, "reset");
+                confirmResetSettingsDialogFragment.show(context, "reset_reset_all_settings_view");
             }
         });
 

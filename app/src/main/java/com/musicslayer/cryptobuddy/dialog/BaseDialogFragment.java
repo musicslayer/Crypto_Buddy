@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -97,9 +96,9 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
         this.setArguments(bundle);
     }
 
-    public boolean isShowing(Context context, String tag) {
+    public boolean isNotShowing(Context context, String tag) {
         BaseDialogFragment gdf = (BaseDialogFragment)getFragmentManager(context).findFragmentByTag(tag);
-        return gdf != null;
+        return gdf == null;
     }
 
     public static FragmentManager getFragmentManager(Context context) {

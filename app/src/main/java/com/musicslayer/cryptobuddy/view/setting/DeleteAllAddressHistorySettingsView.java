@@ -40,7 +40,7 @@ public class DeleteAllAddressHistorySettingsView extends LinearLayout {
                 }
             }
         });
-        confirmDeleteAllAddressHistoryDialogFragment.restoreListeners(context, "delete_all");
+        confirmDeleteAllAddressHistoryDialogFragment.restoreListeners(context, "delete_all_address_history_settings_view");
 
         final AppCompatButton B_DELETEALL = new AppCompatButton(context);
         B_DELETEALL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -48,7 +48,7 @@ public class DeleteAllAddressHistorySettingsView extends LinearLayout {
         B_DELETEALL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETEALL.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteAllAddressHistoryDialogFragment.show(context, "delete_all");
+                confirmDeleteAllAddressHistoryDialogFragment.show(context, "delete_all_address_history_settings_view");
             }
         });
 

@@ -3,10 +3,12 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.util.DataDump;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
@@ -85,5 +87,13 @@ public class CrashDialog extends BaseDialog {
                 System.exit(0);
             }
         });
+
+        TextView T_INFO = findViewById(R.id.crash_dialog_infoTextView);
+        if(App.DEBUG) {
+            T_INFO.setText(ThrowableLogger.getThrowableText(crashException));
+        }
+        else {
+            T_INFO.setVisibility(View.GONE);
+        }
     }
 }

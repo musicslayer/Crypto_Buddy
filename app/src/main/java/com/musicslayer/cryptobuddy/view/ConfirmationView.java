@@ -35,13 +35,26 @@ public class ConfirmationView extends LinearLayout {
 
     public ConfirmationView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        makeRandomDigits();
         makeLayout(context);
     }
 
     public void setNumDigits(Context context, int numDigits) {
         this.numDigits = numDigits;
+
         this.removeAllViews();
+        makeRandomDigits();
         makeLayout(context);
+    }
+
+    public void makeRandomDigits() {
+        // We don't need high quality randomness, we just need something that the user has to confirm.
+        Random rand = new Random();
+        randomCode = new ArrayList<>();
+        for(int i = 0; i < numDigits; i++) {
+            randomCode.add(rand.nextInt(10));
+        }
     }
 
     public void makeLayout(Context context) {
@@ -60,13 +73,6 @@ public class ConfirmationView extends LinearLayout {
         lastDigits = new ArrayList<>();
         for(int i = 0; i < numDigits; i++) {
             lastDigits.add(-1);
-        }
-
-        // We don't need high quality randomness, we just need something that the user has to confirm.
-        Random rand = new Random();
-        randomCode = new ArrayList<>();
-        for(int i = 0; i < numDigits; i++) {
-            randomCode.add(rand.nextInt(10));
         }
 
         TextView messageText = new TextView(context);
@@ -94,8 +100,8 @@ public class ConfirmationView extends LinearLayout {
             B[i].setOnClickListener(new CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
-                    for(int i = 0; i < numDigits - 1; i++) {
-                        lastDigits.set(i, lastDigits.get(i + 1));
+                    for(int j = 0; j < numDigits - 1; j++) {
+                        lastDigits.set(j, lastDigits.get(j + 1));
                     }
                     lastDigits.set(numDigits - 1, ii);
 
@@ -212,6 +218,9 @@ public class ConfirmationView extends LinearLayout {
             randomCode = Serialization.int_deserializeArrayList(bundle.getString("randomCode"));
             lastDigits = Serialization.int_deserializeArrayList(bundle.getString("lastDigits"));
             numDigits = bundle.getInt("numDigits");
+
+            this.removeAllViews();
+            makeLayout(getContext());
         }
         super.onRestoreInstanceState(state);
     }
