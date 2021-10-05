@@ -88,6 +88,14 @@ public class CrashDialog extends BaseDialog {
             }
         });
 
+        Button B_CRASH = findViewById(R.id.crash_dialog_crashButton);
+        B_CRASH.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Rethrow the original Exception that we caught before showing CrashDialog.
+                crashException.throwOriginalException();
+            }
+        });
+
         TextView T_INFO = findViewById(R.id.crash_dialog_infoTextView);
         if(App.DEBUG) {
             T_INFO.setText(crashException.toString());

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
+import java.io.IOException;
+
 // An Exception wrapper used in Crash classes. We can wrap other exceptions and add in useful information.
 public class CrashException extends RuntimeException {
     // Extra info about the exception, such as the objects involved.
@@ -41,5 +43,15 @@ public class CrashException extends RuntimeException {
             ThrowableLogger.processThrowable(e);
             this.extraInfoStringBuilder.append("?\n");
         }
+    }
+
+    public void throwOriginalException() {
+        // Use a trick to throw without having to declare or catch anything.
+        forceThrow(originalException);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void forceThrow(Throwable exception) throws T {
+        throw (T)exception;
     }
 }

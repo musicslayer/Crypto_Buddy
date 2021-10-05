@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Exit the app."
+        android:text="Exit the app cleanly."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crash_dialog_eraseButton" />
 
@@ -80,11 +80,29 @@
         app:layout_constraintTop_toBottomOf="@+id/crash_dialog_exitTextView" />
 
     <TextView
+        android:id="@+id/crash_dialog_crashTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Allow the app to crash as it would have before this screen appeared."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_exitButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/crash_dialog_crashButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crash App"
+        app:drawableLeftCompat="@drawable/ic_baseline_error_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_crashTextView" />
+
+    <TextView
         android:id="@+id/crash_dialog_infoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="(Error Stack)"
-        app:layout_constraintTop_toBottomOf="@id/crash_dialog_exitButton" />
+        android:text="(DEBUG Error Stack)"
+        app:layout_constraintTop_toBottomOf="@id/crash_dialog_crashButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
