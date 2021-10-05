@@ -10,6 +10,7 @@ import android.widget.ScrollView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
+import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Window;
 
@@ -22,7 +23,7 @@ abstract public class BaseDialog extends Dialog {
     public boolean isComplete = false;
 
     // Non-null if a crash occurred.
-    public Exception crashException;
+    public Exception originalException;
 
     abstract public void createLayout();
     abstract public int getBaseViewID();
@@ -44,7 +45,7 @@ abstract public class BaseDialog extends Dialog {
             createLayout();
         }
         catch(Exception e) {
-            crashException = e;
+            originalException = e;
             ThrowableLogger.processThrowable(e);
 
             this.dismiss();
@@ -56,7 +57,8 @@ abstract public class BaseDialog extends Dialog {
         super.dismiss();
 
         // In dialogs, we want the dialog that crashed to have already been dismissed before trying to show CrashDialog.
-        if(crashException != null && !(this instanceof CrashDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+        if(originalException != null && !(this instanceof CrashDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+            CrashException crashException = new CrashException(originalException);
             CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }

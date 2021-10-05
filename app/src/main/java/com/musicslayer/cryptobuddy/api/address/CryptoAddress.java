@@ -85,7 +85,7 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
     public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String address = Serialization.string_deserialize(o.getString("address"));
-        Network network = Serialization.deserialize(o.getJSONObject("network").toStringOrNull(), Network.class);
+        Network network = Serialization.deserialize(o.getJSONObjectString("network"), Network.class);
         boolean includeTokens = Serialization.boolean_deserialize(o.getString("includeTokens"));
         return new CryptoAddress(address, network, includeTokens);
     }

@@ -3,6 +3,8 @@ package com.musicslayer.cryptobuddy.util;
 import android.app.Activity;
 import android.content.Context;
 
+import com.musicslayer.cryptobuddy.crash.CrashException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -83,12 +85,12 @@ public class Reflect {
         return object;
     }
 
-    public static <T> T constructCrashDialogInstance(Class<T> clazz, Activity activity, Exception exception) {
+    public static <T> T constructCrashDialogInstance(Class<T> clazz, Activity activity, CrashException crashException) {
         // Hardcode the Exception arguments to deal with subclasses.
         T object = null;
 
         try {
-            object = clazz.getConstructor(Activity.class, Exception.class).newInstance(activity, exception);
+            object = clazz.getConstructor(Activity.class, CrashException.class).newInstance(activity, crashException);
         }
         catch(IllegalAccessException e) {
             ThrowableLogger.processThrowable(e);

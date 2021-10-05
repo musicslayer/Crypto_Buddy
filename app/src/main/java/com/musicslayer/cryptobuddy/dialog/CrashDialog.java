@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.util.DataDump;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
@@ -20,10 +21,9 @@ import java.util.ArrayList;
 // This Dialog cannot use any of the "Crash" classes, because we do not want any recursive CrashDialog behavior.
 
 public class CrashDialog extends BaseDialog {
-    // The exception that caused the crash.
-    public Exception crashException;
+    public CrashException crashException;
 
-    public CrashDialog(Activity activity, Exception crashException) {
+    public CrashDialog(Activity activity, CrashException crashException) {
         super(activity);
         this.crashException = crashException;
     }
@@ -49,7 +49,7 @@ public class CrashDialog extends BaseDialog {
                 try {
                     // Attach two files. One has the Exception that caused the crash, and the other has the DataDump data.
                     // Some of the Exception may be obfuscated by ProGuard.
-                    java.io.File fileA = File.writeFile(activity, ThrowableLogger.getThrowableText(crashException));
+                    java.io.File fileA = File.writeFile(activity, crashException.toString());
                     java.io.File fileB = File.writeFile(activity, DataDump.getAllData(activity));
 
                     ArrayList<java.io.File> fileArrayList = new ArrayList<>();
@@ -90,7 +90,7 @@ public class CrashDialog extends BaseDialog {
 
         TextView T_INFO = findViewById(R.id.crash_dialog_infoTextView);
         if(App.DEBUG) {
-            T_INFO.setText(ThrowableLogger.getThrowableText(crashException));
+            T_INFO.setText(crashException.toString());
         }
         else {
             T_INFO.setVisibility(View.GONE);

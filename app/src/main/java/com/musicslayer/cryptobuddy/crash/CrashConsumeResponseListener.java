@@ -28,7 +28,12 @@ abstract public class CrashConsumeResponseListener implements ConsumeResponseLis
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(billingResult);
+            crashException.appendExtraInfoFromArgument(purchaseToken);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 }

@@ -27,7 +27,11 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(parent);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 
@@ -38,7 +42,14 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(parent);
+            crashException.appendExtraInfoFromArgument(view);
+            crashException.appendExtraInfoFromArgument(pos);
+            crashException.appendExtraInfoFromArgument(id);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 }

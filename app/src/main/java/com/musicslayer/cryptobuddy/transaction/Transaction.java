@@ -104,7 +104,7 @@ public class Transaction implements Serialization.SerializableToJSON {
                 }
                 break;
             case "info":
-                if(info == null || "".equals(info)) {
+                if(info == null || info.isEmpty()) {
                     data = "(No Info)";
                 }
                 else {
@@ -295,10 +295,10 @@ public class Transaction implements Serialization.SerializableToJSON {
 
     public static Transaction deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        Action action = Serialization.deserialize(o.getJSONObject("action").toStringOrNull(), Action.class);
-        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObject("actionedAssetQuantity").toStringOrNull(), AssetQuantity.class);
-        AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObject("otherAssetQuantity").toStringOrNull(), AssetQuantity.class);
-        Timestamp timestamp = Serialization.deserialize(o.getJSONObject("timestamp").toStringOrNull(), Timestamp.class);
+        Action action = Serialization.deserialize(o.getJSONObjectString("action"), Action.class);
+        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObjectString("actionedAssetQuantity"), AssetQuantity.class);
+        AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObjectString("otherAssetQuantity"), AssetQuantity.class);
+        Timestamp timestamp = Serialization.deserialize(o.getJSONObjectString("timestamp"), Timestamp.class);
         String info = Serialization.string_deserialize(o.getString("info"));
         return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }

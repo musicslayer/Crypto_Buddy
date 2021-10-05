@@ -27,7 +27,11 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(query);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
 
         return false;
@@ -39,7 +43,11 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(newText);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
 
         return false;

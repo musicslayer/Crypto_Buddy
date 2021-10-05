@@ -139,7 +139,7 @@ public class SearchDialog extends BaseDialog {
         table.removeAllViews();
 
         // Make sure we don't accidentally return the entire list of options here.
-        if("".equals(searchText.trim())) { return; }
+        if(searchText.trim().isEmpty()) { return; }
 
         ArrayList<String> options_SORTED;
         ArrayList<String> options_LC_SORTED;

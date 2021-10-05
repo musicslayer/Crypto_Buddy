@@ -27,7 +27,11 @@ abstract public class CrashOnClickListener implements View.OnClickListener {
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(view);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 }

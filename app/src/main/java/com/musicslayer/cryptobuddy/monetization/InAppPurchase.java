@@ -41,7 +41,7 @@ public class InAppPurchase {
         if(billingClient == null || !billingClient.isReady()) {
             PurchasesUpdatedListener purchasesUpdatedListener = new CrashPurchasesUpdatedListener(context) {
                 @Override
-                public void onPurchasesUpdatedImpl(BillingResult billingResult, List<Purchase> purchases) {
+                public void onPurchasesUpdatedImpl(@NonNull BillingResult billingResult, List<Purchase> purchases) {
                     if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         for(Purchase purchase : purchases) {
                             if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {

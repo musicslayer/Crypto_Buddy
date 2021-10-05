@@ -21,9 +21,9 @@ public class DiscreteFilter extends Filter {
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArray("choices").toStringOrNull());
-        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_choices").toStringOrNull());
-        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArray("user_not_choices").toStringOrNull());
+        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("choices"));
+        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_choices"));
+        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_not_choices"));
 
         DiscreteFilter discreteFilter = new DiscreteFilter();
         discreteFilter.choices = choices;

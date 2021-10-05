@@ -7,23 +7,24 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.util.Reflect;
 
 public class CrashDialogFragment extends BaseDialogFragment {
-    public static void showCrashDialogFragment(Class<?> clazz, Exception e, Activity activity, String tag) {
+    public static void showCrashDialogFragment(Class<?> clazz, CrashException crashException, Activity activity, String tag) {
         // Even in cases where CrashDialog would successfully show, sometimes exceptions are thrown which we can ignore.
         try {
-            CrashDialogFragment.newInstance(clazz, e).show(activity, tag);
+            CrashDialogFragment.newInstance(clazz, crashException).show(activity, tag);
         }
         catch(Exception ignored) {
         }
     }
 
-    public static CrashDialogFragment newInstance(Class<?> clazz, Exception e) {
+    public static CrashDialogFragment newInstance(Class<?> clazz, CrashException crashException) {
         // Always use one argument.
         Bundle bundle = new Bundle();
         bundle.putSerializable("class", clazz);
-        bundle.putSerializable("exception", e);
+        bundle.putSerializable("crash_exception", crashException);
 
         CrashDialogFragment fragment = new CrashDialogFragment();
         fragment.setArguments(bundle);
@@ -38,9 +39,9 @@ public class CrashDialogFragment extends BaseDialogFragment {
         Bundle bundle = getArguments();
         if(bundle != null) {
             Class<?> clazz = (Class<?>)bundle.getSerializable("class");
-            Exception e = (Exception)bundle.getSerializable("exception");
+            CrashException crashException = (CrashException)bundle.getSerializable("crash_exception");
 
-            object = Reflect.constructCrashDialogInstance(clazz, getActivity(), e);
+            object = Reflect.constructCrashDialogInstance(clazz, getActivity(), crashException);
             ((Dialog)object).setOnShowListener(this);
         }
 

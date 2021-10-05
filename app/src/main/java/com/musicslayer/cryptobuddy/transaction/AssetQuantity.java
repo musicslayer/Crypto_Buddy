@@ -91,8 +91,8 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
 
     public static AssetQuantity deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        AssetAmount assetAmount = Serialization.deserialize(o.getJSONObject("assetAmount").toStringOrNull(), AssetAmount.class);
-        Asset asset = Serialization.deserialize(o.getJSONObject("asset").toStringOrNull(), Asset.class);
+        AssetAmount assetAmount = Serialization.deserialize(o.getJSONObjectString("assetAmount"), AssetAmount.class);
+        Asset asset = Serialization.deserialize(o.getJSONObjectString("asset"), Asset.class);
         return new AssetQuantity(assetAmount, asset);
     }
 }

@@ -31,7 +31,12 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
         }
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, activity, "crash");
+
+            CrashException crashException = new CrashException(e);
+            crashException.appendExtraInfoFromArgument(billingResult);
+            crashException.appendExtraInfoFromArgument(skuDetailsList);
+
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
         }
     }
 }

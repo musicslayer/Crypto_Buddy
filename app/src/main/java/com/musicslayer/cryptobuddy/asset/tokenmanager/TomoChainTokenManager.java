@@ -80,7 +80,7 @@ public class TomoChainTokenManager extends TokenManager {
                     String display_name = json.getString("name");
 
                     // Tokens must have a nonempty name and display name.
-                    if("".equals(name) || "".equals(display_name)) {
+                    if(name.isEmpty() || display_name.isEmpty()) {
                         continue;
                     }
 

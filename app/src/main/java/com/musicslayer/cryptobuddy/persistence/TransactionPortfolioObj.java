@@ -34,7 +34,7 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
-        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArray("transactionArrayList").toStringOrNull(), Transaction.class);
+        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
 
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
         transactionPortfolioObj.transactionArrayList = transactionArrayList;

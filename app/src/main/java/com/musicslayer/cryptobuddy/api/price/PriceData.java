@@ -31,11 +31,11 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     public static PriceData deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        Crypto crypto = Serialization.deserialize(o.getJSONObject("crypto").toStringOrNull(), Crypto.class);
-        PriceAPI priceAPI_price = Serialization.deserialize(o.getJSONObject("priceAPI_price").toStringOrNull(), PriceAPI.class);
-        PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObject("priceAPI_marketCap").toStringOrNull(), PriceAPI.class);
-        AssetQuantity price = Serialization.deserialize(o.getJSONObject("price").toStringOrNull(), AssetQuantity.class);
-        AssetQuantity marketCap = Serialization.deserialize(o.getJSONObject("marketCap").toStringOrNull(), AssetQuantity.class);
+        Crypto crypto = Serialization.deserialize(o.getJSONObjectString("crypto"), Crypto.class);
+        PriceAPI priceAPI_price = Serialization.deserialize(o.getJSONObjectString("priceAPI_price"), PriceAPI.class);
+        PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObjectString("priceAPI_marketCap"), PriceAPI.class);
+        AssetQuantity price = Serialization.deserialize(o.getJSONObjectString("price"), AssetQuantity.class);
+        AssetQuantity marketCap = Serialization.deserialize(o.getJSONObjectString("marketCap"), AssetQuantity.class);
         return new PriceData(crypto, priceAPI_price, priceAPI_marketCap, price, marketCap, DateTime.toDateString(new Date()));
     }
 

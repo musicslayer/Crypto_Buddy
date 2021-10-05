@@ -33,7 +33,7 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
 
     public static AddressHistoryObj deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObject("cryptoAddress").toStringOrNull(), CryptoAddress.class);
+        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);
     }
 }

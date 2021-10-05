@@ -26,96 +26,108 @@ public class Serialization {
 
     // Classes to properly handle null String values.
     public static class JSONObjectWithNull {
-        JSONObject o;
+        private JSONObject jsonObject;
 
         public JSONObjectWithNull() {
-            o = new JSONObject();
+            jsonObject = new JSONObject();
         }
 
         public JSONObjectWithNull(String s) throws org.json.JSONException {
-            o = s == null ? null : new JSONObject(s);
+            jsonObject = s == null ? null : new JSONObject(s);
         }
 
-        public JSONObjectWithNull(JSONObject o) {
-            this.o = o;
+        public JSONObjectWithNull(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
         }
 
         public String toStringOrNull() {
-            return o == null ? null : o.toString();
+            return jsonObject == null ? null : jsonObject.toString();
         }
 
         public String getString(String key) throws org.json.JSONException {
-            return (String)(o.get(key) instanceof String ? o.get(key) : null);
+            return (String)(jsonObject.get(key) instanceof String ? jsonObject.get(key) : null);
         }
 
-        public JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
-            return new JSONObjectWithNull((JSONObject)(o.get(key) instanceof JSONObject ? o.get(key) : null));
+        public String getJSONObjectString(String key) throws org.json.JSONException {
+            return getJSONObject(key).toStringOrNull();
         }
 
-        public JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
-            return new JSONArrayWithNull((JSONArray)(o.get(key) instanceof JSONArray ? o.get(key) : null));
+        public String getJSONArrayString(String key) throws org.json.JSONException {
+            return getJSONArray(key).toStringOrNull();
         }
 
         public JSONObjectWithNull put(String key, String s) throws org.json.JSONException {
-            o = s == null ? o.put(key, JSONObject.NULL) : o.put(key, s);
+            jsonObject = s == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, s);
             return this;
         }
 
         public JSONObjectWithNull put(String key, JSONObjectWithNull obj) throws org.json.JSONException {
-            o = obj.o == null ? o.put(key, JSONObject.NULL) : o.put(key, obj.o);
+            jsonObject = obj.jsonObject == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, obj.jsonObject);
             return this;
         }
 
         public JSONObjectWithNull put(String key, JSONArrayWithNull arr) throws org.json.JSONException {
-            o = arr.a == null ? o.put(key, JSONObject.NULL) : o.put(key, arr.a);
+            jsonObject = arr.jsonArray == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, arr.jsonArray);
             return this;
+        }
+
+        private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
+            return new JSONObjectWithNull((JSONObject)(jsonObject.get(key) instanceof JSONObject ? jsonObject.get(key) : null));
+        }
+
+        private JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
+            return new JSONArrayWithNull((JSONArray)(jsonObject.get(key) instanceof JSONArray ? jsonObject.get(key) : null));
         }
     }
 
     public static class JSONArrayWithNull {
-        JSONArray a;
+        private JSONArray jsonArray;
 
         public JSONArrayWithNull() {
-            a = new JSONArray();
+            jsonArray = new JSONArray();
         }
 
         public JSONArrayWithNull(String s) throws org.json.JSONException {
-            a = s == null ? null : new JSONArray(s);
+            jsonArray = s == null ? null : new JSONArray(s);
         }
 
-        public JSONArrayWithNull(JSONArray a) {
-            this.a = a;
-        }
-
-        public String toStringOrNull() {
-            return a == null ? null : a.toString();
-        }
-
-        public String getString(int i) throws org.json.JSONException {
-            return a.get(i) instanceof String ? (String)a.get(i) : null;
+        public JSONArrayWithNull(JSONArray jsonArray) {
+            this.jsonArray = jsonArray;
         }
 
         public int length() {
-            return a.length();
+            return jsonArray.length();
         }
 
-        public JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
-            return new JSONObjectWithNull((JSONObject)(a.get(i) instanceof JSONObject ? a.get(i) : null));
+        public String toStringOrNull() {
+            return jsonArray == null ? null : jsonArray.toString();
+        }
+
+        public String getString(int i) throws org.json.JSONException {
+            return jsonArray.get(i) instanceof String ? (String)jsonArray.get(i) : null;
+        }
+
+        public String getJSONObjectString(int i) throws org.json.JSONException {
+            return getJSONObject(i).toStringOrNull();
         }
 
         public JSONArrayWithNull put(String s) throws org.json.JSONException {
-            a = s == null ? a.put(JSONObject.NULL) : a.put(s);
+            jsonArray = s == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(s);
             return this;
         }
 
         public JSONArrayWithNull put(JSONObjectWithNull obj) throws org.json.JSONException {
-            a = obj.o == null ? a.put(JSONObject.NULL) : a.put(obj.o);
+            jsonArray = obj.jsonObject == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(obj.jsonObject);
             return this;
         }
 
         public JSONArrayWithNull put(JSONArrayWithNull arr) throws org.json.JSONException {
-            a = arr.a == null ? a.put(JSONObject.NULL) : a.put(arr.a);
+            jsonArray = arr.jsonArray == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(arr.jsonArray);
             return this;
+        }
+
+        private JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
+            return new JSONObjectWithNull((JSONObject)(jsonArray.get(i) instanceof JSONObject ? jsonArray.get(i) : null));
         }
     }
 
@@ -194,8 +206,7 @@ public class Serialization {
 
             JSONArrayWithNull a = new JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
-                JSONObjectWithNull o = a.getJSONObject(i);
-                arrayList.add(Serialization.deserialize(o.toStringOrNull(), clazzT));
+                arrayList.add(Serialization.deserialize(a.getJSONObjectString(i), clazzT));
             }
 
             return arrayList;
@@ -217,10 +228,9 @@ public class Serialization {
         }
 
         try {
-            // Both arrays are non-null so cast to String to avoid needing a newer Android API.
             return new JSONObjectWithNull()
-                .put("keys", new JSONArrayWithNull((String)Serialization.serializeArrayList(keyArrayList)))
-                .put("values", new JSONArrayWithNull((String)Serialization.serializeArrayList(valueArrayList)))
+                .put("keys", new JSONArrayWithNull(Serialization.serializeArrayList(keyArrayList)))
+                .put("values", new JSONArrayWithNull(Serialization.serializeArrayList(valueArrayList)))
                 .toStringOrNull();
         }
         catch(Exception e) {

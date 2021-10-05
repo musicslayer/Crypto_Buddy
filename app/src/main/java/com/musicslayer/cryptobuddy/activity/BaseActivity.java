@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdView;
 import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.dialog.CrashDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
 import com.musicslayer.cryptobuddy.monetization.Ad;
@@ -44,8 +45,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         catch(Exception e) {
             ThrowableLogger.processThrowable(e);
 
+            CrashException crashException = new CrashException(e);
+
             // In activities, create CrashDialog now while the FragmentManager is still valid.
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, e, this, "crash");
+            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, this, "crash");
         }
     }
 
