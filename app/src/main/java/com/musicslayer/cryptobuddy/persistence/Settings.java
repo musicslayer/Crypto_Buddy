@@ -14,6 +14,8 @@ import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.util.LocaleManager;
+
 // TODO All of this should be cleaned up...
 
 public class Settings {
@@ -90,11 +92,12 @@ public class Settings {
     public static HashMap<Integer, String> map_loss;
     static {
         map_loss = new HashMap<>();
-        map_loss.put(0, "negative");
-        map_loss.put(1, "red");
-        map_loss.put(2, "parenthesis");
-        map_loss.put(3, "red_negative");
-        map_loss.put(4, "red_parenthesis");
+        map_loss.put(0, "match_locale");
+        map_loss.put(1, "negative");
+        map_loss.put(2, "red");
+        map_loss.put(3, "parenthesis");
+        map_loss.put(4, "red_negative");
+        map_loss.put(5, "red_parenthesis");
     }
 
     public static HashMap<Integer, Integer> map_dark;
@@ -145,7 +148,7 @@ public class Settings {
     public static HashMap<Integer, Locale> map_locale_numeric;
     static {
         map_locale_numeric = new HashMap<>();
-        map_locale_numeric.put(0, new Locale("!", "!", "!")); // Match System.
+        map_locale_numeric.put(0, LocaleManager.MATCH_SYSTEM); // Match System.
         map_locale_numeric.put(1, null);
         map_locale_numeric.put(2, Locale.US);
         map_locale_numeric.put(3, Locale.FRENCH);
@@ -154,9 +157,10 @@ public class Settings {
     public static HashMap<Integer, Locale> map_locale_datetime;
     static {
         map_locale_datetime = new HashMap<>();
-        map_locale_datetime.put(0, new Locale("!", "!", "!"));
-        map_locale_datetime.put(1, Locale.US);
-        map_locale_datetime.put(2, Locale.FRENCH);
+        map_locale_datetime.put(0, LocaleManager.MATCH_SYSTEM);
+        map_locale_datetime.put(1, null);
+        map_locale_datetime.put(2, Locale.US);
+        map_locale_datetime.put(3, Locale.FRENCH);
     }
 
     public static HashMap<Integer, ZoneId> map_time_zone;

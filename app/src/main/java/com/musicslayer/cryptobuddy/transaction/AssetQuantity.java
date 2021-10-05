@@ -38,12 +38,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
     @NonNull
     @Override
     public String toString() {
-        return assetAmount.toScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getSettingName();
-    }
-
-    public String toNumericString() {
-        // Returns toString, but with a negative sign for a loss.
-        return assetAmount.toNumericScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getSettingName();
+        return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getSettingName();
     }
 
     private int compare(AssetQuantity other) {

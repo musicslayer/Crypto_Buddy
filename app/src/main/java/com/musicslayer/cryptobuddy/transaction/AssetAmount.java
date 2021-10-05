@@ -8,9 +8,6 @@ import com.musicslayer.cryptobuddy.util.Serialization;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 public class AssetAmount implements Serialization.SerializableToJSON {
     public final static int MAXSCALE = 20;
@@ -42,6 +39,8 @@ public class AssetAmount implements Serialization.SerializableToJSON {
 
     @NonNull
     public String toScaledString(int scale, boolean hasSlidingScale) {
+        // Return a scaled string without any minus sign or Locale formatting.
+
         // Fiat and Crypto have different rules for scaling.
         String s;
 
@@ -94,49 +93,20 @@ public class AssetAmount implements Serialization.SerializableToJSON {
                     s = amount.setScale(scale, RoundingMode.HALF_UP).toPlainString();
                 }
             }
-
-            // In all finite cases, we may apply a certain numeric appearance based on the setting.
-            Locale L = LocaleManager.getSettingLocaleNumeric();
-            if(L != null) {
-                BigDecimal D = new BigDecimal(s);
-                NumberFormat nf = NumberFormat.getInstance(L);
-                DecimalFormat df = ((DecimalFormat)nf);
-
-                String pattern = df.toLocalizedPattern();
-                char decimalSeparator_c = df.getDecimalFormatSymbols().getDecimalSeparator();
-                String decimalSeparator = String.valueOf(decimalSeparator_c);
-
-                int idx_decimal = pattern.lastIndexOf(decimalSeparator_c);
-                if(idx_decimal != -1) {
-                    // Insert the exact number of decimal places in the pattern that we need, despite what the Locale says.
-                    String pattern_front = pattern.substring(0, idx_decimal);
-                    String pattern_back;
-                    if(D.scale() == 0) {
-                        // Don't keep decimal point.
-                        pattern_back = "";
-                    }
-                    else {
-                        pattern_back = decimalSeparator + String.format("%0" + D.scale() + "d", 0).replace("0", String.valueOf(df.getDecimalFormatSymbols().getZeroDigit()));
-                    }
-
-                    // Use "format" because some locales (ccp) have characters ('\uD804' 55300) that are altered by concatenation.
-                    pattern = String.format("%s%s", pattern_front, pattern_back);
-                    df.applyLocalizedPattern(pattern);
-                }
-
-                s = df.format(D);
-            }
         }
 
         return s;
     }
 
-    public String toNumericScaledString(int scale, boolean hasSlidingScale) {
-        // Returns toScaledString, but with a negative sign for a loss.
+    public String toFormattedScaledString(int scale, boolean hasSlidingScale) {
+        // Returns a scaled string, properly formatted based on the numeric Locale setting.
         String s = this.toScaledString(scale, hasSlidingScale);
 
         if(isLoss) {
-            s = "-" + s;
+            s = LocaleManager.formatNegativeNumber(s);
+        }
+        else {
+            s = LocaleManager.formatPositiveNumber(s);
         }
 
         return s;
@@ -166,7 +136,7 @@ public class AssetAmount implements Serialization.SerializableToJSON {
                     return 1;
                 }
             }
-            else if(!isInf && isOtherInf) {
+            else if(!isInf) {
                 if(other.isLoss) {
                     return 1;
                 }

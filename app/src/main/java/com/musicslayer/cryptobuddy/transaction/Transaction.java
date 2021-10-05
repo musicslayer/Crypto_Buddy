@@ -221,13 +221,13 @@ public class Transaction implements Serialization.SerializableToJSON {
     public String getHash() {
         String otherAssetString;
         if(numAssets() == 2) {
-            otherAssetString = otherAssetQuantity.toNumericString();
+            otherAssetString = otherAssetQuantity.toString();
         }
         else {
             otherAssetString = "-";
         }
 
-        return action.toString() + "|" + actionedAssetQuantity.toNumericString() + "|" + otherAssetString + "|" + forwardPrice.toString() + "|" + backwardPrice.toString() + "|" + timestamp.toString();
+        return action.toString() + "|" + actionedAssetQuantity.toString() + "|" + otherAssetString + "|" + forwardPrice.toString() + "|" + backwardPrice.toString() + "|" + timestamp.toString();
     }
 
     public int numAssets() {

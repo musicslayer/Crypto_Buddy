@@ -13,16 +13,19 @@ import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.DateTime;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.setting.DarkSettingsView;
+import com.musicslayer.cryptobuddy.view.setting.DatetimeLocaleSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteAllAddressHistorySettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteCustomTokensSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteDownloadedTokensSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteFoundTokensSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.MessageSettingsView;
+import com.musicslayer.cryptobuddy.view.setting.NumericLocaleSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.OrientationSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DeleteAllPortfoliosSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.ResetAllSettingsSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.ResetEverythingSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.SettingsView;
+import com.musicslayer.cryptobuddy.view.setting.TimeZoneSettingsView;
 
 import java.time.format.FormatStyle;
 
@@ -69,16 +72,16 @@ public class SettingsActivity extends BaseActivity {
         {"Forward", "Forward and Backward"},
         {"All", "Mainnet"},
         {"10 Seconds", "30 Seconds", "60 Seconds"},
-        {"Negative", "Red", "Parenthesis", "Red Negative", "Red Parenthesis"},
+        {"Match Locale", "Negative", "Red", "Parenthesis", "Red Negative", "Red Parenthesis"},
         {"Match System", "On", "Off"},
         {"Short", "Long"},
         {"Match System", "Landscape", "Portrait"},
         {"Use Confirmations", "Do Not Use Confirmations"},
         {"Use Full Asset Names", "Use Asset Symbols"},
         {"500", "1000", "5000"},
-        {"Match System", "No Locale", "US", "FRENCH"},
-        {"Match System", "US", "FRENCH"},
-        {"Match System", "UTC", "EDT"}
+        {"Match System", "No Locale"},
+        {"Match System", "No Locale"},
+        {"Match System"}
     };
 
     final String[][] settingStrings = {
@@ -106,6 +109,7 @@ public class SettingsActivity extends BaseActivity {
             "60 seconds timeout for each API call."
         },
         {
+            "Show lost assets using the negative format of the chosen numeric locale.",
             "Show lost assets using negative numbers.",
             "Show lost assets using red positive numbers.",
             "Show lost assets using positive numbers in parenthesis.",
@@ -140,20 +144,15 @@ public class SettingsActivity extends BaseActivity {
             "Analyze up to 5000 transactions per address.\n** May cause crashes **"
         },
         {
-            "Match system setting for locale when formatting numbers.",
-            "Do not use a locale when formatting numbers.\n(Java's \"BigDecimal\" class decides how numbers are formatted)",
-            "Use US locale when formatting numbers.",
-            "Use FRENCH locale when formatting numbers."
+            "Match system setting for numeric locale.",
+            "Do not use a numeric locale.\nNumbers will appear in a raw decimal format (e.g., 12345.099)."
         },
         {
-            "Match system setting for locale when formatting datetimes.",
-            "Use US locale when formatting datetimes.",
-            "Use FRENCH locale when formatting datetimes."
+            "Match system setting for datetime locale.",
+            "Do not use a datetime locale.\nDatetimes will display as the number of milliseconds since January 1, 1970, 00:00:00 GMT"
         },
         {
-            "Match system setting for the time zone.",
-            "Use UTC time zone.",
-            "Use EDT time zone (UTC−04:00)."
+            "Match system setting for the time zone."
         }
     };
 
@@ -176,7 +175,7 @@ public class SettingsActivity extends BaseActivity {
         LinearLayout L = findViewById(R.id.settings_linearLayout);
 
         BorderedSpinnerView bsv = findViewById(R.id.settings_category_spinner);
-        bsv.setOptions(new String[] {"Formatting", "Localization", "API", "Appearance", "Other", "Reset"});
+        bsv.setOptions(new String[] {"Formatting", "Display Localization", "API", "Appearance", "Other", "Reset"});
         bsv.setOnItemSelectedListener(new CrashOnItemSelectedListener(this) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
@@ -190,9 +189,9 @@ public class SettingsActivity extends BaseActivity {
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[10], settingDisplayNames[10], settingOptions[10], settingStrings[10]));
                 }
                 else if(pos == 1) {
-                    L.addView(new SettingsView(SettingsActivity.this, settingNames[12], settingDisplayNames[12], settingOptions[12], settingStrings[12]));
-                    L.addView(new SettingsView(SettingsActivity.this, settingNames[13], settingDisplayNames[13], settingOptions[13], settingStrings[13]));
-                    L.addView(new SettingsView(SettingsActivity.this, settingNames[14], settingDisplayNames[14], settingOptions[14], settingStrings[14]));
+                    L.addView(new NumericLocaleSettingsView(SettingsActivity.this, settingNames[12], settingDisplayNames[12], settingOptions[12], settingStrings[12]));
+                    L.addView(new DatetimeLocaleSettingsView(SettingsActivity.this, settingNames[13], settingDisplayNames[13], settingOptions[13], settingStrings[13]));
+                    L.addView(new TimeZoneSettingsView(SettingsActivity.this, settingNames[14], settingDisplayNames[14], settingOptions[14], settingStrings[14]));
                 }
                 else if(pos == 2) {
                     L.addView(new SettingsView(SettingsActivity.this, settingNames[3], settingDisplayNames[3], settingOptions[3], settingStrings[3]));

@@ -31,18 +31,10 @@ public class AssetTextView extends AppCompatTextView {
         }
         else {
             text = assetQuantity.toString();
-            if(isLoss) {
-                if("negative".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss)) {
-                    text = "-" + text;
-                }
 
-                if("parenthesis".equals(Settings.setting_loss) || "red_parenthesis".equals(Settings.setting_loss)) {
-                    text = "(" + text + ")";
-                }
-
-                if("red".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss) || "red_parenthesis".equals(Settings.setting_loss)) {
-                    this.setTextColor(0xFFFF0000);
-                }
+            // Number is already formatted by Locale. Just apply the color red here if we need it.
+            if(isLoss && ("red".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss) || "red_parenthesis".equals(Settings.setting_loss))) {
+                this.setTextColor(0xFFFF0000);
             }
         }
 

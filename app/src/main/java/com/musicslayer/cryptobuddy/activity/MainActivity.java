@@ -175,7 +175,7 @@ public class MainActivity extends BaseActivity {
         B_INAPP.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                startActivity(new Intent(MainActivity.this, null));
+                startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
                 finish();
             }
         });

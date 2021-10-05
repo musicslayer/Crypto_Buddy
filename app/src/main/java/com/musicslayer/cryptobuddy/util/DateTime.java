@@ -7,14 +7,23 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateTime {
     public static String toDateString(java.util.Date date, FormatStyle style) {
         if(date == null) { return null; }
 
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), TimeZoneManager.getSettingTimeZone());
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(style, style).withZone(TimeZoneManager.getSettingTimeZone()).withLocale(LocaleManager.getSettingLocaleDatetime());
-        return localDateTime.format(dateTimeFormatter);
+        Locale L = LocaleManager.getSettingLocaleDatetime();
+        if(L == null) {
+            // Just return the long value.
+            return Long.toString(date.getTime());
+        }
+        else {
+            LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), TimeZoneManager.getSettingTimeZone());
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(style, style).withZone(TimeZoneManager.getSettingTimeZone());
+            dateTimeFormatter = dateTimeFormatter.withLocale(L);
+            return localDateTime.format(dateTimeFormatter);
+        }
     }
 
     public static String toDateString(java.util.Date date) {
