@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.activity.TokenManagerActivity;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -12,7 +11,6 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

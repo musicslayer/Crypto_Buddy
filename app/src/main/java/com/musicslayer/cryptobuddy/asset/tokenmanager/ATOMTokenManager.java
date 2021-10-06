@@ -21,8 +21,6 @@ public class ATOMTokenManager extends TokenManager {
     }
 
     public boolean parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return true; }
-
         try {
             JSONObject json = new JSONObject(tokenJSON);
             JSONArray jsonArray = json.getJSONArray("ibc_tokens");

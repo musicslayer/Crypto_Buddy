@@ -24,8 +24,6 @@ public class TronTokenManager extends TokenManager {
     }
 
     public boolean parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return true; }
-
         try {
             JSONObject jsonOverall = new JSONObject(tokenJSON);
             JSONArray jsonArray = jsonOverall.getJSONArray("assetIssue");

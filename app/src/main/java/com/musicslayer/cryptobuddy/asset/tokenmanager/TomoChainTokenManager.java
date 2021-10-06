@@ -64,8 +64,6 @@ public class TomoChainTokenManager extends TokenManager {
     }
 
     public boolean parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return true; }
-
         try {
             JSONObject jsonOverall = new JSONObject(tokenJSON);
             int numPages = jsonOverall.getInt("numPages");

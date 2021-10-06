@@ -23,8 +23,6 @@ public class SPLTokenManager extends TokenManager {
     }
 
     public boolean parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return true; }
-
         try {
             JSONObject jsonData = new JSONObject(tokenJSON);
             JSONArray jsonArray = jsonData.getJSONArray("tokens");

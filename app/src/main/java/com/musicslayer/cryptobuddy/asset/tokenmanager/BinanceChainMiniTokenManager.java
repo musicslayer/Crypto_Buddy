@@ -25,8 +25,6 @@ public class BinanceChainMiniTokenManager extends TokenManager {
     }
 
     public boolean parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return true; }
-
         try {
             JSONArray jsonArray = new JSONArray(tokenJSON);
             for(int i = 0; i < jsonArray.length(); i++) {

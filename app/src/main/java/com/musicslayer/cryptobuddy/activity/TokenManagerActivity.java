@@ -120,6 +120,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                     boolean isAllComplete = true;
 
+                    // Update everything even if one of them wasn't complete.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                         String settingsKey = tokenManagerView.tokenManager.getSettingsKey();
 
