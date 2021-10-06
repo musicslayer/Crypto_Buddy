@@ -9,8 +9,8 @@ import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
-abstract public class CrashDialogInterface implements DialogInterface {
-    abstract public static class CrashOnShowListener implements DialogInterface.OnShowListener {
+public interface CrashDialogInterface extends DialogInterface {
+    abstract class CrashOnShowListener implements DialogInterface.OnShowListener {
         abstract public void onShowImpl(DialogInterface dialog);
 
         public Activity activity;
@@ -36,7 +36,7 @@ abstract public class CrashDialogInterface implements DialogInterface {
         }
     }
 
-    abstract public static class CrashOnDismissListener implements DialogInterface.OnDismissListener {
+    abstract class CrashOnDismissListener implements DialogInterface.OnDismissListener {
         abstract public void onDismissImpl(DialogInterface dialog);
 
         public Activity activity;
