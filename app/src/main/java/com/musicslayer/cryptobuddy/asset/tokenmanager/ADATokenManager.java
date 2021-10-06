@@ -53,8 +53,8 @@ public class ADATokenManager extends TokenManager {
         }
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONArray jsonArray = new JSONArray(tokenJSON);
@@ -87,9 +87,12 @@ public class ADATokenManager extends TokenManager {
                 Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

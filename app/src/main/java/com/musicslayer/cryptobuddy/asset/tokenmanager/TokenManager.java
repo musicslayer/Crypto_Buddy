@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.TokenManagerActivity;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -11,6 +12,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,7 +56,7 @@ abstract public class TokenManager {
 
     public boolean canGetJSON() { return false; }
     public String getJSON() { return null; }
-    public void parse(String tokenJSON) {}
+    public boolean parse(String tokenJSON) { return true; }
 
     public static void initialize(Context context) {
         tokenManagers = new ArrayList<>();
@@ -441,7 +443,7 @@ abstract public class TokenManager {
         return RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
     }
 
-    public void parseFixed(String tokenJSON) {
+    public boolean parseFixed(String tokenJSON) {
         try {
             JSONObject jsonObject = new JSONObject(tokenJSON);
             JSONArray jsonArray = jsonObject.getJSONArray("tokens");
@@ -458,9 +460,12 @@ abstract public class TokenManager {
                 Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

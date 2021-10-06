@@ -23,8 +23,8 @@ public class BinanceChainTokenManager extends TokenManager {
         return RESTUtil.get("https://dex.binance.org/api/v1/tokens?limit=1000");
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONArray jsonArray = new JSONArray(tokenJSON);
@@ -58,9 +58,12 @@ public class BinanceChainTokenManager extends TokenManager {
                 Token token = new Token(name, name, display_name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

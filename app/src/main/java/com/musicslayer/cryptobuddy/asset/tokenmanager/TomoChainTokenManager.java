@@ -63,8 +63,8 @@ public class TomoChainTokenManager extends TokenManager {
         return "{\"numPages\":" + numPages + "," + jsonPages + "}";
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONObject jsonOverall = new JSONObject(tokenJSON);
@@ -96,9 +96,12 @@ public class TomoChainTokenManager extends TokenManager {
                     addDownloadedToken(token);
                 }
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

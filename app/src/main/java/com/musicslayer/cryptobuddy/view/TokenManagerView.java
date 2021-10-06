@@ -58,7 +58,10 @@ public class TokenManagerView extends CrashTableRow {
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                updateTokensFixed();
+                boolean isComplete = updateTokensFixed();
+                if(!isComplete) {
+                    ToastUtil.showToast(context,"tokens_not_downloaded");
+                }
             }
         });
         progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
@@ -73,7 +76,10 @@ public class TokenManagerView extends CrashTableRow {
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                updateTokensDirect();
+                boolean isComplete = updateTokensDirect();
+                if(!isComplete) {
+                    ToastUtil.showToast(context,"tokens_not_downloaded");
+                }
             }
         });
         progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
@@ -170,13 +176,18 @@ public class TokenManagerView extends CrashTableRow {
         tokenJSON = tokenManager.getFixedJSON();
     }
 
-    public void updateTokensFixed() {
-        if(tokenJSON != null) {
+    public boolean updateTokensFixed() {
+        if(tokenJSON == null) {
+            return false;
+        }
+        else {
             tokenManager.resetDownloadedTokens();
-            tokenManager.parseFixed(tokenJSON);
+            boolean isComplete = tokenManager.parseFixed(tokenJSON);
             tokenManager.save(getContext(), "downloaded");
 
             updateLayout();
+
+            return isComplete;
         }
     }
 
@@ -184,13 +195,17 @@ public class TokenManagerView extends CrashTableRow {
         tokenJSON = tokenManager.getJSON();
     }
 
-    public void updateTokensDirect() {
-        if(tokenJSON != null) {
+    public boolean updateTokensDirect() {
+        if(tokenJSON == null) {
+            return false;
+        }
+        else {
             tokenManager.resetDownloadedTokens();
-            tokenManager.parse(tokenJSON);
+            boolean isComplete = tokenManager.parse(tokenJSON);
             tokenManager.save(getContext(), "downloaded");
 
             updateLayout();
+            return isComplete;
         }
     }
 }

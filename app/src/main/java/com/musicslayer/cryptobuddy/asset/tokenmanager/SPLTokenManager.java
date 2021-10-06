@@ -22,8 +22,8 @@ public class SPLTokenManager extends TokenManager {
         return RESTUtil.get("https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json");
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONObject jsonData = new JSONObject(tokenJSON);
@@ -42,9 +42,12 @@ public class SPLTokenManager extends TokenManager {
                 Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

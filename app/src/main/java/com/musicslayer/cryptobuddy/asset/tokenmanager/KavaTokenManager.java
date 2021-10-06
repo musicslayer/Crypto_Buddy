@@ -20,8 +20,8 @@ public class KavaTokenManager extends TokenManager {
         return RESTUtil.get("https://api.data.kava.io/supply/total");
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONObject jsonOverall = new JSONObject(tokenJSON);
@@ -49,9 +49,12 @@ public class KavaTokenManager extends TokenManager {
                 Token token = new Token(name, name, name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

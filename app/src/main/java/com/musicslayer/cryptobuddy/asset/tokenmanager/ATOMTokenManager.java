@@ -20,8 +20,8 @@ public class ATOMTokenManager extends TokenManager {
         return RESTUtil.get("https://api-utility.cosmostation.io/v1/ibc/tokens/cosmoshub-4");
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONObject json = new JSONObject(tokenJSON);
@@ -45,9 +45,12 @@ public class ATOMTokenManager extends TokenManager {
                 Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

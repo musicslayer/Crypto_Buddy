@@ -23,8 +23,8 @@ public class TronTokenManager extends TokenManager {
         return RESTUtil.get("https://api.trongrid.io/wallet/getassetissuelist");
     }
 
-    public void parse(String tokenJSON) {
-        if("{}".equals(tokenJSON)) { return; }
+    public boolean parse(String tokenJSON) {
+        if("{}".equals(tokenJSON)) { return true; }
 
         try {
             JSONObject jsonOverall = new JSONObject(tokenJSON);
@@ -61,9 +61,12 @@ public class TronTokenManager extends TokenManager {
                 Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
                 addDownloadedToken(token);
             }
+
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            return false;
         }
     }
 }

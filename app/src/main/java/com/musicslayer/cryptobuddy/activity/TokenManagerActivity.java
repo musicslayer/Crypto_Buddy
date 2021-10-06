@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.TokenManagerView;
 
 import org.json.JSONObject;
@@ -103,15 +104,21 @@ public class TokenManagerActivity extends BaseActivity {
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(tokenAllJSON != null) {
+                if(tokenAllJSON == null) {
+                    ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                }
+                else {
                     JSONObject tokenAllJSONObject;
                     try {
                         tokenAllJSONObject = new JSONObject(tokenAllJSON);
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);
-                        throw new IllegalStateException(e);
+                        ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                        return;
                     }
+
+                    boolean isAllComplete = true;
 
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                         String settingsKey = tokenManagerView.tokenManager.getSettingsKey();
@@ -127,11 +134,20 @@ public class TokenManagerActivity extends BaseActivity {
                         }
                         catch(Exception e) {
                             ThrowableUtil.processThrowable(e);
-                            throw new IllegalStateException(e);
+                            isAllComplete = false;
+                            continue;
                         }
 
                         tokenManagerView.tokenJSON = tokenTypeJSON.toString();
-                        tokenManagerView.updateTokensFixed();
+
+                        boolean isComplete = tokenManagerView.updateTokensFixed();
+                        if(!isComplete) {
+                            isAllComplete = false;
+                        }
+                    }
+
+                    if(!isAllComplete) {
+                        ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
                     }
                 }
             }
@@ -150,8 +166,18 @@ public class TokenManagerActivity extends BaseActivity {
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                // Update everything even if one of them wasn't complete.
+                boolean isAllComplete = true;
+
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.updateTokensDirect();
+                    boolean isComplete = tokenManagerView.updateTokensDirect();
+                    if(!isComplete) {
+                        isAllComplete = false;
+                    }
+                }
+
+                if(!isAllComplete) {
+                    ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
                 }
             }
         });

@@ -76,12 +76,20 @@ public class CrashException extends RuntimeException {
     public void setLocation(Activity originalActivity, View originalView) {
         // null is passed in if the information isn't available.
         this.originalActivity = originalActivity;
-        if(originalActivity != null) {
-            this.originalDialogArrayList = BaseDialogFragment.getAllDialogs(originalActivity);
+
+        try {
+            if(originalActivity != null) {
+                this.originalDialogArrayList = BaseDialogFragment.getAllDialogs(originalActivity);
+            }
+            else {
+                this.originalDialogArrayList = null;
+            }
         }
-        else {
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
             this.originalDialogArrayList = null;
         }
+
         this.originalView = originalView;
     }
 
