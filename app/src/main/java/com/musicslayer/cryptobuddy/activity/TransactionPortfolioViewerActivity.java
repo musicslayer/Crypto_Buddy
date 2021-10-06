@@ -14,8 +14,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
@@ -44,7 +44,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.transaction_portfolio_viewer_helpButton);
-        helpButton.setOnClickListener(new CrashOnClickListener(this) {
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(TransactionPortfolioViewerActivity.this, R.raw.help_transaction_portfolio_viewer);
@@ -52,7 +52,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         });
 
         BaseDialogFragment createPortfolioDialogFragment = BaseDialogFragment.newInstance(CreatePortfolioDialog.class);
-        createPortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        createPortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((CreatePortfolioDialog)dialog).isComplete) {
@@ -71,7 +71,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         createPortfolioDialogFragment.restoreListeners(this, "create");
 
         Button bCreate = findViewById(R.id.transaction_portfolio_viewer_addButton);
-        bCreate.setOnClickListener(new CrashOnClickListener(this) {
+        bCreate.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 createPortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "create");
@@ -86,7 +86,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         table.removeAllViews();
 
         BaseDialogFragment confirmDeletePortfolioDialogFragment = BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class);
-        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
@@ -102,7 +102,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             AppCompatButton B = new AppCompatButton(TransactionPortfolioViewerActivity.this);
             B.setText(transactionPortfolioObj.name);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
-            B.setOnClickListener(new CrashOnClickListener(this) {
+            B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(TransactionPortfolioViewerActivity.this, TransactionPortfolioExplorerActivity.class);
@@ -116,7 +116,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             AppCompatButton B_DELETE = new AppCompatButton(TransactionPortfolioViewerActivity.this);
             B_DELETE.setText("Delete");
             B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-            B_DELETE.setOnClickListener(new CrashOnClickListener(this) {
+            B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     currentDeletePortfolioName = transactionPortfolioObj.name;

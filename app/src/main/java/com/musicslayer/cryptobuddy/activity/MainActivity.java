@@ -16,9 +16,8 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
@@ -70,7 +69,7 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.main_helpButton);
-        helpButton.setOnClickListener(new CrashOnClickListener(this) {
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(MainActivity.this, R.raw.help_main);
@@ -78,7 +77,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button B_TRANSACTION_EXPLORER = findViewById(R.id.main_transactionExplorerButton);
-        B_TRANSACTION_EXPLORER.setOnClickListener(new CrashOnClickListener(this) {
+        B_TRANSACTION_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 Intent intent = new Intent(MainActivity.this, TransactionExplorerActivity.class);
@@ -89,7 +88,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button B_TRANSACTION_PORTFOLIO = findViewById(R.id.main_transactionPortfolioViewerButton);
-        B_TRANSACTION_PORTFOLIO.setOnClickListener(new CrashOnClickListener(this) {
+        B_TRANSACTION_PORTFOLIO.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, TransactionPortfolioViewerActivity.class));
@@ -98,7 +97,7 @@ public class MainActivity extends BaseActivity {
         });
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
+        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
@@ -106,7 +105,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(!addressData[0].isComplete()) {
@@ -126,7 +125,7 @@ public class MainActivity extends BaseActivity {
         progressDialogFragment.restoreListeners(this, "progress");
 
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
-        chooseAddressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
@@ -139,7 +138,7 @@ public class MainActivity extends BaseActivity {
         chooseAddressDialogFragment.restoreListeners(this, "address");
 
         Button B_ADDRESS_EXPLORER = findViewById(R.id.main_addressExplorerButton);
-        B_ADDRESS_EXPLORER.setOnClickListener(new CrashOnClickListener(this) {
+        B_ADDRESS_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 chooseAddressDialogFragment.show(MainActivity.this, "address");
@@ -147,7 +146,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button B_ADDRESS_PORTFOLIO = findViewById(R.id.main_addressPortfolioViewerButton);
-        B_ADDRESS_PORTFOLIO.setOnClickListener(new CrashOnClickListener(this) {
+        B_ADDRESS_PORTFOLIO.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, AddressPortfolioViewerActivity.class));
@@ -156,7 +155,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button bCryptoPrices = findViewById(R.id.main_cryptoPricesButton);
-        bCryptoPrices.setOnClickListener(new CrashOnClickListener(this) {
+        bCryptoPrices.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(MainActivity.this, "price");
@@ -164,7 +163,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button bCryptoPriceConverter = findViewById(R.id.main_cryptoConverterButton);
-        bCryptoPriceConverter.setOnClickListener(new CrashOnClickListener(this) {
+        bCryptoPriceConverter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(MainActivity.this, "converter");
@@ -172,7 +171,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button B_INAPP = findViewById(R.id.main_inAppPurchasesButton);
-        B_INAPP.setOnClickListener(new CrashOnClickListener(this) {
+        B_INAPP.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
@@ -181,7 +180,7 @@ public class MainActivity extends BaseActivity {
         });
 
         Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
-        B_TokenManager.setOnClickListener(new CrashOnClickListener(this) {
+        B_TokenManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 if(Purchases.isUnlockTokensPurchased) {
@@ -196,7 +195,7 @@ public class MainActivity extends BaseActivity {
 
         Button B_LOCK = findViewById(R.id.main_lockButton);
         if(App.DEBUG) {
-            B_LOCK.setOnClickListener(new CrashOnClickListener(this) {
+            B_LOCK.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     InAppPurchase.lock(MainActivity.this);
@@ -210,7 +209,7 @@ public class MainActivity extends BaseActivity {
 
         Button B_UNLOCK = findViewById(R.id.main_unlockButton);
         if(App.DEBUG) {
-            B_UNLOCK.setOnClickListener(new CrashOnClickListener(this) {
+            B_UNLOCK.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     InAppPurchase.unlock(MainActivity.this);
@@ -224,7 +223,7 @@ public class MainActivity extends BaseActivity {
 
         Button B_REFUND = findViewById(R.id.main_refundButton);
         if(App.DEBUG) {
-            B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
+            B_REFUND.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     InAppPurchase.refund(MainActivity.this);
@@ -237,7 +236,7 @@ public class MainActivity extends BaseActivity {
 
         Button B_CRASH = findViewById(R.id.main_crashButton);
         if(App.DEBUG) {
-            B_CRASH.setOnClickListener(new CrashOnClickListener(this) {
+            B_CRASH.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     throw new RuntimeException();
@@ -252,7 +251,7 @@ public class MainActivity extends BaseActivity {
     public void checkPrivacyPolicy() {
         if(!PrivacyPolicy.settings_privacy_policy) {
             BaseDialogFragment privacyPolicyDialogFragment = BaseDialogFragment.newInstance(PrivacyPolicyDialog.class);
-            privacyPolicyDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+            privacyPolicyDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((PrivacyPolicyDialog)dialog).isComplete) {
@@ -272,7 +271,7 @@ public class MainActivity extends BaseActivity {
         // Check after 5 Days, and the user must have already agreed to the Privacy Policy
         if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
             BaseDialogFragment reviewDialogFragment = BaseDialogFragment.newInstance(ReviewDialog.class);
-            reviewDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+            reviewDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {

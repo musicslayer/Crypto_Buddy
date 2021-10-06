@@ -12,8 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -44,7 +44,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         setContentView(R.layout.activity_transaction_portfolio_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -64,7 +64,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         T.setText("Portfolio = " + transactionPortfolioObj.name);
 
         ImageButton helpButton = findViewById(R.id.transaction_portfolio_explorer_helpButton);
-        helpButton.setOnClickListener(new CrashOnClickListener(this) {
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(TransactionPortfolioExplorerActivity.this, R.raw.help_transaction_portfolio_explorer);
@@ -77,7 +77,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         table.pageView.updateLayout();
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
-        addTransactionDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
@@ -91,7 +91,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         addTransactionDialogFragment.restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_portfolio_explorer_addButton);
-        fab_add.setOnClickListener(new CrashOnClickListener(this) {
+        fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 addTransactionDialogFragment.show(TransactionPortfolioExplorerActivity.this, "transaction");
@@ -99,7 +99,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         });
 
         FloatingActionButton fab_total = findViewById(R.id.transaction_portfolio_explorer_totalButton);
-        fab_total.setOnClickListener(new CrashOnClickListener(this) {
+        fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionPortfolioExplorerActivity.this, "total");

@@ -6,7 +6,7 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class AddressFilterDialog extends BaseDialog {
         bsv.setSelection(filterIndex + 1);
 
         Button B = findViewById(R.id.address_filter_dialog_button);
-        B.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 // Shift because of "all" option.
                 user_INDEX = bsv.spinner.getSelectedItemPosition() - 1;

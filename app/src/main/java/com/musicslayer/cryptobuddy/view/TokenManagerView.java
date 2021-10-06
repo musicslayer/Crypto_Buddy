@@ -11,10 +11,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -50,13 +49,13 @@ public class TokenManagerView extends CrashTableRow {
         T = new TextView(context);
 
         ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressFixedDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
+        progressFixedDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 queryTokensFixed();
             }
         });
-        progressFixedDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 updateTokensFixed();
@@ -65,13 +64,13 @@ public class TokenManagerView extends CrashTableRow {
         progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
 
         ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDirectDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
+        progressDirectDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 queryTokensDirect();
             }
         });
-        progressDirectDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 updateTokensDirect();
@@ -80,7 +79,7 @@ public class TokenManagerView extends CrashTableRow {
         progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType());
-        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
@@ -105,7 +104,7 @@ public class TokenManagerView extends CrashTableRow {
         confirmDeleteTokensDialogFragment.restoreListeners(context, "confirm_delete_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment deleteTokensDialogFragment = BaseDialogFragment.newInstance(DeleteTokensDialog.class, tokenManager.getTokenType(), tokenManager.canGetJSON());
-        deleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        deleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteTokensDialog)dialog).isComplete) {
@@ -119,14 +118,14 @@ public class TokenManagerView extends CrashTableRow {
         B_DELETE = new AppCompatButton(context);
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
         B_DELETE.setText("Delete");
-        B_DELETE.setOnClickListener(new CrashOnClickListener(context) {
+        B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 deleteTokensDialogFragment.show(context, "delete_" + tokenManager.getSettingsKey());
             }
         });
 
         BaseDialogFragment downloadTokensDialogFragment = BaseDialogFragment.newInstance(DownloadTokensDialog.class, tokenManager.getTokenType());
-        downloadTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        downloadTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DownloadTokensDialog)dialog).isComplete) {
@@ -144,7 +143,7 @@ public class TokenManagerView extends CrashTableRow {
         B_DOWNLOAD = new AppCompatButton(context);
         B_DOWNLOAD.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_download_24, 0, 0, 0);
         B_DOWNLOAD.setText("Download");
-        B_DOWNLOAD.setOnClickListener(new CrashOnClickListener(context) {
+        B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 downloadTokensDialogFragment.show(context, "download_" + tokenManager.getSettingsKey());
             }

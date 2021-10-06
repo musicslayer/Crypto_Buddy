@@ -7,8 +7,8 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -63,7 +63,7 @@ public class TimeZoneSettingsView extends CrashLinearLayout {
         prefText.setText(settingDescriptionsArrayList.get(Settings.getSettingValue(settingName)));
 
 
-        bsv.spinner.setOnItemSelectedListener(new CrashOnItemSelectedListener(context) {
+        bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 // The first option is always the same, but others may change.

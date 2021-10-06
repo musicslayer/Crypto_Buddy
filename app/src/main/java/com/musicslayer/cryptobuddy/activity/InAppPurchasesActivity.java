@@ -8,8 +8,8 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 
@@ -47,7 +47,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         Button B_PURCHASE_REMOVEDADS = findViewById(R.id.in_app_purchases_removeAdsButton);
-        B_PURCHASE_REMOVEDADS.setOnClickListener(new CrashOnClickListener(this) {
+        B_PURCHASE_REMOVEDADS.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseRemoveAds(InAppPurchasesActivity.this);
@@ -55,7 +55,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         });
 
         Button B_PURCHASE_UNLOCKTOKENS = findViewById(R.id.in_app_purchases_unlockTokensButton);
-        B_PURCHASE_UNLOCKTOKENS.setOnClickListener(new CrashOnClickListener(this) {
+        B_PURCHASE_UNLOCKTOKENS.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseUnlockTokens(InAppPurchasesActivity.this);
@@ -63,7 +63,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         });
 
         Button B_PURCHASE_SUPPORTDEVELOPER1 = findViewById(R.id.in_app_purchases_supportDeveloperButton1);
-        B_PURCHASE_SUPPORTDEVELOPER1.setOnClickListener(new CrashOnClickListener(this) {
+        B_PURCHASE_SUPPORTDEVELOPER1.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseSupportDeveloper1(InAppPurchasesActivity.this);
@@ -71,7 +71,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         });
 
         Button B_PURCHASE_SUPPORTDEVELOPER2 = findViewById(R.id.in_app_purchases_supportDeveloperButton2);
-        B_PURCHASE_SUPPORTDEVELOPER2.setOnClickListener(new CrashOnClickListener(this) {
+        B_PURCHASE_SUPPORTDEVELOPER2.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseSupportDeveloper2(InAppPurchasesActivity.this);
@@ -79,7 +79,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         });
 
         Button B_PURCHASE_SUPPORTDEVELOPER3 = findViewById(R.id.in_app_purchases_supportDeveloperButton3);
-        B_PURCHASE_SUPPORTDEVELOPER3.setOnClickListener(new CrashOnClickListener(this) {
+        B_PURCHASE_SUPPORTDEVELOPER3.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseSupportDeveloper3(InAppPurchasesActivity.this);

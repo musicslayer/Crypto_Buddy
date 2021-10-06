@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.WindowUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -49,14 +49,14 @@ public class AddressQRCodeDialog extends BaseDialog {
 
         BorderedSpinnerView bsv = findViewById(R.id.address_qr_code_dialog_spinner);
         bsv.setOptions(options);
-        bsv.setOnItemSelectedListener(new CrashOnItemSelectedListener(this.activity) {
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 AddressData addressData = addressDataArrayList.get(pos);
 
                 T.setText(addressData.cryptoAddress.toString());
 
-                B.setOnClickListener(new CrashOnClickListener(AddressQRCodeDialog.this.activity) {
+                B.setOnClickListener(new CrashView.CrashOnClickListener(AddressQRCodeDialog.this.activity) {
                     @Override
                     public void onClickImpl(View view) {
                         ClipboardUtil.copy(AddressQRCodeDialog.this.activity, "wallet_address", addressData.cryptoAddress.address);

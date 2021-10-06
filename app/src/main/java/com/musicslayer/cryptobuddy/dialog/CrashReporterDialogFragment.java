@@ -13,7 +13,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 public class CrashReporterDialogFragment extends BaseDialogFragment {
     // We only want to deal with an app's first crash, so use this flag to prevent multiple CrashReporterDialogs from showing.
-    final static boolean[] LAUNCHED = new boolean[1];
+    final public static boolean[] LAUNCHED = new boolean[1];
 
     public static void showCrashDialogFragment(Class<?> clazz, CrashException crashException, Activity activity, String tag) {
         try {

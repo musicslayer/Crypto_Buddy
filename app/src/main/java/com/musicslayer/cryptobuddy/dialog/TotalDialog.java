@@ -15,9 +15,8 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -49,7 +48,7 @@ public class TotalDialog extends BaseDialog {
         deltaMap = Transaction.resolveAssets(transactionArrayList);
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this.activity) {
+        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 newPriceMap = new HashMap<>();
@@ -77,7 +76,7 @@ public class TotalDialog extends BaseDialog {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(newPriceMap.size() != deltaMap.size()) {
@@ -95,7 +94,7 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.restoreListeners(this.activity, "progress");
 
         Button B_PRICES = findViewById(R.id.total_dialog_priceButton);
-        B_PRICES.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 progressDialogFragment.show(TotalDialog.this.activity, "progress");
             }

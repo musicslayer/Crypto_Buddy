@@ -26,6 +26,7 @@ abstract public class CrashRunnable implements Runnable {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(activity, null);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }

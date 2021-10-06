@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -40,7 +40,7 @@ public class ChooseAddressDialog extends BaseDialog {
         setContentView(R.layout.dialog_choose_address);
 
         ImageButton helpButton = findViewById(R.id.choose_address_dialog_helpButton);
-        helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(ChooseAddressDialog.this.activity, R.raw.help_choose_address);
@@ -49,7 +49,7 @@ public class ChooseAddressDialog extends BaseDialog {
 
         if(Purchases.isUnlockTokensPurchased) {
             Button B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
-            B_TOGGLE.setOnClickListener(new CrashOnClickListener(this.activity) {
+            B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                 public void onClickImpl(View v) {
                     includeTokens = !includeTokens;
                     updateLayout();
@@ -60,7 +60,7 @@ public class ChooseAddressDialog extends BaseDialog {
         final EditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
 
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);
-        B_PASTE.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 CharSequence pasteText = ClipboardUtil.paste(ChooseAddressDialog.this.activity);
                 if(!"".contentEquals(pasteText)) {
@@ -70,7 +70,7 @@ public class ChooseAddressDialog extends BaseDialog {
         });
 
         BaseDialogFragment scanQRDialogFragment = BaseDialogFragment.newInstance(ScanQRDialog.class);
-        scanQRDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        scanQRDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ScanQRDialog)dialog).isComplete) {
@@ -81,7 +81,7 @@ public class ChooseAddressDialog extends BaseDialog {
         scanQRDialogFragment.restoreListeners(this.activity, "scanqr");
 
         Button B_SCANQR = findViewById(R.id.choose_address_dialog_scanQRButton);
-        B_SCANQR.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_SCANQR.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(!PermissionUtil.isGooglePlayServicesAvailable(ChooseAddressDialog.this.activity)) {
                     return;
@@ -96,7 +96,7 @@ public class ChooseAddressDialog extends BaseDialog {
         });
 
         BaseDialogFragment chooseHistoryAddressDialogFragment = BaseDialogFragment.newInstance(ChooseHistoryAddressDialog.class);
-        chooseHistoryAddressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        chooseHistoryAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseHistoryAddressDialog)dialog).isComplete) {
@@ -110,13 +110,13 @@ public class ChooseAddressDialog extends BaseDialog {
         chooseHistoryAddressDialogFragment.restoreListeners(this.activity, "address_history");
 
         Button B_HISTORY = findViewById(R.id.choose_address_dialog_historyButton);
-        B_HISTORY.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_HISTORY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 chooseHistoryAddressDialogFragment.show(ChooseAddressDialog.this.activity, "address_history");
             }
         });
 
-        DialogInterface.OnDismissListener chooseCryptoDialogFragmentListener = new CrashOnDismissListener(this.activity) {
+        DialogInterface.OnDismissListener chooseCryptoDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
@@ -131,7 +131,7 @@ public class ChooseAddressDialog extends BaseDialog {
         };
 
         Button B_CONFIRM = findViewById(R.id.choose_address_dialog_confirmButton);
-        B_CONFIRM.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 String address = E_ADDRESS.getText().toString();
                 if(address.isEmpty()) {

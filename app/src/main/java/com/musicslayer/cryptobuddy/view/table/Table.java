@@ -16,10 +16,10 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -181,7 +181,7 @@ abstract public class Table extends CrashTableLayout {
                     t[i].setText(filterArrayList.get(i).getIncludedString());
 
                     BaseDialogFragment filterDialogFragment = f.getGenericDialogFragment();
-                    filterDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+                    filterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                         @Override
                         public void onDismissImpl(DialogInterface dialog) {
                             if(((BaseDialog)dialog).isComplete) {
@@ -193,7 +193,7 @@ abstract public class Table extends CrashTableLayout {
                     });
                     filterDialogFragment.restoreListeners(context, "filter" + ii);
 
-                    b[i].setOnClickListener(new CrashOnClickListener(context) {
+                    b[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
                         @Override
                         public void onClickImpl(View view) {
                             filterDialogFragment.show(context, "filter" + ii);
@@ -223,7 +223,7 @@ abstract public class Table extends CrashTableLayout {
                 b[i].setText("Sort");
                 b[i].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, sortIcons[sortState.get(i)], 0);
 
-                b[i].setOnClickListener(new CrashOnClickListener(context) {
+                b[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
                     @Override
                     public void onClickImpl(View view) {
                         sortingColumn = ii;
@@ -460,7 +460,7 @@ abstract public class Table extends CrashTableLayout {
         public void makeLayout(Context context) {
             fab_first = new FloatingActionButton(context);
             fab_first.setImageResource(R.drawable.ic_baseline_first_page_24);
-            fab_first.setOnClickListener(new CrashOnClickListener(context) {
+            fab_first.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
                     if(currentPage != 1) {
@@ -473,7 +473,7 @@ abstract public class Table extends CrashTableLayout {
 
             fab_left = new FloatingActionButton(context);
             fab_left.setImageResource(R.drawable.ic_baseline_chevron_left_24);
-            fab_left.setOnClickListener(new CrashOnClickListener(context) {
+            fab_left.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
                     if(currentPage > 1) {
@@ -490,7 +490,7 @@ abstract public class Table extends CrashTableLayout {
 
             fab_right = new FloatingActionButton(context);
             fab_right.setImageResource(R.drawable.ic_baseline_chevron_right_24);
-            fab_right.setOnClickListener(new CrashOnClickListener(context) {
+            fab_right.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
                     if(currentPage < lastPage) {
@@ -503,7 +503,7 @@ abstract public class Table extends CrashTableLayout {
 
             fab_last = new FloatingActionButton(context);
             fab_last.setImageResource(R.drawable.ic_baseline_last_page_24);
-            fab_last.setOnClickListener(new CrashOnClickListener(context) {
+            fab_last.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
                     if(currentPage != lastPage) {

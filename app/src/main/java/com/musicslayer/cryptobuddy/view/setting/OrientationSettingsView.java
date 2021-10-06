@@ -8,8 +8,8 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
@@ -41,7 +41,7 @@ public class OrientationSettingsView extends CrashLinearLayout {
         prefText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         prefText.setText(settingDescriptions[Settings.getSettingValue(settingName)]);
 
-        bsv.spinner.setOnItemSelectedListener(new CrashOnItemSelectedListener(context) {
+        bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);

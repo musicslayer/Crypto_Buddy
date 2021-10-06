@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmResetTableDialog extends BaseDialog {
@@ -30,7 +30,7 @@ public class ConfirmResetTableDialog extends BaseDialog {
         });
 
         Button B_CANCEL = findViewById(R.id.confirm_reset_table_dialog_cancelButton);
-        B_CANCEL.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 dismiss();

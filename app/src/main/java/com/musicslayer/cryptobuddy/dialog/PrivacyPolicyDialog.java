@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 
 public class PrivacyPolicyDialog extends BaseDialog {
@@ -32,7 +32,7 @@ public class PrivacyPolicyDialog extends BaseDialog {
         T.setText("To use this app, you must agree to the privacy policy:\n" + "https://sites.google.com/view/crypto-buddy-privacy-policy/home\n\n");
 
         Button B_AGREE = findViewById(R.id.privacy_policy_agreeButton);
-        B_AGREE.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_AGREE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 PrivacyPolicy.setAgree(PrivacyPolicyDialog.this.activity);
                 dismiss();
@@ -40,7 +40,7 @@ public class PrivacyPolicyDialog extends BaseDialog {
         });
 
         Button B_EXIT = findViewById(R.id.privacy_policy_exitButton);
-        B_EXIT.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_EXIT.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 // For this dialog, "isComplete" means we have to exit the app.

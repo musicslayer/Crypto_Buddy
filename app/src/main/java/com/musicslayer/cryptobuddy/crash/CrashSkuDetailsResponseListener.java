@@ -33,6 +33,7 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(activity, null);
             crashException.appendExtraInfoFromArgument(billingResult);
             crashException.appendExtraInfoFromArgument(skuDetailsList);
 

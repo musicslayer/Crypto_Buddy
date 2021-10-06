@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -44,7 +44,7 @@ public class MessageSettingsView extends CrashLinearLayout {
         prefText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         prefText.setText(settingDescriptions[Settings.getSettingValue(settingName)]);
 
-        bsv.spinner.setOnItemSelectedListener(new CrashOnItemSelectedListener(context) {
+        bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);
@@ -57,7 +57,7 @@ public class MessageSettingsView extends CrashLinearLayout {
 
         final AppCompatButton B_MessageTest = new AppCompatButton(context);
         B_MessageTest.setText("Message Test");
-        B_MessageTest.setOnClickListener(new CrashOnClickListener(context) {
+        B_MessageTest.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 if(Settings.setting_message == android.widget.Toast.LENGTH_SHORT) {
                     ToastUtil.showToast(context,"setting_message_test_short");

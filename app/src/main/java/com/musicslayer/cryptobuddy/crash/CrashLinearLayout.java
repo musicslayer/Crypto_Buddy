@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.crash;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,12 +13,15 @@ import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashLinearLayout extends LinearLayout {
+    public Activity activity;
+
     public CrashLinearLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public CrashLinearLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        this.activity = ContextUtil.getActivity(context);
     }
 
     @Override
@@ -47,6 +51,7 @@ abstract public class CrashLinearLayout extends LinearLayout {
 
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
+            crashException.setLocation(activity, null);
             crashException.appendExtraInfoFromArgument(state);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
             return;
@@ -59,6 +64,7 @@ abstract public class CrashLinearLayout extends LinearLayout {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");

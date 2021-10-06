@@ -21,6 +21,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(this, null);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
         }
@@ -36,6 +37,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(this, null);
             crashException.appendExtraInfoFromArgument(savedInstanceState);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
@@ -51,6 +53,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(this,null);
             crashException.appendExtraInfoFromArgument(menu);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
@@ -68,6 +71,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(this,null);
             crashException.appendExtraInfoFromArgument(item);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
@@ -96,6 +100,7 @@ abstract public class CrashActivity extends AppCompatActivity {
         Exception exception = (Exception)bundle.getSerializable("!EXCEPTION!");
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
+            crashException.setLocation(this,null);
             crashException.appendExtraInfoFromArgument(bundle);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
             return;
@@ -109,6 +114,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(this,null);
             crashException.appendExtraInfoFromArgument(bundle);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");

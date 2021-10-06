@@ -18,10 +18,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnMenuItemClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashPopupMenu;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -122,7 +122,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_FIAT = new AppCompatButton(context);
         B_FIAT.setText("FIAT");
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_FIAT.setOnClickListener(new CrashOnClickListener(context) {
+        B_FIAT.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 setOptionsFiat();
             }
@@ -138,7 +138,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_COIN = new AppCompatButton(context);
         B_COIN.setText("COIN");
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_COIN.setOnClickListener(new CrashOnClickListener(context) {
+        B_COIN.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 setOptionsCoin();
             }
@@ -147,7 +147,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_TOKEN = new AppCompatButton(context);
         B_TOKEN.setText("TOKEN");
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_TOKEN.setOnClickListener(new CrashOnClickListener(context) {
+        B_TOKEN.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 // Show list of token types, or tell user there are none.
                 if(TokenManager.getAllTokens().isEmpty()) {
@@ -169,7 +169,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
                         popup.getMenu().add(o);
                     }
 
-                    popup.setOnMenuItemClickListener(new CrashOnMenuItemClickListener(context) {
+                    popup.setOnMenuItemClickListener(new CrashPopupMenu.CrashOnMenuItemClickListener(context) {
                         public boolean onMenuItemClickImpl(MenuItem item) {
                             // Since we exclude token types with 0 items, we cannot rely on index position.
                             setOptionsToken(item.toString());
@@ -184,7 +184,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         bsv = new BorderedSpinnerView(context);
 
         searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames());
-        searchAssetDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        searchAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SearchDialog)dialog).isComplete) {
@@ -198,7 +198,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_SEARCH = new AppCompatButton(context);
         B_SEARCH.setText("");
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
-        B_SEARCH.setOnClickListener(new CrashOnClickListener(context) {
+        B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 searchAssetDialogFragment.show(context, "search");
             }

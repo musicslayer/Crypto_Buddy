@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+
+import java.util.ArrayList;
 
 public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
     public DialogInterface.OnShowListener SL;
@@ -100,6 +103,22 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public static FragmentManager getFragmentManager(Context context) {
-        return ((BaseActivity)ContextUtil.getActivity(context)).getSupportFragmentManager();
+        return ((AppCompatActivity)ContextUtil.getActivity(context)).getSupportFragmentManager();
+    }
+
+    public static ArrayList<Dialog> getAllDialogs(Context context) {
+        // Returns a list of all the dialogs currently on the stack.
+        ArrayList<Dialog> dialogArrayList = new ArrayList<>();
+
+        for(Fragment fragment : getFragmentManager(context).getFragments()) {
+            if(fragment instanceof DialogFragment) {
+                Dialog dialog = ((DialogFragment) fragment).getDialog();
+                if(dialog != null) {
+                    dialogArrayList.add(dialog);
+                }
+            }
+        }
+
+        return dialogArrayList;
     }
 }

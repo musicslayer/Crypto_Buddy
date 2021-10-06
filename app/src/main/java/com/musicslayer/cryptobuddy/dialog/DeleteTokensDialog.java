@@ -9,7 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class DeleteTokensDialog extends BaseDialog {
     public String tokenString;
@@ -34,7 +34,7 @@ public class DeleteTokensDialog extends BaseDialog {
         toolbar.setTitle("Delete " + tokenString + " Tokens");
 
         Button B_DOWNLOADED = findViewById(R.id.delete_tokens_dialog_downloadedButton);
-        B_DOWNLOADED.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_DOWNLOADED.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 user_CHOICE = "downloaded";
@@ -56,7 +56,7 @@ public class DeleteTokensDialog extends BaseDialog {
         }
 
         Button B_FOUND = findViewById(R.id.delete_tokens_dialog_foundButton);
-        B_FOUND.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_FOUND.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 user_CHOICE = "found";
@@ -66,7 +66,7 @@ public class DeleteTokensDialog extends BaseDialog {
         });
 
         Button B_CUSTOM = findViewById(R.id.delete_tokens_dialog_customButton);
-        B_CUSTOM.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CUSTOM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 user_CHOICE = "custom";

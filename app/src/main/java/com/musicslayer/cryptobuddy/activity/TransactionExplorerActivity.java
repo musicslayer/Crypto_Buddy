@@ -11,8 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetTableDialog;
@@ -40,7 +40,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         setContentView(R.layout.activity_transaction_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -55,7 +55,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ImageButton helpButton = findViewById(R.id.transaction_explorer_helpButton);
-        helpButton.setOnClickListener(new CrashOnClickListener(this) {
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(TransactionExplorerActivity.this, R.raw.help_transaction_explorer);
@@ -68,7 +68,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         table.pageView.updateLayout();
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
-        addTransactionDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
@@ -79,7 +79,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         addTransactionDialogFragment.restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_explorer_addButton);
-        fab_add.setOnClickListener(new CrashOnClickListener(this) {
+        fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 addTransactionDialogFragment.show(TransactionExplorerActivity.this, "transaction");
@@ -87,7 +87,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         });
 
         FloatingActionButton fab_total = findViewById(R.id.transaction_explorer_totalButton);
-        fab_total.setOnClickListener(new CrashOnClickListener(this) {
+        fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionExplorerActivity.this, "total");
@@ -95,7 +95,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         });
 
         BaseDialogFragment confirmResetTableDialogFragment = BaseDialogFragment.newInstance(ConfirmResetTableDialog.class);
-        confirmResetTableDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
+        confirmResetTableDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetTableDialog)dialog).isComplete) {
@@ -106,7 +106,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         confirmResetTableDialogFragment.restoreListeners(this, "reset");
 
         FloatingActionButton fab_reset = findViewById(R.id.transaction_explorer_resetButton);
-        fab_reset.setOnClickListener(new CrashOnClickListener(this) {
+        fab_reset.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 confirmResetTableDialogFragment.show(TransactionExplorerActivity.this, "reset");

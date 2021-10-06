@@ -13,7 +13,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
@@ -100,7 +100,7 @@ public class ConfirmationView extends CrashLinearLayout {
             B[i] = new AppCompatButton(context);
             B[i].setText(Integer.toString(i));
             B[i].setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
-            B[i].setOnClickListener(new CrashOnClickListener(context) {
+            B[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
                     for(int j = 0; j < numDigits - 1; j++) {
@@ -160,7 +160,7 @@ public class ConfirmationView extends CrashLinearLayout {
         B.setText("Confirm");
         B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
         B.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        B.setOnClickListener(new CrashOnClickListener(context) {
+        B.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             @Override
             public void onClickImpl(View view) {
                 if(confirmationListener != null) {

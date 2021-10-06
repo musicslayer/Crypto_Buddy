@@ -8,9 +8,9 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllAddressHistoryDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
@@ -31,7 +31,7 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
         T_Reset.setText("Delete all stored address history.");
 
         BaseDialogFragment confirmDeleteAllAddressHistoryDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAllAddressHistoryDialog.class);
-        confirmDeleteAllAddressHistoryDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        confirmDeleteAllAddressHistoryDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
@@ -46,7 +46,7 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
         B_DELETEALL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         B_DELETEALL.setText("Delete All Address History");
         B_DELETEALL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
-        B_DELETEALL.setOnClickListener(new CrashOnClickListener(context) {
+        B_DELETEALL.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 confirmDeleteAllAddressHistoryDialogFragment.show(context, "delete_all_address_history_settings_view");
             }

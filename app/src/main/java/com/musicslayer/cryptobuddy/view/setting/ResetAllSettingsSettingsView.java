@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.Settings;
@@ -33,7 +33,7 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
         T_Reset.setText("Reset all settings to default values.");
 
         BaseDialogFragment confirmResetSettingsDialogFragment = BaseDialogFragment.newInstance(ConfirmResetSettingsDialog.class);
-        confirmResetSettingsDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        confirmResetSettingsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
@@ -49,7 +49,7 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
         B_Reset.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         B_Reset.setText("Reset All Settings");
         B_Reset.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
-        B_Reset.setOnClickListener(new CrashOnClickListener(context) {
+        B_Reset.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 confirmResetSettingsDialogFragment.show(context, "reset_reset_all_settings_view");
             }

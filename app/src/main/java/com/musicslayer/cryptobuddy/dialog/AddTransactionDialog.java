@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -77,7 +77,7 @@ public class AddTransactionDialog extends BaseDialog {
         T_DATE_CHOICE.setText(nowString);
 
         BaseDialogFragment chooseDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
-        chooseDateDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        chooseDateDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
@@ -100,14 +100,14 @@ public class AddTransactionDialog extends BaseDialog {
         chooseDateDialogFragment.restoreListeners(this.activity, "date");
 
         Button B_CHOOSEDATE = findViewById(R.id.add_transaction_dialog_chooseDateButton);
-        B_CHOOSEDATE.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CHOOSEDATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 chooseDateDialogFragment.show(AddTransactionDialog.this.activity, "date");
             }
         });
 
         BaseDialogFragment chooseTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
-        chooseTimeDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        chooseTimeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
@@ -129,7 +129,7 @@ public class AddTransactionDialog extends BaseDialog {
         chooseTimeDialogFragment.restoreListeners(this.activity, "time");
 
         Button B_CHOOSETIME = findViewById(R.id.add_transaction_dialog_chooseTimeButton);
-        B_CHOOSETIME.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CHOOSETIME.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 chooseTimeDialogFragment.show(AddTransactionDialog.this.activity, "time");
             }
@@ -158,7 +158,7 @@ public class AddTransactionDialog extends BaseDialog {
         RadioButton[] rb = new RadioButton[3];
 
         rb[0] = findViewById(R.id.add_transaction_dialog_radioButton1);
-        rb[0].setOnClickListener(new CrashOnClickListener(this.activity) {
+        rb[0].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.INVISIBLE);
                 B_CHOOSETIME.setVisibility(View.INVISIBLE);
@@ -170,7 +170,7 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         rb[1] = findViewById(R.id.add_transaction_dialog_radioButton2);
-        rb[1].setOnClickListener(new CrashOnClickListener(this.activity) {
+        rb[1].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.VISIBLE);
                 B_CHOOSETIME.setVisibility(View.VISIBLE);
@@ -182,7 +182,7 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         rb[2] = findViewById(R.id.add_transaction_dialog_radioButton3);
-        rb[2].setOnClickListener(new CrashOnClickListener(this.activity) {
+        rb[2].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 B_CHOOSEDATE.setVisibility(View.INVISIBLE);
                 B_CHOOSETIME.setVisibility(View.INVISIBLE);
@@ -197,7 +197,7 @@ public class AddTransactionDialog extends BaseDialog {
         rb[LAST_CHECK].callOnClick();
 
         Button B_CONFIRM = findViewById(R.id.add_transaction_dialog_confirmButton);
-        B_CONFIRM.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 Action action = new Action(Action.actions.get(bsv_action.spinner.getSelectedItemPosition()));
 
@@ -236,7 +236,7 @@ public class AddTransactionDialog extends BaseDialog {
         });
 
         FloatingActionButton fab_swap = findViewById(R.id.add_transaction_dialog_swapButton);
-        fab_swap.setOnClickListener(new CrashOnClickListener(this.activity) {
+        fab_swap.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
                 SelectAndSearchView.swap(ssvPrimary, ssvSecondary);
@@ -249,7 +249,7 @@ public class AddTransactionDialog extends BaseDialog {
             }
         });
 
-        bsv_action.setOnItemSelectedListener(new CrashOnItemSelectedListener(this.activity) {
+        bsv_action.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 if(pos == 0 || pos == 1) {

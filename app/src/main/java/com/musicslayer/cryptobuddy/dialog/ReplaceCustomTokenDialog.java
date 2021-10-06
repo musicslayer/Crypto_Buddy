@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class ReplaceCustomTokenDialog extends BaseDialog {
     public Token oldToken;
@@ -42,7 +42,7 @@ public class ReplaceCustomTokenDialog extends BaseDialog {
         T.setText(text);
 
         Button cancelButton = findViewById(R.id.replace_custom_token_dialog_cancelButton);
-        cancelButton.setOnClickListener(new CrashOnClickListener(this.activity) {
+        cancelButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
                 dismiss();
@@ -50,7 +50,7 @@ public class ReplaceCustomTokenDialog extends BaseDialog {
         });
 
         Button confirmButton = findViewById(R.id.replace_custom_token_dialog_confirmButton);
-        confirmButton.setOnClickListener(new CrashOnClickListener(this.activity) {
+        confirmButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
                 isComplete = true;

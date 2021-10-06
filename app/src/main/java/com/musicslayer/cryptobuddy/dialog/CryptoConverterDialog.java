@@ -9,9 +9,8 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
@@ -52,7 +51,7 @@ public class CryptoConverterDialog extends BaseDialog {
         ssvSecondary.setOptionsCoin();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashOnShowListener(this.activity) {
+        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
@@ -61,7 +60,7 @@ public class CryptoConverterDialog extends BaseDialog {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashOnDismissListener(this.activity) {
+        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(priceDataPrimary.isComplete() && priceDataSecondary.isComplete()) {
@@ -92,7 +91,7 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.restoreListeners(this.activity, "progress");
 
         Button B_CONVERT = findViewById(R.id.crypto_converter_dialog_convertButton);
-        B_CONVERT.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CONVERT.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 cryptoPrimary = (Crypto)ssvPrimary.getChosenAsset();
                 cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
@@ -111,7 +110,7 @@ public class CryptoConverterDialog extends BaseDialog {
         });
 
         FloatingActionButton fab_swap = findViewById(R.id.crypto_converter_dialog_swapButton);
-        fab_swap.setOnClickListener(new CrashOnClickListener(this.activity) {
+        fab_swap.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
                 SelectAndSearchView.swap(ssvPrimary, ssvSecondary);

@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.crash;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -13,12 +14,15 @@ import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashEditText extends AppCompatEditText {
+    public Activity activity;
+
     public CrashEditText(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public CrashEditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        this.activity = ContextUtil.getActivity(context);
     }
 
     @Override
@@ -48,6 +52,7 @@ abstract public class CrashEditText extends AppCompatEditText {
 
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
+            crashException.setLocation(activity, null);
             crashException.appendExtraInfoFromArgument(state);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
             return;
@@ -60,6 +65,7 @@ abstract public class CrashEditText extends AppCompatEditText {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
+            crashException.setLocation(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");

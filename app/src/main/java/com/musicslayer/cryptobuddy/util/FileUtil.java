@@ -69,7 +69,7 @@ public class FileUtil {
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 
-            // This class may be used by CrashReporterDialog, so just return null.
+            // This class may be used by CrashReporterDialog, so just return null instead of throwing something.
             file = null;
         }
 

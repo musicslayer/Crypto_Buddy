@@ -8,9 +8,9 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetEverythingDialog;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
@@ -31,7 +31,7 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
         T_Reset.setText("RESET EVERYTHING!\nApp will be like a new install. Purchase data will be temporarily reset, but will restore itself automatically shortly after restarting the app.");
 
         BaseDialogFragment confirmResetEverythingDialogFragment = BaseDialogFragment.newInstance(ConfirmResetEverythingDialog.class);
-        confirmResetEverythingDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
+        confirmResetEverythingDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
@@ -46,7 +46,7 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
         B_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         B_Reset.setText("RESET EVERYTHING!");
         B_Reset.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
-        B_Reset.setOnClickListener(new CrashOnClickListener(context) {
+        B_Reset.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 confirmResetEverythingDialogFragment.show(context, "reset_reset_everything_settings_view");
             }

@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
@@ -40,9 +40,6 @@ public class CrashReporterDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_crash_reporter);
 
-        Toolbar toolbar = findViewById(R.id.crash_reporter_dialog_toolbar);
-        toolbar.setSubtitle(activity.getLocalClassName());
-
         Button B_EMAIL = findViewById(R.id.crash_reporter_dialog_emailButton);
         B_EMAIL.setOnClickListener(v -> {
             try {
@@ -62,7 +59,68 @@ public class CrashReporterDialog extends BaseDialog {
             }
         });
 
+        Button B_EXIT = findViewById(R.id.crash_reporter_dialog_exitButton);
+        B_EXIT.setOnClickListener(v -> {
+            // Don't use try/catch. An exception will end the app anyway.
+            activity.finishAffinity();
+            System.exit(0);
+        });
+
+        TextView T_SHOW = findViewById(R.id.crash_reporter_dialog_showTextView);
+        TextView T_RECOVER = findViewById(R.id.crash_reporter_dialog_recoverTextView);
+        TextView T_CRASH = findViewById(R.id.crash_reporter_dialog_crashTextView);
+        TextView T_ERASE = findViewById(R.id.crash_reporter_dialog_eraseTextView);
+        Button B_SHOW = findViewById(R.id.crash_reporter_dialog_showButton);
+        Button B_RECOVER = findViewById(R.id.crash_reporter_dialog_recoverButton);
+        Button B_CRASH = findViewById(R.id.crash_reporter_dialog_crashButton);
         Button B_ERASE = findViewById(R.id.crash_reporter_dialog_eraseButton);
+
+        Button B_ADVANCED = findViewById(R.id.crash_reporter_dialog_advancedButton);
+        B_ADVANCED.setOnClickListener(v -> {
+            try {
+                T_SHOW.setVisibility(View.VISIBLE);
+                T_RECOVER.setVisibility(View.VISIBLE);
+                T_CRASH.setVisibility(View.VISIBLE);
+                T_ERASE.setVisibility(View.VISIBLE);
+                B_SHOW.setVisibility(View.VISIBLE);
+                B_RECOVER.setVisibility(View.VISIBLE);
+                B_CRASH.setVisibility(View.VISIBLE);
+                B_ERASE.setVisibility(View.VISIBLE);
+
+                // Don't offer any hide option. This is one and done!
+                B_ADVANCED.setVisibility(View.GONE);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        });
+
+        B_SHOW.setOnClickListener(v -> {
+            try {
+                // Simplest way to show user information. This also has built-in scrolling.
+                AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+                alertDialog.setTitle("Error Information");
+                alertDialog.setMessage(crashException.toString());
+                alertDialog.show();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        });
+
+        B_RECOVER.setOnClickListener(v -> {
+            // Just dismiss this dialog and let the user try to continue.
+            // Don't use try/catch. We already told the user that unpredictable behavior may happen.
+            // Also reset the flag and allow for crashes again.
+            CrashReporterDialogFragment.LAUNCHED[0] = false;
+            dismiss();
+        });
+
+        B_CRASH.setOnClickListener(v -> {
+            // Rethrow the original Exception that we caught before showing CrashReporterDialog.
+            crashException.throwOriginalException();
+        });
+
         B_ERASE.setOnClickListener(v -> {
             try {
                 Persistence.resetAllData(activity);
@@ -76,18 +134,6 @@ public class CrashReporterDialog extends BaseDialog {
             }
         });
 
-        Button B_EXIT = findViewById(R.id.crash_reporter_dialog_exitButton);
-        B_EXIT.setOnClickListener(v -> {
-            activity.finishAffinity();
-            System.exit(0);
-        });
-
-        Button B_CRASH = findViewById(R.id.crash_reporter_dialog_crashButton);
-        B_CRASH.setOnClickListener(v -> {
-            // Rethrow the original Exception that we caught before showing CrashReporterDialog.
-            crashException.throwOriginalException();
-        });
-
         TextView T_INFO = findViewById(R.id.crash_reporter_dialog_infoTextView);
         if(App.DEBUG) {
             T_INFO.setText(crashException.toString());
@@ -95,5 +141,15 @@ public class CrashReporterDialog extends BaseDialog {
         else {
             T_INFO.setVisibility(View.GONE);
         }
+
+        // Advanced options start off hidden.
+        T_SHOW.setVisibility(View.GONE);
+        T_RECOVER.setVisibility(View.GONE);
+        T_CRASH.setVisibility(View.GONE);
+        T_ERASE.setVisibility(View.GONE);
+        B_SHOW.setVisibility(View.GONE);
+        B_RECOVER.setVisibility(View.GONE);
+        B_CRASH.setVisibility(View.GONE);
+        B_ERASE.setVisibility(View.GONE);
     }
 }

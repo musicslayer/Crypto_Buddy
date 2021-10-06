@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class ConfirmBackDialog extends BaseDialog {
     public ConfirmBackDialog(Activity activity) {
@@ -25,7 +25,7 @@ public class ConfirmBackDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_back);
 
         Button B_GOBACK = findViewById(R.id.confirm_back_dialog_backButton);
-        B_GOBACK.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_GOBACK.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 isComplete = true;
                 dismiss();
@@ -33,7 +33,7 @@ public class ConfirmBackDialog extends BaseDialog {
         });
 
         Button B_CANCEL = findViewById(R.id.confirm_back_dialog_cancelButton);
-        B_CANCEL.setOnClickListener(new CrashOnClickListener(this.activity) {
+        B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
                 dismiss();
