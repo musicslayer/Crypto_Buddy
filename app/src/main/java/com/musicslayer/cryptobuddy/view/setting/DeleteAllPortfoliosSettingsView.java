@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
@@ -17,7 +18,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllPortfoliosDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-public class DeleteAllPortfoliosSettingsView extends LinearLayout {
+public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
     public DeleteAllPortfoliosSettingsView(Context context) {
         super(context);
 

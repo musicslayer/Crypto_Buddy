@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -17,7 +18,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-public class DeleteFoundTokensSettingsView extends LinearLayout {
+public class DeleteFoundTokensSettingsView extends CrashLinearLayout {
     public DeleteFoundTokensSettingsView(Context context) {
         super(context);
 
@@ -31,7 +32,7 @@ public class DeleteFoundTokensSettingsView extends LinearLayout {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all found tokens from the app's database.");
 
-        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "Found", "");
+        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "Found");
         confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {

@@ -37,7 +37,7 @@ public class CryptoPricesDialog extends BaseDialog {
 
         TextView T = findViewById(R.id.crypto_prices_dialog_textView);
         SelectAndSearchView ssv = findViewById(R.id.crypto_prices_dialog_selectAndSearchView);
-        ssv.setIncludesFiat(this.activity, false);
+        ssv.setIncludesFiat(false);
         ssv.setOptionsCoin();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
@@ -81,11 +81,7 @@ public class CryptoPricesDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
-
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         String priceData_s = priceData == null ? "{}" : Serialization.serialize(priceData);
         bundle.putString("priceData", priceData_s);
 
@@ -96,7 +92,7 @@ public class CryptoPricesDialog extends BaseDialog {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             String priceData_s = bundle.getString("priceData");
             priceData = "{}".equals(priceData_s) ? null : Serialization.deserialize(priceData_s, PriceData.class);
@@ -104,7 +100,5 @@ public class CryptoPricesDialog extends BaseDialog {
             String crypto_s = bundle.getString("crypto");
             crypto = "{}".equals(crypto_s) ? null : Serialization.deserialize(crypto_s, Crypto.class);
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

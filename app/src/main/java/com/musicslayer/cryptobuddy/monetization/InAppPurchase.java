@@ -217,6 +217,13 @@ public class InAppPurchase {
         });
     }
 
+    // Internal use only!
+    public static void unlock(Context context) {
+        // Just unlock one-time items.
+        grantPurchase(context, "remove_ads");
+        grantPurchase(context, "unlock_tokens");
+    }
+
     private static void grantPurchase(Context context, String id) {
         Purchases.updatePurchase(context, id, true);
 

@@ -3,8 +3,8 @@ package com.musicslayer.cryptobuddy.crash;
 import android.app.Activity;
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -18,7 +18,7 @@ abstract public class CrashRunnable implements Runnable {
     }
 
     @Override
-    public void run() {
+    final public void run() {
         try {
             runImpl();
         }
@@ -27,7 +27,7 @@ abstract public class CrashRunnable implements Runnable {
 
             CrashException crashException = new CrashException(e);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

@@ -26,14 +26,9 @@ public class AboutActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     public void createLayout () {

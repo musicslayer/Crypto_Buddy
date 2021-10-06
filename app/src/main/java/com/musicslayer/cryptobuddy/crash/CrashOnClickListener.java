@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-
-// TODO In all crash classes, use the object passed in to enhance diagnostics...?
 
 abstract public class CrashOnClickListener implements View.OnClickListener {
     abstract public void onClickImpl(View view);
@@ -21,7 +19,7 @@ abstract public class CrashOnClickListener implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View view) {
+    final public void onClick(View view) {
         try {
             onClickImpl(view);
         }
@@ -31,7 +29,7 @@ abstract public class CrashOnClickListener implements View.OnClickListener {
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(view);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

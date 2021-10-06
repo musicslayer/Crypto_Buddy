@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingResult;
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -22,7 +22,7 @@ abstract public class CrashAcknowledgePurchaseResponseListener implements Acknow
     }
 
     @Override
-    public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
+    final public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
         try {
             onAcknowledgePurchaseResponseImpl(billingResult);
         }
@@ -32,7 +32,7 @@ abstract public class CrashAcknowledgePurchaseResponseListener implements Acknow
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(billingResult);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

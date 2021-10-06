@@ -44,11 +44,11 @@ public class CryptoConverterDialog extends BaseDialog {
         NumericEditText E_PRIMARYASSET = findViewById(R.id.crypto_converter_dialog_primaryEditText);
 
         SelectAndSearchView ssvPrimary = findViewById(R.id.crypto_converter_dialog_primarySelectAndSearchView);
-        ssvPrimary.setIncludesFiat(this.activity, false);
+        ssvPrimary.setIncludesFiat(false);
         ssvPrimary.setOptionsCoin();
 
         SelectAndSearchView ssvSecondary = findViewById(R.id.crypto_converter_dialog_secondarySelectAndSearchView);
-        ssvSecondary.setIncludesFiat(this.activity, false);
+        ssvSecondary.setIncludesFiat(false);
         ssvSecondary.setOptionsCoin();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
@@ -120,11 +120,7 @@ public class CryptoConverterDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
-
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         String priceDataPrimary_s = priceDataPrimary == null ? "{}" : Serialization.serialize(priceDataPrimary);
         bundle.putString("priceDataPrimary", priceDataPrimary_s);
 
@@ -141,7 +137,7 @@ public class CryptoConverterDialog extends BaseDialog {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             String priceDataPrimary_s = bundle.getString("priceDataPrimary");
             priceDataPrimary = "{}".equals(priceDataPrimary_s) ? null : Serialization.deserialize(priceDataPrimary_s, PriceData.class);
@@ -155,7 +151,5 @@ public class CryptoConverterDialog extends BaseDialog {
             String cryptoSecondary_s = bundle.getString("cryptoSecondary");
             cryptoSecondary = "{}".equals(cryptoSecondary_s) ? null : Serialization.deserialize(cryptoSecondary_s, Crypto.class);
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

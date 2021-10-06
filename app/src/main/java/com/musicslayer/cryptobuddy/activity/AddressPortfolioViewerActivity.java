@@ -45,7 +45,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -182,25 +182,20 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle bundle) {
-        super.onSaveInstanceState(bundle);
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("PortfolioName", currentDeletePortfolioName);
-
         bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
         bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList[0]));
         bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
-
             cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
             addressDataArrayList[0] = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
             AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

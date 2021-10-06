@@ -21,7 +21,7 @@ public class ConfirmResetEverythingDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_reset_everything);
 
         ConfirmationView C = findViewById(R.id.confirm_reset_everything_dialog_confirmationView);
-        C.setNumDigits(activity, 8);
+        C.setNumDigits(8);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {

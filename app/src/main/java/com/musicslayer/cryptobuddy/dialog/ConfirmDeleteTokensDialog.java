@@ -13,13 +13,9 @@ import com.musicslayer.cryptobuddy.view.ConfirmationView;
 public class ConfirmDeleteTokensDialog extends BaseDialog {
     String tokenString;
 
-    // Round-robin value.
-    public String choice;
-
-    public ConfirmDeleteTokensDialog(Activity activity, String tokenString, String choice) {
+    public ConfirmDeleteTokensDialog(Activity activity, String tokenString) {
         super(activity);
         this.tokenString = tokenString;
-        this.choice = choice;
     }
 
     public int getBaseViewID() {

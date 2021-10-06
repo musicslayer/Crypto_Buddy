@@ -151,20 +151,15 @@ public class TotalDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putString("priceMap", Serialization.serializeHashMap(priceMap));
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             priceMap = Serialization.deserializeHashMap(bundle.getString("priceMap"), Asset.class, AssetAmount.class);
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

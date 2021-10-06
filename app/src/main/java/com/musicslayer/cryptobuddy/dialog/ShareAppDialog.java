@@ -17,7 +17,7 @@ public class ShareAppDialog extends BaseDialog {
         return R.id.share_app_dialog;
     }
 
-    public void createLayout () {
+    public void createLayout() {
         setContentView(R.layout.dialog_share_app);
 
         Button B_EMAIL = findViewById(R.id.share_app_dialog_emailButton);

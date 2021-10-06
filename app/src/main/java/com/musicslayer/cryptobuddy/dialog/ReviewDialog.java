@@ -19,7 +19,7 @@ public class ReviewDialog extends BaseDialog {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         // User cannot hit back to dismiss. They must select an option.
     }
 

@@ -187,22 +187,17 @@ public class DateFilterDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putIntArray("lastcustomdate_start_info", LASTCUSTOMDATE_START_INFO);
         bundle.putIntArray("lastcustomdate_end_info", LASTCUSTOMDATE_END_INFO);
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             LASTCUSTOMDATE_START_INFO = bundle.getIntArray("lastcustomdate_start_info");
             LASTCUSTOMDATE_END_INFO = bundle.getIntArray("lastcustomdate_end_info");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

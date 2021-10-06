@@ -7,11 +7,12 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
-public class SettingsView extends LinearLayout {
+public class SettingsView extends CrashLinearLayout {
     public SettingsView(Context context) {
         super(context);
     }

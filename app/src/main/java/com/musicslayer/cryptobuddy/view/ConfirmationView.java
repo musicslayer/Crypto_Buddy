@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Serialization;
@@ -19,7 +20,7 @@ import com.musicslayer.cryptobuddy.util.Serialization;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ConfirmationView extends LinearLayout {
+public class ConfirmationView extends CrashLinearLayout {
     ArrayList<Integer> randomCode;
     ArrayList<Integer> lastDigits;
     int buttonSize = 150;
@@ -37,15 +38,15 @@ public class ConfirmationView extends LinearLayout {
         super(context, attributeSet);
 
         makeRandomDigits();
-        makeLayout(context);
+        makeLayout();
     }
 
-    public void setNumDigits(Context context, int numDigits) {
+    public void setNumDigits(int numDigits) {
         this.numDigits = numDigits;
 
         this.removeAllViews();
         makeRandomDigits();
-        makeLayout(context);
+        makeLayout();
     }
 
     public void makeRandomDigits() {
@@ -57,23 +58,25 @@ public class ConfirmationView extends LinearLayout {
         }
     }
 
-    public void makeLayout(Context context) {
+    public void makeLayout() {
         if(Settings.setting_confirm) {
-            this.makeLayoutConfirmation(context);
+            this.makeLayoutConfirmation();
         }
         else {
-            this.makeLayoutBypass(context);
+            this.makeLayoutBypass();
         }
     }
 
     @SuppressLint("SetTextI18n")
-    public void makeLayoutConfirmation(Context context) {
+    public void makeLayoutConfirmation() {
         this.setOrientation(LinearLayout.VERTICAL);
 
         lastDigits = new ArrayList<>();
         for(int i = 0; i < numDigits; i++) {
             lastDigits.add(-1);
         }
+
+        Context context = getContext();
 
         TextView messageText = new TextView(context);
         messageText.setText("Confirm by pressing these buttons in sequence: " + getIntArrayText(randomCode));
@@ -150,7 +153,9 @@ public class ConfirmationView extends LinearLayout {
         this.addView(L4);
     }
 
-    public void makeLayoutBypass(Context context) {
+    public void makeLayoutBypass() {
+        Context context = getContext();
+
         AppCompatButton B = new AppCompatButton(context);
         B.setText("Confirm");
         B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
@@ -195,10 +200,10 @@ public class ConfirmationView extends LinearLayout {
     }
 
     @Override
-    public Parcelable onSaveInstanceState()
+    public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("superState", state);
 
         bundle.putString("randomCode", Serialization.int_serializeArrayList(randomCode));
         bundle.putString("lastDigits", Serialization.int_serializeArrayList(lastDigits));
@@ -208,7 +213,7 @@ public class ConfirmationView extends LinearLayout {
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
         {
@@ -220,8 +225,8 @@ public class ConfirmationView extends LinearLayout {
             numDigits = bundle.getInt("numDigits");
 
             this.removeAllViews();
-            makeLayout(getContext());
+            makeLayout();
         }
-        super.onRestoreInstanceState(state);
+        return state;
     }
 }

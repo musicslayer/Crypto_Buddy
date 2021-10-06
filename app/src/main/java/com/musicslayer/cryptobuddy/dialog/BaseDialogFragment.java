@@ -96,9 +96,8 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
         this.setArguments(bundle);
     }
 
-    public boolean isNotShowing(Context context, String tag) {
-        BaseDialogFragment gdf = (BaseDialogFragment)getFragmentManager(context).findFragmentByTag(tag);
-        return gdf == null;
+    public static boolean isNotShowing(Context context, String tag) {
+        return getFragmentManager(context).findFragmentByTag(tag) == null;
     }
 
     public static FragmentManager getFragmentManager(Context context) {

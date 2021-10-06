@@ -9,7 +9,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -17,8 +16,10 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
+import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -28,7 +29,7 @@ import com.musicslayer.cryptobuddy.util.Toast;
 
 import java.util.ArrayList;
 
-abstract public class Table extends TableLayout {
+abstract public class Table extends CrashTableLayout {
     abstract public BaseRow getRow(Context context, Transaction transaction);
 
     // Number of rows before the user input.
@@ -346,10 +347,6 @@ abstract public class Table extends TableLayout {
         this.addView(new BaseHeaderRow(context), 2);
     }
 
-    public void redrawRows(Context context) {
-        redrawRows(context, transactionArrayList);
-    }
-
     public void redrawRows(Context context, ArrayList<Transaction> newTransactionArrayList) {
         ViewGroup group = this;
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
@@ -365,11 +362,11 @@ abstract public class Table extends TableLayout {
     }
 
     @Override
-    public Parcelable onSaveInstanceState()
+    public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
         // Save dynamically added rows.
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("superState", state);
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
@@ -382,7 +379,7 @@ abstract public class Table extends TableLayout {
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         // Load dynamically added rows.
         if (state instanceof Bundle) // implicit null check
@@ -409,10 +406,10 @@ abstract public class Table extends TableLayout {
 
             filterTable(context);
         }
-        super.onRestoreInstanceState(state);
+        return state;
     }
 
-    public static class TablePageView extends LinearLayout {
+    public static class TablePageView extends CrashLinearLayout {
         public Table inner_table;
         public int currentPage = 1;
         public int lastPage;
@@ -534,10 +531,10 @@ abstract public class Table extends TableLayout {
 
             /*
             // Formula
-            final int width = res.getConfiguration().screenWidthDp;
-            final int height = res.getConfiguration().screenHeightDp;
-            return Math.max(width, height) < 470 ? 113 : 158;
-             */
+            //final int width = res.getConfiguration().screenWidthDp;
+            //final int height = res.getConfiguration().screenHeightDp;
+            //return Math.max(width, height) < 470 ? 113 : 158;
+            */
 
             // Hide this view if there is only 1 page.
             if(lastPage < 2) {
@@ -549,10 +546,10 @@ abstract public class Table extends TableLayout {
         }
 
         @Override
-        public Parcelable onSaveInstanceState()
+        public Parcelable onSaveInstanceStateImpl(Parcelable state)
         {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("superState", super.onSaveInstanceState());
+            bundle.putParcelable("superState", state);
             bundle.putInt("currentPage", currentPage);
             bundle.putInt("lastPage", lastPage);
             bundle.putInt("numItems", numItems);
@@ -561,7 +558,7 @@ abstract public class Table extends TableLayout {
         }
 
         @Override
-        public void onRestoreInstanceState(Parcelable state)
+        public Parcelable onRestoreInstanceStateImpl(Parcelable state)
         {
             if (state instanceof Bundle) // implicit null check
             {
@@ -573,7 +570,7 @@ abstract public class Table extends TableLayout {
 
                 updateLayout();
             }
-            super.onRestoreInstanceState(state);
+            return state;
         }
     }
 }

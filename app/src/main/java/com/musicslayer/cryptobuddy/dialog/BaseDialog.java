@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -10,20 +9,16 @@ import android.widget.ScrollView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
-import com.musicslayer.cryptobuddy.crash.CrashException;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.crash.CrashDialog;
 import com.musicslayer.cryptobuddy.util.Window;
 
 // TODO Many common dialogs can be merged.
 
-abstract public class BaseDialog extends Dialog {
+abstract public class BaseDialog extends CrashDialog {
     public BaseActivity activity;
 
     // Tells whether the user deliberately completed this instance.
     public boolean isComplete = false;
-
-    // Non-null if a crash occurred.
-    public Exception originalException;
 
     abstract public void createLayout();
     abstract public int getBaseViewID();
@@ -35,37 +30,15 @@ abstract public class BaseDialog extends Dialog {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreateImpl(Bundle savedInstanceState) {
+        // Needed for older versions of Android.
+        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
 
-        try {
-            // Needed for older versions of Android.
-            requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-
-            createLayout();
-        }
-        catch(Exception e) {
-            originalException = e;
-            ThrowableLogger.processThrowable(e);
-
-            this.dismiss();
-        }
+        createLayout();
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
-
-        // In dialogs, we want the dialog that crashed to have already been dismissed before trying to show CrashDialog.
-        if(originalException != null && !(this instanceof CrashDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
-            CrashException crashException = new CrashException(originalException);
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
-        }
-    }
-
-    @Override
-    public void show() {
-        super.show();
+    public void showImpl() {
         adjustDialog();
     }
 

@@ -249,20 +249,15 @@ public class SearchDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putBoolean("isNames", isNames);
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             isNames = bundle.getBoolean("isNames");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

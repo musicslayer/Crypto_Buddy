@@ -5,8 +5,8 @@ import android.content.Context;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -20,7 +20,7 @@ abstract public class CrashOnMenuItemClickListener implements PopupMenu.OnMenuIt
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
+    final public boolean onMenuItemClick(MenuItem item) {
         try {
             return onMenuItemClickImpl(item);
         }
@@ -30,7 +30,7 @@ abstract public class CrashOnMenuItemClickListener implements PopupMenu.OnMenuIt
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(item);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
 
         return true;

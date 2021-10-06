@@ -5,13 +5,14 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import androidx.core.graphics.BlendModeCompat;
 
+import com.musicslayer.cryptobuddy.crash.CrashEditText;
+
 // An EditText that can turn red if a condition is not met.
 
-abstract public class RedEditText extends AppCompatEditText {
+abstract public class RedEditText extends CrashEditText {
     boolean is_red = false;
 
     public RedEditText(Context context) {
@@ -50,17 +51,17 @@ abstract public class RedEditText extends AppCompatEditText {
     abstract public boolean condition();
 
     @Override
-    public Parcelable onSaveInstanceState()
+    public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("superState", state);
         bundle.putBoolean("is_red", is_red);
 
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
         {
@@ -75,6 +76,6 @@ abstract public class RedEditText extends AppCompatEditText {
                 getBackground().clearColorFilter();
             }
         }
-        super.onRestoreInstanceState(state);
+        return state;
     }
 }

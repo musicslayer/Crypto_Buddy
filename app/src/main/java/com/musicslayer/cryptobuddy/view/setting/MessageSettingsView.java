@@ -9,13 +9,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Toast;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
-public class MessageSettingsView extends LinearLayout {
+public class MessageSettingsView extends CrashLinearLayout {
     public MessageSettingsView(Context context) {
         super(context);
     }

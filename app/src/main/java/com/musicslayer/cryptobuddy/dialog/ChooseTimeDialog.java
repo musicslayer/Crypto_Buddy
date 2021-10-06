@@ -100,20 +100,15 @@ public class ChooseTimeDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putBoolean("is24", is24);
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             is24 = bundle.getBoolean("is24");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

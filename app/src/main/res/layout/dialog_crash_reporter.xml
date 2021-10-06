@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/crash_dialog"
+    android:id="@+id/crash_reporter_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/crash_dialog_toolbar"
+        android:id="@+id/crash_reporter_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -18,91 +18,93 @@
         app:title="CRASH" />
 
     <TextView
-        android:id="@+id/crash_dialog_messageTextView"
+        android:id="@+id/crash_reporter_dialog_messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="The app has crashed! The developer apologizes for any inconvenience caused. Please explore the options below:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/crash_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/crash_reporter_dialog_toolbar" />
 
     <TextView
-        android:id="@+id/crash_dialog_emailTextView"
+        android:id="@+id/crash_reporter_dialog_emailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Send crash info to the developer.\nEmail: musicslayer@gmail.com"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_messageTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_messageTextView" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/crash_dialog_emailButton"
+        android:id="@+id/crash_reporter_dialog_emailButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email Crash Log"
         app:drawableLeftCompat="@drawable/ic_baseline_email_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_emailTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_emailTextView" />
 
     <TextView
-        android:id="@+id/crash_dialog_eraseTextView"
+        android:id="@+id/crash_reporter_dialog_eraseTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Erase all stored app data. Purchase data will be temporarily reset, but will restore itself automatically shortly after restarting the app."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_emailButton" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_emailButton" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/crash_dialog_eraseButton"
+        android:id="@+id/crash_reporter_dialog_eraseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Erase Everything"
         app:drawableLeftCompat="@drawable/ic_baseline_warning_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_eraseTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_eraseTextView" />
 
     <TextView
-        android:id="@+id/crash_dialog_exitTextView"
+        android:id="@+id/crash_reporter_dialog_exitTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Exit the app cleanly."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_eraseButton" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_eraseButton" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/crash_dialog_exitButton"
+        android:id="@+id/crash_reporter_dialog_exitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Exit App"
         app:drawableLeftCompat="@drawable/ic_baseline_exit_to_app_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_exitTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_exitTextView" />
 
     <TextView
-        android:id="@+id/crash_dialog_crashTextView"
+        android:id="@+id/crash_reporter_dialog_crashTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Allow the app to crash as it would have before this screen appeared."
+        android:text="Allow the app to crash as it would have without this crash reporter."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_exitButton" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_exitButton" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/crash_dialog_crashButton"
+        android:id="@+id/crash_reporter_dialog_crashButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crash App"
         app:drawableLeftCompat="@drawable/ic_baseline_error_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_dialog_crashTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_crashTextView" />
 
     <TextView
-        android:id="@+id/crash_dialog_infoTextView"
+        android:id="@+id/crash_reporter_dialog_infoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="(DEBUG Error Stack)"
-        app:layout_constraintTop_toBottomOf="@id/crash_dialog_crashButton" />
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/crash_reporter_dialog_crashButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

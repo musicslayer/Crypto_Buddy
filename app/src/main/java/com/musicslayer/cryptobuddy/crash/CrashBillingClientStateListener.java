@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingResult;
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -23,7 +23,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
     }
 
     @Override
-    public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+    final public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
         try {
             onBillingSetupFinishedImpl(billingResult);
         }
@@ -33,12 +33,12 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(billingResult);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 
     @Override
-    public void onBillingServiceDisconnected() {
+    final public void onBillingServiceDisconnected() {
         try {
             onBillingServiceDisconnectedImpl();
         }
@@ -47,7 +47,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
 
             CrashException crashException = new CrashException(e);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

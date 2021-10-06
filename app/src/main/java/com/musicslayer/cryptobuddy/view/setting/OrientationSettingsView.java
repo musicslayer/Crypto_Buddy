@@ -8,11 +8,12 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
-public class OrientationSettingsView extends LinearLayout {
+public class OrientationSettingsView extends CrashLinearLayout {
     public OrientationSettingsView(Context context) {
         super(context);
     }

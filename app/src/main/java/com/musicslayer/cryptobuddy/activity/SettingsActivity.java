@@ -161,7 +161,7 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

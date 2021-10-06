@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -15,6 +14,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnShowListener;
+import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -23,12 +23,13 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-public class TokenManagerView extends TableRow {
+public class TokenManagerView extends CrashTableRow {
     public TextView T;
     public AppCompatButton B_DELETE;
     public AppCompatButton B_DOWNLOAD;
     public TokenManager tokenManager;
     public String tokenJSON = null;
+    public String choice;
 
     public TokenManagerView(Context context) {
         super(context);
@@ -37,10 +38,12 @@ public class TokenManagerView extends TableRow {
     public TokenManagerView(Context context, TokenManager tokenManager) {
         super(context);
         this.tokenManager = tokenManager;
-        this.makeLayout(context);
+        this.makeLayout();
     }
 
-    public void makeLayout(Context context) {
+    public void makeLayout() {
+        Context context = getContext();
+
         LinearLayout L = new LinearLayout(context);
         L.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -50,13 +53,13 @@ public class TokenManagerView extends TableRow {
         progressFixedDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                queryTokensFixed(context);
+                queryTokensFixed();
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                updateTokensFixed(context);
+                updateTokensFixed();
             }
         });
         progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
@@ -65,23 +68,22 @@ public class TokenManagerView extends TableRow {
         progressDirectDialogFragment.setOnShowListener(new CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                queryTokensDirect(context);
+                queryTokensDirect();
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                updateTokensDirect(context);
+                updateTokensDirect();
             }
         });
         progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
 
-        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), "");
+        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType());
         confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
-                    String choice = ((ConfirmDeleteTokensDialog)dialog).choice;
                     if("downloaded".equals(choice)) {
                         tokenManager.resetDownloadedTokens();
                         tokenManager.save(context, "downloaded");
@@ -95,7 +97,7 @@ public class TokenManagerView extends TableRow {
                         tokenManager.save(context, "custom");
                     }
 
-                    updateLayout(context);
+                    updateLayout();
                     Toast.showToast(context,"tokens_deleted");
                 }
             }
@@ -107,7 +109,7 @@ public class TokenManagerView extends TableRow {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteTokensDialog)dialog).isComplete) {
-                    confirmDeleteTokensDialogFragment.updateArguments(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType(), ((DeleteTokensDialog)dialog).user_CHOICE);
+                    choice = ((DeleteTokensDialog)dialog).user_CHOICE;
                     confirmDeleteTokensDialogFragment.show(context, "confirm_delete_" + tokenManager.getSettingsKey());
                 }
             }
@@ -155,10 +157,7 @@ public class TokenManagerView extends TableRow {
         this.addView(B_DOWNLOAD);
     }
 
-    public void updateLayout(Context context) {
-        // Still set the Button text so that spacing is easier to manage.
-        //B_DOWNLOAD.setText("Download\n" + tokenManager.getTokenType() + " Tokens");
-
+    public void updateLayout() {
         if(tokenManager.canGetJSON()) {
             T.setText(tokenManager.getTokenType() + ":\n(" + tokenManager.downloaded_tokens.size() + ", " + tokenManager.found_tokens.size() + ", " + tokenManager.custom_tokens.size() + ")");
         }
@@ -168,31 +167,31 @@ public class TokenManagerView extends TableRow {
         }
     }
 
-    public void queryTokensFixed(Context context) {
+    public void queryTokensFixed() {
         tokenJSON = tokenManager.getFixedJSON();
     }
 
-    public void updateTokensFixed(Context context) {
+    public void updateTokensFixed() {
         if(tokenJSON != null) {
             tokenManager.resetDownloadedTokens();
             tokenManager.parseFixed(tokenJSON);
-            tokenManager.save(context, "downloaded");
+            tokenManager.save(getContext(), "downloaded");
 
-            updateLayout(context);
+            updateLayout();
         }
     }
 
-    public void queryTokensDirect(Context context) {
+    public void queryTokensDirect() {
         tokenJSON = tokenManager.getJSON();
     }
 
-    public void updateTokensDirect(Context context) {
+    public void updateTokensDirect() {
         if(tokenJSON != null) {
             tokenManager.resetDownloadedTokens();
             tokenManager.parse(tokenJSON);
-            tokenManager.save(context, "downloaded");
+            tokenManager.save(getContext(), "downloaded");
 
-            updateLayout(context);
+            updateLayout();
         }
     }
 }

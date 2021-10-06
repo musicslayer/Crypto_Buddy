@@ -2,10 +2,13 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+
+import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -17,6 +20,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 import com.musicslayer.cryptobuddy.util.Help;
 import com.musicslayer.cryptobuddy.util.REST;
@@ -30,13 +34,14 @@ import java.util.Comparator;
 
 public class TokenManagerActivity extends BaseActivity {
     public String tokenAllJSON = null;
+    ArrayList<TokenManagerView> tokenManagerViewArrayList;
 
     public int getAdLayoutViewID() {
         return R.id.token_manager_adLayout;
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -62,11 +67,11 @@ public class TokenManagerActivity extends BaseActivity {
             }
         });
 
-        ArrayList<TokenManagerView> tokenManagerViewArrayList = new ArrayList<>();
+        tokenManagerViewArrayList = new ArrayList<>();
         for(String tokenType : tokenTypes) {
             TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
             TokenManagerView tokenManagerView = new TokenManagerView(TokenManagerActivity.this, tokenManager);
-            tokenManagerView.updateLayout(TokenManagerActivity.this);
+            tokenManagerView.updateLayout();
 
             tokenManagerViewArrayList.add(tokenManagerView);
             tableLayout.addView(tokenManagerView);
@@ -79,7 +84,7 @@ public class TokenManagerActivity extends BaseActivity {
                 if(((AddCustomTokenDialog)dialog).isComplete) {
                     // We don't know which view was changed, so just update all of them.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                        tokenManagerView.updateLayout(TokenManagerActivity.this);
+                        tokenManagerView.updateLayout();
                     }
                 }
             }
@@ -132,7 +137,7 @@ public class TokenManagerActivity extends BaseActivity {
                         }
 
                         tokenManagerView.tokenJSON = tokenTypeJSON.toString();
-                        tokenManagerView.updateTokensFixed(TokenManagerActivity.this);
+                        tokenManagerView.updateTokensFixed();
                     }
                 }
             }
@@ -144,7 +149,7 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.queryTokensDirect(TokenManagerActivity.this);
+                    tokenManagerView.queryTokensDirect();
                 }
             }
         });
@@ -152,7 +157,7 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.updateTokensDirect(TokenManagerActivity.this);
+                    tokenManagerView.updateTokensDirect();
                 }
             }
         });
@@ -181,5 +186,21 @@ public class TokenManagerActivity extends BaseActivity {
                 downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+            bundle.putString("choice_" + tokenManagerView.tokenManager.getTokenType(), Serialization.string_serialize(tokenManagerView.choice));
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        if(bundle != null) {
+            for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                tokenManagerView.choice = Serialization.string_deserialize(bundle.getString("choice_" + tokenManagerView.tokenManager.getTokenType()));
+            }
+        }
     }
 }

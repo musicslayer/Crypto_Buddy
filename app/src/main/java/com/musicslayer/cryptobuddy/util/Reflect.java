@@ -85,7 +85,7 @@ public class Reflect {
         return object;
     }
 
-    public static <T> T constructCrashDialogInstance(Class<T> clazz, Activity activity, CrashException crashException) {
+    public static <T> T constructCrashReporterDialogInstance(Class<T> clazz, Activity activity, CrashException crashException) {
         // Hardcode the Exception arguments to deal with subclasses.
         T object = null;
 

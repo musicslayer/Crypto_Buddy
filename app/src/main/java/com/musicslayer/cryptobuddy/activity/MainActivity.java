@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         finish();
     }
 
@@ -194,6 +194,19 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        Button B_UNLOCK = findViewById(R.id.main_unlockButton);
+        if(App.DEBUG) {
+            B_UNLOCK.setOnClickListener(new CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    InAppPurchase.unlock(MainActivity.this);
+                }
+            });
+        }
+        else {
+            B_UNLOCK.setVisibility(View.GONE);
+        }
+
         Button B_REFUND = findViewById(R.id.main_refundButton);
         if(App.DEBUG) {
             B_REFUND.setOnClickListener(new CrashOnClickListener(this) {
@@ -221,7 +234,7 @@ public class MainActivity extends BaseActivity {
             });
             privacyPolicyDialogFragment.restoreListeners(this, "privacy_policy");
 
-            if(privacyPolicyDialogFragment.isNotShowing(this, "privacy_policy")) {
+            if(BaseDialogFragment.isNotShowing(this, "privacy_policy")) {
                 privacyPolicyDialogFragment.show(this, "privacy_policy");
             }
         }
@@ -246,14 +259,14 @@ public class MainActivity extends BaseActivity {
             });
             reviewDialogFragment.restoreListeners(this, "review");
 
-            if(reviewDialogFragment.isNotShowing(this, "review")) {
+            if(BaseDialogFragment.isNotShowing(this, "review")) {
                 reviewDialogFragment.show(this, "review");
             }
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenuImpl(Menu menu) {
         menu.add(0, 1, 100, "About");
         menu.add(0, 2, 200, "Settings");
         menu.add(0, 3, 300, "Report Feedback");
@@ -262,7 +275,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelectedImpl(MenuItem item) {
         int id = item.getItemId();
 
         if (id == 1) {
@@ -284,6 +297,6 @@ public class MainActivity extends BaseActivity {
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 }

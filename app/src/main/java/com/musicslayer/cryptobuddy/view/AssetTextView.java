@@ -2,12 +2,11 @@ package com.musicslayer.cryptobuddy.view;
 
 import android.content.Context;
 
-import androidx.appcompat.widget.AppCompatTextView;
-
+import com.musicslayer.cryptobuddy.crash.CrashTextView;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
-public class AssetTextView extends AppCompatTextView {
+public class AssetTextView extends CrashTextView {
     Boolean isLoss;
     AssetQuantity assetQuantity;
 

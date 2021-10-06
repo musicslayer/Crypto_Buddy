@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeResponseListener;
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -22,7 +22,7 @@ abstract public class CrashConsumeResponseListener implements ConsumeResponseLis
     }
 
     @Override
-    public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
+    final public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
         try {
             onConsumeResponseImpl(billingResult, purchaseToken);
         }
@@ -33,7 +33,7 @@ abstract public class CrashConsumeResponseListener implements ConsumeResponseLis
             crashException.appendExtraInfoFromArgument(billingResult);
             crashException.appendExtraInfoFromArgument(purchaseToken);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

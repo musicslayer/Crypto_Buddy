@@ -96,11 +96,7 @@ public class DiscreteFilterDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
-
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         for(int i = 0; i < C.length; i++) {
             bundle.putBoolean("checkbox" + i, C[i].isChecked());
         }
@@ -109,7 +105,7 @@ public class DiscreteFilterDialog extends BaseDialog {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             C = new CheckBox[filter.choices.size()];
             for(int i = 0; i < filter.choices.size(); i++) {
@@ -117,7 +113,5 @@ public class DiscreteFilterDialog extends BaseDialog {
                 C[i].setChecked(bundle.getBoolean("checkbox" + i));
             }
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

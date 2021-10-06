@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.TimeZoneManager;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-public class TimeZoneSettingsView extends LinearLayout {
+public class TimeZoneSettingsView extends CrashLinearLayout {
     public TimeZoneSettingsView(Context context) {
         super(context);
     }

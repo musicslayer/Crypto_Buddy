@@ -13,7 +13,7 @@ public class ConfirmBackDialog extends BaseDialog {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         // User cannot hit back to dismiss. They must select an option.
     }
 

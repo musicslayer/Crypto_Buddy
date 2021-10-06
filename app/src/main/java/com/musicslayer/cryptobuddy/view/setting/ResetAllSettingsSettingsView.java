@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
@@ -17,7 +18,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-public class ResetAllSettingsSettingsView extends LinearLayout {
+public class ResetAllSettingsSettingsView extends CrashLinearLayout {
     public ResetAllSettingsSettingsView(Context context) {
         super(context);
 

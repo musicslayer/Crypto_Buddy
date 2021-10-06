@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -19,7 +19,7 @@ abstract public class CrashOnDismissListener implements DialogInterface.OnDismis
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
+    final public void onDismiss(DialogInterface dialog) {
         try {
             onDismissImpl(dialog);
         }
@@ -29,7 +29,7 @@ abstract public class CrashOnDismissListener implements DialogInterface.OnDismis
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(dialog);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

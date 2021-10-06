@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
-public class NumericLocaleSettingsView extends LinearLayout {
+public class NumericLocaleSettingsView extends CrashLinearLayout {
     public NumericLocaleSettingsView(Context context) {
         super(context);
     }

@@ -18,32 +18,32 @@ import com.musicslayer.cryptobuddy.util.Message;
 
 import java.util.ArrayList;
 
-// This Dialog cannot use any of the "Crash" classes, because we do not want any recursive CrashDialog behavior.
+// This Dialog cannot use any of the "Crash" classes, because we do not want any recursive CrashReporterDialog behavior.
 
-public class CrashDialog extends BaseDialog {
+public class CrashReporterDialog extends BaseDialog {
     public CrashException crashException;
 
-    public CrashDialog(Activity activity, CrashException crashException) {
+    public CrashReporterDialog(Activity activity, CrashException crashException) {
         super(activity);
         this.crashException = crashException;
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         // User cannot hit back to dismiss. They must select an option.
     }
 
     public int getBaseViewID() {
-        return R.id.crash_dialog;
+        return R.id.crash_reporter_dialog;
     }
 
     public void createLayout() {
-        setContentView(R.layout.dialog_crash);
+        setContentView(R.layout.dialog_crash_reporter);
 
-        Toolbar toolbar = findViewById(R.id.crash_dialog_toolbar);
+        Toolbar toolbar = findViewById(R.id.crash_reporter_dialog_toolbar);
         toolbar.setSubtitle(activity.getLocalClassName());
 
-        Button B_EMAIL = findViewById(R.id.crash_dialog_emailButton);
+        Button B_EMAIL = findViewById(R.id.crash_reporter_dialog_emailButton);
         B_EMAIL.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -64,7 +64,7 @@ public class CrashDialog extends BaseDialog {
             }
         });
 
-        Button B_ERASE = findViewById(R.id.crash_dialog_eraseButton);
+        Button B_ERASE = findViewById(R.id.crash_reporter_dialog_eraseButton);
         B_ERASE.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -80,7 +80,7 @@ public class CrashDialog extends BaseDialog {
             }
         });
 
-        Button B_EXIT = findViewById(R.id.crash_dialog_exitButton);
+        Button B_EXIT = findViewById(R.id.crash_reporter_dialog_exitButton);
         B_EXIT.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 activity.finishAffinity();
@@ -88,15 +88,15 @@ public class CrashDialog extends BaseDialog {
             }
         });
 
-        Button B_CRASH = findViewById(R.id.crash_dialog_crashButton);
+        Button B_CRASH = findViewById(R.id.crash_reporter_dialog_crashButton);
         B_CRASH.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Rethrow the original Exception that we caught before showing CrashDialog.
+                // Rethrow the original Exception that we caught before showing CrashReporterDialog.
                 crashException.throwOriginalException();
             }
         });
 
-        TextView T_INFO = findViewById(R.id.crash_dialog_infoTextView);
+        TextView T_INFO = findViewById(R.id.crash_reporter_dialog_infoTextView);
         if(App.DEBUG) {
             T_INFO.setText(crashException.toString());
         }

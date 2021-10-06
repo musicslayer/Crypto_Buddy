@@ -5,8 +5,8 @@ import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -21,7 +21,7 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    final public void onNothingSelected(AdapterView<?> parent) {
         try {
             onNothingSelectedImpl(parent);
         }
@@ -31,12 +31,12 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(parent);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+    final public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         try {
             onItemSelectedImpl(parent, view, pos, id);
         }
@@ -49,7 +49,7 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
             crashException.appendExtraInfoFromArgument(pos);
             crashException.appendExtraInfoFromArgument(id);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

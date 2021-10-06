@@ -32,7 +32,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -134,17 +134,14 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle bundle) {
-        super.onSaveInstanceState(bundle);
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("PortfolioName", currentDeletePortfolioName);
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

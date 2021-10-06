@@ -51,7 +51,7 @@ public class AddressExplorerActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         confirmBackDialogFragment.show(AddressExplorerActivity.this, "back");
     }
 
@@ -179,7 +179,7 @@ public class AddressExplorerActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenuImpl(Menu menu) {
         menu.add(0, 1, 100, "Prices");
         menu.add(0, 2, 200, "Converter");
         menu.add(0, 3, 300, "Report Feedback");
@@ -187,7 +187,7 @@ public class AddressExplorerActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelectedImpl(MenuItem item) {
         int id = item.getItemId();
 
         if (id == 1) {
@@ -203,22 +203,19 @@ public class AddressExplorerActivity extends BaseActivity {
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle bundle) {
-        super.onSaveInstanceState(bundle);
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList));
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             addressDataArrayList = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
             updateLayout();
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

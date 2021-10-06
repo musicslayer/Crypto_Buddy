@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesResponseListener;
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -25,7 +25,7 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
     }
 
     @Override
-    public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
+    final public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
         try {
             onQueryPurchasesResponseImpl(billingResult, purchases);
         }
@@ -36,7 +36,7 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
             crashException.appendExtraInfoFromArgument(billingResult);
             crashException.appendExtraInfoFromArgument(purchases);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

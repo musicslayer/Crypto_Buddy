@@ -10,11 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 
 import java.util.ArrayList;
 
-public class BorderedSpinnerView extends LinearLayout {
-    public Context context;
+public class BorderedSpinnerView extends CrashLinearLayout {
     public Spinner spinner;
 
     public BorderedSpinnerView(Context context) {
@@ -23,7 +23,6 @@ public class BorderedSpinnerView extends LinearLayout {
 
     public BorderedSpinnerView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.context = context;
         this.setBackgroundResource(R.drawable.border_tight);
 
         spinner = new Spinner(context);
@@ -36,19 +35,19 @@ public class BorderedSpinnerView extends LinearLayout {
     }
 
     public void setOptions(String option) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, new String[] {option});
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, new String[] {option});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
     public void setOptions(String[] options) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
     public void setOptions(ArrayList<String> options) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options.toArray(new String[0]));
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, options.toArray(new String[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
@@ -78,26 +77,25 @@ public class BorderedSpinnerView extends LinearLayout {
         this.setLayoutParams(params);
     }
 
+    // If this class is used programmatically, these functions won't be called.
+    // The caller is responsible for restoring the selection itself.
     @Override
-    public Parcelable onSaveInstanceState()
-    {
+    public Parcelable onSaveInstanceStateImpl(Parcelable state) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("superState", state);
         bundle.putInt("selection", this.spinner.getSelectedItemPosition());
 
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
-    {
-        if (state instanceof Bundle) // implicit null check
-        {
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state) {
+        if(state instanceof Bundle) { // implicit null check
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
 
             this.setSelection(bundle.getInt("selection"));
         }
-        super.onRestoreInstanceState(state);
+        return state;
     }
 }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllAddressHistoryDialog;
@@ -16,7 +17,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.util.Toast;
 
-public class DeleteAllAddressHistorySettingsView extends LinearLayout {
+public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
     public DeleteAllAddressHistorySettingsView(Context context) {
         super(context);
 

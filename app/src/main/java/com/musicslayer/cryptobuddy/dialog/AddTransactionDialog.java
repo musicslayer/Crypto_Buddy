@@ -141,13 +141,13 @@ public class AddTransactionDialog extends BaseDialog {
         final NumericEditText E_PRIMARYASSET = findViewById(R.id.add_transaction_dialog_primaryEditText);
 
         SelectAndSearchView ssvPrimary = findViewById(R.id.add_transaction_dialog_primarySelectAndSearchView);
-        ssvPrimary.setIncludesFiat(this.activity, true);
+        ssvPrimary.setIncludesFiat(true);
         ssvPrimary.setOptionsCoin();
 
         final NumericEditText E_SECONDARYASSET = findViewById(R.id.add_transaction_dialog_secondaryEditText);
 
         SelectAndSearchView ssvSecondary = findViewById(R.id.add_transaction_dialog_secondarySelectAndSearchView);
-        ssvSecondary.setIncludesFiat(this.activity, true);
+        ssvSecondary.setIncludesFiat(true);
         ssvSecondary.setOptionsFiat();
 
         final TextView T = findViewById(R.id.add_transaction_dialog_forTextView);
@@ -269,10 +269,7 @@ public class AddTransactionDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putIntArray("lastcustomdate_info", LASTCUSTOMDATE_INFO);
         bundle.putString("lastcustomdate", LASTCUSTOMDATE_TEXT);
         bundle.putInt("lastcheck", LAST_CHECK);
@@ -280,13 +277,11 @@ public class AddTransactionDialog extends BaseDialog {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             LASTCUSTOMDATE_INFO = bundle.getIntArray("lastcustomdate_info");
             LASTCUSTOMDATE_TEXT = bundle.getString("lastcustomdate");
             LAST_CHECK = bundle.getInt("lastcheck");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

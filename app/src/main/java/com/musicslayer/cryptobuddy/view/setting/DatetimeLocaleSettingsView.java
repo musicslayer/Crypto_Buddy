@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.util.LocaleManager;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
-public class DatetimeLocaleSettingsView extends LinearLayout {
+public class DatetimeLocaleSettingsView extends CrashLinearLayout {
     public DatetimeLocaleSettingsView(Context context) {
         super(context);
     }

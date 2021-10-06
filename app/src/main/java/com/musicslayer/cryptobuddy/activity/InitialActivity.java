@@ -21,14 +21,14 @@ import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.util.Toast;
 
 // This Activity class only exists for initialization code, not to be seen by the user.
-// Unlike in App.java, if there is a crash here we can show CrashDialog.
+// Unlike in App.java, if there is a crash here we can show CrashReporterDialog.
 public class InitialActivity extends BaseActivity {
     public int getAdLayoutViewID() {
         return -1;
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressedImpl() {
         // Make sure the user can't cancel out of initialization.
     }
 

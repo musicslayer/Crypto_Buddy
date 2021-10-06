@@ -5,8 +5,8 @@ import android.content.Context;
 
 import androidx.appcompat.widget.SearchView;
 
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -21,7 +21,7 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
+    final public boolean onQueryTextSubmit(String query) {
         try {
             return onQueryTextSubmitImpl(query);
         }
@@ -31,13 +31,13 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(query);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
 
         return false;
     }
 
-    public boolean onQueryTextChange(String newText) {
+    final public boolean onQueryTextChange(String newText) {
         try {
             return onQueryTextChangeImpl(newText);
         }
@@ -47,7 +47,7 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(newText);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
 
         return false;

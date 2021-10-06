@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
-import com.musicslayer.cryptobuddy.dialog.CrashDialog;
-import com.musicslayer.cryptobuddy.dialog.CrashDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
+import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableLogger;
 
@@ -25,7 +25,7 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
     }
 
     @Override
-    public void onSkuDetailsResponse(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
+    final public void onSkuDetailsResponse(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
         try {
             onSkuDetailsResponseImpl(billingResult, skuDetailsList);
         }
@@ -36,7 +36,7 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
             crashException.appendExtraInfoFromArgument(billingResult);
             crashException.appendExtraInfoFromArgument(skuDetailsList);
 
-            CrashDialogFragment.showCrashDialogFragment(CrashDialog.class, crashException, activity, "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
         }
     }
 }

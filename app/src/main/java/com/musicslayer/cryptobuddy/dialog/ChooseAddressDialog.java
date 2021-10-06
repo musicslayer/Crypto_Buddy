@@ -191,20 +191,15 @@ public class ChooseAddressDialog extends BaseDialog {
     }
 
     @Override
-    public Bundle onSaveInstanceState() {
-        super.onSaveInstanceState();
-
-        Bundle bundle = super.onSaveInstanceState();
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putBoolean("includeTokens", includeTokens);
         return bundle;
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle bundle) {
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             includeTokens = bundle.getBoolean("includeTokens");
         }
-
-        super.onRestoreInstanceState(bundle);
     }
 }

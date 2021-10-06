@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnMenuItemClickListener;
@@ -37,7 +38,7 @@ import java.util.Comparator;
 // TODO We show a token multiple times if it is >1 of downloaded, found, and custom.
 // In the help, we should also explain this somewhere...?
 
-public class SelectAndSearchView extends LinearLayout {
+public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
     public String lastButton;
@@ -88,7 +89,7 @@ public class SelectAndSearchView extends LinearLayout {
             Collections.sort(options_coin_sorted, getSymbolComparatorAsset());
         }
 
-        this.makeLayout(context);
+        this.makeLayout();
     }
 
     public Comparator<String> getComparatorString() {
@@ -118,18 +119,20 @@ public class SelectAndSearchView extends LinearLayout {
         };
     }
 
-    public void setIncludesFiat(Context context, boolean includesFiat) {
+    public void setIncludesFiat(boolean includesFiat) {
         this.includesFiat = includesFiat;
 
         // Remake layout to refresh Fiat button visibility and search options.
         this.removeAllViews();
-        makeLayout(context);
+        makeLayout();
     }
 
-    public void makeLayout(Context context) {
+    public void makeLayout() {
         // Top row are buttons to filter spinner, or open search dialog.
         // Bottom row is the spinner.
         this.setOrientation(VERTICAL);
+
+        Context context = getContext();
 
         B_FIAT = new AppCompatButton(context);
         B_FIAT.setText("FIAT");
@@ -390,10 +393,10 @@ public class SelectAndSearchView extends LinearLayout {
     }
 
     @Override
-    public Parcelable onSaveInstanceState()
+    public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("superState", state);
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
         bundle.putString("lastButton", lastButton);
 
@@ -404,7 +407,7 @@ public class SelectAndSearchView extends LinearLayout {
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
         {
@@ -418,6 +421,6 @@ public class SelectAndSearchView extends LinearLayout {
             restoreOptions(lastButton, lastSearchAsset);
             this.bsv.setSelection(bundle.getInt("selection"));
         }
-        super.onRestoreInstanceState(state);
+        return state;
     }
 }
