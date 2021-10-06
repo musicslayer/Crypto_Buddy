@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +22,7 @@ public class VETTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
-        return REST.get("https://vechain.github.io/token-registry/main.json");
+        return RESTUtil.get("https://vechain.github.io/token-registry/main.json");
     }
 
     public void parse(String tokenJSON) {
@@ -52,7 +52,7 @@ public class VETTokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

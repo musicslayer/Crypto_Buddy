@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,80 +135,59 @@ public class Transaction implements Serialization.SerializableToJSON {
 
         switch(sortType) {
             case "action":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = Action.compare(a.action, b.action);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = Action.compare(a.action, b.action);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "quantity":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = AssetQuantity.compare(a.actionedAssetQuantity, b.actionedAssetQuantity);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = AssetQuantity.compare(a.actionedAssetQuantity, b.actionedAssetQuantity);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "other_quantity":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = AssetQuantity.compare(a.otherAssetQuantity, b.otherAssetQuantity);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = AssetQuantity.compare(a.otherAssetQuantity, b.otherAssetQuantity);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "price":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = AssetPrice.compare(a.forwardPrice, b.forwardPrice);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = AssetPrice.compare(a.forwardPrice, b.forwardPrice);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "other_price":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = AssetPrice.compare(a.backwardPrice, b.backwardPrice);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = AssetPrice.compare(a.backwardPrice, b.backwardPrice);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "timestamp":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s = Timestamp.compare(a.timestamp, b.timestamp);
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                comparator = (a, b) -> {
+                    int s = Timestamp.compare(a.timestamp, b.timestamp);
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             case "info":
-                comparator = new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction a, Transaction b) {
-                        int s;
-                        boolean isValidA = a.info != null;
-                        boolean isValidB = b.info != null;
+                comparator = (a, b) -> {
+                    int s;
+                    boolean isValidA = a.info != null;
+                    boolean isValidB = b.info != null;
 
-                        // Null is always smaller than a real action.
-                        if(isValidA & isValidB) { s = a.info.compareTo(b.info); }
-                        else { s = Boolean.compare(isValidA, isValidB); }
+                    // Null is always smaller than a real action.
+                    if(isValidA & isValidB) { s = a.info.compareTo(b.info); }
+                    else { s = Boolean.compare(isValidA, isValidB); }
 
-                        if(s == 0) { s = a.hash.compareTo(b.hash); }
-                        return s;
-                    }
+                    if(s == 0) { s = a.hash.compareTo(b.hash); }
+                    return s;
                 };
                 break;
             default:

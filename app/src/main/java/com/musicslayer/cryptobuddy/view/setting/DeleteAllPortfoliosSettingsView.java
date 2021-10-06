@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllPortfoliosDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
     public DeleteAllPortfoliosSettingsView(Context context) {
@@ -39,7 +39,7 @@ public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
                 if(((ConfirmDeleteAllPortfoliosDialog)dialog).isComplete) {
                     AddressPortfolio.resetAllData(context);
                     TransactionPortfolio.resetAllData(context);
-                    Toast.showToast(context,"reset_portfolios");
+                    ToastUtil.showToast(context,"reset_portfolios");
                 }
             }
         });

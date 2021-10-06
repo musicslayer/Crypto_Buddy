@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ public class KavaTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
-        return REST.get("https://api.data.kava.io/supply/total");
+        return RESTUtil.get("https://api.data.kava.io/supply/total");
     }
 
     public void parse(String tokenJSON) {
@@ -51,7 +51,7 @@ public class KavaTokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

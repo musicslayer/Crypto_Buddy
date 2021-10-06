@@ -2,9 +2,8 @@ package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.DateTime;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +37,7 @@ public class AddressData implements Serialization.SerializableToJSON {
         AddressAPI addressAPI_transactions = Serialization.deserialize(o.getJSONObjectString("addressAPI_transactions"), AddressAPI.class);
         ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("currentBalanceArrayList"), AssetQuantity.class);
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
-        return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTime.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
+        return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, DateTimeUtil.toDateString(new Date()), currentBalanceArrayList, transactionArrayList);
     }
 
     public AddressData(CryptoAddress cryptoAddress, AddressAPI addressAPI_currentBalance, AddressAPI addressAPI_transactions, String date, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList) {
@@ -84,7 +83,7 @@ public class AddressData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, DateTime.toDateString(new Date()), currentBalanceArrayList_f, transactionArrayList_f);
+        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, DateTimeUtil.toDateString(new Date()), currentBalanceArrayList_f, transactionArrayList_f);
     }
 
     public boolean isComplete() {

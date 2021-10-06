@@ -8,7 +8,7 @@ import androidx.appcompat.widget.SearchView;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashOnQueryTextListener implements SearchView.OnQueryTextListener {
     abstract public boolean onQueryTextSubmitImpl(String query);
@@ -26,7 +26,7 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
             return onQueryTextSubmitImpl(query);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(query);
@@ -42,7 +42,7 @@ abstract public class CrashOnQueryTextListener implements SearchView.OnQueryText
             return onQueryTextChangeImpl(newText);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(newText);

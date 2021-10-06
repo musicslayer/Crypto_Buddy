@@ -8,8 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.crash.CrashException;
-import com.musicslayer.cryptobuddy.util.Reflect;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 public class CrashReporterDialogFragment extends BaseDialogFragment {
     // We only want to deal with an app's first crash, so use this flag to prevent multiple CrashReporterDialogs from showing.
@@ -25,7 +25,7 @@ public class CrashReporterDialogFragment extends BaseDialogFragment {
         }
         catch(Exception e) {
             // Even in cases where CrashReporterDialog would successfully show, sometimes exceptions are thrown which we can ignore.
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 
@@ -41,20 +41,19 @@ public class CrashReporterDialogFragment extends BaseDialogFragment {
     }
 
     @NonNull
+    @SuppressWarnings("unchecked")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Object object = null;
-
         Bundle bundle = getArguments();
-        if(bundle != null) {
-            Class<?> clazz = (Class<?>)bundle.getSerializable("class");
-            CrashException crashException = (CrashException)bundle.getSerializable("crash_exception");
+        assert bundle != null;
 
-            object = Reflect.constructCrashReporterDialogInstance(clazz, getActivity(), crashException);
-            ((Dialog)object).setOnShowListener(this);
-        }
+        Class<Dialog> clazz = (Class<Dialog>)bundle.getSerializable("class");
+        CrashException crashException = (CrashException)bundle.getSerializable("crash_exception");
 
-        return (Dialog)object;
+        Dialog dialog = ReflectUtil.constructDialogInstance(clazz, getActivity(), crashException);
+        dialog.setOnShowListener(this);
+
+        return dialog;
     }
 
     // CrashReporterDialog cannot execute any listeners.

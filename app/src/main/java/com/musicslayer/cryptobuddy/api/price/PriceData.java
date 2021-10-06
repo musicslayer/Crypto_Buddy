@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.DateTime;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.Date;
 
@@ -36,7 +36,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObjectString("priceAPI_marketCap"), PriceAPI.class);
         AssetQuantity price = Serialization.deserialize(o.getJSONObjectString("price"), AssetQuantity.class);
         AssetQuantity marketCap = Serialization.deserialize(o.getJSONObjectString("marketCap"), AssetQuantity.class);
-        return new PriceData(crypto, priceAPI_price, priceAPI_marketCap, price, marketCap, DateTime.toDateString(new Date()));
+        return new PriceData(crypto, priceAPI_price, priceAPI_marketCap, price, marketCap, DateTimeUtil.toDateString(new Date()));
     }
 
     public PriceData(Crypto crypto, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, AssetQuantity price, AssetQuantity marketCap, String timestamp) {
@@ -80,7 +80,7 @@ public class PriceData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f, DateTime.toDateString(new Date()));
+        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f, DateTimeUtil.toDateString(new Date()));
     }
 
     public boolean isComplete() {

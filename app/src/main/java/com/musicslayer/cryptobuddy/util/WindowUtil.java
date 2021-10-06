@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 
-public class Window {
+public class WindowUtil {
     public static int[] getDimensions(Activity activity) {
         Rect displayRectangle = new Rect();
-        android.view.Window window = activity.getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
 
         int w = displayRectangle.width();
         int h = displayRectangle.height();

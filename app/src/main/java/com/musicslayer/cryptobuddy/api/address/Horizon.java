@@ -7,8 +7,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,7 +68,7 @@ public class Horizon extends AddressAPI {
             baseURL = "https://horizon-testnet.stellar.org";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/accounts/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address);
         if(addressDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(addressDataJSON);
@@ -108,7 +108,7 @@ public class Horizon extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -132,9 +132,9 @@ public class Horizon extends AddressAPI {
             baseURL = "https://horizon-testnet.stellar.org";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/accounts/" + cryptoAddress.address + "/transactions?limit=200&order=desc&include_failed=true");
-        String addressDataOperationsJSON = REST.get(baseURL + "/accounts/" + cryptoAddress.address + "/operations?limit=200&order=desc&include_failed=true");
-        String addressDataEffectsJSON = REST.get(baseURL + "/accounts/" + cryptoAddress.address + "/effects?limit=200&order=desc&include_failed=true");
+        String addressDataJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/transactions?limit=200&order=desc&include_failed=true");
+        String addressDataOperationsJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/operations?limit=200&order=desc&include_failed=true");
+        String addressDataEffectsJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/effects?limit=200&order=desc&include_failed=true");
         if(addressDataJSON == null && addressDataOperationsJSON == null && addressDataEffectsJSON == null) {
             // If all of these are null, it's possible that there are 0 transactions.
             // If this is true, there are probably no tokens.
@@ -374,12 +374,12 @@ public class Horizon extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataIssueJSON = REST.get(baseURL + "/assets?asset_issuer=" + cryptoAddress.address + "&limit=200&include_failed=true");
+            String addressDataIssueJSON = RESTUtil.get(baseURL + "/assets?asset_issuer=" + cryptoAddress.address + "&limit=200&include_failed=true");
             if(addressDataIssueJSON == null) {
                 return null;
             }
@@ -406,7 +406,7 @@ public class Horizon extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }

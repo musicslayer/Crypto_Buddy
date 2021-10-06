@@ -5,8 +5,8 @@ import android.content.Context;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ abstract public class Coin extends Crypto {
     public static ArrayList<String> coin_combo_names;
 
     public static void initialize(Context context) {
-        coin_names = File.readFileIntoLines(context, R.raw.asset_coin);
+        coin_names = FileUtil.readFileIntoLines(context, R.raw.asset_coin);
 
         coins = new ArrayList<>();
         coin_map = new HashMap<>();
@@ -27,7 +27,7 @@ abstract public class Coin extends Crypto {
         coin_combo_names = new ArrayList<>();
 
         for(String coinName : coin_names) {
-            Coin coin = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.crypto.coin." + coinName);
+            Coin coin = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.crypto.coin." + coinName);
             coins.add(coin);
             coin_map.put(coinName, coin);
             coin_display_names.add(coin.getDisplayName());

@@ -10,7 +10,7 @@ import com.android.billingclient.api.BillingResult;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashAcknowledgePurchaseResponseListener implements AcknowledgePurchaseResponseListener {
     abstract public void onAcknowledgePurchaseResponseImpl(@NonNull BillingResult billingResult);
@@ -27,7 +27,7 @@ abstract public class CrashAcknowledgePurchaseResponseListener implements Acknow
             onAcknowledgePurchaseResponseImpl(billingResult);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(billingResult);

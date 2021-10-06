@@ -6,8 +6,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,7 +52,7 @@ public class ActorForth extends AddressAPI {
 
         String baseURL = "https://rest.bitcoin.com";
 
-        String addressDataJSON = REST.get(baseURL + "/v2/address/details/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/v2/address/details/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -62,7 +62,7 @@ public class ActorForth extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(json.getString("balance"), new BCH()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -76,7 +76,7 @@ public class ActorForth extends AddressAPI {
 
         String baseURL = "https://rest.bitcoin.com";
 
-        String addressDataJSON = REST.get(baseURL + "/v2/address/transactions/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/v2/address/transactions/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -141,7 +141,7 @@ public class ActorForth extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

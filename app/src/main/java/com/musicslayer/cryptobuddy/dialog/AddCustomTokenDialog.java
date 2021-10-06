@@ -13,8 +13,8 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
@@ -39,7 +39,7 @@ public class AddCustomTokenDialog extends BaseDialog {
         helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(AddCustomTokenDialog.this.activity, R.raw.help_add_custom_token);
+                HelpUtil.showHelp(AddCustomTokenDialog.this.activity, R.raw.help_add_custom_token);
             }
         });
 
@@ -64,7 +64,7 @@ public class AddCustomTokenDialog extends BaseDialog {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
                     chosenTokenManager.save(activity, "custom");
 
-                    Toast.showToast(activity,"custom_token_added");
+                    ToastUtil.showToast(activity,"custom_token_added");
                     isComplete = true;
                     dismiss();
                 }
@@ -91,7 +91,7 @@ public class AddCustomTokenDialog extends BaseDialog {
                         chosenTokenManager.addCustomToken(newToken);
                         chosenTokenManager.save(activity, "custom");
 
-                        Toast.showToast(activity,"custom_token_added");
+                        ToastUtil.showToast(activity,"custom_token_added");
                         isComplete = true;
                         dismiss();
                     }

@@ -10,8 +10,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,7 +65,7 @@ public class Solscan extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = REST.get(baseURL + "/account?address=" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/account?address=" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -88,12 +88,12 @@ public class Solscan extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new SOL()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressTokenDataJSON = REST.get(baseURL + "/account/tokens?address=" + cryptoAddress.address);
+            String addressTokenDataJSON = RESTUtil.get(baseURL + "/account/tokens?address=" + cryptoAddress.address);
             if(addressTokenDataJSON == null) {
                 return null;
             }
@@ -128,7 +128,7 @@ public class Solscan extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -153,7 +153,7 @@ public class Solscan extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = REST.get(baseURL + "/account/transaction?address=" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/account/transaction?address=" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -193,7 +193,7 @@ public class Solscan extends AddressAPI {
                 }
 
                 if(isTransfer) {
-                    String transactionJSON = REST.get(baseURL + "/transaction?tx=" + o.getString("txHash"));
+                    String transactionJSON = RESTUtil.get(baseURL + "/transaction?tx=" + o.getString("txHash"));
                     JSONObject transactionData = new JSONObject(transactionJSON);
                     JSONArray sol_transfer_txs = transactionData.getJSONArray("sol_transfer_txs");
                     for(int j = 0; j < sol_transfer_txs.length(); j++) {
@@ -230,7 +230,7 @@ public class Solscan extends AddressAPI {
                 // Token JSON may be null if there are no token transfers.
 
                 // Tokens
-                String addressDataTokenJSON = REST.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10"); // &offset
+                String addressDataTokenJSON = RESTUtil.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10"); // &offset
                 if(addressDataTokenJSON != null) {
                     JSONObject jsonToken = new JSONObject(addressDataTokenJSON);
                     JSONArray jsonTokenData = jsonToken.getJSONObject("data").getJSONObject("tx").getJSONArray("transactions");
@@ -275,7 +275,7 @@ public class Solscan extends AddressAPI {
                 }
 
                 // Tokens2
-                String addressDataTokenJSON2 = REST.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10&offset=10"); // &offset
+                String addressDataTokenJSON2 = RESTUtil.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10&offset=10"); // &offset
                 if(addressDataTokenJSON2 != null) {
                     JSONObject jsonToken2 = new JSONObject(addressDataTokenJSON2);
                     JSONArray jsonTokenData2 = jsonToken2.getJSONObject("data").getJSONObject("tx").getJSONArray("transactions");
@@ -316,7 +316,7 @@ public class Solscan extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

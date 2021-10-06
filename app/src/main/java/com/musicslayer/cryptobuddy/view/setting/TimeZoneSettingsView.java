@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.TimeZoneManager;
+import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.time.Instant;

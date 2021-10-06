@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 

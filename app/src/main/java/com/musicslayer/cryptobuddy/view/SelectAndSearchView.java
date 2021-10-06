@@ -26,8 +26,8 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,30 +93,15 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public Comparator<String> getComparatorString() {
-        return new Comparator<String>() {
-            @Override
-            public int compare(String a, String b) {
-                return a.toLowerCase().compareTo(b.toLowerCase());
-            }
-        };
+        return Comparator.comparing(String::toLowerCase);
     }
 
     public Comparator<Asset> getSymbolComparatorAsset() {
-        return new Comparator<Asset>() {
-            @Override
-            public int compare(Asset a, Asset b) {
-                return a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
-            }
-        };
+        return Comparator.comparing(a -> a.getName().toLowerCase());
     }
 
     public Comparator<Asset> getNameComparatorAsset() {
-        return new Comparator<Asset>() {
-            @Override
-            public int compare(Asset a, Asset b) {
-                return a.getDisplayName().toLowerCase().compareTo(b.getDisplayName().toLowerCase());
-            }
-        };
+        return Comparator.comparing(a -> a.getDisplayName().toLowerCase());
     }
 
     public void setIncludesFiat(boolean includesFiat) {
@@ -166,7 +151,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
             public void onClickImpl(View v) {
                 // Show list of token types, or tell user there are none.
                 if(TokenManager.getAllTokens().isEmpty()) {
-                    Toast.showToast(context,"no_tokens");
+                    ToastUtil.showToast(context,"no_tokens");
                 }
                 else {
                     PopupMenu popup = new PopupMenu(context, B_TOKEN);

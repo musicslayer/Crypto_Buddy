@@ -7,56 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-public class REST {
+public class RESTUtil {
     public static final long limitTime = 1000;
     public static long lastTime = 0;
-
-    // (No one currently uses this, so it is a future item.)
-    // Caller should be able to send many times, while only connecting/disconnecting once.
-    public static String wss(String urlString, String body) {
-        String result = null;
-        BasicWebSocketClient client = null;
-
-        try {
-            client = new BasicWebSocketClient(new URI(urlString));
-            client.connectBlocking(Settings.setting_timeout, TimeUnit.SECONDS);
-            client.send(body);
-
-            Date startDate = new Date();
-            while(client.RESULT == null) {
-                Date endDate = new Date();
-                long diff = endDate.getTime() - startDate.getTime(); // milliseconds
-
-                if(diff > Settings.setting_timeout) {
-                    break;
-                }
-            }
-
-            client.closeBlocking();
-            result = client.RESULT;
-        }
-        catch(Exception e) {
-            // Try once to close the client, but don't wait for it.
-            if(client != null) {
-                client.close();
-            }
-
-            ThrowableLogger.processThrowable(e);
-        }
-
-        return result;
-    }
 
     public static String get(String urlString) {
         // Rate limit - wait a little if we just performed an operation.
         long now = new Date().getTime();
-        while(now - lastTime < REST.limitTime) {
+        while(now - lastTime < RESTUtil.limitTime) {
             now = new Date().getTime();
         }
 
@@ -73,10 +35,10 @@ public class REST {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("accept", "application/json");
 
-            result = REST.request(connection);
+            result = RESTUtil.request(connection);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
 
         return result;
@@ -85,7 +47,7 @@ public class REST {
     public static String post(String urlString, String body) {
         // Rate limit - wait a little if we just performed an operation.
         long now = new Date().getTime();
-        while(now - lastTime < REST.limitTime) {
+        while(now - lastTime < RESTUtil.limitTime) {
             now = new Date().getTime();
         }
 
@@ -110,10 +72,10 @@ public class REST {
             stream.flush();
             stream.close();
 
-            result = REST.request(connection);
+            result = RESTUtil.request(connection);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
 
         return result;
@@ -122,7 +84,7 @@ public class REST {
     public static String postWithKey(String urlString, String body, String keyName, String key) {
         // Rate limit - wait a little if we just performed an operation.
         long now = new Date().getTime();
-        while(now - lastTime < REST.limitTime) {
+        while(now - lastTime < RESTUtil.limitTime) {
             now = new Date().getTime();
         }
 
@@ -148,10 +110,10 @@ public class REST {
             stream.flush();
             stream.close();
 
-            result = REST.request(connection);
+            result = RESTUtil.request(connection);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
 
         return result;
@@ -161,20 +123,17 @@ public class REST {
         final String[] data = new String[1];
         final boolean[] finished = {false};
 
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    InputStream responseStream = connection.getInputStream();
-                    String responseString = REST.readString(responseStream);
-                    data[0] = responseString;
-                }
-                catch(IOException e) {
-                    data[0] = null;
-                }
-
-                finished[0] = true;
+        Thread thread = new Thread(() -> {
+            try {
+                InputStream responseStream = connection.getInputStream();
+                String responseString = RESTUtil.readString(responseStream);
+                data[0] = responseString;
             }
+            catch(IOException e) {
+                data[0] = null;
+            }
+
+            finished[0] = true;
         });
 
         thread.start();

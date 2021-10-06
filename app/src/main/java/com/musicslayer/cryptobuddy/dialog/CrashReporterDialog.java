@@ -11,10 +11,10 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
-import com.musicslayer.cryptobuddy.util.DataDump;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.Message;
+import com.musicslayer.cryptobuddy.util.DataDumpUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.MessageUtil;
 
 import java.util.ArrayList;
 
@@ -44,56 +44,48 @@ public class CrashReporterDialog extends BaseDialog {
         toolbar.setSubtitle(activity.getLocalClassName());
 
         Button B_EMAIL = findViewById(R.id.crash_reporter_dialog_emailButton);
-        B_EMAIL.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    // Attach two files. One has the Exception that caused the crash, and the other has the DataDump data.
-                    // Some of the Exception may be obfuscated by ProGuard.
-                    java.io.File fileA = File.writeFile(activity, crashException.toString());
-                    java.io.File fileB = File.writeFile(activity, DataDump.getAllData(activity));
+        B_EMAIL.setOnClickListener(v -> {
+            try {
+                // Attach two files. One has the Exception that caused the crash, and the other has the DataDump data.
+                // Some of the Exception may be obfuscated by ProGuard.
+                java.io.File fileA = FileUtil.writeFile(activity, crashException.toString());
+                java.io.File fileB = FileUtil.writeFile(activity, DataDumpUtil.getAllData(activity));
 
-                    ArrayList<java.io.File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(fileA);
-                    fileArrayList.add(fileB);
+                ArrayList<java.io.File> fileArrayList = new ArrayList<>();
+                fileArrayList.add(fileA);
+                fileArrayList.add(fileB);
 
-                    Message.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Log", "Crash information is attached.\n\n<WRITE OTHER INFO HERE>", fileArrayList);
-                }
-                catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
-                }
+                MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Log", "Crash information is attached.\n\n<WRITE OTHER INFO HERE>", fileArrayList);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
             }
         });
 
         Button B_ERASE = findViewById(R.id.crash_reporter_dialog_eraseButton);
-        B_ERASE.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    Persistence.resetAllData(activity);
+        B_ERASE.setOnClickListener(v -> {
+            try {
+                Persistence.resetAllData(activity);
 
-                    // Manually show toast "reset_everything" because we do not know if the Toast database was correctly initialized.
-                    // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.
-                    android.widget.Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show();
-                }
-                catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
-                }
+                // Manually show toast "reset_everything" because we do not know if the Toast database was correctly initialized.
+                // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.
+                android.widget.Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
             }
         });
 
         Button B_EXIT = findViewById(R.id.crash_reporter_dialog_exitButton);
-        B_EXIT.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                activity.finishAffinity();
-                System.exit(0);
-            }
+        B_EXIT.setOnClickListener(v -> {
+            activity.finishAffinity();
+            System.exit(0);
         });
 
         Button B_CRASH = findViewById(R.id.crash_reporter_dialog_crashButton);
-        B_CRASH.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Rethrow the original Exception that we caught before showing CrashReporterDialog.
-                crashException.throwOriginalException();
-            }
+        B_CRASH.setOnClickListener(v -> {
+            // Rethrow the original Exception that we caught before showing CrashReporterDialog.
+            crashException.throwOriginalException();
         });
 
         TextView T_INFO = findViewById(R.id.crash_reporter_dialog_infoTextView);

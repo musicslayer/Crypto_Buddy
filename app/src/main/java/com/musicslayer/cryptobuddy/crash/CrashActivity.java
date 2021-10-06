@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashActivity extends AppCompatActivity {
     @Override
@@ -18,7 +18,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             onBackPressedImpl();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
 
@@ -33,7 +33,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             onCreateImpl(savedInstanceState);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(savedInstanceState);
@@ -48,7 +48,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             return onCreateOptionsMenuImpl(menu);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(menu);
@@ -65,7 +65,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             return onOptionsItemSelectedImpl(item);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(item);
@@ -83,7 +83,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             onSaveInstanceStateImpl(bundle);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             // We cannot show the dialog here, so just save the exception.
             bundle.putSerializable("!EXCEPTION!", e);
@@ -96,6 +96,7 @@ abstract public class CrashActivity extends AppCompatActivity {
         Exception exception = (Exception)bundle.getSerializable("!EXCEPTION!");
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
+            crashException.appendExtraInfoFromArgument(bundle);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
             return;
         }
@@ -105,7 +106,7 @@ abstract public class CrashActivity extends AppCompatActivity {
             super.onRestoreInstanceState(bundle);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(bundle);

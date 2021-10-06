@@ -6,9 +6,9 @@ import android.content.Context;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-public class Clipboard {
+public class ClipboardUtil {
     public static void copy(Context context, String label, String text) {
-        Toast.showToast(context,"copy");
+        ToastUtil.showToast(context,"copy");
 
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         clipboard.setPrimaryClip(ClipData.newPlainText(label, text));
@@ -19,11 +19,11 @@ public class Clipboard {
         boolean hasText = clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN) && !"".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText());
 
         if(hasText) {
-            Toast.showToast(context,"paste");
+            ToastUtil.showToast(context,"paste");
             return clipboard.getPrimaryClip().getItemAt(0).getText();
         }
         else {
-            Toast.showToast(context,"no_paste");
+            ToastUtil.showToast(context,"no_paste");
             return "";
         }
     }

@@ -6,8 +6,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,14 +19,14 @@ abstract public class PriceAPI extends API {
     public static ArrayList<String> price_api_display_names;
 
     public static void initialize(Context context) {
-        price_api_names = File.readFileIntoLines(context, R.raw.api_price);
+        price_api_names = FileUtil.readFileIntoLines(context, R.raw.api_price);
 
         price_apis = new ArrayList<>();
         price_api_map = new HashMap<>();
         price_api_display_names = new ArrayList<>();
 
         for(String priceName : price_api_names) {
-            PriceAPI priceAPI = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.api.price." + priceName);
+            PriceAPI priceAPI = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.api.price." + priceName);
             price_apis.add(priceAPI);
             price_api_map.put(priceName, priceAPI);
             price_api_display_names.add(priceAPI.getDisplayName());

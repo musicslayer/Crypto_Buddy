@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.view.setting;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -15,7 +14,7 @@ import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllAddressHistoryDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
     public DeleteAllAddressHistorySettingsView(Context context) {
@@ -37,7 +36,7 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
                     AddressHistory.resetAllData(context);
-                    Toast.showToast(context,"reset_stored_addresses");
+                    ToastUtil.showToast(context,"reset_stored_addresses");
                 }
             }
         });

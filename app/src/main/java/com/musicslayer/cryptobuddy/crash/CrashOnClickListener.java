@@ -7,7 +7,7 @@ import android.view.View;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashOnClickListener implements View.OnClickListener {
     abstract public void onClickImpl(View view);
@@ -24,7 +24,7 @@ abstract public class CrashOnClickListener implements View.OnClickListener {
             onClickImpl(view);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(view);

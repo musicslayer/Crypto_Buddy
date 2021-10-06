@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.util.Log;
 
-public class ThrowableLogger {
+public class ThrowableUtil {
     public static void processThrowable(Throwable e) {
         try {
             Log.e("Crypto Buddy ERROR", getThrowableText(e));

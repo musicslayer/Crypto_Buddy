@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.Decode;
+import com.musicslayer.cryptobuddy.util.DecodeUtil;
 
 // The address of a normal account in Solana is a Base58-encoded string of a 256-bit ed25519 public key.
 
@@ -24,6 +24,6 @@ public class SOL_Mainnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.length() >= 32 && address.length() <= 44 && Decode.isBase58(address);
+        return address.length() >= 32 && address.length() <= 44 && DecodeUtil.isBase58(address);
     }
 }

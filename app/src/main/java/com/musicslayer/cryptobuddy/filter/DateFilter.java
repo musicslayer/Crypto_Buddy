@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
-import com.musicslayer.cryptobuddy.util.DateTime;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,8 +61,8 @@ public class DateFilter extends Filter {
     }
 
     public String getIncludedString() {
-        String startString = user_startDate == null ? "" : "After: " + DateTime.toDateString(user_startDate);
-        String endString = user_endDate == null ? "" : "Before: " + DateTime.toDateString(user_endDate);
+        String startString = user_startDate == null ? "" : "After: " + DateTimeUtil.toDateString(user_startDate);
+        String endString = user_endDate == null ? "" : "Before: " + DateTimeUtil.toDateString(user_endDate);
 
         if(user_startDate == null && user_endDate == null) {
             return "Show All";

@@ -21,7 +21,7 @@ import com.musicslayer.cryptobuddy.crash.CrashPurchasesResponseListener;
 import com.musicslayer.cryptobuddy.crash.CrashPurchasesUpdatedListener;
 import com.musicslayer.cryptobuddy.crash.CrashSkuDetailsResponseListener;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class InAppPurchase {
 
     public static void purchase(Activity activity, List<String> skuList) {
         if(!billingClient.isReady()) {
-            Toast.showToast(activity,"billing_connection_retry");
+            ToastUtil.showToast(activity,"billing_connection_retry");
             InAppPurchase.initialize(activity);
             return;
         }
@@ -125,7 +125,7 @@ public class InAppPurchase {
                     billingClient.launchBillingFlow(activity, billingFlowParams);
                 }
                 else {
-                    Toast.showToast(activity,"billing_problem");
+                    ToastUtil.showToast(activity,"billing_problem");
                 }
             }
         });
@@ -158,10 +158,10 @@ public class InAppPurchase {
             @Override
             public void onAcknowledgePurchaseResponseImpl(@NonNull BillingResult billingResult) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    Toast.showToast(context,toastKey + "_purchase");
+                    ToastUtil.showToast(context,toastKey + "_purchase");
                 }
                 else {
-                    Toast.showToast(context,"acknowledge_problem");
+                    ToastUtil.showToast(context,"acknowledge_problem");
                 }
             }
         });
@@ -178,7 +178,7 @@ public class InAppPurchase {
             @Override
             public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
                 if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                    Toast.showToast(context,"support_developers_purchase");
+                    ToastUtil.showToast(context,"support_developers_purchase");
                 }
             }
         });
@@ -187,12 +187,12 @@ public class InAppPurchase {
     // Internal use only!
     public static void refund(Context context) {
         if(!billingClient.isReady()) {
-            Toast.showToast(context,"billing_connection_retry");
+            ToastUtil.showToast(context,"billing_connection_retry");
             InAppPurchase.initialize(context);
             return;
         }
 
-        Toast.showToast(context,"refund_purchases");
+        ToastUtil.showToast(context,"refund_purchases");
 
         billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
             @Override
@@ -208,13 +208,20 @@ public class InAppPurchase {
                         billingClient.consumeAsync(params.build(), new CrashConsumeResponseListener(context) {
                             @Override
                             public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
-                                Toast.showToast(context,"refund_purchase_complete");
+                                ToastUtil.showToast(context,"refund_purchase_complete");
                             }
                         });
                     }
                 }
             }
         });
+    }
+
+    // Internal use only!
+    public static void lock(Context context) {
+        // Just lock one-time items.
+        revokePurchase(context, "remove_ads");
+        revokePurchase(context, "unlock_tokens");
     }
 
     // Internal use only!

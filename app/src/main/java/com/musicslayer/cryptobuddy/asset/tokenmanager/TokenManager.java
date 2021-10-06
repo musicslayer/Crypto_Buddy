@@ -7,10 +7,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.REST;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,9 +63,9 @@ abstract public class TokenManager {
         tokenManagers_blockchain_ids = new ArrayList<>();
         tokenManagers_token_types = new ArrayList<>();
 
-        tokenManagers_names = File.readFileIntoLines(context, R.raw.asset_tokenmanager);
+        tokenManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
-            TokenManager tokenManager = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
+            TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
@@ -380,6 +380,9 @@ abstract public class TokenManager {
         return s.toString();
     }
 
+    // TODO the two try/catches should be remove. Make this class strict!
+    // TODO Why does this class have it's own serialization system?
+
     // Don't actually create a new instance, just fill in tokens in this existing instance.
     public void deserializeFromJSONX(String s, String source) {
         try {
@@ -406,7 +409,7 @@ abstract public class TokenManager {
         }
         catch(Exception e) {
             // If there is any problem at all, just wipe everything clean.
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             resetDownloadedTokens();
             resetFoundTokens();
             resetCustomTokens();
@@ -435,7 +438,7 @@ abstract public class TokenManager {
     }
 
     public String getFixedJSON() {
-        return REST.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
+        return RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
     }
 
     public void parseFixed(String tokenJSON) {
@@ -457,7 +460,7 @@ abstract public class TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

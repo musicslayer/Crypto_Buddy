@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashTextView extends AppCompatTextView {
     public CrashTextView(Context context) {
@@ -27,7 +27,7 @@ abstract public class CrashTextView extends AppCompatTextView {
             return onSaveInstanceStateImpl(super.onSaveInstanceState());
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             // We cannot show the dialog here, so just save the exception.
             Bundle bundle = new Bundle();
@@ -48,6 +48,7 @@ abstract public class CrashTextView extends AppCompatTextView {
 
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
+            crashException.appendExtraInfoFromArgument(state);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
             return;
         }
@@ -56,7 +57,7 @@ abstract public class CrashTextView extends AppCompatTextView {
             super.onRestoreInstanceState(onRestoreInstanceStateImpl(state));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(state);

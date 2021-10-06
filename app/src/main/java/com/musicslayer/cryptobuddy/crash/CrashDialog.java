@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashDialog extends Dialog {
     private final AppCompatActivity activity;
@@ -18,15 +18,21 @@ abstract public class CrashDialog extends Dialog {
         this.activity = (AppCompatActivity)activity;
     }
 
+    public boolean canLaunchCrashReporterDialog() {
+        // We do not want recursive calling of CrashReporterDialog.
+        //return !(this instanceof CrashReporterDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null;
+        return !(this instanceof CrashReporterDialog);
+    }
+
     @Override
     final public void onBackPressed() {
         try {
             onBackPressedImpl();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
-            if(!(this instanceof CrashReporterDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+            if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
@@ -40,10 +46,11 @@ abstract public class CrashDialog extends Dialog {
             onCreateImpl(savedInstanceState);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
-            if(!(this instanceof CrashReporterDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+            if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
+                crashException.appendExtraInfoFromArgument(savedInstanceState);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
         }
@@ -56,9 +63,9 @@ abstract public class CrashDialog extends Dialog {
             showImpl();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
-            if(!(this instanceof CrashReporterDialog) && activity.getSupportFragmentManager().findFragmentByTag("crash") == null) {
+            if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
@@ -71,7 +78,7 @@ abstract public class CrashDialog extends Dialog {
             return onSaveInstanceStateImpl(super.onSaveInstanceState());
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             // We cannot show the dialog here, so just save the exception.
             Bundle bundle = super.onSaveInstanceState();
@@ -84,8 +91,9 @@ abstract public class CrashDialog extends Dialog {
     final public void onRestoreInstanceState(Bundle bundle) {
         // If onSaveInstanceState had an exception, just show the crash reporter and stop.
         Exception exception = (Exception)bundle.getSerializable("!EXCEPTION!");
-        if(exception != null) {
+        if(exception != null && canLaunchCrashReporterDialog()) {
             CrashException crashException = new CrashException(exception);
+            crashException.appendExtraInfoFromArgument(bundle);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             return;
         }
@@ -95,12 +103,13 @@ abstract public class CrashDialog extends Dialog {
             super.onRestoreInstanceState(bundle);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
-            CrashException crashException = new CrashException(e);
-            crashException.appendExtraInfoFromArgument(bundle);
-
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
+            if(canLaunchCrashReporterDialog()) {
+                CrashException crashException = new CrashException(e);
+                crashException.appendExtraInfoFromArgument(bundle);
+                CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
+            }
         }
     }
 

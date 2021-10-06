@@ -21,25 +21,19 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // Uses both onShow and onDismiss listeners here.
         ProgressDialog currentProgressDialog = (ProgressDialog)dialog;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(SL != null && !currentProgressDialog.isCancelled) {
-                    SL.onShow(currentProgressDialog);
+        new Thread(() -> {
+            if(SL != null && !currentProgressDialog.isCancelled) {
+                SL.onShow(currentProgressDialog);
+            }
+
+            // Only the onDismiss listener should update any UI elements.
+            currentProgressDialog.activity.runOnUiThread(() -> {
+                if(DL != null && !currentProgressDialog.isCancelled) {
+                    DL.onDismiss(currentProgressDialog);
                 }
 
-                // Only the onDismiss listener should update any UI elements.
-                currentProgressDialog.activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(DL != null && !currentProgressDialog.isCancelled) {
-                            DL.onDismiss(currentProgressDialog);
-                        }
-
-                        currentProgressDialog.dismiss();
-                    }
-                });
-            }
+                currentProgressDialog.dismiss();
+            });
         }).start();
     }
 

@@ -8,8 +8,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +42,7 @@ public class Bitquery extends AddressAPI {
         }
 
         // Bitquery doesn't give us this for binance, so use other API.
-        String addressDataJSON = REST.get(baseURL + "/api/v1/account/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/api/v1/account/" + cryptoAddress.address);
         if(addressDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(addressDataJSON);
@@ -80,7 +80,7 @@ public class Bitquery extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -156,8 +156,8 @@ public class Bitquery extends AddressAPI {
         String APIKEYNAME = "X-API-KEY";
         String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";
 
-        String addressDataJSONReceive = REST.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = REST.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;
@@ -277,7 +277,7 @@ public class Bitquery extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -286,7 +286,7 @@ public class Bitquery extends AddressAPI {
         // TODO if this is null, should we return the above transactions, return null, stop the loop?
         for(int offsetNum = 0; offsetNum <= 400000; offsetNum += 100) {
             // Bitquery doesn't give us this so use other API.
-            String addressDataRewardJSON = REST.get("https://api.binance.org/v1/staking/chains/bsc/delegators/" + cryptoAddress.address + "/rewards?limit=100&offset=" + offsetNum);
+            String addressDataRewardJSON = RESTUtil.get("https://api.binance.org/v1/staking/chains/bsc/delegators/" + cryptoAddress.address + "/rewards?limit=100&offset=" + offsetNum);
 
             if(addressDataRewardJSON != null) {
                 try {
@@ -313,7 +313,7 @@ public class Bitquery extends AddressAPI {
                     }
                 }
                 catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
+                    ThrowableUtil.processThrowable(e);
                     return null;
                 }
             }

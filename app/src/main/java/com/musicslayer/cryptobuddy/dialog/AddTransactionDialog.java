@@ -21,8 +21,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.DateTime;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
@@ -44,7 +44,7 @@ public class AddTransactionDialog extends BaseDialog {
         super(activity);
 
         final Date now = new Date();
-        final String nowString = DateTime.toDateString(now);
+        final String nowString = DateTimeUtil.toDateString(now);
 
         // Don't mix calendar and date - there are two "now" times.
         Calendar calendar = Calendar.getInstance();
@@ -57,7 +57,7 @@ public class AddTransactionDialog extends BaseDialog {
             calendar.get(Calendar.MINUTE),
             calendar.get(Calendar.SECOND)};
 
-        LASTCUSTOMDATE = DateTime.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+        LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
 
         LASTCUSTOMDATE_TEXT = nowString;
         CHOSENDATE = now;
@@ -71,7 +71,7 @@ public class AddTransactionDialog extends BaseDialog {
         setContentView(R.layout.dialog_add_transaction);
 
         final Date now = new Date();
-        final String nowString = DateTime.toDateString(now);
+        final String nowString = DateTimeUtil.toDateString(now);
 
         final TextView T_DATE_CHOICE = findViewById(R.id.add_transaction_dialog_dateTimeTextView);
         T_DATE_CHOICE.setText(nowString);
@@ -90,8 +90,8 @@ public class AddTransactionDialog extends BaseDialog {
                     LASTCUSTOMDATE_INFO[1] = month;
                     LASTCUSTOMDATE_INFO[2] = day;
 
-                    LASTCUSTOMDATE = DateTime.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
-                    String newDateText = DateTime.toDateString(LASTCUSTOMDATE);
+                    LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+                    String newDateText = DateTimeUtil.toDateString(LASTCUSTOMDATE);
                     T_DATE_CHOICE.setText(newDateText);
                     LASTCUSTOMDATE_TEXT = newDateText;
                 }
@@ -119,8 +119,8 @@ public class AddTransactionDialog extends BaseDialog {
                     LASTCUSTOMDATE_INFO[4] = minute;
                     LASTCUSTOMDATE_INFO[5] = second;
 
-                    LASTCUSTOMDATE = DateTime.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
-                    String newDateText = DateTime.toDateString(LASTCUSTOMDATE);
+                    LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+                    String newDateText = DateTimeUtil.toDateString(LASTCUSTOMDATE);
                     T_DATE_CHOICE.setText(newDateText);
                     LASTCUSTOMDATE_TEXT = newDateText;
                 }
@@ -206,7 +206,7 @@ public class AddTransactionDialog extends BaseDialog {
                 boolean isValid2 = E_PRIMARYASSET.test() & E_SECONDARYASSET.test();
 
                 if(action.numAssets() == 2 && ssvPrimary.getChosenAsset() == ssvSecondary.getChosenAsset()) {
-                    Toast.showToast(activity,"assets_same");
+                    ToastUtil.showToast(activity,"assets_same");
                     return;
                 }
 

@@ -1,4 +1,7 @@
-package com.musicslayer.cryptobuddy.util;
+package com.musicslayer.cryptobuddy.serialize;
+
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -111,17 +114,17 @@ public class Serialization {
             return getJSONObject(i).toStringOrNull();
         }
 
-        public JSONArrayWithNull put(String s) throws org.json.JSONException {
+        public JSONArrayWithNull put(String s) {
             jsonArray = s == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(s);
             return this;
         }
 
-        public JSONArrayWithNull put(JSONObjectWithNull obj) throws org.json.JSONException {
+        public JSONArrayWithNull put(JSONObjectWithNull obj) {
             jsonArray = obj.jsonObject == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(obj.jsonObject);
             return this;
         }
 
-        public JSONArrayWithNull put(JSONArrayWithNull arr) throws org.json.JSONException {
+        public JSONArrayWithNull put(JSONArrayWithNull arr) {
             jsonArray = arr.jsonArray == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(arr.jsonArray);
             return this;
         }
@@ -140,8 +143,8 @@ public class Serialization {
             s = obj.serializeToJSON();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
 
         // Add the version to every individual object that we serialize, or error if we cannot.
@@ -151,8 +154,8 @@ public class Serialization {
             s = o.toStringOrNull();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
 
         return s;
@@ -168,16 +171,16 @@ public class Serialization {
             version = o.getString(SERIALIZATION_VERSION_MARKER);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
 
         try {
-            return Reflect.callStaticMethodOrError(clazzT, "deserializeFromJSON" + version, s);
+            return ReflectUtil.callStaticMethod(clazzT, "deserializeFromJSON" + version, s);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -193,8 +196,8 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -212,8 +215,8 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -234,8 +237,8 @@ public class Serialization {
                 .toStringOrNull();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -260,8 +263,8 @@ public class Serialization {
             return hashMap;
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -277,7 +280,7 @@ public class Serialization {
     public static String string_serializeArrayList(ArrayList<String> arrayList) {
         if(arrayList == null) { return null; }
 
-        try{
+        try {
             JSONArrayWithNull a = new JSONArrayWithNull();
             for(String s : arrayList) {
                 a.put(Serialization.string_serialize(s));
@@ -286,8 +289,8 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -306,8 +309,8 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -339,8 +342,8 @@ public class Serialization {
             return a.toStringOrNull();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -359,8 +362,8 @@ public class Serialization {
             return arrayList;
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
-            throw new IllegalStateException();
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
     }
 

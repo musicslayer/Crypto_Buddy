@@ -15,9 +15,9 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.Toast;
-import com.musicslayer.cryptobuddy.util.Window;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.util.WindowUtil;
 
 public class ScanQRDialog extends BaseDialog {
     public String user_ADDRESS;
@@ -33,7 +33,7 @@ public class ScanQRDialog extends BaseDialog {
     public void adjustDialog() {
         // Stretch to 90% width. This is needed to see any dialog at all.
         ViewGroup v = findViewById(getBaseViewID());
-        int[] dimensions = Window.getDimensions(this.activity);
+        int[] dimensions = WindowUtil.getDimensions(this.activity);
         v.setLayoutParams(new FrameLayout.LayoutParams((int)(dimensions[0] * 0.9), FrameLayout.LayoutParams.WRAP_CONTENT));
 
         // Do not add Scrollview like superclass does.
@@ -56,7 +56,7 @@ public class ScanQRDialog extends BaseDialog {
                     final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                     if(barcodes.size() > 1) {
-                        Toast.showToast(activity,"multiple_qr_codes_read");
+                        ToastUtil.showToast(activity,"multiple_qr_codes_read");
                     }
                     else if(barcodes.size() == 1) {
                         user_ADDRESS = barcodes.valueAt(0).displayValue;
@@ -66,7 +66,7 @@ public class ScanQRDialog extends BaseDialog {
                     }
                 }
                 catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
+                    ThrowableUtil.processThrowable(e);
                 }
             }
         });
@@ -80,7 +80,7 @@ public class ScanQRDialog extends BaseDialog {
                     cameraSource.start(cameraView.getHolder());
                 }
                 catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
+                    ThrowableUtil.processThrowable(e);
                 }
             }
 
@@ -94,7 +94,7 @@ public class ScanQRDialog extends BaseDialog {
                     cameraSource.release();
                 }
                 catch(Exception e) {
-                    ThrowableLogger.processThrowable(e);
+                    ThrowableUtil.processThrowable(e);
                 }
             }
         });

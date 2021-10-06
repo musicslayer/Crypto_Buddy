@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,7 +14,7 @@ public class WavesTokenManager extends TokenManager {
     public String getSettingsKey() { return "waves"; }
 
     public Token lookupToken(String baseURL, String id) {
-        String tokenString = REST.get(baseURL + "/assets/details?id=" + id);
+        String tokenString = RESTUtil.get(baseURL + "/assets/details?id=" + id);
 
         try {
             JSONArray tokenInfoArray = new JSONArray(tokenString);

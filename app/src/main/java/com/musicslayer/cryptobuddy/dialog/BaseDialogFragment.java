@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
     public DialogInterface.OnShowListener SL;
@@ -56,20 +56,19 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     @NonNull
+    @SuppressWarnings("unchecked")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Object object = null;
-
         Bundle bundle = getArguments();
-        if(bundle != null) {
-            Class<?> clazz = (Class<?>)bundle.getSerializable("class");
-            Object[] argArray = (Object[])bundle.getSerializable("args");
+        assert bundle != null;
 
-            object = Reflect.constructDialogInstance(clazz, getActivity(), argArray);
-            ((Dialog)object).setOnShowListener(this);
-        }
+        Class<Dialog> clazz = (Class<Dialog>)bundle.getSerializable("class");
+        Object[] argArray = (Object[])bundle.getSerializable("args");
 
-        return (Dialog)object;
+        Dialog dialog = ReflectUtil.constructDialogInstance(clazz, getActivity(), argArray);
+        dialog.setOnShowListener(this);
+
+        return dialog;
     }
 
     public void show(Context context, String tag) {

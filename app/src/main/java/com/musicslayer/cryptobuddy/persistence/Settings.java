@@ -14,7 +14,7 @@ import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.util.LocaleManager;
+import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 
 // TODO All of this should be cleaned up...
 

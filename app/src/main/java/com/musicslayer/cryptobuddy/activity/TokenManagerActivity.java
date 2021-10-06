@@ -20,10 +20,10 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 import com.musicslayer.cryptobuddy.view.TokenManagerView;
 
 import org.json.JSONObject;
@@ -53,19 +53,14 @@ public class TokenManagerActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
+                HelpUtil.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
             }
         });
 
         TableLayout tableLayout = findViewById(R.id.token_manager_tableLayout);
 
         ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
-        Collections.sort(tokenTypes, new Comparator<String>() {
-            @Override
-            public int compare(String a, String b) {
-                return a.toLowerCase().compareTo(b.toLowerCase());
-            }
-        });
+        Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
 
         tokenManagerViewArrayList = new ArrayList<>();
         for(String tokenType : tokenTypes) {
@@ -103,7 +98,7 @@ public class TokenManagerActivity extends BaseActivity {
         progressFixedDialogFragment.setOnShowListener(new CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                tokenAllJSON = REST.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
+                tokenAllJSON = RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashOnDismissListener(this) {
@@ -115,14 +110,14 @@ public class TokenManagerActivity extends BaseActivity {
                         tokenAllJSONObject = new JSONObject(tokenAllJSON);
                     }
                     catch(Exception e) {
-                        ThrowableLogger.processThrowable(e);
-                        return;
+                        ThrowableUtil.processThrowable(e);
+                        throw new IllegalStateException(e);
                     }
 
-                    // Try each individually.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                         String settingsKey = tokenManagerView.tokenManager.getSettingsKey();
 
+                        // Not all token types can have a fixed list of tokens.
                         if(!tokenAllJSONObject.has(settingsKey)) {
                             continue;
                         }
@@ -132,8 +127,8 @@ public class TokenManagerActivity extends BaseActivity {
                             tokenTypeJSON = tokenAllJSONObject.getJSONObject(settingsKey);
                         }
                         catch(Exception e) {
-                            ThrowableLogger.processThrowable(e);
-                            continue;
+                            ThrowableUtil.processThrowable(e);
+                            throw new IllegalStateException(e);
                         }
 
                         tokenManagerView.tokenJSON = tokenTypeJSON.toString();

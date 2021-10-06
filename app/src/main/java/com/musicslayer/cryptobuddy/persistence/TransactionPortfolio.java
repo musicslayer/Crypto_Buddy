@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class TransactionPortfolio {
     // Store the raw strings too in case we need them in a data dump.
@@ -99,7 +99,7 @@ public class TransactionPortfolio {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
 
         return hashMap;

@@ -15,7 +15,7 @@ public class ContextUtil {
             return ((Activity)context);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Could not get activity: " + context.toString());
         }
     }
 }

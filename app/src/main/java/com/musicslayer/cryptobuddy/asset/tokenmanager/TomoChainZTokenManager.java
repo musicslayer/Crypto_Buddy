@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ public class TomoChainZTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public Token lookupToken(String baseURL, String id) {
-        String tokenString = REST.get(baseURL + "/api/tokens/" + id);
+        String tokenString = RESTUtil.get(baseURL + "/api/tokens/" + id);
 
         try {
             JSONObject tokenObj = new JSONObject(tokenString);
@@ -42,7 +42,7 @@ public class TomoChainZTokenManager extends TokenManager {
 
         while(!done) {
             numPages++;
-            String pageData = REST.get("https://scan.tomochain.com/api/tokens?type=trc21&limit=50&page=" + numPages);
+            String pageData = RESTUtil.get("https://scan.tomochain.com/api/tokens?type=trc21&limit=50&page=" + numPages);
             if(pageData == null) { return null; }
 
             jsonPages.append("\"page").append(numPages).append("\":").append(pageData);
@@ -93,7 +93,7 @@ public class TomoChainZTokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

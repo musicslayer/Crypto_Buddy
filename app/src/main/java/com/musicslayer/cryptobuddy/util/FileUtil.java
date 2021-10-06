@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import shadow.org.apache.commons.io.FileUtils;
 
-public class File {
+public class FileUtil {
     public static String readFile(Context context, int id) {
         return readFile(new BufferedReader(new InputStreamReader(context.getResources().openRawResource(id))));
     }
@@ -28,7 +28,8 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
 
         return stringBuilder.toString();
@@ -51,7 +52,8 @@ public class File {
             file.close();
         }
         catch(IOException e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
         }
 
         return stringArrayList;
@@ -65,7 +67,9 @@ public class File {
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
+
+            // This class may be used by CrashReporterDialog, so just return null.
             file = null;
         }
 

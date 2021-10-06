@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +20,7 @@ public class TronTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
-        return REST.get("https://api.trongrid.io/wallet/getassetissuelist");
+        return RESTUtil.get("https://api.trongrid.io/wallet/getassetissuelist");
     }
 
     public void parse(String tokenJSON) {
@@ -63,7 +63,7 @@ public class TronTokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

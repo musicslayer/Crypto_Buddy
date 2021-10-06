@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
@@ -29,8 +29,8 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
     @Override
     public boolean equals(Object other) {
         return (other instanceof CryptoAddress) &&
-            ((this.address == null && ((CryptoAddress)other).address == null) || address.equals(((CryptoAddress) other).address)) &&
-            ((this.network == null && ((CryptoAddress)other).network == null) || network.equals(((CryptoAddress) other).network)) &&
+            ((address == null && ((CryptoAddress)other).address == null) || (address != null && ((CryptoAddress) other).address != null && address.equals(((CryptoAddress) other).address))) &&
+            ((network == null && ((CryptoAddress)other).network == null) || (network != null && ((CryptoAddress) other).network != null && network.equals(((CryptoAddress) other).network))) &&
             (includeTokens == ((CryptoAddress) other).includeTokens);
     }
 

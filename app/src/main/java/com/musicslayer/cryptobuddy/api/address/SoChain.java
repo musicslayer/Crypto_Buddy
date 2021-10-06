@@ -4,8 +4,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +36,7 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        String addressDataJSON = REST.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -49,7 +49,7 @@ public class SoChain extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getCrypto()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -69,8 +69,8 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        String addressDataJSONReceived = REST.get("https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
-        String addressDataJSONSpent = REST.get("https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
+        String addressDataJSONReceived = RESTUtil.get("https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
+        String addressDataJSONSpent = RESTUtil.get("https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
         if(addressDataJSONReceived == null || addressDataJSONSpent == null) {
             return null;
         }
@@ -159,7 +159,7 @@ public class SoChain extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

@@ -33,9 +33,9 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
 
@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(MainActivity.this, R.raw.help_main);
+                HelpUtil.showHelp(MainActivity.this, R.raw.help_main);
             }
         });
 
@@ -110,7 +110,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(!addressData[0].isComplete()) {
-                    Toast.showToast(MainActivity.this,"no_address_data");
+                    ToastUtil.showToast(MainActivity.this,"no_address_data");
                 }
 
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
@@ -189,10 +189,24 @@ public class MainActivity extends BaseActivity {
                     finish();
                 }
                 else {
-                    Toast.showToast(MainActivity.this,"unlock_tokens_required");
+                    ToastUtil.showToast(MainActivity.this,"unlock_tokens_required");
                 }
             }
         });
+
+        Button B_LOCK = findViewById(R.id.main_lockButton);
+        if(App.DEBUG) {
+            B_LOCK.setOnClickListener(new CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    InAppPurchase.lock(MainActivity.this);
+                    ToastUtil.showToast(MainActivity.this, "lock_purchases");
+                }
+            });
+        }
+        else {
+            B_LOCK.setVisibility(View.GONE);
+        }
 
         Button B_UNLOCK = findViewById(R.id.main_unlockButton);
         if(App.DEBUG) {
@@ -200,6 +214,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onClickImpl(View view) {
                     InAppPurchase.unlock(MainActivity.this);
+                    ToastUtil.showToast(MainActivity.this, "unlock_purchases");
                 }
             });
         }
@@ -218,6 +233,19 @@ public class MainActivity extends BaseActivity {
         }
         else {
             B_REFUND.setVisibility(View.GONE);
+        }
+
+        Button B_CRASH = findViewById(R.id.main_crashButton);
+        if(App.DEBUG) {
+            B_CRASH.setOnClickListener(new CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    throw new RuntimeException();
+                }
+            });
+        }
+        else {
+            B_CRASH.setVisibility(View.GONE);
         }
     }
 

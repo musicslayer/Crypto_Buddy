@@ -9,11 +9,11 @@ import com.musicslayer.cryptobuddy.dialog.InfoDialog;
 import java.util.ArrayList;
 
 // Class to store crypto-specific info we want to show the user.
-public class Info {
+public class InfoUtil {
     public static boolean hasInfo(ArrayList<AddressData> addressDataArray) {
         // Return true if there is any info to show for any crypto.
         for(AddressData addressData : addressDataArray) {
-            if(Info.getInfo(addressData) != null) {
+            if(InfoUtil.getInfo(addressData) != null) {
                 return true;
             }
         }
@@ -28,9 +28,9 @@ public class Info {
         for(AddressData addressData : addressDataArray) {
             if(seenNames.contains(addressData.cryptoAddress.getCrypto().getName())) { continue; }
 
-            String info = Info.getInfo(addressData);
+            String info = InfoUtil.getInfo(addressData);
             if(info != null) {
-                infoText.append(Info.getInfo(addressData));
+                infoText.append(InfoUtil.getInfo(addressData));
             }
 
             seenNames.add(addressData.cryptoAddress.getCrypto().getName());
@@ -59,6 +59,7 @@ public class Info {
                 }
                 break;
             case "BNBs":
+            case "MATIC":
                 info = "Transactions may not include smart contract operations, such as reflections and taxes.";
                 break;
             case "BTC":
@@ -75,9 +76,6 @@ public class Info {
                 else {
                     info = "Transactions may not include smart contract operations, such as reflections and taxes. Also, token balances for testnet addresses are not available.";
                 }
-                break;
-            case "MATIC":
-                info = "Transactions may not include smart contract operations, such as reflections and taxes.";
                 break;
             case "VET":
                 info = "VTHO balance includes generated rewards from holding VET, but these rewards do not show up as transactions.";

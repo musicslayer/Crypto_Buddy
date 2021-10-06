@@ -7,7 +7,7 @@ import android.widget.DatePicker;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
 public class ChooseDateDialog extends BaseDialog {
     public int user_DAY;
@@ -26,8 +26,8 @@ public class ChooseDateDialog extends BaseDialog {
         setContentView(R.layout.dialog_choose_date);
 
         DatePicker datePicker = findViewById(R.id.choose_date_dialog_datePicker);
-        datePicker.setMinDate(DateTime.getMinDateTime().getTime());
-        datePicker.setMaxDate(DateTime.getMaxDateTime().getTime());
+        datePicker.setMinDate(DateTimeUtil.getMinDateTime().getTime());
+        datePicker.setMaxDate(DateTimeUtil.getMaxDateTime().getTime());
 
         Button B_CONFIRM = findViewById(R.id.choose_date_dialog_confirmButton);
         B_CONFIRM.setOnClickListener(new CrashOnClickListener(this.activity) {

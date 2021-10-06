@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.crash;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 // An Exception wrapper used in Crash classes. We can wrap other exceptions and add in useful information.
 public class CrashException extends RuntimeException {
@@ -28,17 +28,22 @@ public class CrashException extends RuntimeException {
             s.append("Extra Info:\n").append(extraInfo).append("\n");
         }
 
-        s.append(ThrowableLogger.getThrowableText(originalException));
+        s.append(ThrowableUtil.getThrowableText(originalException));
         return s.toString();
     }
 
     public void appendExtraInfoFromArgument(Object obj) {
         // Take any object and try to append it's string information.
         try {
-            this.extraInfoStringBuilder.append(obj.toString()).append("\n");
+            if(obj == null) {
+                this.extraInfoStringBuilder.append("null").append("\n");
+            }
+            else {
+                this.extraInfoStringBuilder.append(obj.toString()).append("\n");
+            }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             this.extraInfoStringBuilder.append("?\n");
         }
     }

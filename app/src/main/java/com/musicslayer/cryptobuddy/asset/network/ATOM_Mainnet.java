@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.Decode;
+import com.musicslayer.cryptobuddy.util.DecodeUtil;
 
 public class ATOM_Mainnet extends Network {
     public boolean isMainnet() {
@@ -22,6 +22,6 @@ public class ATOM_Mainnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.length() <= 255 && address.startsWith("cosmos1") && Decode.hasValidBech32Checksum(address);
+        return address.length() <= 255 && address.startsWith("cosmos1") && DecodeUtil.hasValidBech32Checksum(address);
     }
 }

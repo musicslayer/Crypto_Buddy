@@ -3,8 +3,8 @@ package com.musicslayer.cryptobuddy.transaction;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.LocaleManager;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.i18n.LocaleManager;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

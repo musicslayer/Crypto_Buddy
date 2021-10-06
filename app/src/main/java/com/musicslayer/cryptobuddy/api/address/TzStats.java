@@ -11,8 +11,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,7 +65,7 @@ public class TzStats extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = REST.get(baseURL + "/explorer/account/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/explorer/account/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             // Account may not be active, so say 0 Tezos.
             // We really need a better way to check this case.
@@ -80,13 +80,13 @@ public class TzStats extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new XTZ()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTokenJSON = REST.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50");
-            String addressDataTokenJSON2 = REST.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50&offset=50");
+            String addressDataTokenJSON = RESTUtil.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50");
+            String addressDataTokenJSON2 = RESTUtil.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50&offset=50");
             if(addressDataTokenJSON == null || addressDataTokenJSON2 == null) {
                 return null;
             }
@@ -140,7 +140,7 @@ public class TzStats extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -179,9 +179,9 @@ public class TzStats extends AddressAPI {
             return null;
         }
 
-        String addressDataReceiveJSON = REST.get(baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
-        String addressDataSendJSON = REST.get(baseURL + "/tables/op?sender=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
-        String addressDataCreateJSON = REST.get(baseURL + "/tables/op?creator=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
+        String addressDataReceiveJSON = RESTUtil.get(baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
+        String addressDataSendJSON = RESTUtil.get(baseURL + "/tables/op?sender=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
+        String addressDataCreateJSON = RESTUtil.get(baseURL + "/tables/op?creator=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
         if(addressDataReceiveJSON == null || addressDataSendJSON == null || addressDataCreateJSON == null) {
             return null;
         }
@@ -353,12 +353,12 @@ public class TzStats extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTokenJSON = REST.get("https://api.better-call.dev/v1/tokens/" + networkString + "/transfers/" + cryptoAddress.address + "?size=10");
+            String addressDataTokenJSON = RESTUtil.get("https://api.better-call.dev/v1/tokens/" + networkString + "/transfers/" + cryptoAddress.address + "?size=10");
             if(addressDataTokenJSON == null) {
                 return null;
             }
@@ -423,7 +423,7 @@ public class TzStats extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }

@@ -5,11 +5,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 abstract public class Asset implements Serialization.SerializableToJSON {
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
@@ -68,12 +67,7 @@ abstract public class Asset implements Serialization.SerializableToJSON {
     }
 
     public static void sortAscendingByType(ArrayList<Asset> assetArrayList) {
-        Collections.sort(assetArrayList, new Comparator<Asset>() {
-            @Override
-            public int compare(Asset a, Asset b) {
-                return Asset.compare(a, b);
-            }
-        });
+        Collections.sort(assetArrayList, (a, b) -> compare(a, b));
     }
 
     public String serializationVersion() { return "1"; }

@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.util.DateTime;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.Date;
 
@@ -20,12 +20,12 @@ public class Timestamp implements Serialization.SerializableToJSON {
             return "-";
         }
         else {
-            return DateTime.toDateString(date);
+            return DateTimeUtil.toDateString(date);
         }
     }
 
     private int compare(Timestamp other) {
-        return DateTime.compare(date, other.date);
+        return DateTimeUtil.compare(date, other.date);
     }
 
     public static int compare(Timestamp a, Timestamp b) {

@@ -17,8 +17,8 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
@@ -85,7 +85,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
                 else {
                     T.setText("");
-                    Toast.showToast(activity,"no_price_data");
+                    ToastUtil.showToast(activity,"no_price_data");
                 }
             }
         });
@@ -100,7 +100,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 boolean isValid = E_PRIMARYASSET.test();
 
                 if(cryptoPrimary == cryptoSecondary) {
-                    Toast.showToast(activity,"cryptos_same");
+                    ToastUtil.showToast(activity,"cryptos_same");
                     return;
                 }
 

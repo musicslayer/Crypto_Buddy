@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 // For BTC, DOGE, LTC, etc... other similar coins.
-public class Decode {
+public class DecodeUtil {
     final private static String hexadecimalCharList = "0123456789ABCDEFabcdef";
     final private static String base58CharList = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
     final private static String base32CharList = "234567ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Algorand

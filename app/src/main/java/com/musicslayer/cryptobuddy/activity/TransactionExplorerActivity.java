@@ -21,7 +21,7 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.util.Help;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 public class TransactionExplorerActivity extends BaseActivity {
@@ -58,7 +58,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(TransactionExplorerActivity.this, R.raw.help_transaction_explorer);
+                HelpUtil.showHelp(TransactionExplorerActivity.this, R.raw.help_transaction_explorer);
             }
         });
 

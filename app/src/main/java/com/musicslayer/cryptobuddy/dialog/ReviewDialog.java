@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class ReviewDialog extends BaseDialog {
     public boolean user_LATER = false;
@@ -44,7 +44,7 @@ public class ReviewDialog extends BaseDialog {
                     activity.startActivity(reviewIntent);
                 }
                 else {
-                    Toast.showToast(activity,"review");
+                    ToastUtil.showToast(activity,"review");
                 }
 
                 // Either button sets "isComplete" to true. We just want to make sure the user selected something.

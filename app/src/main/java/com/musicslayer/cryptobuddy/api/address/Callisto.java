@@ -7,8 +7,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +42,7 @@ public class Callisto extends AddressAPI {
             baseURL = "https://testnet-explorer.callisto.network";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/api?module=account&action=balance&address=" + cryptoAddress.address + "&apikey=" + APIKEY);
+        String addressDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=balance&address=" + cryptoAddress.address + "&apikey=" + APIKEY);
         if(addressDataJSON == null) {
             return null;
         }
@@ -54,12 +54,12 @@ public class Callisto extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new CLO()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressTokenDataJSON = REST.get(baseURL + "/api?module=account&action=tokenlist&address=" + cryptoAddress.address + "&apikey=" + APIKEY);
+            String addressTokenDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=tokenlist&address=" + cryptoAddress.address + "&apikey=" + APIKEY);
             if(addressTokenDataJSON == null) {
                 return null;
             }
@@ -85,7 +85,7 @@ public class Callisto extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -105,10 +105,10 @@ public class Callisto extends AddressAPI {
         }
 
         // Normal Transactions - These are all CLO
-        String addressDataJSON = REST.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+        String addressDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
         // Internal Transactions - These are all CLO
-        String addressDataInternalJSON = REST.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+        String addressDataInternalJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
         if(addressDataJSON == null || addressDataInternalJSON == null) {
             return null;
@@ -240,13 +240,13 @@ public class Callisto extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
             // CLO-20 Transactions - Various Tokens
-            String addressDataTokenJSON = REST.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+            String addressDataTokenJSON = RESTUtil.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
             if(addressDataTokenJSON == null) {
                 return null;
@@ -313,7 +313,7 @@ public class Callisto extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }

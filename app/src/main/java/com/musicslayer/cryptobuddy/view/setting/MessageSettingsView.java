@@ -13,7 +13,7 @@ import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 public class MessageSettingsView extends CrashLinearLayout {
@@ -49,7 +49,7 @@ public class MessageSettingsView extends CrashLinearLayout {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 prefText.setText(settingDescriptions[pos]);
                 Settings.setSetting(context, settingName, pos);
-                Toast.loadAllToasts(context.getApplicationContext());
+                ToastUtil.loadAllToasts(context.getApplicationContext());
             }
         });
 
@@ -60,10 +60,10 @@ public class MessageSettingsView extends CrashLinearLayout {
         B_MessageTest.setOnClickListener(new CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 if(Settings.setting_message == android.widget.Toast.LENGTH_SHORT) {
-                    Toast.showToast(context,"setting_message_test_short");
+                    ToastUtil.showToast(context,"setting_message_test_short");
                 }
                 else {
-                    Toast.showToast(context,"setting_message_test_long");
+                    ToastUtil.showToast(context,"setting_message_test_long");
                 }
             }
         });

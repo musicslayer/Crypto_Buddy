@@ -5,8 +5,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONObject;
 
@@ -61,10 +61,10 @@ public class CoinGecko extends PriceAPI {
 
         String priceDataJSON = null;
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = REST.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = REST.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {
@@ -78,7 +78,8 @@ public class CoinGecko extends PriceAPI {
                 price = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                // This may be ignorable. This happens if the website can't lookup the price of something.
+                ThrowableUtil.processThrowable(e);
             }
         }
 
@@ -91,10 +92,10 @@ public class CoinGecko extends PriceAPI {
         String priceDataJSON = null;
 
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = REST.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = REST.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {
@@ -108,7 +109,8 @@ public class CoinGecko extends PriceAPI {
                 marketCap = new AssetQuantity(d.toPlainString(), new USD());
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                // This may be ignorable. This happens if the website can't lookup the market cap of something.
+                ThrowableUtil.processThrowable(e);
             }
         }
 

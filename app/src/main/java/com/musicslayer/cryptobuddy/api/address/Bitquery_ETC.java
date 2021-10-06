@@ -6,8 +6,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class Bitquery_ETC extends AddressAPI {
             "}" +
             "\"\n}";
 
-        String addressDataJSON = REST.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+        String addressDataJSON = RESTUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
         if(addressDataJSON == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public class Bitquery_ETC extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new ETC()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -115,8 +115,8 @@ public class Bitquery_ETC extends AddressAPI {
                 "}" +
                 "\"\n}";
 
-        String addressDataJSONReceive = REST.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = REST.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;
@@ -188,7 +188,7 @@ public class Bitquery_ETC extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

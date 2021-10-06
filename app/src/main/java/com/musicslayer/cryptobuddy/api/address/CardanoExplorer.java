@@ -7,8 +7,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class CardanoExplorer extends AddressAPI {
                 "\"query\": \"query searchForPaymentAddress($address: String!) {\\n  transactions_aggregate(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}) {\\n    aggregate {\\n      count\\n    }\\n  }\\n  paymentAddresses(addresses: [$address]) {\\n    summary {\\n      assetBalances {\\n        asset {\\n          assetName\\n          decimals\\n          description\\n          fingerprint\\n          name\\n          policyId\\n          ticker\\n        }\\n        quantity\\n      }\\n    }\\n  }\\n}\\n\"," +
                 "\"variables\": \"{\\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +
                 "}";
-        String addressDataJSON = REST.post(baseURL, body);
+        String addressDataJSON = RESTUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -103,7 +103,7 @@ public class CardanoExplorer extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -127,7 +127,7 @@ public class CardanoExplorer extends AddressAPI {
             "\"query\": \"query getPaymentAddressTransactions($address: String!, $offset: Int!, $limit: Int!) {\\n  transactions(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}, offset: $offset, limit: $limit) {\\n    ...TransactionDetails\\n  }\\n}\\n\\nfragment TransactionDetails on Transaction {\\n  block {\\n    epochNo\\n    hash\\n    number\\n    slotNo\\n  }\\n  deposit\\n  fee\\n  hash\\n  includedAt\\n  mint {\\n    asset {\\n      assetName\\n      decimals\\n      description\\n      fingerprint\\n      name\\n      policyId\\n      ticker\\n    }\\n    quantity\\n  }\\n  inputs {\\n    address\\n    sourceTxHash\\n    sourceTxIndex\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  metadata {\\n    key\\n    value\\n  }\\n  outputs {\\n    address\\n    index\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  totalOutput\\n  withdrawals {\\n    address\\n    amount\\n  }\\n}\\n\"," +
             "\"variables\": \"{\\\"offset\\\":0, \\\"limit\\\":100, \\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +
             "}";
-        String addressDataJSON = REST.post(baseURL, body);
+        String addressDataJSON = RESTUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -289,7 +289,7 @@ public class CardanoExplorer extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

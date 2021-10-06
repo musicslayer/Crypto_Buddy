@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.Decode;
+import com.musicslayer.cryptobuddy.util.DecodeUtil;
 
 // TODO ADA addresses can be in BECH32 or in original format.
 
@@ -24,6 +24,6 @@ public class ADA_Mainnet_Shelley extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.startsWith("addr1") && address.length() == 103 && Decode.hasValidBech32Checksum(address);
+        return address.startsWith("addr1") && address.length() == 103 && DecodeUtil.hasValidBech32Checksum(address);
     }
 }

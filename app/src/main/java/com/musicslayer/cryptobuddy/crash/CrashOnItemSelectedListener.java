@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
     abstract public void onNothingSelectedImpl(AdapterView<?> parent);
@@ -26,7 +26,7 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
             onNothingSelectedImpl(parent);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(parent);
@@ -41,7 +41,7 @@ abstract public class CrashOnItemSelectedListener implements AdapterView.OnItemS
             onItemSelectedImpl(parent, view, pos, id);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(parent);

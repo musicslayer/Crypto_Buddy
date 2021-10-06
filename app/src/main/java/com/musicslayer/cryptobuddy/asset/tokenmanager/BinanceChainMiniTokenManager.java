@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,7 +21,7 @@ public class BinanceChainMiniTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
-        return REST.get("https://dex.binance.org/api/v1/mini/tokens?limit=1000");
+        return RESTUtil.get("https://dex.binance.org/api/v1/mini/tokens?limit=1000");
     }
 
     public void parse(String tokenJSON) {
@@ -44,7 +44,7 @@ public class BinanceChainMiniTokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

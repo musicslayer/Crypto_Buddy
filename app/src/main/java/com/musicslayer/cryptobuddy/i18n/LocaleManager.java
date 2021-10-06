@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.util;
+package com.musicslayer.cryptobuddy.i18n;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
@@ -6,12 +6,10 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Locale;
 
 public class LocaleManager {
@@ -177,12 +175,7 @@ public class LocaleManager {
         // Return all numeric locales, sorted by name.
         ArrayList<Locale> localeArrayList = new ArrayList<>(Arrays.asList(NumberFormat.getAvailableLocales()));
 
-        Collections.sort(localeArrayList, new Comparator<Locale>() {
-            @Override
-            public int compare(Locale a, Locale b) {
-                return a.toString().compareToIgnoreCase(b.toString());
-            }
-        });
+        Collections.sort(localeArrayList, (a, b) -> a.toString().compareToIgnoreCase(b.toString()));
 
         return localeArrayList;
     }
@@ -191,12 +184,7 @@ public class LocaleManager {
         // Return all datetime locales, sorted by name.
         ArrayList<Locale> localeArrayList = new ArrayList<>(Arrays.asList(Calendar.getAvailableLocales()));
 
-        Collections.sort(localeArrayList, new Comparator<Locale>() {
-            @Override
-            public int compare(Locale a, Locale b) {
-                return a.toString().compareToIgnoreCase(b.toString());
-            }
-        });
+        Collections.sort(localeArrayList, (a, b) -> a.toString().compareToIgnoreCase(b.toString()));
 
         return localeArrayList;
     }

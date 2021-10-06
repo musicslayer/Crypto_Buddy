@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,7 +23,7 @@ public class ADATokenManager extends TokenManager {
         String baseURL = "https://raw.githubusercontent.com/cardano-foundation/cardano-token-registry/master/mappings/";
 
         // Get all file info.
-        String fileArray = REST.get("https://api.github.com/repos/cardano-foundation/cardano-token-registry/contents/mappings");
+        String fileArray = RESTUtil.get("https://api.github.com/repos/cardano-foundation/cardano-token-registry/contents/mappings");
 
         // For each file, get the token info.
         try {
@@ -33,7 +33,7 @@ public class ADATokenManager extends TokenManager {
             for(int i = 0; i < fileArrayJSON.length(); i++) {
                 JSONObject file = fileArrayJSON.getJSONObject(i);
                 String filename = file.getString("name");
-                String tokenInfo = REST.get(baseURL + filename);
+                String tokenInfo = RESTUtil.get(baseURL + filename);
 
                 if(tokenInfo == null) {
                     return null;
@@ -89,7 +89,7 @@ public class ADATokenManager extends TokenManager {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

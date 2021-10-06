@@ -24,8 +24,8 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -102,7 +102,7 @@ abstract public class Table extends CrashTableLayout {
         finishRows(context);
 
         if(transaction.isFiltered(filterArrayList, columnTypes)) {
-            Toast.showToast(context,"new_transaction_filtered");
+            ToastUtil.showToast(context,"new_transaction_filtered");
         }
     }
 

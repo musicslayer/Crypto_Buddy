@@ -10,7 +10,7 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-public class Permission {
+public class PermissionUtil {
     public static boolean isGooglePlayServicesAvailable(Activity activity) {
         int g = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity);
         if (ConnectionResult.SUCCESS == g) {
@@ -18,22 +18,22 @@ public class Permission {
         }
 
         if(ConnectionResult.SERVICE_MISSING == g) {
-            Toast.showToast(activity,"google_play_missing");
+            ToastUtil.showToast(activity,"google_play_missing");
         }
         else if(ConnectionResult.SERVICE_UPDATING == g) {
-            Toast.showToast(activity,"google_play_updating");
+            ToastUtil.showToast(activity,"google_play_updating");
         }
         else if(ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED == g) {
-            Toast.showToast(activity,"google_play_needs_update");
+            ToastUtil.showToast(activity,"google_play_needs_update");
         }
         else if(ConnectionResult.SERVICE_DISABLED == g) {
-            Toast.showToast(activity,"google_play_disabled");
+            ToastUtil.showToast(activity,"google_play_disabled");
         }
         else if(ConnectionResult.SERVICE_INVALID == g) {
-            Toast.showToast(activity,"google_play_invalid");
+            ToastUtil.showToast(activity,"google_play_invalid");
         }
         else {
-            Toast.showToast(activity,"unknown_google_play_error");
+            ToastUtil.showToast(activity,"unknown_google_play_error");
         }
 
         return false;
@@ -42,7 +42,7 @@ public class Permission {
     public static boolean requestCameraPermission(Activity activity) {
         // Older versions cannot run the app unless the permission has already been granted, so only check for newer versions.
         if(Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Toast.showToast(activity,"no_camera_permission");
+            ToastUtil.showToast(activity,"no_camera_permission");
             activity.requestPermissions(new String[] { Manifest.permission.CAMERA }, 0);
             return false;
         }

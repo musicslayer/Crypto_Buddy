@@ -18,18 +18,13 @@ import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 // This Activity class only exists for initialization code, not to be seen by the user.
-// Unlike in App.java, if there is a crash here we can show CrashReporterDialog.
+// Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
     public int getAdLayoutViewID() {
         return -1;
-    }
-
-    @Override
-    public void onBackPressedImpl() {
-        // Make sure the user can't cancel out of initialization.
     }
 
     public void createLayout() {
@@ -39,7 +34,7 @@ public class InitialActivity extends BaseActivity {
         Context applicationContext = getApplicationContext();
 
         Settings.loadAllSettings(applicationContext);
-        Toast.loadAllToasts(applicationContext);
+        ToastUtil.loadAllToasts(applicationContext);
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
         Network.initialize(applicationContext);

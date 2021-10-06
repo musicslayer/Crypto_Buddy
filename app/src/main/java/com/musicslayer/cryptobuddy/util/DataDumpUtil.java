@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 // Methods to dump all app data in a user's installation.
-public class DataDump {
+public class DataDumpUtil {
     // Pass in null if we do not have access to the activity object.
     public static String getAllData(Activity a) {
         StringBuilder s = new StringBuilder();

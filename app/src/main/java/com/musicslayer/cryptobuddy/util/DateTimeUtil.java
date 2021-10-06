@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
+import com.musicslayer.cryptobuddy.i18n.LocaleManager;
+import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
 import java.time.LocalDateTime;
@@ -9,7 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateTime {
+public class DateTimeUtil {
     public static String toDateString(java.util.Date date, FormatStyle style) {
         if(date == null) { return null; }
 

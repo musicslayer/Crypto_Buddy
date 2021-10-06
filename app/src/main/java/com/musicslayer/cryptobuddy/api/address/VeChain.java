@@ -9,8 +9,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,7 +45,7 @@ public class VeChain extends AddressAPI {
             baseURL = "https://explore-testnet.vechain.org";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase());
+        String addressDataJSON = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase());
         if(addressDataJSON == null) {
             return null;
         }
@@ -85,7 +85,7 @@ public class VeChain extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -106,8 +106,8 @@ public class VeChain extends AddressAPI {
         }
 
         // Transfers (VET, VTHO, and Tokens)
-        String addressDataJSONTransfers = REST.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50");
-        String addressDataJSONTransfers2 = REST.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=50");
+        String addressDataJSONTransfers = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50");
+        String addressDataJSONTransfers2 = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=50");
 
         if(addressDataJSONTransfers == null || addressDataJSONTransfers2 == null) {
             return null;
@@ -134,7 +134,7 @@ public class VeChain extends AddressAPI {
 
                     // Get fee (in VeThor)
                     String txID = o.getString("txID");
-                    String transactionJSON = REST.get(baseURL + "/api/transactions/" + txID);
+                    String transactionJSON = RESTUtil.get(baseURL + "/api/transactions/" + txID);
                     JSONObject transactionData = new JSONObject(transactionJSON);
 
                     BigDecimal fee = new BigDecimal(new BigInteger(transactionData.getJSONObject("receipt").getString("paid").substring(2), 16).toString());
@@ -203,7 +203,7 @@ public class VeChain extends AddressAPI {
 
                     // Get fee (in VeThor)
                     String txID = o.getString("txID");
-                    String transactionJSON = REST.get(baseURL + "/api/transactions/" + txID);
+                    String transactionJSON = RESTUtil.get(baseURL + "/api/transactions/" + txID);
                     JSONObject transactionData = new JSONObject(transactionJSON);
 
                     BigDecimal fee = new BigDecimal(new BigInteger(transactionData.getJSONObject("receipt").getString("paid").substring(2), 16).toString());
@@ -253,7 +253,7 @@ public class VeChain extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

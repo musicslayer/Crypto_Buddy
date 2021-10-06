@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.view.setting;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -16,7 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenList;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
     public DeleteDownloadedTokensSettingsView(Context context) {
@@ -39,7 +38,7 @@ public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     TokenList.resetDownloadedTokens(context);
                     TokenManager.resetAllDownloadedTokens();
-                    Toast.showToast(context,"reset_downloaded_tokens");
+                    ToastUtil.showToast(context,"reset_downloaded_tokens");
                 }
             }
         });

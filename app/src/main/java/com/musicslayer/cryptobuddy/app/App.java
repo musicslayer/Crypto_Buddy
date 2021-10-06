@@ -6,7 +6,7 @@ import androidx.multidex.MultiDexApplication;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 // The code in this class must be especially crash free because we cannot use CrashReporterDialog here.
 public class App extends MultiDexApplication {
@@ -29,11 +29,12 @@ public class App extends MultiDexApplication {
         }
 
         try {
-            // Needed for older Android versions
+            // Needed for older Android versions.
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            // Try to proceed on in case the method is removed in a later Android version.
+            ThrowableUtil.processThrowable(e);
         }
     }
 }

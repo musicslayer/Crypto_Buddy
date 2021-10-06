@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.api;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 abstract public class API implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.

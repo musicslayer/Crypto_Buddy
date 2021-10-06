@@ -11,7 +11,7 @@ import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
             onSkuDetailsResponseImpl(billingResult, skuDetailsList);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(billingResult);

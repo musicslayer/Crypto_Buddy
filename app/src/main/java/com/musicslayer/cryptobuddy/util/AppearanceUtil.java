@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.musicslayer.cryptobuddy.persistence.Settings;
 
-public class Appearance {
+public class AppearanceUtil {
     // Needs activity, not Context
     public static void setAppearance(Activity activity) {
         setTheme();

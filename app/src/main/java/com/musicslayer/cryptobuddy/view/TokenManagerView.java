@@ -21,7 +21,7 @@ import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class TokenManagerView extends CrashTableRow {
     public TextView T;
@@ -98,7 +98,7 @@ public class TokenManagerView extends CrashTableRow {
                     }
 
                     updateLayout();
-                    Toast.showToast(context,"tokens_deleted");
+                    ToastUtil.showToast(context,"tokens_deleted");
                 }
             }
         });

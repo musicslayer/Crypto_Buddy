@@ -5,8 +5,8 @@ import android.content.Context;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ abstract public class Fiat extends Asset {
     public static ArrayList<String> fiat_combo_names;
 
     public static void initialize(Context context) {
-        fiat_names = File.readFileIntoLines(context, R.raw.asset_fiat);
+        fiat_names = FileUtil.readFileIntoLines(context, R.raw.asset_fiat);
 
         fiats = new ArrayList<>();
         fiat_map = new HashMap<>();
@@ -27,7 +27,7 @@ abstract public class Fiat extends Asset {
         fiat_combo_names = new ArrayList<>();
 
         for(String fiatName : fiat_names) {
-            Fiat fiat = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiat." + fiatName);
+            Fiat fiat = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiat." + fiatName);
             fiats.add(fiat);
             fiat_map.put(fiatName, fiat);
             fiat_display_names.add(fiat.getDisplayName());

@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.persistence;
 
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.Reflect;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class Persistence {
                 Class<?> value = persistentClassMap.get(key);
                 if(value == null) { throw new NullPointerException(); }
 
-                allDataMap.put(key, Reflect.callStaticMethodOrError(value, "getAllData"));
+                allDataMap.put(key, ReflectUtil.callStaticMethod(value, "getAllData"));
             }
             catch(Exception e) {
                 try {
@@ -45,10 +45,10 @@ public class Persistence {
                     noInfoMap.put("!ERROR!", "!NO_INFO!");
                     allDataMap.put(key, noInfoMap);
 
-                    ThrowableLogger.processThrowable(e);
+                    ThrowableUtil.processThrowable(e);
 
                     HashMap<String, String> errorMap = new HashMap<>();
-                    errorMap.put("!ERROR!", ThrowableLogger.getThrowableText(e));
+                    errorMap.put("!ERROR!", ThrowableUtil.getThrowableText(e));
                     allDataMap.put(key, errorMap);
                 }
                 catch(Exception ignored) {
@@ -69,10 +69,10 @@ public class Persistence {
                 Class<?> value = persistentClassMap.get(key);
                 if(value == null) { throw new NullPointerException(); }
 
-                Reflect.callResetAllData(value, context);
+                ReflectUtil.callResetAllData(value, context);
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
             }
         }
     }

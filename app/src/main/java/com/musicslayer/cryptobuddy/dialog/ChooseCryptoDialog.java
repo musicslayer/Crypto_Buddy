@@ -12,7 +12,6 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class ChooseCryptoDialog extends BaseDialog {
     public ArrayList<CryptoAddress> cryptoAddressArrayList;
@@ -35,12 +34,7 @@ public class ChooseCryptoDialog extends BaseDialog {
         ArrayList<CryptoAddress> sortedCryptoAddressArrayList = new ArrayList<>(cryptoAddressArrayList);
 
         // Sort by network
-        Collections.sort(sortedCryptoAddressArrayList, new Comparator<CryptoAddress>() {
-            @Override
-            public int compare(CryptoAddress a, CryptoAddress b) {
-                return Network.compare(a.network, b.network);
-            }
-        });
+        Collections.sort(sortedCryptoAddressArrayList, (a, b) -> Network.compare(a.network, b.network));
 
         ArrayList<String> options = new ArrayList<>();
         for(CryptoAddress ca : sortedCryptoAddressArrayList) {

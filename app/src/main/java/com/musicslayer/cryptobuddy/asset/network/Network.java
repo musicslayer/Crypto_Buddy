@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.util.File;
-import com.musicslayer.cryptobuddy.util.Reflect;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,14 +36,14 @@ abstract public class Network implements Serialization.SerializableToJSON {
     public static ArrayList<String> network_display_names;
 
     public static void initialize(Context context) {
-        network_names = File.readFileIntoLines(context, R.raw.asset_network);
+        network_names = FileUtil.readFileIntoLines(context, R.raw.asset_network);
 
         networks = new ArrayList<>();
         network_map = new HashMap<>();
         network_display_names = new ArrayList<>();
 
         for(String networkName : network_names) {
-            Network network = Reflect.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.network." + networkName);
+            Network network = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.network." + networkName);
             networks.add(network);
             network_map.put(networkName, network);
             network_display_names.add(network.getDisplayName());

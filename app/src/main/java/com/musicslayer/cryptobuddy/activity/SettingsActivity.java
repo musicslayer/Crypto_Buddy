@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.setting.DarkSettingsView;
 import com.musicslayer.cryptobuddy.view.setting.DatetimeLocaleSettingsView;
@@ -86,10 +86,10 @@ public class SettingsActivity extends BaseActivity {
 
     final String[][] settingStrings = {
         {
-            "Short format datetime:\n" + DateTime.toDateString(FormatStyle.SHORT),
-            "Medium format datetime:\n" + DateTime.toDateString(FormatStyle.MEDIUM),
-            "Long format datetime:\n" + DateTime.toDateString(FormatStyle.LONG),
-            "Full format datetime:\n" + DateTime.toDateString(FormatStyle.FULL)
+            "Short format datetime:\n" + DateTimeUtil.toDateString(FormatStyle.SHORT),
+            "Medium format datetime:\n" + DateTimeUtil.toDateString(FormatStyle.MEDIUM),
+            "Long format datetime:\n" + DateTimeUtil.toDateString(FormatStyle.LONG),
+            "Full format datetime:\n" + DateTimeUtil.toDateString(FormatStyle.FULL)
         },
         {
             "Show all decimal places expected for the crypto.\n0.00010000 BTC.",

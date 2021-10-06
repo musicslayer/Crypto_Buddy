@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
@@ -10,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.crash.CrashDialog;
-import com.musicslayer.cryptobuddy.util.Window;
+import com.musicslayer.cryptobuddy.util.WindowUtil;
 
 // TODO Many common dialogs can be merged.
 
@@ -32,7 +33,7 @@ abstract public class BaseDialog extends CrashDialog {
     @Override
     protected void onCreateImpl(Bundle savedInstanceState) {
         // Needed for older versions of Android.
-        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         createLayout();
     }
@@ -47,7 +48,7 @@ abstract public class BaseDialog extends CrashDialog {
         ViewGroup p = (ViewGroup)v.getParent();
 
         // Stretch to 90% width. This is needed to see any dialog at all.
-        int[] dimensions = Window.getDimensions(this.activity);
+        int[] dimensions = WindowUtil.getDimensions(this.activity);
         v.setLayoutParams(new FrameLayout.LayoutParams((int)(dimensions[0] * 0.9), FrameLayout.LayoutParams.WRAP_CONTENT));
 
         // Add a ScrollView

@@ -6,11 +6,10 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.util.Serialization;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class AssetQuantity implements Serialization.SerializableToJSON {
     public AssetAmount assetAmount;
@@ -67,12 +66,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON {
     }
 
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {
-        Collections.sort(assetQuantityArrayList, new Comparator<AssetQuantity>() {
-            @Override
-            public int compare(AssetQuantity a, AssetQuantity b) {
-                return AssetQuantity.compare(a, b);
-            }
-        });
+        Collections.sort(assetQuantityArrayList, (a, b) -> compare(a, b));
     }
 
     public String serializationVersion() { return "1"; }

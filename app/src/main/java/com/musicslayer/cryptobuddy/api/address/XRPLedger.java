@@ -12,8 +12,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,7 +56,7 @@ public class XRPLedger extends AddressAPI {
                 "}" +
                 "]" +
                 "}";
-        String addressDataJSON = REST.post(baseURL, body);
+        String addressDataJSON = RESTUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -83,7 +83,7 @@ public class XRPLedger extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new XRP()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -96,7 +96,7 @@ public class XRPLedger extends AddressAPI {
                     "}" +
                     "]" +
                     "}";
-            String addressDataTokensLJSON = REST.post(baseURL, bodyTokensL);
+            String addressDataTokensLJSON = RESTUtil.post(baseURL, bodyTokensL);
 
             String bodyTokens = "{" +
                     "\"method\": \"account_lines\"," +
@@ -106,7 +106,7 @@ public class XRPLedger extends AddressAPI {
                     "}" +
                     "]" +
                     "}";
-            String addressDataTokensJSON = REST.post(baseURL, bodyTokens);
+            String addressDataTokensJSON = RESTUtil.post(baseURL, bodyTokens);
 
             if(addressDataTokensLJSON == null || addressDataTokensJSON == null) {
                 return null;
@@ -165,7 +165,7 @@ public class XRPLedger extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -198,7 +198,7 @@ public class XRPLedger extends AddressAPI {
                 "}" +
                 "]" +
                 "}";
-        String addressDataJSON = REST.post(baseURL, body);
+        String addressDataJSON = RESTUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -291,7 +291,7 @@ public class XRPLedger extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

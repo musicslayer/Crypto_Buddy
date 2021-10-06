@@ -12,8 +12,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnItemSelectedListener;
-import com.musicslayer.cryptobuddy.util.Clipboard;
-import com.musicslayer.cryptobuddy.util.Window;
+import com.musicslayer.cryptobuddy.util.ClipboardUtil;
+import com.musicslayer.cryptobuddy.util.WindowUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import net.glxn.qrgen.android.QRCode;
@@ -44,7 +44,7 @@ public class AddressQRCodeDialog extends BaseDialog {
         Button B = findViewById(R.id.address_qr_code_dialog_copyButton);
         ImageView I = findViewById(R.id.address_qr_code_dialog_qrCode);
 
-        final int[] dimensions = Window.getDimensions(AddressQRCodeDialog.this.activity);
+        final int[] dimensions = WindowUtil.getDimensions(AddressQRCodeDialog.this.activity);
         final int s = (int) Math.min(dimensions[0] * 0.9f * 0.9f, dimensions[1] * 0.9f * 0.9f); // First 0.9 for dialog, second 0.9 for QR code.
 
         BorderedSpinnerView bsv = findViewById(R.id.address_qr_code_dialog_spinner);
@@ -59,7 +59,7 @@ public class AddressQRCodeDialog extends BaseDialog {
                 B.setOnClickListener(new CrashOnClickListener(AddressQRCodeDialog.this.activity) {
                     @Override
                     public void onClickImpl(View view) {
-                        Clipboard.copy(AddressQRCodeDialog.this.activity, "wallet_address", addressData.cryptoAddress.address);
+                        ClipboardUtil.copy(AddressQRCodeDialog.this.activity, "wallet_address", addressData.cryptoAddress.address);
                     }
                 });
 

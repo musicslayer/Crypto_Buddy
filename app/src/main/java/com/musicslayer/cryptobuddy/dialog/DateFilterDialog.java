@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.filter.DateFilter;
-import com.musicslayer.cryptobuddy.util.DateTime;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
 import java.util.Calendar;
 
@@ -68,7 +68,7 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_START_INFO[1] = month;
                     LASTCUSTOMDATE_START_INFO[2] = day;
 
-                    filter.user_startDate = DateTime.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
+                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
                     updateLayout();
                 }
             }
@@ -95,7 +95,7 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_START_INFO[4] = minute;
                     LASTCUSTOMDATE_START_INFO[5] = second;
 
-                    filter.user_startDate = DateTime.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
+                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
                     updateLayout();
                 }
             }
@@ -122,7 +122,7 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_END_INFO[1] = month;
                     LASTCUSTOMDATE_END_INFO[2] = day;
 
-                    filter.user_endDate = DateTime.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
+                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
                     updateLayout();
                 }
             }
@@ -149,7 +149,7 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_END_INFO[4] = minute;
                     LASTCUSTOMDATE_END_INFO[5] = second;
 
-                    filter.user_endDate = DateTime.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
+                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
                     updateLayout();
                 }
             }
@@ -173,7 +173,7 @@ public class DateFilterDialog extends BaseDialog {
             T_START.setText("No Lower Limit");
         }
         else {
-            T_START.setText(DateTime.toDateString(filter.user_startDate));
+            T_START.setText(DateTimeUtil.toDateString(filter.user_startDate));
         }
 
         TextView T_END = findViewById(R.id.date_filter_dialog_endDateTextView);
@@ -182,7 +182,7 @@ public class DateFilterDialog extends BaseDialog {
             T_END.setText("No Upper Limit");
         }
         else {
-            T_END.setText(DateTime.toDateString(filter.user_endDate));
+            T_END.setText(DateTimeUtil.toDateString(filter.user_endDate));
         }
     }
 

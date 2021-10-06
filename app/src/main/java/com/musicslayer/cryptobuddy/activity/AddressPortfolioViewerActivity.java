@@ -27,9 +27,9 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.Serialization;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(AddressPortfolioViewerActivity.this, R.raw.help_address_portfolio_viewer);
+                HelpUtil.showHelp(AddressPortfolioViewerActivity.this, R.raw.help_address_portfolio_viewer);
             }
         });
 
@@ -72,7 +72,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(AddressPortfolio.isSaved(name)) {
-                        Toast.showToast(AddressPortfolioViewerActivity.this,"portfolio_name_used");
+                        ToastUtil.showToast(AddressPortfolioViewerActivity.this,"portfolio_name_used");
                     }
                     else {
                         AddressPortfolio.addPortfolio(AddressPortfolioViewerActivity.this, new AddressPortfolioObj(name));
@@ -128,7 +128,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 for(AddressData addressData : addressDataArrayList[0]) {
                     if(!addressData.isComplete()) {
                         // Only alert once. Others would be redundant.
-                        Toast.showToast(AddressPortfolioViewerActivity.this,"no_address_data");
+                        ToastUtil.showToast(AddressPortfolioViewerActivity.this,"no_address_data");
                         break;
                     }
                 }

@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class ResetAllSettingsSettingsView extends CrashLinearLayout {
     public ResetAllSettingsSettingsView(Context context) {
@@ -39,7 +39,7 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
                     Settings.resetAllData(context);
                     ((Activity)context).recreate();
-                    Toast.showToast(context,"reset_settings");
+                    ToastUtil.showToast(context,"reset_settings");
                 }
             }
         });

@@ -21,8 +21,8 @@ import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class TransactionPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
@@ -47,7 +47,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(TransactionPortfolioViewerActivity.this, R.raw.help_transaction_portfolio_viewer);
+                HelpUtil.showHelp(TransactionPortfolioViewerActivity.this, R.raw.help_transaction_portfolio_viewer);
             }
         });
 
@@ -59,7 +59,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(TransactionPortfolio.isSaved(name)) {
-                        Toast.showToast(TransactionPortfolioViewerActivity.this,"portfolio_name_used");
+                        ToastUtil.showToast(TransactionPortfolioViewerActivity.this,"portfolio_name_used");
                     }
                     else {
                         TransactionPortfolio.addPortfolio(TransactionPortfolioViewerActivity.this, new TransactionPortfolioObj(name));

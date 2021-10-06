@@ -16,11 +16,10 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.crash.CrashOnClickListener;
 import com.musicslayer.cryptobuddy.crash.CrashOnQueryTextListener;
-import com.musicslayer.cryptobuddy.util.Help;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class SearchDialog extends BaseDialog {
     public ArrayList<Asset> assetArrayList;
@@ -60,18 +59,15 @@ public class SearchDialog extends BaseDialog {
     }
 
     public static void sortAscendingByType(ArrayList<String> optionsArrayList) {
-        Collections.sort(optionsArrayList, new Comparator<String>() {
-            @Override
-            public int compare(String a, String b) {
-                // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
-                // If length is equal, just go alphabetically.
-                int s = Integer.compare(a.length(), b.length());
-                if(s != 0) {
-                    return s;
-                }
-                else {
-                    return a.toLowerCase().compareTo(b.toLowerCase());
-                }
+        Collections.sort(optionsArrayList, (a, b) -> {
+            // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
+            // If length is equal, just go alphabetically.
+            int s = Integer.compare(a.length(), b.length());
+            if(s != 0) {
+                return s;
+            }
+            else {
+                return a.toLowerCase().compareTo(b.toLowerCase());
             }
         });
     }
@@ -87,7 +83,7 @@ public class SearchDialog extends BaseDialog {
         helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(SearchDialog.this.activity, R.raw.help_search);
+                HelpUtil.showHelp(SearchDialog.this.activity, R.raw.help_search);
             }
         });
 
@@ -182,34 +178,28 @@ public class SearchDialog extends BaseDialog {
                     public void onClickImpl(View v) {
                         // Sort assetArrayList in the same way as the options we used so that the index lines up.
                         if(isNames) {
-                            Collections.sort(assetArrayList, new Comparator<Asset>() {
-                                @Override
-                                public int compare(Asset a, Asset b) {
-                                    // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
-                                    // If length is equal, just go alphabetically.
-                                    int s = Integer.compare(a.getDisplayName().length(), b.getDisplayName().length());
-                                    if(s != 0) {
-                                        return s;
-                                    }
-                                    else {
-                                        return a.getDisplayName().toLowerCase().compareTo(b.getDisplayName().toLowerCase());
-                                    }
+                            Collections.sort(assetArrayList, (a, b) -> {
+                                // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
+                                // If length is equal, just go alphabetically.
+                                int s = Integer.compare(a.getDisplayName().length(), b.getDisplayName().length());
+                                if(s != 0) {
+                                    return s;
+                                }
+                                else {
+                                    return a.getDisplayName().toLowerCase().compareTo(b.getDisplayName().toLowerCase());
                                 }
                             });
                         }
                         else {
-                            Collections.sort(assetArrayList, new Comparator<Asset>() {
-                                @Override
-                                public int compare(Asset a, Asset b) {
-                                    // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
-                                    // If length is equal, just go alphabetically.
-                                    int s = Integer.compare(a.getName().length(), b.getName().length());
-                                    if(s != 0) {
-                                        return s;
-                                    }
-                                    else {
-                                        return a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
-                                    }
+                            Collections.sort(assetArrayList, (a, b) -> {
+                                // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
+                                // If length is equal, just go alphabetically.
+                                int s = Integer.compare(a.getName().length(), b.getName().length());
+                                if(s != 0) {
+                                    return s;
+                                }
+                                else {
+                                    return a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
                                 }
                             });
                         }

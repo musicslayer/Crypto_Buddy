@@ -10,8 +10,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = REST.get(baseURL + "/v1/account/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/v1/account/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -68,7 +68,7 @@ public class AlgoExplorer extends AddressAPI {
                     JSONObject asset = assets.getJSONObject(i);
                     String id = asset.getString("asset-id");
 
-                    String tokenData = REST.get("https://algoexplorerapi.io/v1/asset/" + id);
+                    String tokenData = RESTUtil.get("https://algoexplorerapi.io/v1/asset/" + id);
                     JSONObject tokenJSON = new JSONObject(tokenData);
 
                     String name = tokenJSON.getString("unitname");
@@ -83,7 +83,7 @@ public class AlgoExplorer extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -109,7 +109,7 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = REST.get(baseURL + "/v1/account/" + cryptoAddress.address + "/transactions");
+        String addressDataJSON = RESTUtil.get(baseURL + "/v1/account/" + cryptoAddress.address + "/transactions");
         if(addressDataJSON == null) {
             return null;
         }
@@ -187,7 +187,7 @@ public class AlgoExplorer extends AddressAPI {
 
                     // TOKEN
                     String id = jsonTransaction.getJSONObject("curxfer").getString("id");
-                    String tokenData = REST.get("https://algoexplorerapi.io/v1/asset/" + id);
+                    String tokenData = RESTUtil.get("https://algoexplorerapi.io/v1/asset/" + id);
                     JSONObject tokenJSON = new JSONObject(tokenData);
 
                     String name = tokenJSON.getString("unitname");
@@ -229,7 +229,7 @@ public class AlgoExplorer extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

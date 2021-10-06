@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.crash.CrashActivity;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.util.Appearance;
+import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 
 abstract public class BaseActivity extends CrashActivity {
     abstract public void createLayout();
@@ -20,7 +20,7 @@ abstract public class BaseActivity extends CrashActivity {
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
         if(App.isAppInitialized) {
-            Appearance.setAppearance(this);
+            AppearanceUtil.setAppearance(this);
 
             InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
                 @Override
@@ -43,11 +43,13 @@ abstract public class BaseActivity extends CrashActivity {
             ViewGroup v = findViewById(getAdLayoutViewID());
 
             AdView ad = Ad.createBannerAdView(this);
-            ConstraintLayout.LayoutParams CL = (ConstraintLayout.LayoutParams)v.getLayoutParams();
-            CL.width = ad.getAdSize().getWidthInPixels(this);
-            CL.height = ad.getAdSize().getHeightInPixels(this);
-            v.setLayoutParams(CL);
-            v.addView(ad);
+            if(ad.getAdSize() != null) {
+                ConstraintLayout.LayoutParams CL = (ConstraintLayout.LayoutParams)v.getLayoutParams();
+                CL.width = ad.getAdSize().getWidthInPixels(this);
+                CL.height = ad.getAdSize().getHeightInPixels(this);
+                v.setLayoutParams(CL);
+                v.addView(ad);
+            }
         }
     }
 }

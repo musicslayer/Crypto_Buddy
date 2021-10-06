@@ -16,10 +16,10 @@ import com.musicslayer.cryptobuddy.crash.CrashOnDismissListener;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.util.Clipboard;
-import com.musicslayer.cryptobuddy.util.Help;
-import com.musicslayer.cryptobuddy.util.Permission;
-import com.musicslayer.cryptobuddy.util.Toast;
+import com.musicslayer.cryptobuddy.util.ClipboardUtil;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.PermissionUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class ChooseAddressDialog extends BaseDialog {
         helpButton.setOnClickListener(new CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                Help.showHelp(ChooseAddressDialog.this.activity, R.raw.help_choose_address);
+                HelpUtil.showHelp(ChooseAddressDialog.this.activity, R.raw.help_choose_address);
             }
         });
 
@@ -62,7 +62,7 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);
         B_PASTE.setOnClickListener(new CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                CharSequence pasteText = Clipboard.paste(ChooseAddressDialog.this.activity);
+                CharSequence pasteText = ClipboardUtil.paste(ChooseAddressDialog.this.activity);
                 if(!"".contentEquals(pasteText)) {
                     E_ADDRESS.setText(pasteText);
                 }
@@ -83,11 +83,11 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_SCANQR = findViewById(R.id.choose_address_dialog_scanQRButton);
         B_SCANQR.setOnClickListener(new CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                if(!Permission.isGooglePlayServicesAvailable(ChooseAddressDialog.this.activity)) {
+                if(!PermissionUtil.isGooglePlayServicesAvailable(ChooseAddressDialog.this.activity)) {
                     return;
                 }
 
-                if(!Permission.requestCameraPermission(ChooseAddressDialog.this.activity)) {
+                if(!PermissionUtil.requestCameraPermission(ChooseAddressDialog.this.activity)) {
                     return;
                 }
 
@@ -135,14 +135,14 @@ public class ChooseAddressDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 String address = E_ADDRESS.getText().toString();
                 if(address.isEmpty()) {
-                    Toast.showToast(activity,"empty_address");
+                    ToastUtil.showToast(activity,"empty_address");
                     return;
                 }
 
                 ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.getAllValidCryptoAddress(address, includeTokens);
 
                 if(cryptoAddressArrayList.isEmpty()) {
-                    Toast.showToast(activity,"unrecognized_address");
+                    ToastUtil.showToast(activity,"unrecognized_address");
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);

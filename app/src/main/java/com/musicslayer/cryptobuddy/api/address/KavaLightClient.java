@@ -9,8 +9,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class KavaLightClient extends AddressAPI {
             baseURL = "https://api.data-testnet.kava.io";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/bank/balances/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/bank/balances/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -84,7 +84,7 @@ public class KavaLightClient extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -104,9 +104,9 @@ public class KavaLightClient extends AddressAPI {
             baseURL = "https://api.data-testnet.kava.io";
         }
 
-        String addressDataJSON_Send = REST.get(baseURL + "/txs?transfer.sender=" + cryptoAddress.address + "&limit=100");
-        String addressDataJSON_Receive = REST.get(baseURL + "/txs?transfer.recipient=" + cryptoAddress.address + "&limit=100");
-        String addressDataJSON_Delegate = REST.get(baseURL + "/txs?message.action=delegate&message.sender=" + cryptoAddress.address + "&limit=100");
+        String addressDataJSON_Send = RESTUtil.get(baseURL + "/txs?transfer.sender=" + cryptoAddress.address + "&limit=100");
+        String addressDataJSON_Receive = RESTUtil.get(baseURL + "/txs?transfer.recipient=" + cryptoAddress.address + "&limit=100");
+        String addressDataJSON_Delegate = RESTUtil.get(baseURL + "/txs?message.action=delegate&message.sender=" + cryptoAddress.address + "&limit=100");
 
         if(addressDataJSON_Send == null || addressDataJSON_Receive == null || addressDataJSON_Delegate == null) {
             return null;
@@ -269,90 +269,100 @@ public class KavaLightClient extends AddressAPI {
 
                         Log.e("Crypto T", "Type = " + type);
 
-                        if("transfer".equals(type)) {
-                            // For a transfer, keys come in sets of 3 - recipient, sender, amount
-                            // Note that we could have multiple transfers, and we could have either "sends" or "recieves" here.
-                            JSONArray attributes = event.getJSONArray("attributes");
+                        switch (type) {
+                            case "transfer":
+                                // For a transfer, keys come in sets of 3 - recipient, sender, amount
+                                // Note that we could have multiple transfers, and we could have either "sends" or "recieves" here.
+                                JSONArray attributes = event.getJSONArray("attributes");
 
-                            for(int iii = 0; iii < attributes.length(); iii+=3) {
-                                JSONObject attributeR = attributes.getJSONObject(iii);
-                                JSONObject attributeS = attributes.getJSONObject(iii + 1);
-                                JSONObject attributeA = attributes.getJSONObject(iii + 2);
+                                for (int iii = 0; iii < attributes.length(); iii += 3) {
+                                    JSONObject attributeR = attributes.getJSONObject(iii);
+                                    JSONObject attributeS = attributes.getJSONObject(iii + 1);
+                                    JSONObject attributeA = attributes.getJSONObject(iii + 2);
 
-                                String rAddress = attributeR.getString("value");
+                                    String rAddress = attributeR.getString("value");
 
-                                // Only process sends
-                                if(!cryptoAddress.address.equals(rAddress)) {
-                                    continue;
-                                }
-
-                                String[] amountSA = attributeA.getString("value").split(",");
-                                for(String amountS : amountSA) {
-                                    // Separate into amount and name
-                                    Pattern pattern = Pattern.compile("[a-zA-Z]");
-                                    Matcher matcher = pattern.matcher(amountS);
-
-                                    matcher.find();
-                                    int idx = matcher.start();
-
-                                    Crypto crypto;
-
-                                    String name = amountS.substring(idx).toUpperCase();
-                                    if("UKAVA".equals(name)) {
-                                        crypto = cryptoAddress.getCrypto();
+                                    // Only process sends
+                                    if (!cryptoAddress.address.equals(rAddress)) {
+                                        continue;
                                     }
-                                    else {
-                                        if(!shouldIncludeTokens(cryptoAddress)) {
-                                            continue;
+
+                                    String[] amountSA = attributeA.getString("value").split(",");
+                                    for (String amountS : amountSA) {
+                                        // Separate into amount and name
+                                        Pattern pattern = Pattern.compile("[a-zA-Z]");
+                                        Matcher matcher = pattern.matcher(amountS);
+
+                                        matcher.find();
+                                        int idx = matcher.start();
+
+                                        Crypto crypto;
+
+                                        String name = amountS.substring(idx).toUpperCase();
+                                        if ("UKAVA".equals(name)) {
+                                            crypto = cryptoAddress.getCrypto();
+                                        } else {
+                                            if (!shouldIncludeTokens(cryptoAddress)) {
+                                                continue;
+                                            }
+
+                                            crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", 0, "?");
                                         }
 
-                                        crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", 0, "?");
+                                        BigDecimal value = new BigDecimal(amountS.substring(0, idx));
+
+                                        if (crypto == null) {
+                                            Log.e("Crypto Buddy", "N");
+                                        }
+
+                                        value = value.movePointLeft(crypto.getScale());
+                                        String balance_diff_s = value.toString();
+                                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction"));
+                                        if (transactionArrayList.size() == getMaxTransactions()) {
+                                            return transactionArrayList;
+                                        }
                                     }
+                                }
+                                break;
+                            case "cdp_draw":
+                            case "withdraw_rewards":
+                            case "claim_reward":
+                            case "claim_atomic_swap":
+                            case "hard_withdrawal":
+                            case "cdp_withdrawal":
+                                // Don't do any additional processing, but we know that we have to pay the fee here.
+                                fee_enabled = true;
+                                break;
+                            case "unbond":
+                                // Unbonding fee is charged immediately, but the actual unbonding may or may not be finished yet.
+                                fee_enabled = true;
 
-                                    BigDecimal value = new BigDecimal(amountS.substring(0, idx));
+                                Date now = new Date();
 
-                                    if(crypto == null) {
-                                        Log.e("Crypto Buddy", "N");
+                                JSONArray undelegate_attributes = event.getJSONArray("attributes");
+
+                                for (int iii = 0; iii < undelegate_attributes.length(); iii += 3) {
+                                    //JSONObject attributeValidator = undelegate_attributes.getJSONObject(iii);
+                                    JSONObject attributeAmount = undelegate_attributes.getJSONObject(iii + 1);
+                                    JSONObject attributeTime = undelegate_attributes.getJSONObject(iii + 2);
+
+                                    String undelegate_block_time = attributeTime.getString("value");
+                                    DateFormat undelegate_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+                                    undelegate_format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                                    Date undelegate_block_time_date = undelegate_format.parse(undelegate_block_time);
+
+                                    if (now.after(undelegate_block_time_date)) {
+                                        BigDecimal undelegate_d = new BigDecimal(attributeAmount.getString("value"));
+                                        undelegate_d = undelegate_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                                        String undelegate_s = undelegate_d.toPlainString();
+
+                                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(undelegate_s, cryptoAddress.getCrypto()), null, new Timestamp(undelegate_block_time_date), "Undelegate"));
+                                        if (transactionArrayList.size() == getMaxTransactions()) {
+                                            return transactionArrayList;
+                                        }
                                     }
-
-                                    value = value.movePointLeft(crypto.getScale());
-                                    String balance_diff_s = value.toString();
-                                    transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                                 }
-                            }
-                        }
-                        else if("cdp_draw".equals(type) || "withdraw_rewards".equals(type) || "claim_reward".equals(type) || "claim_atomic_swap".equals(type) || "hard_withdrawal".equals(type) || "cdp_withdrawal".equals(type)) {
-                            // Don't do any additional processing, but we know that we have to pay the fee here.
-                            fee_enabled = true;
-                        }
-                        else if("unbond".equals(type)) {
-                            // Unbonding fee is charged immediately, but the actual unbonding may or may not be finished yet.
-                            fee_enabled = true;
-
-                            Date now = new Date();
-
-                            JSONArray undelegate_attributes = event.getJSONArray("attributes");
-
-                            for(int iii = 0; iii < undelegate_attributes.length(); iii+=3) {
-                                //JSONObject attributeValidator = undelegate_attributes.getJSONObject(iii);
-                                JSONObject attributeAmount = undelegate_attributes.getJSONObject(iii + 1);
-                                JSONObject attributeTime = undelegate_attributes.getJSONObject(iii + 2);
-
-                                String undelegate_block_time = attributeTime.getString("value");
-                                DateFormat undelegate_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                                undelegate_format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                                Date undelegate_block_time_date = undelegate_format.parse(undelegate_block_time);
-
-                                if(now.after(undelegate_block_time_date)) {
-                                    BigDecimal undelegate_d = new BigDecimal(attributeAmount.getString("value"));
-                                    undelegate_d = undelegate_d.movePointLeft(cryptoAddress.getCrypto().getScale());
-                                    String undelegate_s = undelegate_d.toPlainString();
-
-                                    transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(undelegate_s, cryptoAddress.getCrypto()), null, new Timestamp(undelegate_block_time_date),"Undelegate"));
-                                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                                }
-                            }
+                                break;
                         }
                     }
                 }
@@ -439,7 +449,7 @@ public class KavaLightClient extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

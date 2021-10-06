@@ -8,8 +8,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class AtomScan extends AddressAPI {
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
-        String addressDataJSON = REST.get("https://node.atomscan.com/cosmos/bank/v1beta1/balances/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get("https://node.atomscan.com/cosmos/bank/v1beta1/balances/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public class AtomScan extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -93,7 +93,7 @@ public class AtomScan extends AddressAPI {
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
-        String addressDataJSON = REST.get("https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50");
+        String addressDataJSON = RESTUtil.get("https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50");
 
         // Next page:
         // Use last ID from header.
@@ -303,7 +303,7 @@ public class AtomScan extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

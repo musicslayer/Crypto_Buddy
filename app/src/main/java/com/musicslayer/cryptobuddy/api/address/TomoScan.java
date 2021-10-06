@@ -9,8 +9,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class TomoScan extends AddressAPI {
             baseURL = "https://scan.testnet.tomochain.com";
         }
 
-        String addressDataJSON = REST.get(baseURL + "/api/accounts/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -58,13 +58,13 @@ public class TomoScan extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new TOMO()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressTRC20DataJSON = REST.get(baseURL + "/api/tokens/holding/TRC20/" + cryptoAddress.address);
-            String addressTRC21DataJSON = REST.get(baseURL + "/api/tokens/holding/TRC21/" + cryptoAddress.address);
+            String addressTRC20DataJSON = RESTUtil.get(baseURL + "/api/tokens/holding/TRC20/" + cryptoAddress.address);
+            String addressTRC21DataJSON = RESTUtil.get(baseURL + "/api/tokens/holding/TRC21/" + cryptoAddress.address);
             if(addressTRC20DataJSON == null || addressTRC21DataJSON == null) {
                 return null;
             }
@@ -116,7 +116,7 @@ public class TomoScan extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }
@@ -136,18 +136,18 @@ public class TomoScan extends AddressAPI {
         }
 
         // Normal Transactions - These are all TOMO
-        String addressDataJSON = REST.get(baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100");
+        String addressDataJSON = RESTUtil.get(baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100");
 
         // Internal Transactions - These are all TOMO
-        String addressDataInternalJSON = REST.get(baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100");
+        String addressDataInternalJSON = RESTUtil.get(baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100");
 
         // Rewards - These are all TOMO
-        String addressDataRewardJSON = REST.get(baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100");
+        String addressDataRewardJSON = RESTUtil.get(baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100");
 
         // Votes - Only for mainnet
         String addressDataVotesJSON;
         if(cryptoAddress.network.isMainnet()) {
-            addressDataVotesJSON = REST.get("https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address);
+            addressDataVotesJSON = RESTUtil.get("https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address);
         }
         else {
             addressDataVotesJSON = "{}";
@@ -339,14 +339,14 @@ public class TomoScan extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
             // TRC-20 and TRC-21 Transactions - Various Tokens
-            String addressDataTokenJSON20 = REST.get(baseURL + "/api/token-txs/trc20?limit=50&holder=" + cryptoAddress.address);
-            String addressDataTokenJSON21 = REST.get(baseURL + "/api/token-txs/trc21?limit=50&holder=" + cryptoAddress.address);
+            String addressDataTokenJSON20 = RESTUtil.get(baseURL + "/api/token-txs/trc20?limit=50&holder=" + cryptoAddress.address);
+            String addressDataTokenJSON21 = RESTUtil.get(baseURL + "/api/token-txs/trc21?limit=50&holder=" + cryptoAddress.address);
 
             if(addressDataTokenJSON20 == null || addressDataTokenJSON21 == null) {
                 return null;
@@ -480,7 +480,7 @@ public class TomoScan extends AddressAPI {
                 }
             }
             catch(Exception e) {
-                ThrowableLogger.processThrowable(e);
+                ThrowableUtil.processThrowable(e);
                 return null;
             }
         }

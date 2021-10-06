@@ -8,7 +8,7 @@ import android.widget.PopupMenu;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashOnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
     abstract public boolean onMenuItemClickImpl(MenuItem item);
@@ -25,7 +25,7 @@ abstract public class CrashOnMenuItemClickListener implements PopupMenu.OnMenuIt
             return onMenuItemClickImpl(item);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(item);

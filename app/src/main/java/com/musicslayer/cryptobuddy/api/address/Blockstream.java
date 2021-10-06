@@ -5,8 +5,8 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
-import com.musicslayer.cryptobuddy.util.REST;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.RESTUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class Blockstream extends AddressAPI {
             urlPart = "/testnet/";
         }
 
-        String addressDataJSON = REST.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -54,7 +54,7 @@ public class Blockstream extends AddressAPI {
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new BTC()));
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 
@@ -72,7 +72,7 @@ public class Blockstream extends AddressAPI {
             urlPart = "/testnet/";
         }
 
-        String addressDataJSON = REST.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs");
+        String addressDataJSON = RESTUtil.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs");
         if(addressDataJSON == null) {
             return null;
         }
@@ -152,7 +152,7 @@ public class Blockstream extends AddressAPI {
             }
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
             return null;
         }
 

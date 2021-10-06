@@ -10,7 +10,7 @@ import com.android.billingclient.api.BillingResult;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableLogger;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashBillingClientStateListener implements BillingClientStateListener {
     abstract public void onBillingSetupFinishedImpl(@NonNull BillingResult billingResult);
@@ -28,7 +28,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
             onBillingSetupFinishedImpl(billingResult);
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
             crashException.appendExtraInfoFromArgument(billingResult);
@@ -43,7 +43,7 @@ abstract public class CrashBillingClientStateListener implements BillingClientSt
             onBillingServiceDisconnectedImpl();
         }
         catch(Exception e) {
-            ThrowableLogger.processThrowable(e);
+            ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
 
