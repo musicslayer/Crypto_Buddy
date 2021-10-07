@@ -24,8 +24,8 @@ public class PriceData implements Serialization.SerializableToJSON {
             .put("crypto", new Serialization.JSONObjectWithNull(Serialization.serialize(crypto)))
             .put("priceAPI_price", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_price)))
             .put("priceAPI_marketCap", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_marketCap)))
-            .put("price", Serialization.serialize(price))
-            .put("marketCap", Serialization.serialize(marketCap))
+            .put("price", new Serialization.JSONObjectWithNull(Serialization.serialize(price)))
+            .put("marketCap", new Serialization.JSONObjectWithNull(Serialization.serialize(marketCap)))
             .toStringOrNull();
     }
 
