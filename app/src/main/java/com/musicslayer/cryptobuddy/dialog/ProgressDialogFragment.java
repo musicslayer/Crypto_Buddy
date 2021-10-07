@@ -1,6 +1,10 @@
 package com.musicslayer.cryptobuddy.dialog;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,5 +46,32 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // Unlike in the superclass, here we do not want to use the onDismiss listener.
         // Instead, any dialog that gets dismissed needs to be cancelled.
         ((ProgressDialog)dialog).isCancelled = true;
+    }
+
+    // These methods below enable us to start the progress function once, and then get the result shown even if the activity/dialog is recreated.
+
+    public static String getProgressValue(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        return settings.getString("progress_value", "!DEFAULT!");
+    }
+
+    public static void setProgressValueOnce(Context context, String value) {
+        // Only set if we haven't started.
+        String existingValue = getProgressValue(context);
+        if(!("!DEFAULT!".equals(existingValue) || "!STARTED!".equals(existingValue))) { return; }
+
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("progress_value", value);
+        editor.apply();
+    }
+
+    public static void clearProgressValue(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.clear();
+        editor.apply();
     }
 }

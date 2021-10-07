@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.PollingUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
@@ -43,13 +45,60 @@ public class CryptoPricesDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                priceData = PriceData.getPriceData(crypto);
+                if(("!DEFAULT!".equals(ProgressDialogFragment.getProgressValue(activity)))) {
+                    // This is the first call, so actually do the work.
+                    ProgressDialogFragment.setProgressValueOnce(activity,"!STARTED!");
+
+                    priceData = PriceData.getPriceData(crypto);
+
+                    ProgressDialogFragment.setProgressValueOnce(activity,Serialization.serialize(priceData));
+
+                }
+                else {
+                    // We are already in progress. Just wait for the result.
+                    PollingUtil.pollFor(new PollingUtil.PollingUtilListener() {
+                        @Override
+                        public boolean breakCondition(PollingUtil pollingUtil) {
+                            return !"!STARTED!".equals(ProgressDialogFragment.getProgressValue(activity));
+                        }
+                    });
+                }
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                String value = ProgressDialogFragment.getProgressValue(activity);
+
+                Log.e("Crypto Buddy", "PROGRESS END A");
+
+                if("!DEFAULT!".equals(value) || "!STARTED!".equals(value)) { return; }
+
+                Log.e("Crypto Buddy", "PROGRESS END B");
+
+                ProgressDialogFragment.clearProgressValue(activity);
+
+                PriceData priceDataS = Serialization.deserialize(value, PriceData.class);
+
+                if(priceDataS.isComplete()) {
+                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceDataS.crypto), priceDataS.price);
+                    AssetQuantity marketCapAssetQuantity = priceDataS.marketCap;
+
+                    String text = "Forward Price = " + assetPrice.toString();
+                    if("ForwardBackward".equals(Settings.setting_price)) {
+                        text = text + "\nBackward Price = " + assetPrice.reverseAssetPrice().toString();
+                    }
+                    text = text + "\nMarket Cap = " + marketCapAssetQuantity.toString() + "\nData Source = CoinGecko API V3";
+
+                    T.setText(text);
+                }
+                else {
+                    T.setText("");
+                    ToastUtil.showToast(activity,"no_price_data");
+                }
+
+                /*
                 if(priceData.isComplete()) {
                     AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);
                     AssetQuantity marketCapAssetQuantity = priceData.marketCap;
@@ -66,6 +115,8 @@ public class CryptoPricesDialog extends BaseDialog {
                     T.setText("");
                     ToastUtil.showToast(activity,"no_price_data");
                 }
+
+                 */
             }
         });
         progressDialogFragment.restoreListeners(this.activity, "progress");

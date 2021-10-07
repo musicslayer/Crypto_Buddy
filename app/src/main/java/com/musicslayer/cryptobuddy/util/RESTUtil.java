@@ -12,17 +12,22 @@ import java.nio.charset.Charset;
 import java.util.Date;
 
 public class RESTUtil {
+    // This is the amount of time we want between web requests, to avoid overloading other APIs and triggering their rate limiting.
     public static final long limitTime = 1000;
+
+    // This is static because it needs to be shared between all of the methods.
+    // All types of web requests need to be far enough apart from any other type of web request.
     public static long lastTime = 0;
 
-    public static String get(String urlString) {
-        // Rate limit - wait a little if we just performed an operation.
-        long now = new Date().getTime();
-        while(now - lastTime < RESTUtil.limitTime) {
-            now = new Date().getTime();
-        }
+    public static void rateLimit() {
+        // Make sure that enough time has elapsed since last call.
+        long timeAlreadyElapsed = new Date().getTime() - lastTime;
+        PollingUtil.waitFor(RESTUtil.limitTime - timeAlreadyElapsed);
+        lastTime = new Date().getTime();
+    }
 
-        lastTime = now;
+    public static String get(String urlString) {
+        rateLimit();
         return get_impl(urlString);
     }
 
@@ -45,13 +50,7 @@ public class RESTUtil {
     }
 
     public static String post(String urlString, String body) {
-        // Rate limit - wait a little if we just performed an operation.
-        long now = new Date().getTime();
-        while(now - lastTime < RESTUtil.limitTime) {
-            now = new Date().getTime();
-        }
-
-        lastTime = now;
+        rateLimit();
         return post_impl(urlString, body);
     }
 
@@ -82,13 +81,7 @@ public class RESTUtil {
     }
 
     public static String postWithKey(String urlString, String body, String keyName, String key) {
-        // Rate limit - wait a little if we just performed an operation.
-        long now = new Date().getTime();
-        while(now - lastTime < RESTUtil.limitTime) {
-            now = new Date().getTime();
-        }
-
-        lastTime = now;
+        rateLimit();
         return postWithKey_impl(urlString, body, keyName, key);
     }
 
