@@ -45,12 +45,12 @@ public class SearchDialog extends BaseDialog {
         sortAscendingByType(options_names_SORTED);
 
         this.options_symbols_LC_SORTED = new ArrayList<>();
-        for(String o : options_symbols) {
+        for(String o : this.options_symbols_SORTED) {
             this.options_symbols_LC_SORTED.add(o.toLowerCase());
         }
 
         this.options_names_LC_SORTED = new ArrayList<>();
-        for(String o : options_names) {
+        for(String o : this.options_names_SORTED) {
             this.options_names_LC_SORTED.add(o.toLowerCase());
         }
 

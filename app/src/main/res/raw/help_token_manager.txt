@@ -17,3 +17,10 @@ For tokens that cannot be downloaded*:
 
 
 (*Some token types, such as Binance Smart Chain, have too many tokens to feasibly download and store a complete collection upfront.)
+
+
+There is a precedence ordering when tokens are in more than one category.
+The app will recognize a downloaded token first, then a found token, and lastly a custom token.
+
+So for example, if you add a custom token, but then later that same token is officially recognized and in the downloaded list, the custom token will remain but the downloaded information will be used.
+If the downloaded token is later removed, then the custom token's information will be used again.

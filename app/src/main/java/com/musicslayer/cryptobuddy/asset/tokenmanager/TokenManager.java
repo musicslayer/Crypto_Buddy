@@ -268,11 +268,23 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         }
     }
 
+    public static void resetAllDownloadedTokens() {
+        for(TokenManager tokenManager : tokenManagers) {
+            tokenManager.resetDownloadedTokens();
+        }
+    }
+
     public void resetDownloadedTokens() {
         downloaded_tokens = new ArrayList<>();
         downloaded_token_map = new HashMap<>();
         downloaded_token_names = new ArrayList<>();
         downloaded_token_display_names = new ArrayList<>();
+    }
+
+    public static void resetAllFoundTokens() {
+        for(TokenManager tokenManager : tokenManagers) {
+            tokenManager.resetFoundTokens();
+        }
     }
 
     public void resetFoundTokens() {
@@ -282,6 +294,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         found_token_display_names = new ArrayList<>();
     }
 
+    public static void resetAllCustomTokens() {
+        for(TokenManager tokenManager : tokenManagers) {
+            tokenManager.resetCustomTokens();
+        }
+    }
+
     public void resetCustomTokens() {
         custom_tokens = new ArrayList<>();
         custom_token_map = new HashMap<>();
@@ -289,62 +307,33 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         custom_token_display_names = new ArrayList<>();
     }
 
-    public static void resetAllDownloadedTokens() {
-        for(TokenManager tokenManager : tokenManagers) {
-            tokenManager.resetDownloadedTokens();
-        }
-    }
-
-    public static void resetAllFoundTokens() {
-        for(TokenManager tokenManager : tokenManagers) {
-            tokenManager.resetFoundTokens();
-        }
-    }
-
-    public static void resetAllCustomTokens() {
-        for(TokenManager tokenManager : tokenManagers) {
-            tokenManager.resetCustomTokens();
-        }
-    }
-
-    public ArrayList<Token> getTokens() {
-        ArrayList<Token> tokens = new ArrayList<>();
-
-        tokens.addAll(downloaded_tokens);
-        tokens.addAll(found_tokens);
-        tokens.addAll(custom_tokens);
-
-        return tokens;
-    }
-
-    public ArrayList<String> getTokenNames() {
-        ArrayList<String> names = new ArrayList<>();
-
-        names.addAll(downloaded_token_names);
-        names.addAll(found_token_names);
-        names.addAll(custom_token_names);
-
-        return names;
-    }
-
-    public ArrayList<String> getTokenDisplayNames() {
-        ArrayList<String> displayNames = new ArrayList<>();
-
-        displayNames.addAll(downloaded_token_display_names);
-        displayNames.addAll(found_token_display_names);
-        displayNames.addAll(custom_token_display_names);
-
-        return displayNames;
-    }
-
     public static ArrayList<Token> getAllTokens() {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for(TokenManager tokenManager : tokenManagers) {
-            tokens.addAll(tokenManager.downloaded_tokens);
-            tokens.addAll(tokenManager.found_tokens);
-            tokens.addAll(tokenManager.custom_tokens);
+            tokens.addAll(tokenManager.getTokens());
         }
+
+        return tokens;
+    }
+
+    public ArrayList<Token> getTokens() {
+        // Here we take into account precedence by favoring downloaded tokens over found tokens over custom tokens.
+        // We don't actually delete the shadowed tokens from the TokenManager, we merely don't add them to the list this method returns.
+        ArrayList<Token> tokens = new ArrayList<>();
+
+        // Found tokens -> remove downloaded keys
+        ArrayList<Token> copy_found_tokens = new ArrayList<>(found_tokens);
+        copy_found_tokens.removeAll(downloaded_tokens);
+
+        // Custom tokens -> remove downloaded/found keys
+        ArrayList<Token> copy_custom_tokens = new ArrayList<>(custom_tokens);
+        copy_custom_tokens.removeAll(downloaded_tokens);
+        copy_custom_tokens.removeAll(copy_found_tokens);
+
+        tokens.addAll(downloaded_tokens);
+        tokens.addAll(copy_found_tokens);
+        tokens.addAll(copy_custom_tokens);
 
         return tokens;
     }
@@ -353,9 +342,17 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         ArrayList<String> names = new ArrayList<>();
 
         for(TokenManager tokenManager : tokenManagers) {
-            names.addAll(tokenManager.downloaded_token_names);
-            names.addAll(tokenManager.found_token_names);
-            names.addAll(tokenManager.custom_token_names);
+            names.addAll(tokenManager.getTokenNames());
+        }
+
+        return names;
+    }
+
+    public ArrayList<String> getTokenNames() {
+        ArrayList<String> names = new ArrayList<>();
+
+        for(Token token : getTokens()) {
+            names.add(token.getName());
         }
 
         return names;
@@ -365,9 +362,17 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         ArrayList<String> displayNames = new ArrayList<>();
 
         for(TokenManager tokenManager : tokenManagers) {
-            displayNames.addAll(tokenManager.downloaded_token_display_names);
-            displayNames.addAll(tokenManager.found_token_display_names);
-            displayNames.addAll(tokenManager.custom_token_display_names);
+            displayNames.addAll(tokenManager.getTokenDisplayNames());
+        }
+
+        return displayNames;
+    }
+
+    public ArrayList<String> getTokenDisplayNames() {
+        ArrayList<String> displayNames = new ArrayList<>();
+
+        for(Token token : getTokens()) {
+            displayNames.add(token.getDisplayName());
         }
 
         return displayNames;
