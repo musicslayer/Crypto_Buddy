@@ -34,7 +34,7 @@ abstract public class CrashPopupMenu extends PopupMenu {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(item);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");

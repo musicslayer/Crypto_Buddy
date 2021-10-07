@@ -51,7 +51,7 @@ abstract public class CrashLinearLayout extends LinearLayout {
 
         if(exception != null) {
             CrashException crashException = new CrashException(exception);
-            crashException.setLocation(activity, null);
+            crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
             return;
@@ -64,7 +64,7 @@ abstract public class CrashLinearLayout extends LinearLayout {
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
-            crashException.setLocation(activity, null);
+            crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");

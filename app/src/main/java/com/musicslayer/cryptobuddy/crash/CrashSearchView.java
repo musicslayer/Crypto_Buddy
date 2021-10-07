@@ -34,7 +34,7 @@ abstract public class CrashSearchView extends SearchView {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(query);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
@@ -51,7 +51,7 @@ abstract public class CrashSearchView extends SearchView {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(newText);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");

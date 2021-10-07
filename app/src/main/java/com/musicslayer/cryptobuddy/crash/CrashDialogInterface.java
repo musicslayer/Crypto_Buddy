@@ -28,7 +28,7 @@ public interface CrashDialogInterface extends DialogInterface {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(dialog);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
@@ -54,7 +54,7 @@ public interface CrashDialogInterface extends DialogInterface {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(dialog);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");

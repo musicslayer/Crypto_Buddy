@@ -17,7 +17,7 @@ public class NumericEditText extends RedEditText {
     // Returns if the value is a number.
     public boolean condition() {
         try {
-            new BigDecimal(this.getText().toString());
+            new BigDecimal(this.getTextString());
             return true;
         }
         catch(Exception e) {

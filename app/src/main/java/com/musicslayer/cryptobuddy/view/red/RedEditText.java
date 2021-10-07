@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.view.red;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.util.AttributeSet;
 
 import androidx.core.graphics.BlendModeColorFilterCompat;
@@ -23,6 +24,13 @@ abstract public class RedEditText extends CrashEditText {
         super(context, attributeSet);
         this.getBackground().mutate();
         test();
+    }
+
+    // Use this to work around warnings regarding getText() potentially returning null.
+    public String getTextString() {
+        Editable E = getText();
+        assert E != null;
+        return E.toString();
     }
 
     // Returns if the value satisfies the condition, and will highlight itself in red if it does not.

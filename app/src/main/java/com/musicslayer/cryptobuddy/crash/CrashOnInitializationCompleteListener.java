@@ -30,7 +30,7 @@ abstract public class CrashOnInitializationCompleteListener implements OnInitial
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
-            crashException.setLocation(activity, null);
+            crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(initializationStatus);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");

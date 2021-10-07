@@ -33,7 +33,7 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
             ThrowableUtil.processThrowable(e);
 
             CrashException crashException = new CrashException(e);
-            crashException.setLocation(activity, null);
+            crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(billingResult);
             crashException.appendExtraInfoFromArgument(purchases);
 

@@ -28,7 +28,7 @@ public class CreatePortfolioDialog extends BaseDialog {
         B_CREATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(E.test()) {
-                    user_NAME = E.getText().toString();
+                    user_NAME = E.getTextString();
 
                     isComplete = true;
                     dismiss();

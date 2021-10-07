@@ -49,7 +49,7 @@ public class DataDumpUtil {
         return s.toString();
     }
 
-    public static String getInfosAboutDevice(Activity a) {
+    private static String getInfosAboutDevice(Activity a) {
         StringBuilder sb = new StringBuilder();
 
         // application info

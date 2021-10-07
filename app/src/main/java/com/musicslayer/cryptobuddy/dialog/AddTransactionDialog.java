@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
@@ -152,7 +152,7 @@ public class AddTransactionDialog extends BaseDialog {
 
         final TextView T = findViewById(R.id.add_transaction_dialog_forTextView);
 
-        final EditText E_INFO = findViewById(R.id.add_transaction_dialog_infoEditText);
+        final AnythingEditText E_INFO = findViewById(R.id.add_transaction_dialog_infoEditText);
 
         RadioGroup radioGroup = findViewById(R.id.add_transaction_dialog_radioGroup);
         RadioButton[] rb = new RadioButton[3];
@@ -215,19 +215,19 @@ public class AddTransactionDialog extends BaseDialog {
                 }
 
                 Asset primaryAsset = ssvPrimary.getChosenAsset();
-                AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getText().toString(), primaryAsset);
+                AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), primaryAsset);
 
                 AssetQuantity secondaryAssetQuantity;
                 if(action.numAssets() == 2) {
                     Asset secondaryAsset = ssvSecondary.getChosenAsset();
-                    secondaryAssetQuantity = new AssetQuantity(E_SECONDARYASSET.getText().toString(), secondaryAsset);
+                    secondaryAssetQuantity = new AssetQuantity(E_SECONDARYASSET.getTextString(), secondaryAsset);
                 }
                 else {
                     secondaryAssetQuantity = null;
                 }
 
                 // Info can be anything.
-                String info = E_INFO.getText().toString();
+                String info = E_INFO.getTextString();
                 user_TRANSACTION = new Transaction(action, primaryAssetQuantity, secondaryAssetQuantity, new Timestamp(CHOSENDATE), info);
 
                 isComplete = true;
@@ -241,8 +241,8 @@ public class AddTransactionDialog extends BaseDialog {
             public void onClickImpl(View view) {
                 SelectAndSearchView.swap(ssvPrimary, ssvSecondary);
 
-                String textPrimary = E_PRIMARYASSET.getText().toString();
-                String textSecondary = E_SECONDARYASSET.getText().toString();
+                String textPrimary = E_PRIMARYASSET.getTextString();
+                String textSecondary = E_SECONDARYASSET.getTextString();
 
                 E_PRIMARYASSET.setText(textSecondary);
                 E_SECONDARYASSET.setText(textPrimary);

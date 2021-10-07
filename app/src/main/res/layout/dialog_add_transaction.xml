@@ -137,7 +137,7 @@
         app:layout_constraintStart_toEndOf="@+id/add_transaction_dialog_chooseDateButton"
         app:layout_constraintTop_toTopOf="@+id/add_transaction_dialog_chooseDateButton" />
 
-    <EditText
+    <com.musicslayer.cryptobuddy.view.red.AnythingEditText
         android:id="@+id/add_transaction_dialog_infoEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -32,6 +32,7 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -101,7 +102,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManager.saveAll(MainActivity.this, "found");
+                TokenManagerList.saveAllData(MainActivity.this);
             }
         });
 

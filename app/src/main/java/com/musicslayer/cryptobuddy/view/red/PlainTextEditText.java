@@ -15,7 +15,7 @@ public class PlainTextEditText extends RedEditText {
     // Returns if the value is nonempty text.
     public boolean condition() {
         try {
-            return this.getText().toString().length() != 0;
+            return !this.getTextString().isEmpty();
         }
         catch(Exception e) {
             return false;

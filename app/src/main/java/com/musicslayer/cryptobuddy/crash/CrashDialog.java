@@ -33,7 +33,7 @@ abstract public class CrashDialog extends Dialog {
 
             if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity,null);
+                crashException.setLocationInfo(activity,null);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
         }
@@ -50,7 +50,7 @@ abstract public class CrashDialog extends Dialog {
 
             if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity,null);
+                crashException.setLocationInfo(activity,null);
                 crashException.appendExtraInfoFromArgument(savedInstanceState);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
@@ -68,7 +68,7 @@ abstract public class CrashDialog extends Dialog {
 
             if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity,null);
+                crashException.setLocationInfo(activity,null);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }
         }
@@ -95,7 +95,7 @@ abstract public class CrashDialog extends Dialog {
         Exception exception = (Exception)bundle.getSerializable("!EXCEPTION!");
         if(exception != null && canLaunchCrashReporterDialog()) {
             CrashException crashException = new CrashException(exception);
-            crashException.setLocation(activity,null);
+            crashException.setLocationInfo(activity,null);
             crashException.appendExtraInfoFromArgument(bundle);
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             return;
@@ -110,7 +110,7 @@ abstract public class CrashDialog extends Dialog {
 
             if(canLaunchCrashReporterDialog()) {
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity,null);
+                crashException.setLocationInfo(activity,null);
                 crashException.appendExtraInfoFromArgument(bundle);
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
             }

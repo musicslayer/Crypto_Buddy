@@ -35,7 +35,7 @@ abstract public class CrashAdapterView<T extends Adapter> extends AdapterView<T>
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(parent);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
@@ -51,7 +51,7 @@ abstract public class CrashAdapterView<T extends Adapter> extends AdapterView<T>
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, null);
+                crashException.setLocationInfo(activity, null);
                 crashException.appendExtraInfoFromArgument(parent);
                 crashException.appendExtraInfoFromArgument(view);
                 crashException.appendExtraInfoFromArgument(pos);

@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -62,7 +63,7 @@ public class AddCustomTokenDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
-                    chosenTokenManager.save(activity, "custom");
+                    TokenManagerList.saveAllData(activity);
 
                     ToastUtil.showToast(activity,"custom_token_added");
                     isComplete = true;
@@ -79,17 +80,17 @@ public class AddCustomTokenDialog extends BaseDialog {
                 boolean isValid = E_ID.test() & E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
                 if(isValid) {
-                    String key = E_ID.getText().toString();
-                    String name = E_SYMBOL.getText().toString();
-                    String display_name = E_NAME.getText().toString();
-                    int scale = new BigInteger(E_DECIMALS.getText().toString()).intValue();
+                    String key = E_ID.getTextString();
+                    String name = E_SYMBOL.getTextString();
+                    String display_name = E_NAME.getTextString();
+                    int scale = new BigInteger(E_DECIMALS.getTextString()).intValue();
                     String id = key;
 
                     Token oldToken = chosenTokenManager.custom_token_map.get(key);
                     Token newToken = new Token(key, name, display_name, scale, id, chosenTokenManager.getBlockchainID(), chosenTokenManager.getTokenType());
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
-                        chosenTokenManager.save(activity, "custom");
+                        TokenManagerList.saveAllData(activity);
 
                         ToastUtil.showToast(activity,"custom_token_added");
                         isComplete = true;

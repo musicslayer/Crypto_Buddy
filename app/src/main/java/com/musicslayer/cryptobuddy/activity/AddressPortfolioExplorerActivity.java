@@ -34,6 +34,7 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -132,7 +133,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManager.saveAll(AddressPortfolioExplorerActivity.this, "found");
+                TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
             }
         });
 
@@ -231,7 +232,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
                     if(((ProgressDialog)dialog).isCancelled) { return; }
                     newAddressDataArrayList[0].add(AddressData.getAddressData(cryptoAddress));
-                    TokenManager.saveAll(AddressPortfolioExplorerActivity.this, "found");
+                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
                 }
             }
         });

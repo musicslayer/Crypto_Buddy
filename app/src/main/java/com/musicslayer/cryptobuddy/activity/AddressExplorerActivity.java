@@ -29,6 +29,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -131,7 +132,7 @@ public class AddressExplorerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 newAddressData[0] = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
-                TokenManager.saveAll(AddressExplorerActivity.this, "found");
+                TokenManagerList.saveAllData(AddressExplorerActivity.this);
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {

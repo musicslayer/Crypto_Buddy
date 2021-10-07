@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.persistence.TokenList;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -44,10 +44,10 @@ public class InitialActivity extends BaseActivity {
         PrivacyPolicy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
 
-        TokenManager.initialize(applicationContext); // * Deserializes, but uses a separate system which catches errors.
+        TokenManager.initialize(applicationContext); // * Deserializes
         if(!Purchases.isUnlockTokensPurchased) {
             // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
-            TokenList.resetAllData(applicationContext);
+            TokenManagerList.resetAllData(applicationContext);
         }
 
         AddressHistory.loadAllData(applicationContext); // * Deserializes

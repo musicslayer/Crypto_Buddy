@@ -12,8 +12,13 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class AddressPortfolio {
+    // This default will cause an error when deserialized. We should never see this value used.
+    public final static String DEFAULT = "null";
+
     // Store the raw strings too in case we need them in a data dump.
-    public static ArrayList<String> settings_address_portfolio_raw = new ArrayList<>();
+    // Once everything has successfully loaded we stop updating these.
+    public static HashMap<Integer, String> settings_address_portfolio_raw = new HashMap<>();
+
     public static ArrayList<AddressPortfolioObj> settings_address_portfolio = new ArrayList<>();
 
     public static boolean isSaved(String name) {
@@ -43,21 +48,20 @@ public class AddressPortfolio {
     }
 
     public static void loadAllData(Context context) {
+        settings_address_portfolio_raw = new HashMap<>();
         settings_address_portfolio = new ArrayList<>();
 
         SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
         int size = settings.getInt("address_portfolio_size", 0);
 
+        settings_address_portfolio_raw.put(-1, Integer.toString(size));
+
         for(int i = 0; i < size; i++) {
-            String serialString = settings.getString("address_portfolio" + i, "");
-            settings_address_portfolio_raw.add(serialString);
+            String serialString = settings.getString("address_portfolio" + i, DEFAULT);
+            settings_address_portfolio_raw.put(i, serialString == null ? "null" : serialString);
 
             AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
-
-            // If there is any problem at all, don't add this one.
-            if(addressPortfolioObj != null) {
-                settings_address_portfolio.add(addressPortfolioObj);
-            }
+            settings_address_portfolio.add(addressPortfolioObj);
         }
 
         // Data might have changed if portfolios removed cryptos that no longer exist.
@@ -87,8 +91,14 @@ public class AddressPortfolio {
 
     public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
-        for(int i = 0; i < settings_address_portfolio_raw.size(); i++) {
-            hashMap.put("RAW" + i, settings_address_portfolio_raw.get(i));
+
+        for(int key : settings_address_portfolio_raw.keySet()) {
+            if(key == -1) {
+                hashMap.put("SIZE", settings_address_portfolio_raw.get(key));
+            }
+            else {
+                hashMap.put("RAW" + key, settings_address_portfolio_raw.get(key));
+            }
         }
 
         // We want the raw data even if this next piece errors.

@@ -13,10 +13,8 @@ import java.util.ArrayList;
 
 // An Exception wrapper used in Crash classes. We can wrap other exceptions and add in useful information.
 public class CrashException extends RuntimeException {
-    // Properties that help indicate where the crash originally occurred.
-    public Activity originalActivity;
-    public ArrayList<Dialog> originalDialogArrayList;
-    public View originalView;
+    // Info about where the crash originally occurred.
+    public String locationInfo;
 
     // Extra info about the exception, such as the objects involved.
     public StringBuilder extraInfoStringBuilder = new StringBuilder();
@@ -32,33 +30,12 @@ public class CrashException extends RuntimeException {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        if(originalActivity == null && originalDialogArrayList == null && originalView == null) {
+        if(locationInfo == null) {
             s.append("No Location Info:\n\n");
         }
         else {
-            s.append("Location Info:\n");
-
-            try {
-                if(originalActivity != null) {
-                    s.append(originalActivity.getClass().getSimpleName()).append("\n");
-                }
-                if(originalDialogArrayList != null) {
-                    for(Dialog originalDialog : originalDialogArrayList) {
-                        s.append(originalDialog.getClass().getSimpleName()).append("\n");
-                    }
-                }
-                if(originalView != null) {
-                    s.append(originalView.getClass().getSimpleName()).append("\n");
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                s.append("?\n");
-            }
-
-            s.append("\n");
+            s.append("Location Info:\n").append(locationInfo).append("\n");
         }
-
 
         String extraInfo = extraInfoStringBuilder.toString();
 
@@ -73,24 +50,43 @@ public class CrashException extends RuntimeException {
         return s.toString();
     }
 
-    public void setLocation(Activity originalActivity, View originalView) {
-        // null is passed in if the information isn't available.
-        this.originalActivity = originalActivity;
+    public void setLocationInfo(Activity originalActivity, View originalView) {
+        ArrayList<Dialog> originalDialogArrayList;
 
         try {
             if(originalActivity != null) {
-                this.originalDialogArrayList = BaseDialogFragment.getAllDialogs(originalActivity);
+                originalDialogArrayList = BaseDialogFragment.getAllDialogs(originalActivity);
             }
             else {
-                this.originalDialogArrayList = null;
+                originalDialogArrayList = null;
             }
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            this.originalDialogArrayList = null;
+            originalDialogArrayList = null;
         }
 
-        this.originalView = originalView;
+        StringBuilder s = new StringBuilder();
+
+        try {
+            if(originalActivity != null) {
+                s.append(originalActivity.getClass().getSimpleName()).append("\n");
+            }
+            if(originalDialogArrayList != null) {
+                for(Dialog originalDialog : originalDialogArrayList) {
+                    s.append(originalDialog.getClass().getSimpleName()).append("\n");
+                }
+            }
+            if(originalView != null) {
+                s.append(originalView.getClass().getSimpleName()).append("\n");
+            }
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            s.append("?\n");
+        }
+
+        locationInfo = s.toString();
     }
 
     public void appendExtraInfoFromArgument(Object obj) {

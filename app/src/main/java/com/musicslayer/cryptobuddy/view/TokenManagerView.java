@@ -20,6 +20,7 @@ import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class TokenManagerView extends CrashTableRow {
@@ -91,16 +92,15 @@ public class TokenManagerView extends CrashTableRow {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
                     if("downloaded".equals(choice)) {
                         tokenManager.resetDownloadedTokens();
-                        tokenManager.save(context, "downloaded");
                     }
                     else if("found".equals(choice)) {
                         tokenManager.resetFoundTokens();
-                        tokenManager.save(context, "found");
                     }
                     else if("custom".equals(choice)) {
                         tokenManager.resetCustomTokens();
-                        tokenManager.save(context, "custom");
                     }
+
+                    TokenManagerList.saveAllData(context);
 
                     updateLayout();
                     ToastUtil.showToast(context,"tokens_deleted");
@@ -183,7 +183,8 @@ public class TokenManagerView extends CrashTableRow {
         else {
             tokenManager.resetDownloadedTokens();
             boolean isComplete = tokenManager.parseFixed(tokenJSON);
-            tokenManager.save(getContext(), "downloaded");
+
+            TokenManagerList.saveAllData(getContext());
 
             updateLayout();
 
@@ -202,7 +203,8 @@ public class TokenManagerView extends CrashTableRow {
         else {
             tokenManager.resetDownloadedTokens();
             boolean isComplete = tokenManager.parse(tokenJSON);
-            tokenManager.save(getContext(), "downloaded");
+
+            TokenManagerList.saveAllData(getContext());
 
             updateLayout();
             return isComplete;

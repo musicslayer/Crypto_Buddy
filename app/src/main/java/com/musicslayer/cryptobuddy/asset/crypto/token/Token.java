@@ -49,32 +49,4 @@ public class Token extends Crypto {
     public String modify(String s) {
         return s + " (" + token_type + ")";
     }
-
-    public String serializeToJSONX() {
-        return "{" +
-            "\"key\":\"" + key.replace("\"", "\\\"") + "\"," +
-            "\"name\":\"" + original_name.replace("\"", "\\\"") + "\"," +
-            "\"display_name\":\"" + original_display_name.replace("\"", "\\\"") + "\"," +
-            "\"scale\":" + scale + "," +
-            "\"id\":\"" + id.replace("\"", "\\\"") + "\"," +
-            "\"blockchain_id\":\"" + blockchain_id.replace("\"", "\\\"") + "\"," +
-            "\"token_type\":\"" + token_type.replace("\"", "\\\"") + "\"" +
-            "}";
-    }
-
-    public static Token deserializeFromJSONX(JSONObject tokenJSON) {
-        try {
-            String key = tokenJSON.getString("key");
-            String name = tokenJSON.getString("name");
-            String display_name = tokenJSON.getString("display_name");
-            int scale = tokenJSON.getInt("scale");
-            String id = tokenJSON.getString("id");
-            String blockchain_id = tokenJSON.getString("blockchain_id");
-            String token_type = tokenJSON.getString("token_type");
-            return new Token(key, name, display_name, scale, id, blockchain_id, token_type);
-        }
-        catch(Exception ignored) {
-            return UnknownToken.createUnknownToken(null, null, null, 0, "?", "?", "?");
-        }
-    }
 }

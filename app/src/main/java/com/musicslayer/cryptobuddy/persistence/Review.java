@@ -9,6 +9,7 @@ import java.util.HashMap;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Review {
+    // The default value is a dynamic date, so we can't store it here.
     public static long settings_review_time;
 
     public static void setReviewTime(Context context) {

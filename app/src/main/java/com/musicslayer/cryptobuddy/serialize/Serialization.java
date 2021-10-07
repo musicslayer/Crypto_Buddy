@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.serialize;
 
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -381,5 +382,85 @@ public class Serialization {
 
     public static BigDecimal bigdecimal_deserialize(String s) {
         return s == null ? null : new BigDecimal(string_deserialize(s));
+    }
+
+    // Asset.serializeToJSON only serializes a key used to lookup an Asset later.
+    // This method serializes all the information needed to reconstruct a token from scratch.
+    public static String token_serialize(Token obj) {
+        if(obj == null) { return null; }
+
+        try {
+            // Use original properties directly, not the potentially modified ones from getter functions.
+            return new Serialization.JSONObjectWithNull()
+                .put("key", string_serialize(obj.key))
+                .put("name", string_serialize(obj.original_name))
+                .put("display_name", string_serialize(obj.original_display_name))
+                .put("scale", int_serialize(obj.scale))
+                .put("id", string_serialize(obj.id))
+                .put("blockchain_id", string_serialize(obj.blockchain_id))
+                .put("token_type", string_serialize(obj.token_type))
+                .toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Token token_deserialize(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+            String id = Serialization.string_deserialize(o.getString("id"));
+            String blockchain_id = Serialization.string_deserialize(o.getString("blockchain_id"));
+            String token_type = Serialization.string_deserialize(o.getString("token_type"));
+            return new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String token_serializeArrayList(ArrayList<Token> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(Token obj : arrayList) {
+                a.put(Serialization.token_serialize(obj));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Token> token_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Token> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.token_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
     }
 }

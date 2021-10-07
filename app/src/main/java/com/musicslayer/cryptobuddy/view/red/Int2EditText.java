@@ -17,7 +17,7 @@ public class Int2EditText extends RedEditText {
     // Returns if the value is an integer with up to 2 digits.
     public boolean condition() {
         try {
-            BigInteger scale = new BigInteger(this.getText().toString());
+            BigInteger scale = new BigInteger(this.getTextString());
             return scale.compareTo(BigInteger.ZERO) >= 0 && scale.compareTo(BigInteger.valueOf(99)) <= 0;
         }
         catch(Exception e) {

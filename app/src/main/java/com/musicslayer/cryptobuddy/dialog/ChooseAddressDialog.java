@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -20,6 +19,7 @@ import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 
 import java.util.ArrayList;
 
@@ -57,7 +57,7 @@ public class ChooseAddressDialog extends BaseDialog {
             });
         }
 
-        final EditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
+        final AnythingEditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
 
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);
         B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -133,7 +133,7 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_CONFIRM = findViewById(R.id.choose_address_dialog_confirmButton);
         B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                String address = E_ADDRESS.getText().toString();
+                String address = E_ADDRESS.getTextString();
                 if(address.isEmpty()) {
                     ToastUtil.showToast(activity,"empty_address");
                     return;

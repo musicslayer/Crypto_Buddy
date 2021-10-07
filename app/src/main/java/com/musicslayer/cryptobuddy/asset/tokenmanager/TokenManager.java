@@ -6,7 +6,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.TokenList;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
@@ -18,7 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class TokenManager {
+abstract public class TokenManager implements Serialization.SerializableToJSON {
     public static ArrayList<TokenManager> tokenManagers;
     public static HashMap<String, TokenManager> tokenManagers_map;
     public static HashMap<String, TokenManager> tokenManagers_token_type_map;
@@ -56,6 +57,23 @@ abstract public class TokenManager {
     public String getJSON() { return null; }
     public boolean parse(String tokenJSON) { return true; }
 
+    public TokenManager() {
+        this.downloaded_tokens = new ArrayList<>();
+        this.downloaded_token_map = new HashMap<>();
+        this.downloaded_token_names = new ArrayList<>();
+        this.downloaded_token_display_names = new ArrayList<>();
+
+        this.found_tokens = new ArrayList<>();
+        this.found_token_map = new HashMap<>();
+        this.found_token_names = new ArrayList<>();
+        this.found_token_display_names = new ArrayList<>();
+
+        this.custom_tokens = new ArrayList<>();
+        this.custom_token_map = new HashMap<>();
+        this.custom_token_names = new ArrayList<>();
+        this.custom_token_display_names = new ArrayList<>();
+    }
+
     public static void initialize(Context context) {
         tokenManagers = new ArrayList<>();
         tokenManagers_map = new HashMap<>();
@@ -63,36 +81,29 @@ abstract public class TokenManager {
         tokenManagers_blockchain_ids = new ArrayList<>();
         tokenManagers_token_types = new ArrayList<>();
 
+        TokenManagerList.initializeRawArray();
+
         tokenManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
+
+            if(Purchases.isUnlockTokensPurchased) {
+                // Use the deserialized dummy object to fill in the tokens in this real one.
+                TokenManager copyTokenManager = TokenManagerList.loadData(context, tokenManager.getSettingsKey());
+
+                // If this is a new TokenManager that wasn't previously saved, then there are no tokens to add.
+                if(copyTokenManager != null) {
+                    tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
+                    tokenManager.addFoundToken(copyTokenManager.found_tokens);
+                    tokenManager.addCustomToken(copyTokenManager.custom_tokens);
+                }
+            }
+
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
             tokenManagers_blockchain_ids.add(tokenManager.getBlockchainID());
             tokenManagers_token_types.add(tokenManager.getTokenType());
-
-            tokenManager.downloaded_tokens = new ArrayList<>();
-            tokenManager.downloaded_token_map = new HashMap<>();
-            tokenManager.downloaded_token_names = new ArrayList<>();
-            tokenManager.downloaded_token_display_names = new ArrayList<>();
-
-            tokenManager.found_tokens = new ArrayList<>();
-            tokenManager.found_token_map = new HashMap<>();
-            tokenManager.found_token_names = new ArrayList<>();
-            tokenManager.found_token_display_names = new ArrayList<>();
-
-            tokenManager.custom_tokens = new ArrayList<>();
-            tokenManager.custom_token_map = new HashMap<>();
-            tokenManager.custom_token_names = new ArrayList<>();
-            tokenManager.custom_token_display_names = new ArrayList<>();
-        }
-
-        if(Purchases.isUnlockTokensPurchased) {
-            // Load data stored in the settings.
-            loadAll(context, "downloaded");
-            loadAll(context, "found");
-            loadAll(context, "custom");
         }
     }
 
@@ -167,6 +178,14 @@ abstract public class TokenManager {
         return token;
     }
 
+    public void addDownloadedToken(ArrayList<Token> tokenArrayList) {
+        if(tokenArrayList == null) { return; }
+
+        for(Token token : tokenArrayList) {
+            addDownloadedToken(token);
+        }
+    }
+
     public void addDownloadedToken(Token token) {
         if(token == null) { return; }
 
@@ -189,6 +208,14 @@ abstract public class TokenManager {
         }
     }
 
+    public void addFoundToken(ArrayList<Token> tokenArrayList) {
+        if(tokenArrayList == null) { return; }
+
+        for(Token token : tokenArrayList) {
+            addFoundToken(token);
+        }
+    }
+
     public void addFoundToken(Token token) {
         if(token == null) { return; }
 
@@ -208,6 +235,14 @@ abstract public class TokenManager {
             found_tokens.set(idx, token);
             found_token_names.set(idx, token.getName());
             found_token_display_names.set(idx, token.getDisplayName());
+        }
+    }
+
+    public void addCustomToken(ArrayList<Token> tokenArrayList) {
+        if(tokenArrayList == null) { return; }
+
+        for(Token token : tokenArrayList) {
+            addCustomToken(token);
         }
     }
 
@@ -338,105 +373,6 @@ abstract public class TokenManager {
         return displayNames;
     }
 
-    public String serializeToJSONX(String source) {
-        StringBuilder s = new StringBuilder("[");
-
-        if("downloaded".equals(source)) {
-            for(int i = 0; i < downloaded_tokens.size(); i++) {
-                Token token = downloaded_tokens.get(i);
-
-                s.append(token.serializeToJSONX());
-
-                if(i < downloaded_tokens.size() - 1) {
-                    s.append(",");
-                }
-            }
-        }
-        else if("found".equals(source)) {
-            for(int i = 0; i < found_tokens.size(); i++) {
-                Token token = found_tokens.get(i);
-
-                s.append(token.serializeToJSONX());
-
-                if(i < found_tokens.size() - 1) {
-                    s.append(",");
-                }
-            }
-        }
-        else if("custom".equals(source)) {
-            for(int i = 0; i < custom_tokens.size(); i++) {
-                Token token = custom_tokens.get(i);
-
-                s.append(token.serializeToJSONX());
-
-                if(i < custom_tokens.size() - 1) {
-                    s.append(",");
-                }
-            }
-        }
-
-        s.append("]");
-
-        return s.toString();
-    }
-
-    // TODO the two try/catches should be remove. Make this class strict!
-    // TODO Why does this class have it's own serialization system?
-
-    // Don't actually create a new instance, just fill in tokens in this existing instance.
-    public void deserializeFromJSONX(String s, String source) {
-        try {
-            JSONArray json = new JSONArray(s);
-
-            if("downloaded".equals(source)) {
-                for(int i = 0; i < json.length(); i++) {
-                    JSONObject tokenJSON = json.getJSONObject(i);
-                    addDownloadedToken(Token.deserializeFromJSONX(tokenJSON));
-                }
-            }
-            else if("found".equals(source)) {
-                for(int i = 0; i < json.length(); i++) {
-                    JSONObject tokenJSON = json.getJSONObject(i);
-                    addFoundToken(Token.deserializeFromJSONX(tokenJSON));
-                }
-            }
-            else if("custom".equals(source)) {
-                for(int i = 0; i < json.length(); i++) {
-                    JSONObject tokenJSON = json.getJSONObject(i);
-                    addCustomToken(Token.deserializeFromJSONX(tokenJSON));
-                }
-            }
-        }
-        catch(Exception e) {
-            // If there is any problem at all, just wipe everything clean.
-            ThrowableUtil.processThrowable(e);
-            resetDownloadedTokens();
-            resetFoundTokens();
-            resetCustomTokens();
-        }
-    }
-
-    public static void saveAll(Context context, String source) {
-        for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            tokenManager.save(context, source);
-        }
-    }
-
-    public void save(Context context, String source) {
-        TokenList.set(context, getSettingsKey(), source, serializeToJSONX(source));
-    }
-
-    public static void loadAll(Context context, String source) {
-        for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            tokenManager.load(context, source);
-        }
-    }
-
-    public void load(Context context, String source) {
-        String s = TokenList.get(context, getSettingsKey(), source);
-        deserializeFromJSONX(s, source);
-    }
-
     public String getFixedJSON() {
         return RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
     }
@@ -465,5 +401,36 @@ abstract public class TokenManager {
             ThrowableUtil.processThrowable(e);
             return false;
         }
+    }
+
+    public String serializationVersion() { return "1"; }
+
+    public String serializeToJSON() throws org.json.JSONException {
+        // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
+        return new Serialization.JSONObjectWithNull()
+            .put("key", Serialization.string_serialize(getKey()))
+            .put("token_type", Serialization.string_serialize(getTokenType()))
+            .put("downloaded_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(downloaded_tokens)))
+            .put("found_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(found_tokens)))
+            .put("custom_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(custom_tokens)))
+            .toStringOrNull();
+    }
+
+    public static TokenManager deserializeFromJSON1(String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String key = Serialization.string_deserialize(o.getString("key"));
+        String token_type = Serialization.string_deserialize(o.getString("token_type"));
+        ArrayList<Token> downloaded_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));
+        ArrayList<Token> found_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("found_tokens"));
+        ArrayList<Token> custom_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("custom_tokens"));
+
+        // This is a dummy object that only has to hold onto the token array lists.
+        // We don't need to call the proper add* methods here.
+        TokenManager tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+        tokenManager.downloaded_tokens = downloaded_tokens;
+        tokenManager.found_tokens = found_tokens;
+        tokenManager.custom_tokens = custom_tokens;
+
+        return tokenManager;
     }
 }

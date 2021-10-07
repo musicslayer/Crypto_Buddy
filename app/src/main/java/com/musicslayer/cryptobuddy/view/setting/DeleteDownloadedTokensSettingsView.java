@@ -14,7 +14,7 @@ import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
-import com.musicslayer.cryptobuddy.persistence.TokenList;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
@@ -36,8 +36,8 @@ public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
-                    TokenList.resetDownloadedTokens(context);
                     TokenManager.resetAllDownloadedTokens();
+                    TokenManagerList.saveAllData(context);
                     ToastUtil.showToast(context,"reset_downloaded_tokens");
                 }
             }

@@ -28,7 +28,15 @@ public class UnknownToken extends Token {
             unknownDisplayName = "?Unknown Token (" + display_name + ")?";
         }
 
-        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, "?", "?", token_type);
+        String unknownTokenType;
+        if(token_type == null) {
+            unknownTokenType = "?";
+        }
+        else {
+            unknownTokenType = token_type;
+        }
+
+        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, "?", "?", unknownTokenType);
     }
 
     private UnknownToken(String key, String name, String display_name, int scale, String id, String blockchain_id, String token_type) {

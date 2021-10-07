@@ -32,7 +32,7 @@ abstract public class CrashView extends View {
                 ThrowableUtil.processThrowable(e);
 
                 CrashException crashException = new CrashException(e);
-                crashException.setLocation(activity, view);
+                crashException.setLocationInfo(activity, view);
                 crashException.appendExtraInfoFromArgument(view);
 
                 CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");

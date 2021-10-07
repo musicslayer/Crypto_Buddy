@@ -94,7 +94,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Attempt to recover from the crash and continue. This may not be possible, or may result in unpredictable behavior."
+        android:text="Attempt to recover from the crash and continue. This may result in unpredictable behavior."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_showButton" />
 

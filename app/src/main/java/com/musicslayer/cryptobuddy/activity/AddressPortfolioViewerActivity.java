@@ -26,6 +26,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -116,7 +117,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
                     if(((ProgressDialog)dialog).isCancelled) { return; }
                     addressDataArrayList[0].add(AddressData.getAddressData(cryptoAddress));
-                    TokenManager.saveAll(AddressPortfolioViewerActivity.this, "found");
+                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this);
                 }
             }
         });
