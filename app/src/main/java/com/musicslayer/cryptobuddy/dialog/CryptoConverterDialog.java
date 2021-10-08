@@ -21,9 +21,9 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
+import java.util.ArrayList;
+
 public class CryptoConverterDialog extends BaseDialog {
-    PriceData priceDataPrimary;
-    PriceData priceDataSecondary;
     Crypto cryptoPrimary;
     Crypto cryptoSecondary;
 
@@ -54,15 +54,25 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
-                if(((ProgressDialog)dialog).isCancelled) { return; }
-                priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
+                PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
+                if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
+
+                ArrayList<PriceData> priceDataArrayList = new ArrayList<>();
+                priceDataArrayList.add(priceDataPrimary);
+                priceDataArrayList.add(priceDataSecondary);
+
+                ProgressDialogFragment.setValue(activity, Serialization.serializeArrayList(priceDataArrayList));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                ArrayList<PriceData> priceDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(activity), PriceData.class);
+                PriceData priceDataPrimary = priceDataArrayList.get(0);
+                PriceData priceDataSecondary = priceDataArrayList.get(1);
+
                 if(priceDataPrimary.isComplete() && priceDataSecondary.isComplete()) {
                     AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
                     AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataPrimary.crypto), priceDataPrimary.price);
@@ -120,35 +130,16 @@ public class CryptoConverterDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        String priceDataPrimary_s = priceDataPrimary == null ? "{}" : Serialization.serialize(priceDataPrimary);
-        bundle.putString("priceDataPrimary", priceDataPrimary_s);
-
-        String priceDataSecondary_s = priceDataSecondary == null ? "{}" : Serialization.serialize(priceDataSecondary);
-        bundle.putString("priceDataSecondary", priceDataSecondary_s);
-
-        String cryptoPrimary_s = cryptoPrimary == null ? "{}" : Serialization.serialize(cryptoPrimary);
-        bundle.putString("cryptoPrimary", cryptoPrimary_s);
-
-        String cryptoSecondary_s = cryptoSecondary == null ? "{}" : Serialization.serialize(cryptoSecondary);
-        bundle.putString("cryptoSecondary", cryptoSecondary_s);
-
+        bundle.putString("cryptoPrimary", Serialization.serialize(cryptoPrimary));
+        bundle.putString("cryptoSecondary", Serialization.serialize(cryptoSecondary));
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            String priceDataPrimary_s = bundle.getString("priceDataPrimary");
-            priceDataPrimary = "{}".equals(priceDataPrimary_s) ? null : Serialization.deserialize(priceDataPrimary_s, PriceData.class);
-
-            String priceDataSecondary_s = bundle.getString("priceDataSecondary");
-            priceDataSecondary = "{}".equals(priceDataSecondary_s) ? null : Serialization.deserialize(priceDataSecondary_s, PriceData.class);
-
-            String cryptoPrimary_s = bundle.getString("cryptoPrimary");
-            cryptoPrimary = "{}".equals(cryptoPrimary_s) ? null : Serialization.deserialize(cryptoPrimary_s, Crypto.class);
-
-            String cryptoSecondary_s = bundle.getString("cryptoSecondary");
-            cryptoSecondary = "{}".equals(cryptoSecondary_s) ? null : Serialization.deserialize(cryptoSecondary_s, Crypto.class);
+            cryptoPrimary = Serialization.deserialize(bundle.getString("cryptoPrimary"), Crypto.class);
+            cryptoSecondary = Serialization.deserialize(bundle.getString("cryptoSecondary"), Crypto.class);
         }
     }
 }

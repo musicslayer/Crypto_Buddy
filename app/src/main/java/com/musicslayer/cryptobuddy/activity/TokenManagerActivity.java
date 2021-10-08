@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class TokenManagerActivity extends BaseActivity {
-    public String tokenAllJSON = null;
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
 
     public int getAdLayoutViewID() {
@@ -98,12 +97,15 @@ public class TokenManagerActivity extends BaseActivity {
         progressFixedDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                tokenAllJSON = RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
+                String tokenAllJSON = RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
+                ProgressDialogFragment.setValue(TokenManagerActivity.this, Serialization.string_serialize(tokenAllJSON));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                String tokenAllJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue(TokenManagerActivity.this));
+
                 if(tokenAllJSON == null) {
                     ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
                 }
@@ -159,9 +161,21 @@ public class TokenManagerActivity extends BaseActivity {
         progressDirectDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    tokenManagerView.queryTokensDirect();
-                }
+                //for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                //    tokenManagerView.queryTokensDirect();
+                //}
+
+                TokenManagerView tokenManagerView2 = tokenManagerViewArrayList.get(2);
+                tokenManagerView2.queryTokensDirect();
+
+                TokenManagerView tokenManagerView3 = tokenManagerViewArrayList.get(3);
+                tokenManagerView3.queryTokensDirect();
+
+                TokenManagerView tokenManagerView4 = tokenManagerViewArrayList.get(4);
+                tokenManagerView4.queryTokensDirect();
+
+
+                ProgressDialogFragment.setValue(activity, "ABCDE");
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -212,6 +226,7 @@ public class TokenManagerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+            bundle.putString("tokenJSON_" + tokenManagerView.tokenManager.getTokenType(), Serialization.string_serialize(tokenManagerView.choice));
             bundle.putString("choice_" + tokenManagerView.tokenManager.getTokenType(), Serialization.string_serialize(tokenManagerView.choice));
         }
     }
@@ -220,6 +235,7 @@ public class TokenManagerActivity extends BaseActivity {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                tokenManagerView.tokenJSON = Serialization.string_deserialize(bundle.getString("tokenJSON_" + tokenManagerView.tokenManager.getTokenType()));
                 tokenManagerView.choice = Serialization.string_deserialize(bundle.getString("choice_" + tokenManagerView.tokenManager.getTokenType()));
             }
         }

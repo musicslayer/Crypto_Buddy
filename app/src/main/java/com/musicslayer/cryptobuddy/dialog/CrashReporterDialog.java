@@ -18,8 +18,9 @@ import com.musicslayer.cryptobuddy.util.MessageUtil;
 
 import java.util.ArrayList;
 
-// This Dialog cannot use any of the "Crash" classes, because we do not want any recursive CrashReporterDialog behavior.
+// This class/file cannot use any of the "Crash" classes, because we do not want any recursive CrashReporterDialog behavior.
 
+// This is only meant to be used with CrashReporterDialogFragment.
 public class CrashReporterDialog extends BaseDialog {
     public CrashException crashException;
 

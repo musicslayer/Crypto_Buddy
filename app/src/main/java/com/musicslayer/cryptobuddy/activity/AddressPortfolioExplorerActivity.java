@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddressFilterDialog;
@@ -49,8 +48,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     AddressTable table;
 
     final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
-    final AddressData[] addressData = new AddressData[1];
-    final static ArrayList<AddressData>[] newAddressDataArrayList = new ArrayList[1];
 
     AddressPortfolioObj addressPortfolioObj;
     ArrayList<AddressData> addressDataArrayList;
@@ -132,22 +129,25 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         add_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
+                AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
+                TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this); // Save found tokens.
+                ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serialize(addressData));
             }
         });
 
         add_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(!addressData[0].isComplete()) {
+                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(AddressPortfolioExplorerActivity.this), AddressData.class);
+
+                if(!addressData.isComplete()) {
                     ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
                 }
 
                 addressPortfolioObj.addData(cryptoAddress[0]);
                 AddressPortfolio.saveAllData(AddressPortfolioExplorerActivity.this);
 
-                addressDataArrayList.add(addressData[0]);
+                addressDataArrayList.add(addressData);
                 updateLayout();
 
                 if(filterIndex != -1) {
@@ -228,19 +228,23 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 ArrayList<CryptoAddress> cryptoAddressArrayList = addressPortfolioObj.cryptoAddressArrayList;
 
-                newAddressDataArrayList[0] = new ArrayList<>();
+                ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
-                    if(((ProgressDialog)dialog).isCancelled) { return; }
-                    newAddressDataArrayList[0].add(AddressData.getAddressData(cryptoAddress));
-                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
+                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                    newAddressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
+                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this); // Save found tokens.
                 }
+
+                ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serializeArrayList(newAddressDataArrayList));
             }
         });
 
         refresh_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                for(AddressData addressData : newAddressDataArrayList[0]) {
+                ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(AddressPortfolioExplorerActivity.this), AddressData.class);
+
+                for(AddressData addressData : newAddressDataArrayList) {
                     if(!addressData.isComplete()) {
                         // Only alert once. Others would be redundant.
                         ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
@@ -249,7 +253,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
 
                 addressDataArrayList.clear();
-                addressDataArrayList.addAll(newAddressDataArrayList[0]);
+                addressDataArrayList.addAll(newAddressDataArrayList);
                 updateLayout();
                 ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"refresh");
             }

@@ -31,7 +31,6 @@ public class TotalDialog extends BaseDialog {
     ArrayList<Transaction> transactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
-    HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
 
     public TotalDialog(Activity activity, ArrayList<Transaction> transactionArrayList) {
         super(activity);
@@ -51,13 +50,13 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                newPriceMap = new HashMap<>();
+                HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
 
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
                 Asset.sortAscendingByType(keySet);
 
                 for(Asset asset : keySet) {
-                    if(((ProgressDialog)dialog).isCancelled) { return; }
+                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
 
                     if(asset instanceof Fiat) {
                         // For now, USD is the only fiat, and it's price is 1 by definition.
@@ -73,12 +72,16 @@ public class TotalDialog extends BaseDialog {
                         }
                     }
                 }
+
+                ProgressDialogFragment.setValue(activity, Serialization.serializeHashMap(newPriceMap));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(activity), Asset.class, AssetAmount.class);
+
                 if(newPriceMap.size() != deltaMap.size()) {
                     ToastUtil.showToast(activity,"no_price_data");
                 }

@@ -12,6 +12,12 @@ public class ProgressDialog extends BaseDialog {
         super(activity);
     }
 
+    @Override
+    public void onBackPressedImpl() {
+        ProgressDialogFragment.setCancelled(activity);
+        dismiss();
+    }
+
     public int getBaseViewID() {
         return R.id.progress_dialog;
     }

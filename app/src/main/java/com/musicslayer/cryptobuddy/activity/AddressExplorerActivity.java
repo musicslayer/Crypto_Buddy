@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
@@ -43,8 +42,6 @@ public class AddressExplorerActivity extends BaseActivity {
 
     AddressTable table;
     ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
-
-    final static AddressData[] newAddressData = new AddressData[1];
 
     public int getAdLayoutViewID() {
         return R.id.address_explorer_adLayout;
@@ -131,19 +128,22 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                newAddressData[0] = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
-                TokenManagerList.saveAllData(AddressExplorerActivity.this);
+                AddressData newAddressData = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
+                TokenManagerList.saveAllData(AddressExplorerActivity.this); // Save found tokens.
+                ProgressDialogFragment.setValue(AddressExplorerActivity.this, Serialization.serialize(newAddressData));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(!newAddressData[0].isComplete()) {
+                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(AddressExplorerActivity.this), AddressData.class);
+
+                if(!newAddressData.isComplete()) {
                     ToastUtil.showToast(AddressExplorerActivity.this,"no_address_data");
                 }
 
                 addressDataArrayList.clear();
-                addressDataArrayList.add(newAddressData[0]);
+                addressDataArrayList.add(newAddressData);
                 updateLayout();
                 ToastUtil.showToast(AddressExplorerActivity.this,"refresh");
             }

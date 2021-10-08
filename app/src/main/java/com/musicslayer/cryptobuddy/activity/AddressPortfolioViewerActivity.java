@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
@@ -37,7 +36,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 
     final ArrayList<CryptoAddress>[] cryptoAddressArrayList = new ArrayList[1];
-    final ArrayList<AddressData>[] addressDataArrayList = new ArrayList[1];
     final String[] AddressPortfolioObjName = new String[1];
 
     public int getAdLayoutViewID() {
@@ -114,18 +112,24 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
+
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
-                    if(((ProgressDialog)dialog).isCancelled) { return; }
-                    addressDataArrayList[0].add(AddressData.getAddressData(cryptoAddress));
-                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this);
+                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                    addressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
+                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this); // Save found tokens.
                 }
+
+                ProgressDialogFragment.setValue(AddressPortfolioViewerActivity.this, Serialization.serializeArrayList(addressDataArrayList));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                for(AddressData addressData : addressDataArrayList[0]) {
+                ArrayList<AddressData> addressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(AddressPortfolioViewerActivity.this), AddressData.class);
+
+                for(AddressData addressData : addressDataArrayList) {
                     if(!addressData.isComplete()) {
                         // Only alert once. Others would be redundant.
                         ToastUtil.showToast(AddressPortfolioViewerActivity.this,"no_address_data");
@@ -136,8 +140,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
                 Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
                 intent.putExtra("AddressPortfolioName",  AddressPortfolioObjName[0]);
-                //intent.putExtra("AddressData_Array",  addressDataArrayList[0]);
-                intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList[0]));
+                intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList));
                 AddressPortfolioViewerActivity.this.startActivity(intent);
 
                 finish();
@@ -154,7 +157,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 @Override
                 public void onClickImpl(View view) {
                     cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
-                    addressDataArrayList[0] = new ArrayList<>();
                     AddressPortfolioObjName[0] = addressPortfolioObj.name;
 
                     progressDialogFragment.show(AddressPortfolioViewerActivity.this, "progress");
@@ -185,7 +187,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("PortfolioName", currentDeletePortfolioName);
         bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
-        bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList[0]));
         bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
@@ -194,7 +195,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
             cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
-            addressDataArrayList[0] = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
             AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
     }

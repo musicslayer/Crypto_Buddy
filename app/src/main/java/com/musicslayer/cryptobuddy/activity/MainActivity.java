@@ -15,7 +15,6 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
-import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
@@ -41,7 +40,6 @@ import java.util.Date;
 
 public class MainActivity extends BaseActivity {
     final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
-    final static AddressData[] addressData = new AddressData[1];
 
     public int getAdLayoutViewID() {
         return R.id.main_adLayout;
@@ -101,23 +99,25 @@ public class MainActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                addressData[0] = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManagerList.saveAllData(MainActivity.this);
+                AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
+                TokenManagerList.saveAllData(MainActivity.this); // Save found tokens.
+                ProgressDialogFragment.setValue(MainActivity.this, Serialization.serialize(addressData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(!addressData[0].isComplete()) {
+                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(MainActivity.this), AddressData.class);
+
+                if(!addressData.isComplete()) {
                     ToastUtil.showToast(MainActivity.this,"no_address_data");
                 }
 
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
-                //intent.putExtra("AddressData", addressData[0]);
-                intent.putExtra("AddressData", Serialization.serialize(addressData[0]));
+                intent.putExtra("AddressData", Serialization.serialize(addressData));
                 MainActivity.this.startActivity(intent);
 
                 MainActivity.this.finish();

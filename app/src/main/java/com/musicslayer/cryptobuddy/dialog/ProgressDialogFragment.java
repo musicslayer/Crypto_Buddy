@@ -9,7 +9,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.util.PollingUtil;
+
 public class ProgressDialogFragment extends BaseDialogFragment {
+    public final static String START = "!START!";
+    public final static String IN_PROGRESS = "!IN_PROGRESS!";
+    public final static String CANCELLED = "!CANCELLED!";
+    public final static String DONE = "!DONE!";
+
     public static ProgressDialogFragment newInstance(Class<?> clazz, Object... args) {
         Bundle bundle = new Bundle();
         bundle.putSerializable("class", clazz);
@@ -27,18 +34,42 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
         new Thread(() -> {
             if(SL != null && !currentProgressDialog.isCancelled) {
-                SL.onShow(currentProgressDialog);
+                if(ProgressDialogFragment.isStart(currentProgressDialog.activity)) {
+                    // This is the first call, so actually do the work.
+                    ProgressDialogFragment.setInProgress(currentProgressDialog.activity);
+
+                    SL.onShow(currentProgressDialog);
+
+                    if(!ProgressDialogFragment.isCancelled(currentProgressDialog.activity)) {
+                        ProgressDialogFragment.setDone(currentProgressDialog.activity);
+                    }
+                }
+                else {
+                    // We are already in progress. Just wait for the result.
+                    PollingUtil.pollFor(new PollingUtil.PollingUtilListener() {
+                        @Override
+                        public boolean breakCondition(PollingUtil pollingUtil) {
+                            return !ProgressDialogFragment.isInProgress(currentProgressDialog.activity);
+                        }
+                    });
+                }
             }
 
             // Only the onDismiss listener should update any UI elements.
             currentProgressDialog.activity.runOnUiThread(() -> {
-                if(DL != null && !currentProgressDialog.isCancelled) {
+                if(DL != null && !currentProgressDialog.isCancelled && ProgressDialogFragment.isDone(currentProgressDialog.activity)) {
                     DL.onDismiss(currentProgressDialog);
                 }
 
                 currentProgressDialog.dismiss();
             });
         }).start();
+    }
+
+    @Override
+    public void show(Context context, String tag) {
+        ProgressDialogFragment.clearAll(context);
+        super.show(context, tag);
     }
 
     @Override
@@ -50,16 +81,12 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     // These methods below enable us to start the progress function once, and then get the result shown even if the activity/dialog is recreated.
 
-    public static String getProgressValue(Context context) {
+    public static String getValue(Context context) {
         SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
-        return settings.getString("progress_value", "!DEFAULT!");
+        return settings.getString("progress_value", null);
     }
 
-    public static void setProgressValueOnce(Context context, String value) {
-        // Only set if we haven't started.
-        String existingValue = getProgressValue(context);
-        if(!("!DEFAULT!".equals(existingValue) || "!STARTED!".equals(existingValue))) { return; }
-
+    public static void setValue(Context context, String value) {
         SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
@@ -67,11 +94,57 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         editor.apply();
     }
 
-    public static void clearProgressValue(Context context) {
+    public static void clearAll(Context context) {
+        // This is equivalent to setting the status to START and the value to null.
         SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();
         editor.apply();
+    }
+
+    public static String getStatus(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        return settings.getString("progress_status", START);
+    }
+
+    public static void setInProgress(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("progress_status", IN_PROGRESS);
+        editor.apply();
+    }
+
+    public static void setCancelled(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("progress_status", CANCELLED);
+        editor.apply();
+    }
+
+    public static void setDone(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("progress_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("progress_status", DONE);
+        editor.apply();
+    }
+
+    public static boolean isStart(Context context) {
+        return START.equals(ProgressDialogFragment.getStatus(context));
+    }
+
+    public static boolean isInProgress(Context context) {
+        return IN_PROGRESS.equals(ProgressDialogFragment.getStatus(context));
+    }
+
+    public static boolean isCancelled(Context context) {
+        return CANCELLED.equals(ProgressDialogFragment.getStatus(context));
+    }
+
+    public static boolean isDone(Context context) {
+        return DONE.equals(ProgressDialogFragment.getStatus(context));
     }
 }
