@@ -393,6 +393,7 @@ abstract public class Table extends CrashTableLayout {
             maskedTransactionArrayList = Serialization.deserializeArrayList(bundle.getString("masked_transactions"), Transaction.class);
             sortState = bundle.getIntegerArrayList("sortState");
 
+            // pageView stores the number of items, but it may have other state that needs to be updated based on the masked list.
             pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));
             pageView.setNumItems(maskedTransactionArrayList.size());
 

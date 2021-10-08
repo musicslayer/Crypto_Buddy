@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -141,12 +142,14 @@ public class TokenManagerActivity extends BaseActivity {
                             continue;
                         }
 
-                        tokenManagerView.tokenJSON = tokenTypeJSON.toString();
+                        String tokenJSON = tokenTypeJSON.toString();
 
-                        boolean isComplete = tokenManagerView.updateTokensFixed();
-                        if(!isComplete) {
-                            isAllComplete = false;
-                        }
+                        tokenManagerView.tokenManager.resetDownloadedTokens();
+                        tokenManagerView.tokenManager.parseFixed(tokenJSON);
+
+                        TokenManagerList.saveAllData(TokenManagerActivity.this);
+
+                        tokenManagerView.updateLayout();
                     }
 
                     if(!isAllComplete) {
@@ -161,31 +164,30 @@ public class TokenManagerActivity extends BaseActivity {
         progressDirectDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                //for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                //    tokenManagerView.queryTokensDirect();
-                //}
+                ArrayList<String> tokenJSONArrayList = new ArrayList<>();
 
-                TokenManagerView tokenManagerView2 = tokenManagerViewArrayList.get(2);
-                tokenManagerView2.queryTokensDirect();
+                for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                    tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
+                }
 
-                TokenManagerView tokenManagerView3 = tokenManagerViewArrayList.get(3);
-                tokenManagerView3.queryTokensDirect();
-
-                TokenManagerView tokenManagerView4 = tokenManagerViewArrayList.get(4);
-                tokenManagerView4.queryTokensDirect();
-
-
-                ProgressDialogFragment.setValue(activity, "ABCDE");
+                ProgressDialogFragment.setValue(activity, Serialization.string_serializeArrayList(tokenJSONArrayList));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                // Update everything even if one of them wasn't complete.
+                ArrayList<String> tokenJSONArrayList = Serialization.string_deserializeArrayList(ProgressDialogFragment.getValue(activity));
+
                 boolean isAllComplete = true;
 
-                for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                    boolean isComplete = tokenManagerView.updateTokensDirect();
+                for(int i = 0; i < tokenManagerViewArrayList.size(); i++) {
+                    TokenManagerView tokenManagerView = tokenManagerViewArrayList.get(i);
+
+                    tokenManagerView.tokenManager.resetDownloadedTokens();
+                    boolean isComplete = tokenManagerView.tokenManager.parse(tokenJSONArrayList.get(i));
+                    TokenManagerList.saveAllData(TokenManagerActivity.this);
+
+                    tokenManagerView.updateLayout();
                     if(!isComplete) {
                         isAllComplete = false;
                     }
@@ -226,8 +228,7 @@ public class TokenManagerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-            bundle.putString("tokenJSON_" + tokenManagerView.tokenManager.getTokenType(), Serialization.string_serialize(tokenManagerView.choice));
-            bundle.putString("choice_" + tokenManagerView.tokenManager.getTokenType(), Serialization.string_serialize(tokenManagerView.choice));
+            bundle.putParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType(), tokenManagerView.onSaveInstanceState());
         }
     }
 
@@ -235,8 +236,7 @@ public class TokenManagerActivity extends BaseActivity {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                tokenManagerView.tokenJSON = Serialization.string_deserialize(bundle.getString("tokenJSON_" + tokenManagerView.tokenManager.getTokenType()));
-                tokenManagerView.choice = Serialization.string_deserialize(bundle.getString("choice_" + tokenManagerView.tokenManager.getTokenType()));
+                tokenManagerView.onRestoreInstanceState(bundle.getParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType()));
             }
         }
     }

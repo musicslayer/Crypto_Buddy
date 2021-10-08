@@ -2,6 +2,8 @@ package com.musicslayer.cryptobuddy.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,6 +23,7 @@ import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class TokenManagerView extends CrashTableRow {
@@ -28,7 +31,6 @@ public class TokenManagerView extends CrashTableRow {
     public AppCompatButton B_DELETE;
     public AppCompatButton B_DOWNLOAD;
     public TokenManager tokenManager;
-    public String tokenJSON = null;
     public String choice;
 
     public TokenManagerView(Context context) {
@@ -53,13 +55,28 @@ public class TokenManagerView extends CrashTableRow {
         progressFixedDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                queryTokensFixed();
+                String tokenJSON = tokenManager.getFixedJSON();
+                ProgressDialogFragment.setValue(activity, Serialization.string_serialize(tokenJSON));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                boolean isComplete = updateTokensFixed();
+                String tokenJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue(activity));
+
+                boolean isComplete;
+                if(tokenJSON == null) {
+                    isComplete = false;
+                }
+                else {
+                    tokenManager.resetDownloadedTokens();
+                    isComplete = tokenManager.parseFixed(tokenJSON);
+
+                    TokenManagerList.saveAllData(getContext());
+
+                    updateLayout();
+                }
+
                 if(!isComplete) {
                     ToastUtil.showToast(context,"tokens_not_downloaded");
                 }
@@ -71,13 +88,28 @@ public class TokenManagerView extends CrashTableRow {
         progressDirectDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                queryTokensDirect();
+                String tokenJSON = tokenManager.getJSON();
+                ProgressDialogFragment.setValue(activity, Serialization.string_serialize(tokenJSON));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                boolean isComplete = updateTokensDirect();
+                String tokenJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue(activity));
+
+                boolean isComplete;
+                if(tokenJSON == null) {
+                    isComplete = false;
+                }
+                else {
+                    tokenManager.resetDownloadedTokens();
+                    isComplete = tokenManager.parse(tokenJSON);
+
+                    TokenManagerList.saveAllData(getContext());
+
+                    updateLayout();
+                }
+
                 if(!isComplete) {
                     ToastUtil.showToast(context,"tokens_not_downloaded");
                 }
@@ -172,42 +204,25 @@ public class TokenManagerView extends CrashTableRow {
         }
     }
 
-    public void queryTokensFixed() {
-        tokenJSON = tokenManager.getFixedJSON();
+    @Override
+    public Parcelable onSaveInstanceStateImpl(Parcelable state)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", state);
+        bundle.putString("choice", choice);
+
+        return bundle;
     }
 
-    public boolean updateTokensFixed() {
-        if(tokenJSON == null) {
-            return false;
+    @Override
+    public Parcelable onRestoreInstanceStateImpl(Parcelable state)
+    {
+        if (state instanceof Bundle) // implicit null check
+        {
+            Bundle bundle = (Bundle) state;
+            state = bundle.getParcelable("superState");
+            choice = bundle.getString("choice");
         }
-        else {
-            tokenManager.resetDownloadedTokens();
-            boolean isComplete = tokenManager.parseFixed(tokenJSON);
-
-            TokenManagerList.saveAllData(getContext());
-
-            updateLayout();
-
-            return isComplete;
-        }
-    }
-
-    public void queryTokensDirect() {
-        tokenJSON = tokenManager.getJSON();
-    }
-
-    public boolean updateTokensDirect() {
-        if(tokenJSON == null) {
-            return false;
-        }
-        else {
-            tokenManager.resetDownloadedTokens();
-            boolean isComplete = tokenManager.parse(tokenJSON);
-
-            TokenManagerList.saveAllData(getContext());
-
-            updateLayout();
-            return isComplete;
-        }
+        return state;
     }
 }

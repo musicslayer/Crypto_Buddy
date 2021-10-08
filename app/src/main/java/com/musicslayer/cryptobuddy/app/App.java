@@ -8,7 +8,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
-// The code in this class must be especially crash free because we cannot use CrashReporterDialog here.
+// The code in this class must be especially crash free because we cannot use CrashReporterDialog here, or even AlertDialog.
 public class App extends MultiDexApplication {
     // This needs to be changed before creating a public release!
     public static boolean DEBUG = true;

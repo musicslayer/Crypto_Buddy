@@ -38,6 +38,7 @@ public class ConfirmationView extends CrashLinearLayout {
         super(context, attributeSet);
 
         makeRandomDigits();
+        makeLastDigits();
         makeLayout();
     }
 
@@ -46,6 +47,8 @@ public class ConfirmationView extends CrashLinearLayout {
 
         this.removeAllViews();
         makeRandomDigits();
+        makeLastDigits();
+
         makeLayout();
     }
 
@@ -55,6 +58,13 @@ public class ConfirmationView extends CrashLinearLayout {
         randomCode = new ArrayList<>();
         for(int i = 0; i < numDigits; i++) {
             randomCode.add(rand.nextInt(10));
+        }
+    }
+
+    public void makeLastDigits() {
+        lastDigits = new ArrayList<>();
+        for(int i = 0; i < numDigits; i++) {
+            lastDigits.add(-1);
         }
     }
 
@@ -70,11 +80,6 @@ public class ConfirmationView extends CrashLinearLayout {
     @SuppressLint("SetTextI18n")
     public void makeLayoutConfirmation() {
         this.setOrientation(LinearLayout.VERTICAL);
-
-        lastDigits = new ArrayList<>();
-        for(int i = 0; i < numDigits; i++) {
-            lastDigits.add(-1);
-        }
 
         Context context = getContext();
 
