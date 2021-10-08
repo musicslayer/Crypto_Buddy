@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
@@ -130,7 +131,10 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class).show(TransactionPortfolioExplorerActivity.this, "feedback");
+            TransactionTable table = findViewById(R.id.transaction_portfolio_explorer_table);
+            String type = "TransactionPortfolio";
+            String info = "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionPortfolioExplorerActivity.this, "feedback");
             return true;
         }
 

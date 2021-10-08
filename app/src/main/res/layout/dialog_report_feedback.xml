@@ -17,13 +17,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Report Feedback/Bugs" />
 
+    <CheckBox
+        android:id="@+id/report_feedback_dialog_screenshotCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attach screenshot."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/report_feedback_dialog_toolbar" />
+
+    <CheckBox
+        android:id="@+id/report_feedback_dialog_installCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attach app install information."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/report_feedback_dialog_screenshotCheckBox" />
+
+    <CheckBox
+        android:id="@+id/report_feedback_dialog_infoCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attach information."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/report_feedback_dialog_installCheckBox" />
+
     <TextView
         android:id="@+id/report_feedback_dialog_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email: musicslayer@gmail.com"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/report_feedback_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/report_feedback_dialog_infoCheckBox" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/report_feedback_dialog_button"

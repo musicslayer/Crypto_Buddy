@@ -72,7 +72,7 @@ public class SettingsActivity extends BaseActivity {
         {"Forward", "Forward and Backward"},
         {"All", "Mainnet"},
         {"10 Seconds", "30 Seconds", "60 Seconds"},
-        {"Match Locale", "Negative", "Red", "Parenthesis", "Red Negative", "Red Parenthesis"},
+        {"Match Locale", "Negative", "Red", "Parentheses", "Red Match Locale", "Red Negative", "Red Parentheses"},
         {"Match System", "On", "Off"},
         {"Short", "Long"},
         {"Match System", "Landscape", "Portrait"},
@@ -109,12 +109,13 @@ public class SettingsActivity extends BaseActivity {
             "60 seconds timeout for each API call."
         },
         {
-            "Show lost assets using the negative format of the chosen numeric locale.",
+            "Show lost assets using numbers of the chosen locale's negative format.",
             "Show lost assets using negative numbers.",
             "Show lost assets using red positive numbers.",
-            "Show lost assets using positive numbers in parenthesis.",
+            "Show lost assets using positive numbers in parentheses.",
+            "Show lost assets using red numbers of the chosen locale's negative format.",
             "Show lost assets using red negative numbers.",
-            "Show lost assets using red positive numbers in parenthesis."
+            "Show lost assets using red positive numbers in parentheses."
         },
         {
             "Match system setting for dark mode.",

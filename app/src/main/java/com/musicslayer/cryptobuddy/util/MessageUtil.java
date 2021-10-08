@@ -6,10 +6,11 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MessageUtil {
-    public static void sendEmail(Activity activity, String toText, String subjectText, String bodyText, ArrayList<java.io.File> fileArrayList) {
+    public static void sendEmail(Activity activity, String toText, String subjectText, String bodyText, ArrayList<File> fileArrayList) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{toText});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subjectText);
@@ -25,7 +26,7 @@ public class MessageUtil {
             ClipData clipData = ClipData.newRawUri("", null);
 
             ArrayList<Uri> uriArrayList = new ArrayList<>();
-            for(java.io.File file : fileArrayList) {
+            for(File file : fileArrayList) {
                 // Files can be null because we catch IO errors in order to use this in CrashReporterDialog.
                 if(file != null) {
                     Uri uri = Uri.parse("content://com.musicslayer.cryptobuddy.provider/" + file.getName());

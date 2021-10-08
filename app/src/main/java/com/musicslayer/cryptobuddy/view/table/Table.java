@@ -132,8 +132,6 @@ abstract public class Table extends CrashTableLayout {
         doSort(context);
         updateFilters();
         filterTable(context);
-
-        pageView.setNumItems(maskedTransactionArrayList.size());
     }
 
     public void drawRow(Context context, Transaction transaction) {
@@ -300,6 +298,7 @@ abstract public class Table extends CrashTableLayout {
             }
         }
 
+        // pageView may be null at this point when the Table is first inflated from XML.
         if(pageView != null) {
             pageView.setNumItems(newTransactionArrayList.size());
         }
@@ -361,6 +360,48 @@ abstract public class Table extends CrashTableLayout {
         }
     }
 
+    public String getInfo() {
+        // Get a String representation of this table's state.
+        // Different than serialization because the info cannot be used to reconstruct the table.
+        StringBuilder s = new StringBuilder();
+        s.append("Table Info:").append("\n\n").append("Table Type: ").append(getClass().getSimpleName());
+
+        // columnTypes
+        s.append("\n\nColumn Types:");
+        for(String column : columnTypes) {
+            s.append("\n").append(column);
+        }
+
+        //columnHeaders
+        s.append("\n\nColumn Headers:");
+        for(String column : columnHeaders) {
+            s.append("\n").append(column);
+        }
+
+        //transactionArrayList
+        s.append("\n\nTransaction Array List:\n");
+        s.append(Serialization.serializeArrayList(transactionArrayList));
+
+        //maskedTransactionArrayList
+        s.append("\n\nMasked Transaction Array List:\n");
+        s.append(Serialization.serializeArrayList(maskedTransactionArrayList));
+
+        //filterArrayList
+        s.append("\n\nFilter Array List:\n");
+        s.append(Serialization.serializeArrayList(filterArrayList));
+
+        //sortingColumn
+        s.append("\n\nSorting Column: ").append(sortingColumn);
+
+        //sortState
+        s.append("\n\nSort State: ").append(sortState);
+
+        //pageView
+        s.append("\n\n").append(pageView.getInfo());
+
+        return s.toString();
+    }
+
     @Override
     public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
@@ -386,16 +427,13 @@ abstract public class Table extends CrashTableLayout {
         {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
+            pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));
 
             sortingColumn = bundle.getInt("sortingColumn");
             filterArrayList = Serialization.deserializeArrayList(bundle.getString("filters"), Filter.class);
             transactionArrayList = Serialization.deserializeArrayList(bundle.getString("transactions"), Transaction.class);
             maskedTransactionArrayList = Serialization.deserializeArrayList(bundle.getString("masked_transactions"), Transaction.class);
             sortState = bundle.getIntegerArrayList("sortState");
-
-            // pageView stores the number of items, but it may have other state that needs to be updated based on the masked list.
-            pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));
-            pageView.setNumItems(maskedTransactionArrayList.size());
 
             // Remove and add the filter and sort row
             Context context = getContext();
@@ -411,7 +449,7 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public static class TablePageView extends CrashLinearLayout {
-        public Table inner_table;
+        public Table outer_table;
         public int currentPage = 1;
         public int lastPage;
         public int numItems;
@@ -433,18 +471,18 @@ abstract public class Table extends CrashTableLayout {
         }
 
         public void setTable(Table inner_table) {
-            this.inner_table = inner_table;
+            this.outer_table = inner_table;
         }
 
         public void setNumItems(int numItems) {
-            int oldNumItems = this.numItems;
             this.numItems = numItems;
 
+            int oldLastPage = this.lastPage;
             this.lastPage = ((numItems - 1) / numItemsPerPage) + 1;
 
-            // If the number of items changed (i.e. due to a filter), just go back to first page.
-            if(oldNumItems != numItems) {
-                currentPage = 1;
+            // If the number of pages decreased, and we are past the new last page, then update our page to be the new last page.
+            if(lastPage < oldLastPage) {
+                currentPage = lastPage;
             }
 
             updateLayout();
@@ -467,7 +505,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage != 1) {
                         currentPage = 1;
                         updateLayout();
-                        inner_table.filterTable(context);
+                        outer_table.filterTable(context);
                     }
                 }
             });
@@ -480,7 +518,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage > 1) {
                         currentPage--;
                         updateLayout();
-                        inner_table.filterTable(context);
+                        outer_table.filterTable(context);
                     }
                 }
             });
@@ -497,7 +535,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage < lastPage) {
                         currentPage++;
                         updateLayout();
-                        inner_table.filterTable(context);
+                        outer_table.filterTable(context);
                     }
                 }
             });
@@ -510,7 +548,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage != lastPage) {
                         currentPage = lastPage;
                         updateLayout();
-                        inner_table.filterTable(context);
+                        outer_table.filterTable(context);
                     }
                 }
             });
@@ -528,14 +566,10 @@ abstract public class Table extends CrashTableLayout {
             pageTextView.setText(currentPage + "/" + lastPage);
 
             // Artificially make the text width match the floating action button width.
-            pageTextView.setWidth(158);
-
-            /*
-            // Formula
-            //final int width = res.getConfiguration().screenWidthDp;
-            //final int height = res.getConfiguration().screenHeightDp;
-            //return Math.max(width, height) < 470 ? 113 : 158;
-            */
+            final int width = getContext().getResources().getConfiguration().screenWidthDp;
+            final int height = getContext().getResources().getConfiguration().screenHeightDp;
+            final int size = Math.max(width, height) < 470 ? 113 : 158;
+            pageTextView.setWidth(size);
 
             // Hide this view if there is only 1 page.
             if(lastPage < 2) {
@@ -544,6 +578,15 @@ abstract public class Table extends CrashTableLayout {
             else {
                 this.setVisibility(VISIBLE);
             }
+        }
+
+        public String getInfo() {
+            // Get a String representation of this table's state.
+            // Different than serialization because the info cannot be used to reconstruct the table.
+            return "Table Page Info:" +
+                    "\n--> Current Page: " + currentPage +
+                    "\n--> Last Page: " + lastPage +
+                    "\n--> Number of Items: " + numItems;
         }
 
         @Override
@@ -567,7 +610,9 @@ abstract public class Table extends CrashTableLayout {
                 state = bundle.getParcelable("superState");
                 currentPage = bundle.getInt("currentPage");
                 lastPage = bundle.getInt("lastPage");
+
                 numItems = bundle.getInt("numItems");
+                setNumItems(numItems); // Restores other state.
 
                 updateLayout();
             }

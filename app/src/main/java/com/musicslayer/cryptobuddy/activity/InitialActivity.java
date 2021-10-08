@@ -10,7 +10,6 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;

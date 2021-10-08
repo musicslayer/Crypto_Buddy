@@ -32,7 +32,7 @@ public class AssetTextView extends CrashTextView {
             text = assetQuantity.toString();
 
             // Number is already formatted by Locale. Just apply the color red here if we need it.
-            if(isLoss && ("red".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss) || "red_parenthesis".equals(Settings.setting_loss))) {
+            if(isLoss && ("red".equals(Settings.setting_loss) || "red_match_locale".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss) || "red_parentheses".equals(Settings.setting_loss))) {
                 this.setTextColor(0xFFFF0000);
             }
         }

@@ -34,6 +34,7 @@ import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
+import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 import java.util.ArrayList;
 
@@ -199,7 +200,10 @@ public class AddressExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class).show(AddressExplorerActivity.this, "feedback");
+            AddressTable table = findViewById(R.id.address_explorer_table);
+            String type = "Address";
+            String info = table.getInfo();
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(AddressExplorerActivity.this, "feedback");
             return true;
         }
 

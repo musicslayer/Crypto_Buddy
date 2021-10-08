@@ -6,6 +6,8 @@ import android.os.Environment;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
+import com.musicslayer.cryptobuddy.view.table.Table;
+import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -21,10 +23,10 @@ public class DataDumpUtil {
 
         // Add all user device data.
         s.append("\n\nDevice Data:");
-        s.append(getInfosAboutDevice(a));
+        s.append(getInfoAboutDevice(a));
 
         // Add all persistent data.
-        s.append("\n\nPersistent Data");
+        s.append("\n\nPersistent Data:");
 
         HashMap<String, HashMap<String, String>> allDataMap = Persistence.getAllData();
         ArrayList<String> allDataKeys = new ArrayList<>(allDataMap.keySet());
@@ -49,7 +51,7 @@ public class DataDumpUtil {
         return s.toString();
     }
 
-    private static String getInfosAboutDevice(Activity a) {
+    private static String getInfoAboutDevice(Activity a) {
         StringBuilder sb = new StringBuilder();
 
         // application info

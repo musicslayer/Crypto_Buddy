@@ -16,6 +16,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 // This class/file cannot use any of the "Crash" classes, because we do not want any recursive CrashReporterDialog behavior.
@@ -46,10 +47,10 @@ public class CrashReporterDialog extends BaseDialog {
             try {
                 // Attach two files. One has the Exception that caused the crash, and the other has the DataDump data.
                 // Some of the Exception may be obfuscated by ProGuard.
-                java.io.File fileA = FileUtil.writeFile(activity, crashException.toString());
-                java.io.File fileB = FileUtil.writeFile(activity, DataDumpUtil.getAllData(activity));
+                File fileA = FileUtil.writeFile(activity, crashException.toString());
+                File fileB = FileUtil.writeFile(activity, DataDumpUtil.getAllData(activity));
 
-                ArrayList<java.io.File> fileArrayList = new ArrayList<>();
+                ArrayList<File> fileArrayList = new ArrayList<>();
                 fileArrayList.add(fileA);
                 fileArrayList.add(fileB);
 

@@ -50,7 +50,7 @@ public class LocaleManager {
         // Format a negative number (String of a BigDecimal) based on the locale.
         // (The input String is always a positive number.)
         // Note that the user may wish to override how negative numbers are displayed, so we may not match the Locale.
-        if(!"match_locale".equals(Settings.setting_loss)) {
+        if(!"match_locale".equals(Settings.setting_loss) && !"red_match_locale".equals(Settings.setting_loss)) {
             return formatNegativeNumberOverride(s);
         }
 
@@ -143,7 +143,7 @@ public class LocaleManager {
             s = "-" + s;
         }
 
-        if("parenthesis".equals(Settings.setting_loss) || "red_parenthesis".equals(Settings.setting_loss)) {
+        if("parentheses".equals(Settings.setting_loss) || "red_parentheses".equals(Settings.setting_loss)) {
             s = "(" + s + ")";
         }
 

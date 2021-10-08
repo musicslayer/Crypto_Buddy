@@ -21,6 +21,7 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
+import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
@@ -135,7 +136,10 @@ public class TransactionExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class).show(TransactionExplorerActivity.this, "feedback");
+            TransactionTable table = findViewById(R.id.transaction_explorer_table);
+            String type = "Transaction";
+            String info = table.getInfo();
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionExplorerActivity.this, "feedback");
             return true;
         }
 

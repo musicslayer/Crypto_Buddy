@@ -81,6 +81,8 @@ public class ToastUtil {
 
         toastMap.put("unlock_tokens_required", Toast.makeText(context, "In-app purchase required to unlock tokens.", getToastDuration()));
 
+        toastMap.put("cannot_attach", Toast.makeText(context, "Could not attach all files to the email.", getToastDuration()));
+
         // Internal Only!
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", getToastDuration()));
         toastMap.put("unlock_purchases", Toast.makeText(context, "Purchases unlocked.", getToastDuration()));

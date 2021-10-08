@@ -314,7 +314,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class).show(AddressPortfolioExplorerActivity.this, "feedback");
+            AddressTable table = findViewById(R.id.address_portfolio_explorer_table);
+            String type = "AddressPortfolio";
+            String info = "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(AddressPortfolioExplorerActivity.this, "feedback");
             return true;
         }
 

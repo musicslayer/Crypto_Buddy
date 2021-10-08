@@ -95,9 +95,10 @@ public class Settings {
         map_loss.put(0, "match_locale");
         map_loss.put(1, "negative");
         map_loss.put(2, "red");
-        map_loss.put(3, "parenthesis");
-        map_loss.put(4, "red_negative");
-        map_loss.put(5, "red_parenthesis");
+        map_loss.put(3, "parentheses");
+        map_loss.put(4, "red_match_locale");
+        map_loss.put(5, "red_negative");
+        map_loss.put(6, "red_parentheses");
     }
 
     public static HashMap<Integer, Integer> map_dark;

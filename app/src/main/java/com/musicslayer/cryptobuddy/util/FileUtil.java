@@ -2,13 +2,14 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-
-import shadow.org.apache.commons.io.FileUtils;
 
 public class FileUtil {
     public static String readFile(Context context, int id) {
@@ -59,20 +60,21 @@ public class FileUtil {
         return stringArrayList;
     }
 
-    public static java.io.File writeFile(Context context, String s) {
+    public static File writeFile(Context context, String s) {
         // Returns a tempfile with the String written to it.
-        java.io.File file;
+        File file;
         try {
-            file = java.io.File.createTempFile("CrashLog", null, context.getCacheDir());
+            file = File.createTempFile("CryptoBuddy_CrashLog", ".txt", context.getCacheDir());
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
-        catch(Exception e) {
+        catch(Exception e) { // Catch everything!
             ThrowableUtil.processThrowable(e);
 
             // This class may be used by CrashReporterDialog, so just return null instead of throwing something.
             file = null;
         }
 
+        file.deleteOnExit();
         return file;
     }
 }
