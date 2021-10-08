@@ -56,7 +56,7 @@ public class TotalDialog extends BaseDialog {
                 Asset.sortAscendingByType(keySet);
 
                 for(Asset asset : keySet) {
-                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                    if(ProgressDialogFragment.isCancelled()) { return; }
 
                     if(asset instanceof Fiat) {
                         // For now, USD is the only fiat, and it's price is 1 by definition.
@@ -73,14 +73,14 @@ public class TotalDialog extends BaseDialog {
                     }
                 }
 
-                ProgressDialogFragment.setValue(activity, Serialization.serializeHashMap(newPriceMap));
+                ProgressDialogFragment.setValue(Serialization.serializeHashMap(newPriceMap));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(activity), Asset.class, AssetAmount.class);
+                HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetAmount.class);
 
                 if(newPriceMap.size() != deltaMap.size()) {
                     ToastUtil.showToast(activity,"no_price_data");

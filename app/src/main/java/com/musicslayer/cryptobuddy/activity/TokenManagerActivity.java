@@ -99,13 +99,13 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenAllJSON = RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
-                ProgressDialogFragment.setValue(TokenManagerActivity.this, Serialization.string_serialize(tokenAllJSON));
+                ProgressDialogFragment.setValue(Serialization.string_serialize(tokenAllJSON));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenAllJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue(TokenManagerActivity.this));
+                String tokenAllJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue());
 
                 if(tokenAllJSON == null) {
                     ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
@@ -169,13 +169,13 @@ public class TokenManagerActivity extends BaseActivity {
                     tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
                 }
 
-                ProgressDialogFragment.setValue(activity, Serialization.string_serializeArrayList(tokenJSONArrayList));
+                ProgressDialogFragment.setValue(Serialization.string_serializeArrayList(tokenJSONArrayList));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<String> tokenJSONArrayList = Serialization.string_deserializeArrayList(ProgressDialogFragment.getValue(activity));
+                ArrayList<String> tokenJSONArrayList = Serialization.string_deserializeArrayList(ProgressDialogFragment.getValue());
 
                 boolean isAllComplete = true;
 

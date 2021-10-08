@@ -14,7 +14,7 @@ public class ProgressDialog extends BaseDialog {
 
     @Override
     public void onBackPressedImpl() {
-        ProgressDialogFragment.setCancelled(activity);
+        ProgressDialogFragment.setCancelled();
         dismiss();
     }
 

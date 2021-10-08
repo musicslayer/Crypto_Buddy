@@ -134,14 +134,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
 
-                ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serialize(addressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(addressData));
             }
         });
 
         add_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(AddressPortfolioExplorerActivity.this), AddressData.class);
+                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 if(!addressData.isComplete()) {
                     ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
@@ -234,21 +234,21 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
                 ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
-                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                    if(ProgressDialogFragment.isCancelled()) { return; }
                     newAddressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
 
                     // Save found tokens, potentially from multiple TokenManagers.
                     TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
                 }
 
-                ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serializeArrayList(newAddressDataArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList));
             }
         });
 
         refresh_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(AddressPortfolioExplorerActivity.this), AddressData.class);
+                ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
 
                 for(AddressData addressData : newAddressDataArrayList) {
                     if(!addressData.isComplete()) {

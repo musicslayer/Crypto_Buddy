@@ -43,14 +43,14 @@ public class CryptoPricesDialog extends BaseDialog {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 PriceData priceData = PriceData.getPriceData(crypto);
-                ProgressDialogFragment.setValue(activity, Serialization.serialize(priceData));
+                ProgressDialogFragment.setValue(Serialization.serialize(priceData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(activity), PriceData.class);
+                PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(priceData.isComplete()) {
                     AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);

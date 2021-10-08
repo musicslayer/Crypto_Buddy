@@ -55,21 +55,21 @@ public class CryptoConverterDialog extends BaseDialog {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
-                if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                if(ProgressDialogFragment.isCancelled()) { return; }
                 PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
 
                 ArrayList<PriceData> priceDataArrayList = new ArrayList<>();
                 priceDataArrayList.add(priceDataPrimary);
                 priceDataArrayList.add(priceDataSecondary);
 
-                ProgressDialogFragment.setValue(activity, Serialization.serializeArrayList(priceDataArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(priceDataArrayList));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<PriceData> priceDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(activity), PriceData.class);
+                ArrayList<PriceData> priceDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), PriceData.class);
                 PriceData priceDataPrimary = priceDataArrayList.get(0);
                 PriceData priceDataSecondary = priceDataArrayList.get(1);
 

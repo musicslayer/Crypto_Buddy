@@ -115,21 +115,21 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
 
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
-                    if(ProgressDialogFragment.isCancelled(activity)) { return; }
+                    if(ProgressDialogFragment.isCancelled()) { return; }
                     addressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
 
                     // Save found tokens, potentially from multiple TokenManagers.
                     TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this);
                 }
 
-                ProgressDialogFragment.setValue(AddressPortfolioViewerActivity.this, Serialization.serializeArrayList(addressDataArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(addressDataArrayList));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<AddressData> addressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(AddressPortfolioViewerActivity.this), AddressData.class);
+                ArrayList<AddressData> addressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
 
                 for(AddressData addressData : addressDataArrayList) {
                     if(!addressData.isComplete()) {

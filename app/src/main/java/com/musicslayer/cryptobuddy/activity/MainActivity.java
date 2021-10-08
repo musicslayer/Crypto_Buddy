@@ -104,14 +104,14 @@ public class MainActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(MainActivity.this);
 
-                ProgressDialogFragment.setValue(MainActivity.this, Serialization.serialize(addressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(addressData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(MainActivity.this), AddressData.class);
+                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 if(!addressData.isComplete()) {
                     ToastUtil.showToast(MainActivity.this,"no_address_data");

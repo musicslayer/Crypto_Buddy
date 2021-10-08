@@ -133,13 +133,13 @@ public class AddressExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressExplorerActivity.this);
 
-                ProgressDialogFragment.setValue(AddressExplorerActivity.this, Serialization.serialize(newAddressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(AddressExplorerActivity.this), AddressData.class);
+                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 if(!newAddressData.isComplete()) {
                     ToastUtil.showToast(AddressExplorerActivity.this,"no_address_data");
