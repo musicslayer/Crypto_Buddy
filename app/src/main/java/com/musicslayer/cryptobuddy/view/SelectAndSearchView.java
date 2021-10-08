@@ -35,9 +35,6 @@ import java.util.Comparator;
 
 // This class is hardcoded to deal with all crypto, and optionally Fiat as well.
 
-// TODO We show a token multiple times if it is >1 of downloaded, found, and custom.
-// In the help, we should also explain this somewhere...?
-
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;

@@ -63,7 +63,7 @@ public class AddCustomTokenDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
-                    TokenManagerList.saveAllData(activity);
+                    TokenManagerList.updateTokenManager(activity, chosenTokenManager);
 
                     ToastUtil.showToast(activity,"custom_token_added");
                     isComplete = true;
@@ -90,7 +90,7 @@ public class AddCustomTokenDialog extends BaseDialog {
                     Token newToken = new Token(key, name, display_name, scale, id, chosenTokenManager.getBlockchainID(), chosenTokenManager.getTokenType());
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
-                        TokenManagerList.saveAllData(activity);
+                        TokenManagerList.updateTokenManager(activity, chosenTokenManager);
 
                         ToastUtil.showToast(activity,"custom_token_added");
                         isComplete = true;

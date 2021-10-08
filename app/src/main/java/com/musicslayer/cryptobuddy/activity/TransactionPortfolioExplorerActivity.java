@@ -83,7 +83,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
                     transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
-                    TransactionPortfolio.saveAllData(TransactionPortfolioExplorerActivity.this);
+                    TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, transactionPortfolioObj);
 
                     table.addRow(TransactionPortfolioExplorerActivity.this, ((AddTransactionDialog) dialog).user_TRANSACTION);
                 }

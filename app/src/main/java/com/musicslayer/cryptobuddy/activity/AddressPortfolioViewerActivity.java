@@ -117,7 +117,9 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
                     if(ProgressDialogFragment.isCancelled(activity)) { return; }
                     addressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
-                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this); // Save found tokens.
+
+                    // Save found tokens, potentially from multiple TokenManagers.
+                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this);
                 }
 
                 ProgressDialogFragment.setValue(AddressPortfolioViewerActivity.this, Serialization.serializeArrayList(addressDataArrayList));

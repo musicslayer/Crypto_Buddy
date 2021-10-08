@@ -27,7 +27,7 @@ public class AddressHistory {
         return settings_address_history.contains(addressHistoryObj);
     }
 
-    public static void addAddress(Context context, AddressHistoryObj addressHistoryObj) {
+    public static void addAddressToHistory(Context context, AddressHistoryObj addressHistoryObj) {
         if(isSaved(addressHistoryObj)) {
             settings_address_history.remove(addressHistoryObj);
             settings_address_history.add(0, addressHistoryObj);
@@ -39,10 +39,11 @@ public class AddressHistory {
         else {
             settings_address_history.add(0, addressHistoryObj);
         }
+
         saveAllData(context);
     }
 
-    public static void removeAddress(Context context, AddressHistoryObj addressHistoryObj) {
+    public static void removeAddressFromHistory(Context context, AddressHistoryObj addressHistoryObj) {
         settings_address_history.remove(addressHistoryObj);
         saveAllData(context);
     }
@@ -80,8 +81,6 @@ public class AddressHistory {
             AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
             settings_address_history.add(addressHistoryObj);
         }
-
-        saveAllData(context);
     }
 
     public static HashMap<String, String> getAllData() {

@@ -2,8 +2,6 @@ package com.musicslayer.cryptobuddy.asset.crypto.token;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 
-import org.json.JSONObject;
-
 public class Token extends Crypto {
     public String original_name;
     public String original_display_name;

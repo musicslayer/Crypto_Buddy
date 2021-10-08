@@ -130,7 +130,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this); // Save found tokens.
+
+                // Save found tokens, potentially from multiple TokenManagers.
+                TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
+
                 ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serialize(addressData));
             }
         });
@@ -145,7 +148,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
 
                 addressPortfolioObj.addData(cryptoAddress[0]);
-                AddressPortfolio.saveAllData(AddressPortfolioExplorerActivity.this);
+                //AddressPortfolio.saveAllData(AddressPortfolioExplorerActivity.this);
+                AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
                 addressDataArrayList.add(addressData);
                 updateLayout();
@@ -232,7 +236,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
                     if(ProgressDialogFragment.isCancelled(activity)) { return; }
                     newAddressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
-                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this); // Save found tokens.
+
+                    // Save found tokens, potentially from multiple TokenManagers.
+                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
                 }
 
                 ProgressDialogFragment.setValue(AddressPortfolioExplorerActivity.this, Serialization.serializeArrayList(newAddressDataArrayList));

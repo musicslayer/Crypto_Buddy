@@ -34,7 +34,6 @@ import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
-import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 import java.util.ArrayList;
 
@@ -130,7 +129,10 @@ public class AddressExplorerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData newAddressData = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
-                TokenManagerList.saveAllData(AddressExplorerActivity.this); // Save found tokens.
+
+                // Save found tokens, potentially from multiple TokenManagers.
+                TokenManagerList.saveAllData(AddressExplorerActivity.this);
+
                 ProgressDialogFragment.setValue(AddressExplorerActivity.this, Serialization.serialize(newAddressData));
             }
         });

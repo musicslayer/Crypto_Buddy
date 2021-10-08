@@ -6,8 +6,6 @@ import android.os.Environment;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
-import com.musicslayer.cryptobuddy.view.table.Table;
-import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

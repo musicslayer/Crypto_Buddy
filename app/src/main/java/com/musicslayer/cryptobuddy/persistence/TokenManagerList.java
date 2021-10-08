@@ -9,7 +9,6 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TokenManagerList {
@@ -29,6 +28,15 @@ public class TokenManagerList {
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager));
         }
+
+        editor.apply();
+    }
+
+    public static void updateTokenManager(Context context, TokenManager tokenManager) {
+        SharedPreferences settings = context.getSharedPreferences("token_manager_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager));
 
         editor.apply();
     }

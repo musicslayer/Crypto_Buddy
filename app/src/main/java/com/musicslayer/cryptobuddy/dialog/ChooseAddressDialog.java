@@ -122,7 +122,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
                     user_CRYPTOADDRESS = ((ChooseCryptoDialog)dialog).user_CRYPTOADDRESS;
 
-                    AddressHistory.addAddress(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
+                    AddressHistory.addAddressToHistory(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();
@@ -146,7 +146,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);
-                    AddressHistory.addAddress(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
+                    AddressHistory.addAddressToHistory(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();

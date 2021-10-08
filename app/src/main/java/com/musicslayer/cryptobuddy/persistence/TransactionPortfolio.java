@@ -63,21 +63,26 @@ public class TransactionPortfolio {
             TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
             settings_transaction_portfolio.add(transactionPortfolioObj);
         }
-
-        // Data might have changed if transactions removed cryptos that no longer exist.
-        saveAllData(context);
     }
 
     public static void addPortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
         settings_transaction_portfolio.add(transactionPortfolioObj);
-
         TransactionPortfolio.saveAllData(context);
     }
 
     public static void removePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
         settings_transaction_portfolio.remove(transactionPortfolioObj);
-
         TransactionPortfolio.saveAllData(context);
+    }
+
+    public static void updatePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
+        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        int idx = settings_transaction_portfolio.indexOf(transactionPortfolioObj);
+        editor.putString("transaction_portfolio" + idx, Serialization.serialize(transactionPortfolioObj));
+
+        editor.apply();
     }
 
     public static TransactionPortfolioObj getFromName(String name) {

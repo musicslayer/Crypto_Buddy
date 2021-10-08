@@ -72,7 +72,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parseFixed(tokenJSON);
 
-                    TokenManagerList.saveAllData(getContext());
+                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
 
                     updateLayout();
                 }
@@ -105,7 +105,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parse(tokenJSON);
 
-                    TokenManagerList.saveAllData(getContext());
+                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
 
                     updateLayout();
                 }
@@ -132,7 +132,7 @@ public class TokenManagerView extends CrashTableRow {
                         tokenManager.resetCustomTokens();
                     }
 
-                    TokenManagerList.saveAllData(context);
+                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
 
                     updateLayout();
                     ToastUtil.showToast(context,"tokens_deleted");

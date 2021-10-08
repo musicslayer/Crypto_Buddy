@@ -100,7 +100,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
-                TokenManagerList.saveAllData(MainActivity.this); // Save found tokens.
+
+                // Save found tokens, potentially from multiple TokenManagers.
+                TokenManagerList.saveAllData(MainActivity.this);
+
                 ProgressDialogFragment.setValue(MainActivity.this, Serialization.serialize(addressData));
             }
         });

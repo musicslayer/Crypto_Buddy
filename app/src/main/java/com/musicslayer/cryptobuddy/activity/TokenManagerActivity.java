@@ -146,8 +146,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                         tokenManagerView.tokenManager.resetDownloadedTokens();
                         tokenManagerView.tokenManager.parseFixed(tokenJSON);
-
-                        TokenManagerList.saveAllData(TokenManagerActivity.this);
+                        TokenManagerList.updateTokenManager(TokenManagerActivity.this, tokenManagerView.tokenManager);
 
                         tokenManagerView.updateLayout();
                     }
@@ -185,7 +184,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                     tokenManagerView.tokenManager.resetDownloadedTokens();
                     boolean isComplete = tokenManagerView.tokenManager.parse(tokenJSONArrayList.get(i));
-                    TokenManagerList.saveAllData(TokenManagerActivity.this);
+                    TokenManagerList.updateTokenManager(TokenManagerActivity.this, tokenManagerView.tokenManager);
 
                     tokenManagerView.updateLayout();
                     if(!isComplete) {

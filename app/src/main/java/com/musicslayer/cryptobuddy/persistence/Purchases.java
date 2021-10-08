@@ -34,7 +34,7 @@ public class Purchases {
                 isUnlockTokensPurchased = isPurchased;
                 editor.putBoolean("purchases_unlock_tokens", isPurchased);
 
-                // If we changed the purchase status, update TokenManagers and TokenList data right now.
+                // If we changed the purchase status, update TokenManagers right now.
                 if(hasChanged) {
                     TokenManager.initialize(context);
                     if(!isPurchased) {

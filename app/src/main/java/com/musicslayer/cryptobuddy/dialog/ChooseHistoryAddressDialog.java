@@ -36,7 +36,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             B.setText(a.toString());
             B.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                 public void onClickImpl(View v) {
-                    AddressHistory.addAddress(ChooseHistoryAddressDialog.this.activity, a);
+                    AddressHistory.addAddressToHistory(ChooseHistoryAddressDialog.this.activity, a);
                     user_CRYPTOADDRESS = a.cryptoAddress;
 
                     isComplete = true;

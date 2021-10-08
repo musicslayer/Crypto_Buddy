@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashException;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
+import com.musicslayer.cryptobuddy.util.ScreenshotUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
@@ -54,7 +55,28 @@ public class CrashReporterDialog extends BaseDialog {
                 fileArrayList.add(fileA);
                 fileArrayList.add(fileB);
 
-                MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Log", "Crash information is attached.\n\n<WRITE OTHER INFO HERE>", fileArrayList);
+                MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Info", "Crash information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        });
+
+        Button B_EMAILSCREENSHOT = findViewById(R.id.crash_reporter_dialog_emailScreenshotButton);
+        B_EMAILSCREENSHOT.setOnClickListener(v -> {
+            try {
+                // Attach three files. One has the Exception that caused the crash, one has the DataDump data, and one has a screenshot.
+                // Some of the Exception may be obfuscated by ProGuard.
+                File fileA = FileUtil.writeFile(activity, crashException.toString());
+                File fileB = FileUtil.writeFile(activity, DataDumpUtil.getAllData(activity));
+                File fileC = ScreenshotUtil.writeScreenshotFile(activity);
+
+                ArrayList<File> fileArrayList = new ArrayList<>();
+                fileArrayList.add(fileA);
+                fileArrayList.add(fileB);
+                fileArrayList.add(fileC);
+
+                MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Info", "Crash information and screenshot are attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

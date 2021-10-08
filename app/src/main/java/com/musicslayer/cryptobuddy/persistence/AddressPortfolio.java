@@ -63,21 +63,26 @@ public class AddressPortfolio {
             AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
             settings_address_portfolio.add(addressPortfolioObj);
         }
-
-        // Data might have changed if portfolios removed cryptos that no longer exist.
-        saveAllData(context);
     }
 
     public static void addPortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
         settings_address_portfolio.add(addressPortfolioObj);
-
         AddressPortfolio.saveAllData(context);
     }
 
     public static void removePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
         settings_address_portfolio.remove(addressPortfolioObj);
-
         AddressPortfolio.saveAllData(context);
+    }
+
+    public static void updatePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
+        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        int idx = settings_address_portfolio.indexOf(addressPortfolioObj);
+        editor.putString("address_portfolio" + idx, Serialization.serialize(addressPortfolioObj));
+
+        editor.apply();
     }
 
     public static AddressPortfolioObj getFromName(String name) {

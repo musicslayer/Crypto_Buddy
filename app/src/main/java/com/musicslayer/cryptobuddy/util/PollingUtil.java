@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.util;
 
-import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-
 import java.util.Date;
 
 public class PollingUtil {
