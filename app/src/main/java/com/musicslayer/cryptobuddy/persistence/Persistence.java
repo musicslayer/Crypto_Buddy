@@ -59,10 +59,12 @@ public class Persistence {
         return allDataMap;
     }
 
-    public static void resetAllData(Context context) {
+    public static boolean resetAllData(Context context) {
         // Resets all stored persistent data in the app. App should be just like a new install.
         // Individually, try to reset each piece of data.
         // Note that each "resetData" method should erase both active and stored data.
+        boolean isComplete = true;
+
         ArrayList<String> keys = new ArrayList<>(persistentClassMap.keySet());
         for(String key : keys) {
             try {
@@ -73,7 +75,10 @@ public class Persistence {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                isComplete = false;
             }
         }
+
+        return isComplete;
     }
 }

@@ -59,6 +59,7 @@ public class ToastUtil {
         toastMap.put("reset_found_tokens", Toast.makeText(context, "Found tokens have been deleted.", getToastDuration()));
         toastMap.put("reset_custom_tokens", Toast.makeText(context, "Custom tokens have been deleted.", getToastDuration()));
         toastMap.put("reset_everything", Toast.makeText(context, "All stored app data has been reset.", getToastDuration()));
+        toastMap.put("reset_everything_fail", Toast.makeText(context, "Could not reset all stored app data.", getToastDuration()));
 
         toastMap.put("no_tokens", Toast.makeText(context, "There are currently no tokens in the app's database.", getToastDuration()));
 

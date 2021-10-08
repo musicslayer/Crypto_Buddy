@@ -1,6 +1,8 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -93,11 +95,11 @@ public class CrashReporterDialog extends BaseDialog {
         TextView T_SHOW = findViewById(R.id.crash_reporter_dialog_showTextView);
         TextView T_RECOVER = findViewById(R.id.crash_reporter_dialog_recoverTextView);
         TextView T_CRASH = findViewById(R.id.crash_reporter_dialog_crashTextView);
-        TextView T_ERASE = findViewById(R.id.crash_reporter_dialog_eraseTextView);
+        TextView T_ERASE = findViewById(R.id.crash_reporter_dialog_resetTextView);
         Button B_SHOW = findViewById(R.id.crash_reporter_dialog_showButton);
         Button B_RECOVER = findViewById(R.id.crash_reporter_dialog_recoverButton);
         Button B_CRASH = findViewById(R.id.crash_reporter_dialog_crashButton);
-        Button B_ERASE = findViewById(R.id.crash_reporter_dialog_eraseButton);
+        Button B_RESET = findViewById(R.id.crash_reporter_dialog_resetButton);
 
         Button B_ADVANCED = findViewById(R.id.crash_reporter_dialog_advancedButton);
         B_ADVANCED.setOnClickListener(v -> {
@@ -109,7 +111,7 @@ public class CrashReporterDialog extends BaseDialog {
                 B_SHOW.setVisibility(View.VISIBLE);
                 B_RECOVER.setVisibility(View.VISIBLE);
                 B_CRASH.setVisibility(View.VISIBLE);
-                B_ERASE.setVisibility(View.VISIBLE);
+                B_RESET.setVisibility(View.VISIBLE);
 
                 // Don't offer any hide option. This is one and done!
                 B_ADVANCED.setVisibility(View.GONE);
@@ -145,13 +147,35 @@ public class CrashReporterDialog extends BaseDialog {
             crashException.throwOriginalException();
         });
 
-        B_ERASE.setOnClickListener(v -> {
+        AlertDialog resetAlertDialog = new AlertDialog.Builder(activity).create();
+        resetAlertDialog.setTitle("Confirmation");
+        resetAlertDialog.setCancelable(true);
+        resetAlertDialog.setMessage("Are you sure you want to reset ALL STORED APP DATA? This cannot be reversed.");
+        resetAlertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes", (dialog, which) -> {
             try {
-                Persistence.resetAllData(activity);
+                boolean isComplete = Persistence.resetAllData(activity);
 
-                // Manually show toast "reset_everything" because we do not know if the Toast database was correctly initialized.
+                // Manually show toast because we do not know if the Toast database was correctly initialized.
                 // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.
-                android.widget.Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show();
+                if(isComplete) {
+                    android.widget.Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything"
+                }
+                else {
+                    android.widget.Toast.makeText(activity, "Could not reset all stored app data.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything_fail"
+                }
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        });
+        // No-op, but we need this so the button appears.
+        resetAlertDialog.setButton(Dialog.BUTTON_NEUTRAL, "No", (dialog, which) -> {});
+
+        B_RESET.setOnClickListener(v -> {
+            try {
+                resetAlertDialog.show();
+                resetAlertDialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+                resetAlertDialog.getButton(Dialog.BUTTON_NEUTRAL).setTextColor(Color.RED);
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
@@ -174,6 +198,6 @@ public class CrashReporterDialog extends BaseDialog {
         B_SHOW.setVisibility(View.GONE);
         B_RECOVER.setVisibility(View.GONE);
         B_CRASH.setVisibility(View.GONE);
-        B_ERASE.setVisibility(View.GONE);
+        B_RESET.setVisibility(View.GONE);
     }
 }

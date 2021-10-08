@@ -35,8 +35,13 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
-                    Persistence.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_everything");
+                    boolean isComplete = Persistence.resetAllData(context);
+                    if(isComplete) {
+                        ToastUtil.showToast(context,"reset_everything");
+                    }
+                    else {
+                        ToastUtil.showToast(context,"reset_everything_fail");
+                    }
                 }
             }
         });
