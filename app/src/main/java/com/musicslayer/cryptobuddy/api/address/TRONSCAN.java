@@ -84,7 +84,7 @@ public class TRONSCAN extends AddressAPI {
                     crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
                 }
                 else {
-                    // TODO Other types (NFTs).
+                    // Other types (NFTs)?
                     continue;
                 }
 
@@ -144,7 +144,7 @@ public class TRONSCAN extends AddressAPI {
                         cost = o2.getJSONObject("cost");
                     }
                     else {
-                        // TODO indicate unknown fee?
+                        // Indicate unknown fee?
                     }
                 }
 
@@ -205,31 +205,41 @@ public class TRONSCAN extends AddressAPI {
                     String tokenType = o.getString("tokenType");
                     String id = tokenInfo.getString("tokenId");
 
+                    BigDecimal amount = new BigDecimal(o.getString("amount")).movePointLeft(scale);
+
+                    if(amount.compareTo(BigDecimal.ZERO) <= 0) {
+                        continue;
+                    }
+
                     Crypto crypto;
                     if("_".equals(id)) {
                         crypto = cryptoAddress.getCrypto();
+
+                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                     }
                     else if("trc10".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
                         crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+
+                        if(shouldIncludeTokens(cryptoAddress)) {
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        }
                     }
                     else if("trc20".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
-
                         crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+
+                        if(shouldIncludeTokens(cryptoAddress)) {
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        }
                     }
                     else {
                         // Don't deal with NFTs yet...
-                        continue;
-                    }
-
-                    BigDecimal amount = new BigDecimal(o.getString("amount")).movePointLeft(scale);
-
-                    if(amount.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                     }
                 }
             }
@@ -252,7 +262,7 @@ public class TRONSCAN extends AddressAPI {
                         cost = o2.getJSONObject("cost");
                     }
                     else {
-                        // TODO indicate unknown fee?
+                        // Indicate unknown fee?
                     }
                 }
 
@@ -313,31 +323,41 @@ public class TRONSCAN extends AddressAPI {
                     String tokenType = o.getString("tokenType");
                     String id = tokenInfo.getString("tokenId");
 
+                    BigDecimal amount = new BigDecimal(o.getString("amount")).movePointLeft(scale);
+
+                    if(amount.compareTo(BigDecimal.ZERO) <= 0) {
+                        continue;
+                    }
+
                     Crypto crypto;
                     if("_".equals(id)) {
                         crypto = cryptoAddress.getCrypto();
+
+                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                     }
                     else if("trc10".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
                         crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+
+                        if(shouldIncludeTokens(cryptoAddress)) {
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        }
                     }
                     else if("trc20".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
-
                         crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+
+                        if(shouldIncludeTokens(cryptoAddress)) {
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        }
                     }
                     else {
                         // Don't deal with NFTs yet...
-                        continue;
-                    }
-
-                    BigDecimal amount = new BigDecimal(o.getString("amount")).movePointLeft(scale);
-
-                    if(amount.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                     }
                 }
                 else {

@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 // TODO Unconfirmed transactions should only appear if they actually affect balance???
 // TODO Which network addresses are case sensitive/insensitive?
+// TODO NFT View -> We have to support more token types.
 
 abstract public class AddressAPI extends API {
     public static ArrayList<AddressAPI> address_apis;
