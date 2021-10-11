@@ -1,8 +1,6 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;

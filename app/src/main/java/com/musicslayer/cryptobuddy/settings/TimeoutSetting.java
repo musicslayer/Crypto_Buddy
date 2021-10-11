@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class TimeoutSetting extends Setting {
+    public static Long value;
+    public void updateValue() { value = (Long)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "TimeoutSetting"; }
     public String getName() { return "TimeoutSetting"; }
     public String getDisplayName() { return "Timeout"; }
@@ -26,10 +29,10 @@ public class TimeoutSetting extends Setting {
 
     @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        ArrayList<Integer> optionValues = new ArrayList<>();
-        optionValues.add(10000);
-        optionValues.add(30000);
-        optionValues.add(60000);
+        ArrayList<Long> optionValues = new ArrayList<>();
+        optionValues.add(10000L);
+        optionValues.add(30000L);
+        optionValues.add(60000L);
         return (ArrayList<T>)optionValues;
     }
 }

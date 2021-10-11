@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class MaxNumberTransactionsSetting extends Setting {
+    public static Integer value;
+    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "MaxNumberTransactionsSetting"; }
     public String getName() { return "MaxNumberTransactionsSetting"; }
     public String getDisplayName() { return "Max Number of Transactions"; }

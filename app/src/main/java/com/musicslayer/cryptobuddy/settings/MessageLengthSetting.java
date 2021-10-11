@@ -5,6 +5,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MessageLengthSetting extends Setting {
+    public static Integer value;
+    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "MessageLengthSetting"; }
     public String getName() { return "MessageLengthSetting"; }
     public String getDisplayName() { return "Message Length"; }

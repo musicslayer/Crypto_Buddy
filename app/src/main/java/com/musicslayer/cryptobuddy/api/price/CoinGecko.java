@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 
-// TODO -> CoinGecko doesn't give prices for:
+// CoinGecko doesn't give prices for these tokens:
 // ADA
 // ALGO
 // ATOM

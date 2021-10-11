@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 import java.util.ArrayList;
 
 public class DarkModeSetting extends Setting {
+    public static Integer value;
+    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "DarkModeSetting"; }
     public String getName() { return "DarkModeSetting"; }
     public String getDisplayName() { return "Dark Mode"; }

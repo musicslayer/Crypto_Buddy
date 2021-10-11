@@ -1,6 +1,8 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.DatetimeLocaleSetting;
+import com.musicslayer.cryptobuddy.settings.LossValuesSetting;
+import com.musicslayer.cryptobuddy.settings.NumericLocaleSetting;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -50,7 +52,7 @@ public class LocaleManager {
         // Format a negative number (String of a BigDecimal) based on the locale.
         // (The input String is always a positive number.)
         // Note that the user may wish to override how negative numbers are displayed, so we may not match the Locale.
-        if(!"match_locale".equals(Setting.getSettingValueFromKey("LossValuesSetting")) && !"red_match_locale".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
+        if(!"match_locale".equals(LossValuesSetting.value) && !"red_match_locale".equals(LossValuesSetting.value)) {
             return formatNegativeNumberOverride(s);
         }
 
@@ -139,11 +141,11 @@ public class LocaleManager {
         // Format the input based on the setting for loss values.
         // Note that color is applied in "AssetTextView".
         // The symbols used here are not based on any Locale.
-        if("negative".equals(Setting.getSettingValueFromKey("LossValuesSetting")) || "red_negative".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
+        if("negative".equals(LossValuesSetting.value) || "red_negative".equals(LossValuesSetting.value)) {
             s = "-" + s;
         }
 
-        if("parentheses".equals(Setting.getSettingValueFromKey("LossValuesSetting")) || "red_parentheses".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
+        if("parentheses".equals(LossValuesSetting.value) || "red_parentheses".equals(LossValuesSetting.value)) {
             s = "(" + s + ")";
         }
 
@@ -152,7 +154,7 @@ public class LocaleManager {
 
     public static Locale getSettingLocaleNumeric() {
         // Null means do not use any formatting.
-        Locale L = Setting.getSettingValueFromKey("NumericLocaleSetting");
+        Locale L = NumericLocaleSetting.value;
         if(MATCH_SYSTEM.equals(L)) {
             // Use the system default.
             L = Locale.getDefault();
@@ -163,7 +165,7 @@ public class LocaleManager {
 
     public static Locale getSettingLocaleDatetime() {
         // Null means do not use any formatting.
-        Locale L = Setting.getSettingValueFromKey("DatetimeLocaleSetting");
+        Locale L = DatetimeLocaleSetting.value;
         if(MATCH_SYSTEM.equals(L)) {
             // Use the system default.
             L = Locale.getDefault();

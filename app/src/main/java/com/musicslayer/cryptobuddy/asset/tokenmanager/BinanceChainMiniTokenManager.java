@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 // mainnet: https://dex.binance.org/api/v1/mini/tokens
-// TODO testnet: https://testnet-dex.binance.org/api/v1/mini/tokens
+// testnet: https://testnet-dex.binance.org/api/v1/mini/tokens (We don't support testnet tokens currently)
 
 // BEP8
 public class BinanceChainMiniTokenManager extends TokenManager {

@@ -6,6 +6,9 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 
 public class DatetimeFormatSetting extends Setting {
+    public static FormatStyle value;
+    public void updateValue() { value = (FormatStyle)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "DatetimeFormatSetting"; }
     public String getName() { return "DatetimeFormatSetting"; }
     public String getDisplayName() { return "Datetime Format"; }

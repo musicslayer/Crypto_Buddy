@@ -26,7 +26,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         options_fiat_sorted = Fiat.fiats;
         options_coin_sorted = Coin.coins;
 
-        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
+        if("full".equals(AssetDisplaySetting.value)) {
             options_fiat_text_sorted = Fiat.fiat_display_names;
             options_coin_text_sorted = Coin.coin_display_names;
 
@@ -252,7 +252,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         // Initialize the sorted lists for this kind of token.
         options_token_sorted = tokenManager.getTokens();
 
-        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
+        if("full".equals(AssetDisplaySetting.value)) {
             options_token_text_sorted = tokenManager.getTokenDisplayNames();
 
             Collections.sort(options_token_text_sorted, getComparatorString());
@@ -276,7 +276,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public void setOptionsSearch(Asset asset) {
-        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
+        if("full".equals(AssetDisplaySetting.value)) {
             bsv.setOptions(asset.getDisplayName());
         }
         else {

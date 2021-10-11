@@ -4,8 +4,6 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.util.DecodeUtil;
 
-// TODO ADA addresses can be in BECH32 or in original format.
-
 public class ADA_Mainnet_Shelley extends Network {
     public boolean isMainnet() {
         return true;

@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 // mainnet: https://dex.binance.org/api/v1/tokens
-// TODO testnet: https://testnet-dex.binance.org/api/v1/tokens
+// testnet: https://testnet-dex.binance.org/api/v1/tokens (We don't support testnet tokens currently)
 
 public class BinanceChainTokenManager extends TokenManager {
     public String getKey() { return "BinanceChainTokenManager"; }

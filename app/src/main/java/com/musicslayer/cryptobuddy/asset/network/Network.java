@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO For now, SegWit is always bc1/ltc1, but in the future the number could change. There are also different kinds of SegWit.
+// For now, SegWit is always bc1/ltc1, but in the future the number could change. There are also different kinds of SegWit.
 
 abstract public class Network implements Serialization.SerializableToJSON {
     abstract public boolean isMainnet();

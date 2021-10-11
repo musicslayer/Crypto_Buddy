@@ -5,6 +5,9 @@ import android.content.pm.ActivityInfo;
 import java.util.ArrayList;
 
 public class OrientationSetting extends Setting {
+    public static Integer value;
+    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "OrientationSetting"; }
     public String getName() { return "OrientationSetting"; }
     public String getDisplayName() { return "Orientation"; }

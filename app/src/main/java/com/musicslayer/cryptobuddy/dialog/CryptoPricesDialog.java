@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
@@ -57,7 +57,7 @@ public class CryptoPricesDialog extends BaseDialog {
                     AssetQuantity marketCapAssetQuantity = priceData.marketCap;
 
                     String text = "Forward Price = " + assetPrice.toString();
-                    if("ForwardBackward".equals(Setting.getSettingValueFromKey("PriceDisplaySetting"))) {
+                    if("ForwardBackward".equals(PriceDisplaySetting.value)) {
                         text = text + "\nBackward Price = " + assetPrice.reverseAssetPrice().toString();
                     }
                     text = text + "\nMarket Cap = " + marketCapAssetQuantity.toString() + "\nData Source = CoinGecko API V3";

@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.util;
 
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.TimeoutSetting;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -131,7 +131,7 @@ public class RESTUtil {
 
         thread.start();
         try {
-            thread.join(Setting.getSettingValueFromKey("TimeoutSetting"));
+            thread.join(TimeoutSetting.value);
         }
         catch(InterruptedException e) {
             data[0] = null;

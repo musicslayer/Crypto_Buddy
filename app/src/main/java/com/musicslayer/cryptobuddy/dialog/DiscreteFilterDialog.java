@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -77,21 +76,9 @@ public class DiscreteFilterDialog extends BaseDialog {
             for(int i = 0; i < filter.choices.size(); i++) {
                 C[i] = new CheckBox(this.activity);
                 C[i].setChecked(filter.isIncluded(filter.choices.get(i)));
+                C[i].setText(filter.choices.get(i));
+                L.addView(C[i]);
             }
-        }
-
-        for(int i = 0; i < filter.choices.size(); i++) {
-            LinearLayout L_ROW = new LinearLayout(this.activity);
-            L_ROW.setOrientation(LinearLayout.HORIZONTAL);
-            L_ROW.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            TextView T = new TextView(this.activity);
-            T.setText(filter.choices.get(i));
-
-            L_ROW.addView(C[i]);
-            L_ROW.addView(T);
-
-            L.addView(L_ROW);
         }
     }
 
@@ -111,6 +98,7 @@ public class DiscreteFilterDialog extends BaseDialog {
             for(int i = 0; i < filter.choices.size(); i++) {
                 C[i] = new CheckBox(this.activity);
                 C[i].setChecked(bundle.getBoolean("checkbox" + i));
+                C[i].setText(filter.choices.get(i));
             }
         }
     }

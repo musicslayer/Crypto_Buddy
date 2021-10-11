@@ -4,7 +4,8 @@ import android.app.Activity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.DarkModeSetting;
+import com.musicslayer.cryptobuddy.settings.OrientationSetting;
 
 public class AppearanceUtil {
     // Needs activity, not Context
@@ -14,15 +15,15 @@ public class AppearanceUtil {
     }
 
     public static void setTheme() {
-        if(!Setting.getSettingValueFromKey("DarkModeSetting").equals(AppCompatDelegate.getDefaultNightMode())) {
-            AppCompatDelegate.setDefaultNightMode(Setting.getSettingValueFromKey("DarkModeSetting"));
+        if(!DarkModeSetting.value.equals(AppCompatDelegate.getDefaultNightMode())) {
+            AppCompatDelegate.setDefaultNightMode(DarkModeSetting.value);
         }
     }
 
     // Needs activity, not Context
     public static void setOrientation(Activity activity) {
-        if(!Setting.getSettingValueFromKey("OrientationSetting").equals(activity.getResources().getConfiguration().orientation)) {
-            activity.setRequestedOrientation(Setting.getSettingValueFromKey("OrientationSetting"));
+        if(!OrientationSetting.value.equals(activity.getResources().getConfiguration().orientation)) {
+            activity.setRequestedOrientation(OrientationSetting.value);
         }
     }
 }

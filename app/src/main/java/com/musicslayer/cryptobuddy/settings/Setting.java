@@ -32,11 +32,13 @@ abstract public class Setting implements Serialization.SerializableToJSON {
     abstract public ArrayList<String> getOptionNames();
     abstract public ArrayList<String> getOptionDisplays();
     abstract public <T> ArrayList<T> getOptionValues();
+    abstract public void updateValue();
 
     // Usually this is not the case, but when some settings are changed we must recreate the Activity.
     public void setSetting(int chosenOptionPosition) {
         this.chosenOptionPosition = chosenOptionPosition;
         this.chosenOptionName = getOptionNames().get(chosenOptionPosition);
+        updateValue();
     }
 
     public boolean needsRefresh() { return false; }
@@ -63,14 +65,21 @@ abstract public class Setting implements Serialization.SerializableToJSON {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings." + settingName);
 
             Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
-            if(copySetting != null) {
-                int idx = setting.getOptionNames().indexOf(copySetting.chosenOptionName);
+            int idx;
+            if(copySetting == null) {
+                // If this is a new setting, just set it to the first value.
+                idx = 0;
+            }
+            else {
+                idx = setting.getOptionNames().indexOf(copySetting.chosenOptionName);
                 if(idx == -1) {
                     // If saved option choice no longer exists, just default to first one.
                     idx = 0;
                 }
                 setting.setSetting(idx);
             }
+
+            setting.setSetting(idx);
 
             settings.add(setting);
             settings_map.put(settingName, setting);
@@ -86,17 +95,6 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         }
 
         return setting;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T getSettingValueFromKey(String key) {
-        Setting setting = settings_map.get(key);
-        if(setting == null) {
-            // There is no fallback here because we don't know what T should be. We must error.
-            throw new IllegalStateException();
-        }
-
-        return (T)setting.getOptionValues().get(setting.chosenOptionPosition);
     }
 
     public String serializationVersion() { return "1"; }

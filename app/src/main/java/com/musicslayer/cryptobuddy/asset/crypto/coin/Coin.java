@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -36,7 +36,7 @@ abstract public class Coin extends Crypto {
     }
 
     public static ArrayList<String> getAllCoinSettingNames() {
-        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
+        if("full".equals(AssetDisplaySetting.value)) {
             return coin_display_names;
         }
         else {

@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class NumberDecimalPlacesSetting extends Setting {
+    public static String value;
+    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "NumberDecimalPlacesSetting"; }
     public String getName() { return "NumberDecimalPlacesSetting"; }
     public String getDisplayName() { return "Number of Decimal Places"; }

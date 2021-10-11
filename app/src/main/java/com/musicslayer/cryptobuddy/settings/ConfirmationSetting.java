@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class ConfirmationSetting extends Setting {
+    public static Boolean value;
+    public void updateValue() { value = (Boolean)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "ConfirmationSetting"; }
     public String getName() { return "ConfirmationSetting"; }
     public String getDisplayName() { return "Confirmation"; }

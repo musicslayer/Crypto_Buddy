@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.TimeZoneSetting;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,7 +12,7 @@ public class TimeZoneManager {
     public static Instant nowInstant;
 
     public static ZoneId getSettingTimeZone() {
-        ZoneId Z = Setting.getSettingValueFromKey("TimeZoneSetting");
+        ZoneId Z = TimeZoneSetting.value;
         if(Z == null) {
             // Use the system default.
             Z = ZoneId.systemDefault();

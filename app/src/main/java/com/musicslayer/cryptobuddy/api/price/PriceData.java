@@ -2,12 +2,7 @@ package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-
-import java.util.Date;
-
-// TODO priceData from API should tell us the date that the data is from.
 
 public class PriceData implements Serialization.SerializableToJSON {
     public Crypto crypto;
@@ -15,7 +10,6 @@ public class PriceData implements Serialization.SerializableToJSON {
     public PriceAPI priceAPI_marketCap;
     public AssetQuantity price;
     public AssetQuantity marketCap;
-    //public String timestamp;
 
     public String serializationVersion() { return "1"; }
 
@@ -36,16 +30,15 @@ public class PriceData implements Serialization.SerializableToJSON {
         PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObjectString("priceAPI_marketCap"), PriceAPI.class);
         AssetQuantity price = Serialization.deserialize(o.getJSONObjectString("price"), AssetQuantity.class);
         AssetQuantity marketCap = Serialization.deserialize(o.getJSONObjectString("marketCap"), AssetQuantity.class);
-        return new PriceData(crypto, priceAPI_price, priceAPI_marketCap, price, marketCap, DateTimeUtil.toDateString(new Date()));
+        return new PriceData(crypto, priceAPI_price, priceAPI_marketCap, price, marketCap);
     }
 
-    public PriceData(Crypto crypto, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, AssetQuantity price, AssetQuantity marketCap, String timestamp) {
+    public PriceData(Crypto crypto, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, AssetQuantity price, AssetQuantity marketCap) {
         this.crypto = crypto;
         this.priceAPI_price = priceAPI_price;
         this.priceAPI_marketCap = priceAPI_marketCap;
         this.price = price;
         this.marketCap = marketCap;
-        //this.timestamp = timestamp;
     }
 
     public static PriceData getPriceData(Crypto crypto) {
@@ -80,7 +73,7 @@ public class PriceData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f, DateTimeUtil.toDateString(new Date()));
+        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
     public boolean isComplete() {

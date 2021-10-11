@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class LossValuesSetting extends Setting {
+    public static String value;
+    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "LossValuesSetting"; }
     public String getName() { return "LossValuesSetting"; }
     public String getDisplayName() { return "Loss Values"; }

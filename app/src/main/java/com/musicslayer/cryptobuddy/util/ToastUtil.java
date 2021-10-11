@@ -7,7 +7,7 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.MessageLengthSetting;
 
 import java.util.HashMap;
 
@@ -93,7 +93,7 @@ public class ToastUtil {
 
     private static int getToastDuration() {
         // Do this to avoid a Lint warning
-        if(Setting.getSettingValueFromKey("MessageLengthSetting").equals(Toast.LENGTH_SHORT)) {
+        if(MessageLengthSetting.value.equals(Toast.LENGTH_SHORT)) {
             return Toast.LENGTH_SHORT;
         }
         else {

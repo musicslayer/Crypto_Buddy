@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class PriceDisplaySetting extends Setting {
+    public static String value;
+    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
+
     public String getKey() { return "PriceDisplaySetting"; }
     public String getName() { return "PriceDisplaySetting"; }
     public String getDisplayName() { return "Price Display"; }

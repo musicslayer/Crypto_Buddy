@@ -3,6 +3,9 @@ package com.musicslayer.cryptobuddy.settings;
 import java.util.ArrayList;
 
 public class UnknownSetting extends Setting {
+    public static String value;
+    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
+
     String key;
     String settingsKey;
 
