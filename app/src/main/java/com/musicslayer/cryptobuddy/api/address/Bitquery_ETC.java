@@ -20,8 +20,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-// TODO Tokens
-
 public class Bitquery_ETC extends AddressAPI {
     final String APIKEYNAME = "X-API-KEY";
     final String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";

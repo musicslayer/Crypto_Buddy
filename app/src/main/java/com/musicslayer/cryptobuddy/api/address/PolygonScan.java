@@ -17,6 +17,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO Include Proof of Stake Bridge.
+// TODO Bridge could also carry tokens.
+
 public class PolygonScan extends AddressAPI {
     public final String APIKEY_polygonscan = "P1JCB9EWXNTQGAN4ZSC5Z3CF8444DC3BMH";
 
@@ -240,7 +243,6 @@ public class PolygonScan extends AddressAPI {
                 if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
             }
 
-            // TODO Include other bridges, like MATIC Tokens.
             // Plasma
             if(cryptoAddress.network.isMainnet()) {
                 JSONObject jsonPlasma = new JSONObject(addressDataPlasmaJSON);

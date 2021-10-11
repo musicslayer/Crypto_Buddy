@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 // Use Etherscan for transactions, but use Ethplorer for balance information so we can see token balances.
-// TODO Between the two APIs, display names of tokens are mismatched.
+// Unfortunately, between the two APIs, display names of tokens are mismatched.
 
 public class Etherscan extends AddressAPI {
     public final String APIKEY_etherscan = "ZHZ4Y7XKI9JD6XT8HV9HDZJMA8RHY7Y6DP";
