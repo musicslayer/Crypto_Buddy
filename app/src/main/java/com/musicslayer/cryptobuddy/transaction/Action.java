@@ -6,8 +6,6 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-// TODO Actions for delegate, redelegate, undelegate? Burn?
-
 public class Action implements Serialization.SerializableToJSON {
     final public static ArrayList<String> actions;
     static {

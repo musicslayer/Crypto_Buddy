@@ -19,7 +19,7 @@ public class Persistence {
         persistentClassMap.put("PrivacyPolicy", PrivacyPolicy.class);
         persistentClassMap.put("Purchases", Purchases.class);
         persistentClassMap.put("Review", Review.class);
-        persistentClassMap.put("Settings", Settings.class);
+        persistentClassMap.put("SettingList", SettingList.class);
         persistentClassMap.put("TokenList", TokenManagerList.class);
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }

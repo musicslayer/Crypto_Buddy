@@ -3,8 +3,8 @@ package com.musicslayer.cryptobuddy.view;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.crash.CrashTextView;
+import com.musicslayer.cryptobuddy.settings.Setting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.persistence.Settings;
 
 public class AssetTextView extends CrashTextView {
     Boolean isLoss;
@@ -32,7 +32,8 @@ public class AssetTextView extends CrashTextView {
             text = assetQuantity.toString();
 
             // Number is already formatted by Locale. Just apply the color red here if we need it.
-            if(isLoss && ("red".equals(Settings.setting_loss) || "red_match_locale".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss) || "red_parentheses".equals(Settings.setting_loss))) {
+            String lossSetting = Setting.getSettingValueFromKey("LossValuesSetting");
+            if(isLoss && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
                 this.setTextColor(0xFFFF0000);
             }
         }

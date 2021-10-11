@@ -37,7 +37,6 @@ public class TokenManagerList {
         SharedPreferences.Editor editor = settings.edit();
 
         editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager));
-
         editor.apply();
     }
 

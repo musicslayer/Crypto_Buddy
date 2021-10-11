@@ -14,8 +14,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -69,7 +69,7 @@ public class ConfirmationView extends CrashLinearLayout {
     }
 
     public void makeLayout() {
-        if(Settings.setting_confirm) {
+        if(Setting.getSettingValueFromKey("ConfirmationSetting")) {
             this.makeLayoutConfirmation();
         }
         else {

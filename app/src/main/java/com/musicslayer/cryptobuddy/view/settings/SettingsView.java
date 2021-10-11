@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.view.setting;
+package com.musicslayer.cryptobuddy.view.settings;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -9,33 +9,18 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
-import com.musicslayer.cryptobuddy.persistence.Settings;
-import com.musicslayer.cryptobuddy.i18n.LocaleManager;
+import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-
-public class NumericLocaleSettingsView extends CrashLinearLayout {
-    public NumericLocaleSettingsView(Context context) {
+public class SettingsView extends CrashLinearLayout {
+    public SettingsView(Context context) {
         super(context);
     }
 
-    public NumericLocaleSettingsView(Context context, String settingName, String settingDisplayName, String[] settingOptions, String[] settingDescriptions) {
+    public SettingsView(Context context, Setting setting) {
         super(context);
-
-        // Two options will be passed in, but we must dynamically add the rest.
-        ArrayList<String> settingOptionsArrayList = new ArrayList<>();
-        Collections.addAll(settingOptionsArrayList, settingOptions);
-
-        ArrayList<String> settingDescriptionsArrayList = new ArrayList<>();
-        Collections.addAll(settingDescriptionsArrayList, settingDescriptions);
-
-        for(Locale locale : LocaleManager.getAvailableLocalesNumeric()) {
-            settingOptionsArrayList.add(locale.toString());
-            settingDescriptionsArrayList.add("Use " + locale.toString() + " numeric locale.");
-        }
 
         this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         this.setOrientation(LinearLayout.VERTICAL);
@@ -47,26 +32,32 @@ public class NumericLocaleSettingsView extends CrashLinearLayout {
 
         final TextView T=new TextView(context);
         T.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        T.setText(settingDisplayName + ":");
+        T.setText(setting.getDisplayName() + ":");
 
         BorderedSpinnerView bsv = new BorderedSpinnerView(context);
-        bsv.setOptions(settingOptionsArrayList);
+        bsv.setOptions(setting.getModifiedOptionNames());
         bsv.setMargins(10, 0, 10, 0);
 
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        prefText.setText(settingDescriptionsArrayList.get(Settings.getSettingValue(settingName)));
-
+        prefText.setText(setting.getOptionDisplays().get(setting.chosenOptionPosition));
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                prefText.setText(settingDescriptionsArrayList.get(pos));
-                Settings.setSetting(context, settingName, pos);
+                int oldSetting = setting.chosenOptionPosition;
+
+                setting.setSetting(pos);
+                prefText.setText(setting.getOptionDisplays().get(pos));
+                SettingList.saveSetting(context, setting);
+
+                if(oldSetting != pos && setting.needsRefresh()) {
+                    ContextUtil.getActivity(context).recreate();
+                }
             }
         });
 
-        bsv.spinner.setSelection(Settings.getSettingValue(settingName));
+        bsv.spinner.setSelection(setting.chosenOptionPosition);
 
         prefText.setPadding(0,0,0, 50);
 

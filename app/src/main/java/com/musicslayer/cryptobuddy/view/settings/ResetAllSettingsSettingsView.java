@@ -1,6 +1,5 @@
-package com.musicslayer.cryptobuddy.view.setting;
+package com.musicslayer.cryptobuddy.view.settings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
@@ -15,7 +14,8 @@ import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class ResetAllSettingsSettingsView extends CrashLinearLayout {
@@ -37,8 +37,8 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
-                    Settings.resetAllData(context);
-                    ((Activity)context).recreate();
+                    SettingList.resetAllData(context);
+                    ContextUtil.getActivity(context).recreate();
                     ToastUtil.showToast(context,"reset_settings");
                 }
             }

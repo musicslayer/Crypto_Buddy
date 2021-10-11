@@ -5,7 +5,7 @@ import android.content.Context;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.settings.Setting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -57,6 +57,6 @@ abstract public class AddressAPI extends API {
     }
 
     public static int getMaxTransactions() {
-        return Settings.setting_max_transactions;
+        return Setting.getSettingValueFromKey("MaxNumberTransactionsSetting");
     }
 }

@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.settings.Setting;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.view.AssetTextView;
 
 public class TransactionTable extends Table {
@@ -15,7 +15,7 @@ public class TransactionTable extends Table {
     }
 
     public static boolean shouldAddBackwardsPrice() {
-        return "ForwardBackward".equals(Settings.setting_price);
+        return "ForwardBackward".equals(Setting.getSettingValueFromKey("PriceDisplaySetting"));
     }
 
     public TransactionTable(Context context) {

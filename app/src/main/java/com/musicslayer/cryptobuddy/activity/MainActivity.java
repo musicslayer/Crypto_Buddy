@@ -120,6 +120,7 @@ public class MainActivity extends BaseActivity {
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
+                // Note that serialization does shrink this somewhat.
                 intent.putExtra("AddressData", Serialization.serialize(addressData));
                 MainActivity.this.startActivity(intent);
 

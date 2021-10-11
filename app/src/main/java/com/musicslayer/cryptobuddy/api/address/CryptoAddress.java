@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.network.Network;
-import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
 
     public static ArrayList<CryptoAddress> getAllValidCryptoAddress(String address, boolean includeTokens) {
         ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
-        boolean rejectTestnet = "Mainnet".equals(Settings.setting_network);
+        boolean rejectTestnet = "Mainnet".equals(Setting.getSettingValueFromKey("NetworksSetting"));
 
         // Find all valid cryptos.
         for(Network n : Network.networks) {

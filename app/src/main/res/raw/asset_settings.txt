@@ -1,0 +1,15 @@
+AssetDisplaySetting
+ConfirmationSetting
+DarkModeSetting
+DatetimeFormatSetting
+DatetimeLocaleSetting
+LossValuesSetting
+MaxNumberTransactionsSetting
+MessageLengthSetting
+NetworksSetting
+NumberDecimalPlacesSetting
+NumericLocaleSetting
+OrientationSetting
+PriceDisplaySetting
+TimeoutSetting
+TimeZoneSetting

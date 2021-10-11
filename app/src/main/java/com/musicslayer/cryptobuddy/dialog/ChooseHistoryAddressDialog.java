@@ -13,8 +13,6 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 
-// TODO Maybe clicking a choice here shouldn't proceed. Your choice here could merely be filled in, so that the user can edit it if they wish ??
-
 public class ChooseHistoryAddressDialog extends BaseDialog {
     public CryptoAddress user_CRYPTOADDRESS;
 

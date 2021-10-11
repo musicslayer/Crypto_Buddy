@@ -13,8 +13,6 @@ import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.crash.CrashDialog;
 import com.musicslayer.cryptobuddy.util.WindowUtil;
 
-// TODO Many common dialogs can be merged.
-
 abstract public class BaseDialog extends CrashDialog {
     public BaseActivity activity;
 

@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -50,7 +50,7 @@ public class LocaleManager {
         // Format a negative number (String of a BigDecimal) based on the locale.
         // (The input String is always a positive number.)
         // Note that the user may wish to override how negative numbers are displayed, so we may not match the Locale.
-        if(!"match_locale".equals(Settings.setting_loss) && !"red_match_locale".equals(Settings.setting_loss)) {
+        if(!"match_locale".equals(Setting.getSettingValueFromKey("LossValuesSetting")) && !"red_match_locale".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
             return formatNegativeNumberOverride(s);
         }
 
@@ -139,11 +139,11 @@ public class LocaleManager {
         // Format the input based on the setting for loss values.
         // Note that color is applied in "AssetTextView".
         // The symbols used here are not based on any Locale.
-        if("negative".equals(Settings.setting_loss) || "red_negative".equals(Settings.setting_loss)) {
+        if("negative".equals(Setting.getSettingValueFromKey("LossValuesSetting")) || "red_negative".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
             s = "-" + s;
         }
 
-        if("parentheses".equals(Settings.setting_loss) || "red_parentheses".equals(Settings.setting_loss)) {
+        if("parentheses".equals(Setting.getSettingValueFromKey("LossValuesSetting")) || "red_parentheses".equals(Setting.getSettingValueFromKey("LossValuesSetting"))) {
             s = "(" + s + ")";
         }
 
@@ -152,7 +152,7 @@ public class LocaleManager {
 
     public static Locale getSettingLocaleNumeric() {
         // Null means do not use any formatting.
-        Locale L = Settings.setting_locale_numeric;
+        Locale L = Setting.getSettingValueFromKey("NumericLocaleSetting");
         if(MATCH_SYSTEM.equals(L)) {
             // Use the system default.
             L = Locale.getDefault();
@@ -163,7 +163,7 @@ public class LocaleManager {
 
     public static Locale getSettingLocaleDatetime() {
         // Null means do not use any formatting.
-        Locale L = Settings.setting_locale_datetime;
+        Locale L = Setting.getSettingValueFromKey("DatetimeLocaleSetting");
         if(MATCH_SYSTEM.equals(L)) {
             // Use the system default.
             L = Locale.getDefault();

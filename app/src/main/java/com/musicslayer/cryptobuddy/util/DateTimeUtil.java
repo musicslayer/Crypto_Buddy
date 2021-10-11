@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.util;
 
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +29,7 @@ public class DateTimeUtil {
     }
 
     public static String toDateString(java.util.Date date) {
-        return toDateString(date, Settings.setting_datetime);
+        return toDateString(date, Setting.getSettingValueFromKey("DatetimeFormatSetting"));
     }
 
     public static String toDateString(FormatStyle style) {

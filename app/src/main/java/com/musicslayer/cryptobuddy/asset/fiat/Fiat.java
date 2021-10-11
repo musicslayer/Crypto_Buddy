@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.settings.Setting;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -36,7 +36,7 @@ abstract public class Fiat extends Asset {
     }
 
     public static ArrayList<String> getAllFiatSettingNames() {
-        if("full".equals(Settings.setting_asset)) {
+        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
             return fiat_display_names;
         }
         else {

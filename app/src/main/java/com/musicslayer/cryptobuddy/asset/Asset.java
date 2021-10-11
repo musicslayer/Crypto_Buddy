@@ -4,8 +4,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ abstract public class Asset implements Serialization.SerializableToJSON {
     }
 
     public String getSettingName() {
-        if("full".equals(Settings.setting_asset)) {
+        if("full".equals(Setting.getSettingValueFromKey("AssetDisplaySetting"))) {
             return getDisplayName();
         }
         else {

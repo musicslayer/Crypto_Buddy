@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.view.setting;
+package com.musicslayer.cryptobuddy.view.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;

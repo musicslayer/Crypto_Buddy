@@ -1,16 +1,18 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.persistence.Settings;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 public class TimeZoneManager {
+    // Set this date when the app starts in app initialization.
+    public static Instant nowInstant;
+
     public static ZoneId getSettingTimeZone() {
-        ZoneId Z = Settings.setting_time_zone;
+        ZoneId Z = Setting.getSettingValueFromKey("TimeZoneSetting");
         if(Z == null) {
             // Use the system default.
             Z = ZoneId.systemDefault();
@@ -18,7 +20,7 @@ public class TimeZoneManager {
         return Z;
     }
 
-    public static ArrayList<String> getAvailableTimeZoneStrings() {
+    public static ArrayList<ZoneId> getAvailableTimeZones() {
         // Return the time zone strings directly, sorted by time zone offset for "now".
         ArrayList<ZoneId> zoneIdArrayList = new ArrayList<>();
 
@@ -26,8 +28,12 @@ public class TimeZoneManager {
             zoneIdArrayList.add(ZoneId.of(zoneIdString));
         }
 
-        Instant nowInstant = new Date().toInstant();
+        sortByOffset(zoneIdArrayList);
 
+        return zoneIdArrayList;
+    }
+
+    private static void sortByOffset(ArrayList<ZoneId> zoneIdArrayList) {
         Collections.sort(zoneIdArrayList, (a, b) -> {
             // Sort by the offset first, then by name.
             int s = a.getRules().getOffset(nowInstant).compareTo(b.getRules().getOffset(nowInstant));
@@ -38,12 +44,5 @@ public class TimeZoneManager {
                 return a.toString().compareToIgnoreCase(b.toString());
             }
         });
-
-        ArrayList<String> zoneIdStringArrayList = new ArrayList<>();
-        for(ZoneId zoneId : zoneIdArrayList) {
-            zoneIdStringArrayList.add(zoneId.toString() + " (" + zoneId.getRules().getOffset(nowInstant).toString() + ")");
-        }
-
-        return zoneIdStringArrayList;
     }
 }

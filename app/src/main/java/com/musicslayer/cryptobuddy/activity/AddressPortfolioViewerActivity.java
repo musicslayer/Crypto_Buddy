@@ -140,6 +140,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 }
 
                 // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
+                // Note that serialization does shrink this somewhat.
                 Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
                 intent.putExtra("AddressPortfolioName",  AddressPortfolioObjName[0]);
                 intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList));

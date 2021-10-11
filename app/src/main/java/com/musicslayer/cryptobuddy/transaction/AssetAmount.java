@@ -2,9 +2,9 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.persistence.Settings;
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.settings.Setting;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -86,7 +86,7 @@ public class AssetAmount implements Serialization.SerializableToJSON {
             }
             else {
                 // Crypto starts with fixed digits and truncates based on Setting.
-                if("Truncated".equals(Settings.setting_decimal)) {
+                if("Truncated".equals(Setting.getSettingValueFromKey("NumberDecimalPlacesSetting"))) {
                     s = amount.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
                 }
                 else {
