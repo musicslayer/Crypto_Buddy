@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.DecodeUtil;
+import com.musicslayer.cryptobuddy.decode.Ethereum;
 
 public class TOMO_Mainnet extends Network {
     public boolean isMainnet() {
@@ -22,6 +22,6 @@ public class TOMO_Mainnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return DecodeUtil.isValidBlockchainAddress(address);
+        return Ethereum.isAddress(address);
     }
 }

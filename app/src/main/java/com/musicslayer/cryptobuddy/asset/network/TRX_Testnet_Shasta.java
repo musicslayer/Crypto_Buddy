@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.DecodeUtil;
+import com.musicslayer.cryptobuddy.decode.Base58;
 
 public class TRX_Testnet_Shasta extends Network {
     public boolean isMainnet() {
@@ -22,6 +22,6 @@ public class TRX_Testnet_Shasta extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.length() == 34 && address.startsWith("T") && DecodeUtil.isBase58(address);
+        return address.length() == 34 && address.startsWith("T") && Base58.isAddress(address);
     }
 }

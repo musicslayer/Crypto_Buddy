@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.decode.Bech32;
 
 public class BTC_Mainnet_SegWit extends Network {
     public boolean isMainnet() {
@@ -21,6 +22,6 @@ public class BTC_Mainnet_SegWit extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.startsWith("bc1");
+        return address.startsWith("bc1") && Bech32.hasValidChecksum(address);
     }
 }

@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.DecodeUtil;
+import com.musicslayer.cryptobuddy.decode.Base58;
 
 public class LTC_Testnet_P2SH extends Network {
     public boolean isMainnet() {
@@ -27,11 +27,11 @@ public class LTC_Testnet_P2SH extends Network {
             address = address.substring(prefix.length());
         }
 
-        if(!DecodeUtil.hasValidBase58Checksum(address)) {
+        if(!Base58.hasValidChecksum(address)) {
             return false;
         }
 
-        int networkID = DecodeUtil.getAddressNetworkID(address);
+        int networkID = Base58.getAddressNetworkID(address);
         return networkID == 196;
     }
 }

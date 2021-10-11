@@ -32,6 +32,9 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
+// TODO Have another screen which lists addresses in the portfolio.
+// Users can select one or more that they wish to analyze?
+
 public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 

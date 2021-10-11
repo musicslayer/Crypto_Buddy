@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.util.DecodeUtil;
+import com.musicslayer.cryptobuddy.decode.Bech32;
 
 public class KAVA_Mainnet extends Network {
     public boolean isMainnet() {
@@ -22,6 +22,6 @@ public class KAVA_Mainnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.startsWith("kava1") && DecodeUtil.hasValidBech32Checksum(address);
+        return address.startsWith("kava1") && Bech32.hasValidChecksum(address);
     }
 }
