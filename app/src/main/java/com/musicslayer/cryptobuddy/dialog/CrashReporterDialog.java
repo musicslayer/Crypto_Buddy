@@ -124,7 +124,7 @@ public class CrashReporterDialog extends BaseDialog {
         B_SHOW.setOnClickListener(v -> {
             try {
                 // Simplest way to show user information. This also has built-in scrolling.
-                AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
                 alertDialog.setTitle("Error Information");
                 alertDialog.setMessage(crashException.toString());
                 alertDialog.show();
@@ -147,11 +147,11 @@ public class CrashReporterDialog extends BaseDialog {
             crashException.throwOriginalException();
         });
 
-        AlertDialog resetAlertDialog = new AlertDialog.Builder(activity).create();
+        AlertDialog.Builder resetAlertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
         resetAlertDialog.setTitle("Confirmation");
         resetAlertDialog.setCancelable(true);
         resetAlertDialog.setMessage("Are you sure you want to reset ALL STORED APP DATA? This cannot be reversed.");
-        resetAlertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes", (dialog, which) -> {
+        resetAlertDialog.setPositiveButton("Yes", (dialog, which) -> {
             try {
                 boolean isComplete = Persistence.resetAllData(activity);
 
@@ -169,13 +169,11 @@ public class CrashReporterDialog extends BaseDialog {
             }
         });
         // No-op, but we need this so the button appears.
-        resetAlertDialog.setButton(Dialog.BUTTON_NEUTRAL, "No", (dialog, which) -> {});
+        resetAlertDialog.setNeutralButton("No", (dialog, which) -> {});
 
         B_RESET.setOnClickListener(v -> {
             try {
                 resetAlertDialog.show();
-                resetAlertDialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(Color.RED);
-                resetAlertDialog.getButton(Dialog.BUTTON_NEUTRAL).setTextColor(Color.RED);
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

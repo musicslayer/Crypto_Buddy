@@ -24,6 +24,7 @@
 
         <item name="actionBarStyle">@style/ActionBarTheme</item>
         <item name="actionOverflowButtonStyle">@style/DotsTheme</item>
+        <item name="alertDialogStyle">@style/AlertDialogTheme</item>
         <item name="buttonStyle">@style/ButtonTheme</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
         <item name="titleTextColor">@android:color/black</item>
@@ -39,6 +40,12 @@
     <style name="ActionBarTheme.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="@style/Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="materialButtonStyle">@style/MaterialButtonTheme</item>
     </style>
 
     <style name="ButtonTheme" parent="@style/Widget.AppCompat.Button.Borderless">
