@@ -129,7 +129,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         add_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
+                AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
@@ -235,7 +235,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
                 for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
                     if(ProgressDialogFragment.isCancelled()) { return; }
-                    newAddressDataArrayList.add(AddressData.getAddressData(cryptoAddress));
+                    newAddressDataArrayList.add(AddressData.getAllData(cryptoAddress));
 
                     // Save found tokens, potentially from multiple TokenManagers.
                     TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);

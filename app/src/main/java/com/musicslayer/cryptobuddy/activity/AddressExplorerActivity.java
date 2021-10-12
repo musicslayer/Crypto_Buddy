@@ -128,7 +128,7 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData newAddressData = AddressData.getAddressData(addressDataArrayList.get(0).cryptoAddress);
+                AddressData newAddressData = AddressData.getAllData(addressDataArrayList.get(0).cryptoAddress);
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressExplorerActivity.this);

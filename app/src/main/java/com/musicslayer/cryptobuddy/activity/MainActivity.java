@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData addressData = AddressData.getAddressData(cryptoAddress[0]);
+                AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(MainActivity.this);

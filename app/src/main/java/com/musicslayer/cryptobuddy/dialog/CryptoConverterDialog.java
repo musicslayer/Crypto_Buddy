@@ -73,7 +73,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 PriceData priceDataPrimary = priceDataArrayList.get(0);
                 PriceData priceDataSecondary = priceDataArrayList.get(1);
 
-                if(priceDataPrimary.isComplete() && priceDataSecondary.isComplete()) {
+                if(priceDataPrimary.isPriceComplete() && priceDataSecondary.isPriceComplete()) {
                     AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
                     AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataPrimary.crypto), priceDataPrimary.price);
                     AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataSecondary.crypto), priceDataSecondary.price);

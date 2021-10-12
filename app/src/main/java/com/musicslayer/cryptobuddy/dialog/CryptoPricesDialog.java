@@ -42,7 +42,7 @@ public class CryptoPricesDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                PriceData priceData = PriceData.getPriceData(crypto);
+                PriceData priceData = PriceData.getAllData(crypto);
                 ProgressDialogFragment.setValue(Serialization.serialize(priceData));
             }
         });

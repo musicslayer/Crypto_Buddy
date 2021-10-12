@@ -44,7 +44,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
         this.marketCapHashMap = marketCapHashMap;
     }
 
-    public static BulkPriceData getBulkPriceData(ArrayList<Crypto> cryptoArrayList) {
+    public static BulkPriceData getAllBulkData(ArrayList<Crypto> cryptoArrayList) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
@@ -79,11 +79,59 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
         return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }
 
-    public boolean isPriceComplete() {
-        return !(priceAPI_price instanceof UnknownPriceAPI) && priceHashMap != null;
+    public static BulkPriceData getBulkPriceData(ArrayList<Crypto> cryptoArrayList) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
+        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+
+        // Get price information.
+        for(PriceAPI priceAPI : PriceAPI.price_apis) {
+            if(!priceAPI.isSupported(cryptoArrayList)) {
+                continue;
+            }
+
+            priceHashMap_f = priceAPI.getBulkPrice(cryptoArrayList);
+            if(priceHashMap_f != null) {
+                priceAPI_price_f = priceAPI;
+                break;
+            }
+        }
+
+        return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
+    }
+
+    public static BulkPriceData getBulkMarketCapData(ArrayList<Crypto> cryptoArrayList) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
+        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+
+        // Get market cap information.
+        for(PriceAPI priceAPI : PriceAPI.price_apis) {
+            if(!priceAPI.isSupported(cryptoArrayList)) {
+                continue;
+            }
+
+            marketCapHashMap_f = priceAPI.getBulkMarketCap(cryptoArrayList);
+            if(marketCapHashMap_f != null) {
+                priceAPI_marketCap_f = priceAPI;
+                break;
+            }
+        }
+
+        return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }
 
     public boolean isComplete() {
         return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && priceHashMap != null && marketCapHashMap != null;
+    }
+
+    public boolean isPriceComplete() {
+        return !(priceAPI_price instanceof UnknownPriceAPI) && priceHashMap != null;
+    }
+
+    public boolean isMarketCapComplete() {
+        return !(priceAPI_marketCap instanceof UnknownPriceAPI) && marketCapHashMap != null;
     }
 }

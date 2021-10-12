@@ -41,7 +41,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         this.marketCap = marketCap;
     }
 
-    public static PriceData getPriceData(Crypto crypto) {
+    public static PriceData getAllData(Crypto crypto) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         AssetQuantity price_f = null;
@@ -76,7 +76,59 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
+    public static PriceData getPriceData(Crypto crypto) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        AssetQuantity price_f = null;
+        AssetQuantity marketCap_f = null;
+
+        // Get price information.
+        for(PriceAPI priceAPI : PriceAPI.price_apis) {
+            if(!priceAPI.isSupported(crypto)) {
+                continue;
+            }
+
+            price_f = priceAPI.getPrice(crypto);
+            if(price_f != null) {
+                priceAPI_price_f = priceAPI;
+                break;
+            }
+        }
+
+        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
+    }
+
+    public static PriceData getMarketCapData(Crypto crypto) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        AssetQuantity price_f = null;
+        AssetQuantity marketCap_f = null;
+
+        // Get market cap information.
+        for(PriceAPI priceAPI : PriceAPI.price_apis) {
+            if(!priceAPI.isSupported(crypto)) {
+                continue;
+            }
+
+            marketCap_f = priceAPI.getMarketCap(crypto);
+            if(marketCap_f != null) {
+                priceAPI_marketCap_f = priceAPI;
+                break;
+            }
+        }
+
+        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
+    }
+
     public boolean isComplete() {
         return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && price != null && marketCap != null;
+    }
+
+    public boolean isPriceComplete() {
+        return !(priceAPI_price instanceof UnknownPriceAPI) && price != null;
+    }
+
+    public boolean isMarketCapComplete() {
+        return !(priceAPI_marketCap instanceof UnknownPriceAPI) && marketCap != null;
     }
 }

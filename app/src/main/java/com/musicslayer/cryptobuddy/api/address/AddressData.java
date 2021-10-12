@@ -43,7 +43,7 @@ public class AddressData implements Serialization.SerializableToJSON {
         this.transactionArrayList = transactionArrayList;
     }
 
-    public static AddressData getAddressData(CryptoAddress cryptoAddress) {
+    public static AddressData getAllData(CryptoAddress cryptoAddress) {
         AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
         AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
@@ -80,7 +80,61 @@ public class AddressData implements Serialization.SerializableToJSON {
         return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
+    public static AddressData getCurrentBalanceData(CryptoAddress cryptoAddress) {
+        AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
+        ArrayList<Transaction> transactionArrayList_f = null;
+
+        // Get current balance information.
+        for(AddressAPI addressAPI : AddressAPI.address_apis) {
+            if(!addressAPI.isSupported(cryptoAddress)) {
+                continue;
+            }
+
+            currentBalanceArrayList_f = addressAPI.getCurrentBalance(cryptoAddress);
+            if(currentBalanceArrayList_f != null) {
+                // Sort currentBalanceArrayList_f so that Coins come before Tokens.
+                AssetQuantity.sortAscendingByType(currentBalanceArrayList_f);
+                addressAPI_currentBalance_f = addressAPI;
+                break;
+            }
+        }
+
+        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+    }
+
+    public static AddressData getTransactionsData(CryptoAddress cryptoAddress) {
+        AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
+        ArrayList<Transaction> transactionArrayList_f = null;
+
+        // Get transaction information.
+        for(AddressAPI addressAPI : AddressAPI.address_apis) {
+            if(!addressAPI.isSupported(cryptoAddress)) {
+                continue;
+            }
+
+            transactionArrayList_f = addressAPI.getTransactions(cryptoAddress);
+            if(transactionArrayList_f != null) {
+                addressAPI_transactions_f = addressAPI;
+                break;
+            }
+        }
+
+        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+    }
+
     public boolean isComplete() {
         return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && !(addressAPI_transactions instanceof UnknownAddressAPI) && currentBalanceArrayList != null && transactionArrayList != null;
+    }
+
+    public boolean isCurrentBalanceComplete() {
+        return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && currentBalanceArrayList != null;
+    }
+
+    public boolean isTransactionsComplete() {
+        return !(addressAPI_transactions instanceof UnknownAddressAPI) && transactionArrayList != null;
     }
 }
