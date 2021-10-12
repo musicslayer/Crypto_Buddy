@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -12,6 +13,7 @@ import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -83,6 +85,15 @@ public class InAppPurchasesActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 InAppPurchase.purchaseSupportDeveloper3(InAppPurchasesActivity.this);
+            }
+        });
+
+        Button B_RESTORE_PURCHASES = findViewById(R.id.in_app_purchases_restorePurchasesButton);
+        B_RESTORE_PURCHASES.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                ToastUtil.showToast(InAppPurchasesActivity.this,"restoring_purchases");
+                InAppPurchase.updateAllPurchases(InAppPurchasesActivity.this);
             }
         });
 

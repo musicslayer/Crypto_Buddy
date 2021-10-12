@@ -102,6 +102,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp" />
 
+            <TextView
+                android:id="@+id/in_app_purchases_restorePurchasesTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Restore purchases by manually querying your purchase history. Normally, the app does this automatically, but this button may help troubleshoot issues." />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/in_app_purchases_restorePurchasesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Restore Purchases"
+                app:drawableLeftCompat="@drawable/ic_baseline_stars_24" />
+
         </LinearLayout>
     </ScrollView>
 

@@ -247,7 +247,7 @@ public class InAppPurchase {
         }
     }
 
-    private static void updateAllPurchases(Context context) {
+    public static void updateAllPurchases(Context context) {
         if(!billingClient.isReady()) {
             InAppPurchase.initialize(context);
             return;
