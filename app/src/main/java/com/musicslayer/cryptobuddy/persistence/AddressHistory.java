@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
@@ -81,6 +82,15 @@ public class AddressHistory {
             AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
             settings_address_history.add(addressHistoryObj);
         }
+    }
+
+    public static AddressHistoryObj getFromCryptoAddress(CryptoAddress cryptoAddress) {
+        for(AddressHistoryObj h : settings_address_history) {
+            if(cryptoAddress.equals(h.cryptoAddress)) {
+                return h;
+            }
+        }
+        return null;
     }
 
     public static HashMap<String, String> getAllData() {

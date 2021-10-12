@@ -155,7 +155,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         progressDialogFragment.restoreListeners(this, "progress");
 
         for(AddressPortfolioObj addressPortfolioObj : AddressPortfolio.settings_address_portfolio) {
-            TableRow TR = new TableRow(AddressPortfolioViewerActivity.this);
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B.setText(addressPortfolioObj.name);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
@@ -183,6 +182,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
             TRP.setMargins(80,0,0,0);
 
+            TableRow TR = new TableRow(AddressPortfolioViewerActivity.this);
             TR.addView(B);
             TR.addView(B_DELETE, TRP);
             table.addView(TR);
