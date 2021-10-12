@@ -24,7 +24,9 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.view.table.Table;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 public class TransactionPortfolioExplorerActivity extends BaseActivity {
@@ -76,6 +78,14 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.transaction_portfolio_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
+        table.setOnDeleteTransactionListener(new Table.OnDeleteTransactionListener() {
+            @Override
+            public void onDeleteTransaction(Table table, Transaction transaction) {
+                // Remove the transaction from the portfolio.
+                transactionPortfolioObj.removeData(transaction);
+                TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, transactionPortfolioObj);
+            }
+        });
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
         addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {

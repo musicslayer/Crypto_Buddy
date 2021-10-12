@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteTokensDialog extends BaseDialog {
@@ -20,6 +21,17 @@ public class ConfirmDeleteTokensDialog extends BaseDialog {
 
     public int getBaseViewID() {
         return R.id.confirm_delete_tokens_dialog;
+    }
+
+    @Override
+    public void showImpl() {
+        super.showImpl();
+
+        // Early return if confirmations are off.
+        if("None".equals(ConfirmationSetting.value)) {
+            isComplete = true;
+            dismiss();
+        }
     }
 
     public void createLayout() {

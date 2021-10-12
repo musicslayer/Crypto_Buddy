@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteAddressHistoryDialog extends BaseDialog {
@@ -15,6 +16,17 @@ public class ConfirmDeleteAddressHistoryDialog extends BaseDialog {
 
     public int getBaseViewID() {
         return R.id.confirm_delete_address_history_dialog;
+    }
+
+    @Override
+    public void showImpl() {
+        super.showImpl();
+
+        // Early return if confirmations are off.
+        if("None".equals(ConfirmationSetting.value)) {
+            isComplete = true;
+            dismiss();
+        }
     }
 
     public void createLayout() {

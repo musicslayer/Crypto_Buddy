@@ -22,6 +22,10 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
         transactionArrayList.add(transaction);
     }
 
+    public void removeData(Transaction transaction) {
+        transactionArrayList.remove(transaction);
+    }
+
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {

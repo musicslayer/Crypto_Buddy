@@ -28,6 +28,9 @@ public class ConfirmationView extends CrashLinearLayout {
     // By default we require 4 digits, but extra sensitive things can increase this number.
     int numDigits = 4;
 
+    // By default the user can alter confirmations in the settings. But strict confirmations ignore this and always require the input code.
+    boolean isStrict = false;
+
     private ConfirmationView.ConfirmationListener confirmationListener;
 
     public ConfirmationView(Context context) {
@@ -45,10 +48,17 @@ public class ConfirmationView extends CrashLinearLayout {
     public void setNumDigits(int numDigits) {
         this.numDigits = numDigits;
 
-        this.removeAllViews();
         makeRandomDigits();
         makeLastDigits();
 
+        this.removeAllViews();
+        makeLayout();
+    }
+
+    public void setStrict(boolean isStrict) {
+        this.isStrict = isStrict;
+
+        this.removeAllViews();
         makeLayout();
     }
 
@@ -69,16 +79,18 @@ public class ConfirmationView extends CrashLinearLayout {
     }
 
     public void makeLayout() {
-        if(ConfirmationSetting.value) {
-            this.makeLayoutConfirmation();
+        if(isStrict || "Code".equals(ConfirmationSetting.value)) {
+            this.makeLayoutCode();
         }
-        else {
-            this.makeLayoutBypass();
+        else if("Dialog".equals(ConfirmationSetting.value)) {
+            this.makeLayoutDialog();
         }
+
+        // This view should not be visible in the "None" case.
     }
 
     @SuppressLint("SetTextI18n")
-    public void makeLayoutConfirmation() {
+    public void makeLayoutCode() {
         this.setOrientation(LinearLayout.VERTICAL);
 
         Context context = getContext();
@@ -158,7 +170,7 @@ public class ConfirmationView extends CrashLinearLayout {
         this.addView(L4);
     }
 
-    public void makeLayoutBypass() {
+    public void makeLayoutDialog() {
         Context context = getContext();
 
         AppCompatButton B = new AppCompatButton(context);
@@ -177,12 +189,6 @@ public class ConfirmationView extends CrashLinearLayout {
         this.addView(B);
     }
 
-    public void checkConfirmation() {
-        if(confirmationListener != null && randomCode.equals(lastDigits)) {
-            confirmationListener.onConfirmation(this);
-        }
-    }
-
     public String getIntArrayText(ArrayList<Integer> arrayList) {
         StringBuilder s = new StringBuilder();
         for(int i : arrayList) {
@@ -194,6 +200,12 @@ public class ConfirmationView extends CrashLinearLayout {
             }
         }
         return s.toString();
+    }
+
+    public void checkConfirmation() {
+        if(confirmationListener != null && randomCode.equals(lastDigits)) {
+            confirmationListener.onConfirmation(this);
+        }
     }
 
     public void setOnConfirmationListener(ConfirmationView.ConfirmationListener confirmationListener) {

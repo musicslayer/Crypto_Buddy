@@ -20,8 +20,10 @@ public class ConfirmResetEverythingDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_confirm_reset_everything);
 
+        // This has extra digits, and will always show regardless of the setting.
         ConfirmationView C = findViewById(R.id.confirm_reset_everything_dialog_confirmationView);
         C.setNumDigits(8);
+        C.setStrict(true);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {

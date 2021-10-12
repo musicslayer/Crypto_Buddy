@@ -26,11 +26,15 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 import java.util.ArrayList;
 
 abstract public class Table extends CrashTableLayout {
     abstract public BaseRow getRow(Context context, Transaction transaction);
+
+    // Subclasses can reset specific things here.
+    public void resetTableProperties() {}
 
     // Number of rows before the user input.
     final int numHeaderRows = 3;
@@ -55,8 +59,11 @@ abstract public class Table extends CrashTableLayout {
     int sortingColumn;
 
     // 0 is descending, 1 no sorting, 2 is ascending.
+    // -1 means don't offer sorting.
     ArrayList<Integer> sortState = new ArrayList<>();
     final int[] sortIcons = new int[]{R.drawable.ic_baseline_arrow_drop_down_24, R.drawable.ic_baseline_arrow_drop_line_24, R.drawable.ic_baseline_arrow_drop_up_24};
+
+    private Table.OnDeleteTransactionListener onDeleteTransactionListener;
 
     public TablePageView pageView;
 
@@ -219,34 +226,41 @@ abstract public class Table extends CrashTableLayout {
 
                 b[i] = new AppCompatButton(context);
                 b[i].setText("Sort");
-                b[i].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, sortIcons[sortState.get(i)], 0);
 
-                b[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
-                    @Override
-                    public void onClickImpl(View view) {
-                        sortingColumn = ii;
+                if(sortState.get(i) != -1) {
+                    b[i].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, sortIcons[sortState.get(i)], 0);
+                    b[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
+                        @Override
+                        public void onClickImpl(View view) {
+                            sortingColumn = ii;
 
-                        for(int j = 0; j < numColumns; j++) {
-                            if(j != ii) {
-                                b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_line_24, 0);
-                                sortState.set(j, 1);
-                            }
-                            else {
-                                if(sortState.get(j) == 0) {
-                                    b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_up_24, 0);
-                                    sortState.set(j, 2);
+                            for(int j = 0; j < numColumns; j++) {
+                                if(j != ii) {
+                                    b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_line_24, 0);
+                                    sortState.set(j, 1);
                                 }
                                 else {
-                                    b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
-                                    sortState.set(j, 0);
+                                    if(sortState.get(j) == 0) {
+                                        b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_up_24, 0);
+                                        sortState.set(j, 2);
+                                    }
+                                    else {
+                                        b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
+                                        sortState.set(j, 0);
+                                    }
+                                    doSort(context);
                                 }
-                                doSort(context);
                             }
                         }
-                    }
-                });
+                    });
+                }
 
                 this.addView(b[i]);
+
+                // Don't draw the button, but we still want it to take up space.
+                if(sortState.get(i) == -1) {
+                    b[i].setVisibility(INVISIBLE);
+                }
             }
         }
     }
@@ -291,6 +305,8 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public void filterTable(Context context) {
+        resetTableProperties();
+
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
         for(Transaction t : maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
@@ -446,6 +462,20 @@ abstract public class Table extends CrashTableLayout {
             filterTable(context);
         }
         return state;
+    }
+
+    public void checkDeletion(Transaction transaction) {
+        if(onDeleteTransactionListener != null) {
+            onDeleteTransactionListener.onDeleteTransaction(this, transaction);
+        }
+    }
+
+    public void setOnDeleteTransactionListener(Table.OnDeleteTransactionListener onDeleteTransactionListener) {
+        this.onDeleteTransactionListener = onDeleteTransactionListener;
+    }
+
+    abstract public static class OnDeleteTransactionListener {
+        abstract public void onDeleteTransaction(Table table, Transaction transaction);
     }
 
     public static class TablePageView extends CrashLinearLayout {

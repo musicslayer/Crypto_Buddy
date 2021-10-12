@@ -3,8 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable-night/border_round.xml" value="0.24947916666666667" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/border_round.xml" value="0.24947916666666667" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/border_round_red.xml" value="0.25" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_backward_24.xml" value="0.2453125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_calculate_24.xml" value="0.1" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_delete_12.xml" value="0.25833333333333336" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.25833333333333336" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_feedback_24.xml" value="0.1" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_forward_24.xml" value="0.2453125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/drawable/ic_baseline_radio_button_checked_24.xml" value="0.381025641025641" />
@@ -39,6 +44,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_all_portfolios.xml" value="0.2328125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_all_tokens.xml" value="0.18425925925925926" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_tokens.xml" value="0.25" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_transaction.xml" value="0.2234375" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_reset_everything.xml" value="0.16770833333333332" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_reset_settings.xml" value="0.16770833333333332" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_reset_table.xml" value="0.24791666666666667" />

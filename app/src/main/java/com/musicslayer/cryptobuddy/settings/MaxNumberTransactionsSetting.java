@@ -23,7 +23,7 @@ public class MaxNumberTransactionsSetting extends Setting {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Analyze up to 500 transactions per address.");
         optionDisplays.add("Analyze up to 1000 transactions per address.");
-        optionDisplays.add("Analyze up to 5000 transactions per address.\n** May cause crashes **");
+        optionDisplays.add("Analyze up to 5000 transactions per address.\n** May Cause Crashes **");
         return optionDisplays;
     }
 

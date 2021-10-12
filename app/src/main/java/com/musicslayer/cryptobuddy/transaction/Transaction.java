@@ -36,6 +36,10 @@ public class Transaction implements Serialization.SerializableToJSON {
         this.hash = getHash();
     }
 
+    public boolean equals(Transaction other) {
+        return other != null && hash.equals(other.hash);
+    }
+
     public static void sortAscendingByType(ArrayList<Transaction> transactionArrayList, String sortType) {
         Comparator<Transaction> comparator = Transaction.getComparatorForType(sortType);
         Collections.sort(transactionArrayList, comparator);
@@ -206,7 +210,7 @@ public class Transaction implements Serialization.SerializableToJSON {
             otherAssetString = "-";
         }
 
-        return action.toString() + "|" + actionedAssetQuantity.toString() + "|" + otherAssetString + "|" + forwardPrice.toString() + "|" + backwardPrice.toString() + "|" + timestamp.toString();
+        return action.toString() + "|" + actionedAssetQuantity.toString() + "|" + otherAssetString + "|" + forwardPrice.toString() + "|" + backwardPrice.toString() + "|" + timestamp.toString() + "|" + info;
     }
 
     public int numAssets() {
