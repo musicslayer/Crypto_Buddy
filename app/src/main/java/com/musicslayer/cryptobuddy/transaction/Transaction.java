@@ -36,8 +36,9 @@ public class Transaction implements Serialization.SerializableToJSON {
         this.hash = getHash();
     }
 
-    public boolean equals(Transaction other) {
-        return other != null && hash.equals(other.hash);
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Transaction && hash.equals(((Transaction)other).hash);
     }
 
     public static void sortAscendingByType(ArrayList<Transaction> transactionArrayList, String sortType) {

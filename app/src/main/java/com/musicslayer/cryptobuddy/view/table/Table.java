@@ -26,15 +26,11 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 import java.util.ArrayList;
 
 abstract public class Table extends CrashTableLayout {
     abstract public BaseRow getRow(Context context, Transaction transaction);
-
-    // Subclasses can reset specific things here.
-    public void resetTableProperties() {}
 
     // Number of rows before the user input.
     final int numHeaderRows = 3;
@@ -305,8 +301,6 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public void filterTable(Context context) {
-        resetTableProperties();
-
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
         for(Transaction t : maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
