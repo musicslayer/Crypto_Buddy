@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.util.RESTUtil;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 // CoinGecko doesn't give prices for these tokens:
 // ADA
@@ -44,9 +46,6 @@ import java.math.BigDecimal;
   */
 
 
-// TODO we can get multiple prices at once...
-//https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,dogecoin&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true
-
 public class CoinGecko extends PriceAPI {
     public String getName() { return "CoinGecko"; }
     public String getDisplayName() { return "CoinGecko API V3"; }
@@ -54,6 +53,104 @@ public class CoinGecko extends PriceAPI {
     public boolean isSupported(Crypto crypto) {
         // Right now, everything is supported.
         return true;
+    }
+
+    public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList) {
+        // Separate cryptoArrayList into coins and tokens.
+        // Further separate tokens by blockchain.
+        HashMap<String, ArrayList<Crypto>> blockchainHashMap = new HashMap<>();
+        ArrayList<Crypto> coinArrayList = new ArrayList<>();
+        for(Crypto crypto : cryptoArrayList) {
+            if(crypto instanceof Coin) {
+                coinArrayList.add(crypto);
+            }
+            else if(crypto instanceof Token && !"?".equals(crypto.getID())) {
+                Token token = (Token)crypto;
+
+                ArrayList<Crypto> tokenArrayList = blockchainHashMap.get(token.getBlockchainID());
+                if(tokenArrayList == null) {
+                    tokenArrayList = new ArrayList<>();
+                }
+
+                tokenArrayList.add(crypto);
+                blockchainHashMap.put(token.getBlockchainID(), tokenArrayList);
+            }
+        }
+
+        HashMap<Crypto, AssetQuantity> priceHashMap = new HashMap<>();
+
+        // Tokens
+        for(String blockchainID : blockchainHashMap.keySet()) {
+            ArrayList<Crypto> tokenArrayList = blockchainHashMap.get(blockchainID);
+            if(tokenArrayList == null) { continue; }
+
+            StringBuilder tokenString = new StringBuilder();
+            for(int i = 0; i < tokenArrayList.size(); i++) {
+                tokenString.append(tokenArrayList.get(i).getID());
+                if(i < tokenArrayList.size() - 1) {
+                    tokenString.append(",");
+                }
+            }
+
+            String priceDataTokenJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            if(priceDataTokenJSON != null) {
+                try {
+                    JSONObject json = new JSONObject(priceDataTokenJSON);
+
+                    for(Crypto token : tokenArrayList) {
+                        if(!json.has(token.getID())) { continue; }
+
+                        JSONObject json2 = json.getJSONObject(token.getID());
+
+                        BigDecimal d = new BigDecimal(json2.getString("usd"));
+
+                        // For now, just use USD.
+                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), new USD()));
+                    }
+                }
+                catch(Exception e) {
+                    // Ignore error and return null.
+                    // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                    ThrowableUtil.processThrowable(e);
+                    return null;
+                }
+            }
+        }
+
+        // Coins
+        StringBuilder coinString = new StringBuilder();
+        for(int i = 0; i < coinArrayList.size(); i++) {
+            coinString.append(coinArrayList.get(i).getID());
+            if(i < coinArrayList.size() - 1) {
+                coinString.append(",");
+            }
+        }
+
+        String priceDataCoinJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        if(priceDataCoinJSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataCoinJSON);
+
+                for(Crypto coin : coinArrayList) {
+                    if(!json.has(coin.getID())) { continue; }
+
+                    JSONObject json2 = json.getJSONObject(coin.getID());
+
+                    BigDecimal d = new BigDecimal(json2.getString("usd"));
+
+                    // For now, just use USD.
+                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), new USD()));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
+
+        return priceHashMap;
     }
 
     public AssetQuantity getPrice(Crypto crypto) {
@@ -70,20 +167,121 @@ public class CoinGecko extends PriceAPI {
         if(priceDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataJSON);
-                JSONObject json2 = json.getJSONObject(crypto.getID());
+                if(json.has(crypto.getID())) {
+                    JSONObject json2 = json.getJSONObject(crypto.getID());
 
-                BigDecimal d = new BigDecimal(json2.getString("usd"));
+                    BigDecimal d = new BigDecimal(json2.getString("usd"));
 
-                // For now, just use USD.
-                price = new AssetQuantity(d.toPlainString(), new USD());
+                    // For now, just use USD.
+                    price = new AssetQuantity(d.toPlainString(), new USD());
+                }
             }
             catch(Exception e) {
-                // This may be ignorable. This happens if the website can't lookup the price of something.
+                // Ignore error and return null.
                 ThrowableUtil.processThrowable(e);
+                return null;
             }
         }
 
         return price;
+    }
+
+    public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList) {
+        // Separate cryptoArrayList into coins and tokens.
+        // Further separate tokens by blockchain.
+        HashMap<String, ArrayList<Crypto>> blockchainHashMap = new HashMap<>();
+        ArrayList<Crypto> coinArrayList = new ArrayList<>();
+        for(Crypto crypto : cryptoArrayList) {
+            if(crypto instanceof Coin) {
+                coinArrayList.add(crypto);
+            }
+            else if(crypto instanceof Token && !"?".equals(crypto.getID())) {
+                Token token = (Token)crypto;
+
+                ArrayList<Crypto> tokenArrayList = blockchainHashMap.get(token.getBlockchainID());
+                if(tokenArrayList == null) {
+                    tokenArrayList = new ArrayList<>();
+                }
+
+                tokenArrayList.add(crypto);
+                blockchainHashMap.put(token.getBlockchainID(), tokenArrayList);
+            }
+        }
+
+        HashMap<Crypto, AssetQuantity> priceHashMap = new HashMap<>();
+
+        // Tokens
+        for(String blockchainID : blockchainHashMap.keySet()) {
+            ArrayList<Crypto> tokenArrayList = blockchainHashMap.get(blockchainID);
+            if(tokenArrayList == null) { continue; }
+
+            StringBuilder tokenString = new StringBuilder();
+            for(int i = 0; i < tokenArrayList.size(); i++) {
+                tokenString.append(tokenArrayList.get(i).getID());
+                if(i < tokenArrayList.size() - 1) {
+                    tokenString.append(",");
+                }
+            }
+
+            String priceDataTokenJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            if(priceDataTokenJSON != null) {
+                try {
+                    JSONObject json = new JSONObject(priceDataTokenJSON);
+
+                    for(Crypto token : tokenArrayList) {
+                        if(!json.has(token.getID())) { continue; }
+
+                        JSONObject json2 = json.getJSONObject(token.getID());
+
+                        BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
+
+                        // For now, just use USD.
+                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), new USD()));
+                    }
+                }
+                catch(Exception e) {
+                    // Ignore error and return null.
+                    // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                    ThrowableUtil.processThrowable(e);
+                    return null;
+                }
+            }
+        }
+
+        // Coins
+        StringBuilder coinString = new StringBuilder();
+        for(int i = 0; i < coinArrayList.size(); i++) {
+            coinString.append(coinArrayList.get(i).getID());
+            if(i < coinArrayList.size() - 1) {
+                coinString.append(",");
+            }
+        }
+
+        String priceDataCoinJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        if(priceDataCoinJSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataCoinJSON);
+
+                for(Crypto coin : coinArrayList) {
+                    if(!json.has(coin.getID())) { continue; }
+
+                    JSONObject json2 = json.getJSONObject(coin.getID());
+
+                    BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
+
+                    // For now, just use USD.
+                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), new USD()));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
+
+        return priceHashMap;
     }
 
     public AssetQuantity getMarketCap(Crypto crypto) {
@@ -101,16 +299,19 @@ public class CoinGecko extends PriceAPI {
         if(priceDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataJSON);
-                JSONObject json2 = json.getJSONObject(crypto.getID());
+                if(json.has(crypto.getID())) {
+                    JSONObject json2 = json.getJSONObject(crypto.getID());
 
-                BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
+                    BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
 
-                // For now, just use USD.
-                marketCap = new AssetQuantity(d.toPlainString(), new USD());
+                    // For now, just use USD.
+                    marketCap = new AssetQuantity(d.toPlainString(), new USD());
+                }
             }
             catch(Exception e) {
-                // This may be ignorable. This happens if the website can't lookup the market cap of something.
+                // Ignore error and return null.
                 ThrowableUtil.processThrowable(e);
+                return null;
             }
         }
 

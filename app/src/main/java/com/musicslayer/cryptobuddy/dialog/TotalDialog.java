@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.price.PriceData;
+import com.musicslayer.cryptobuddy.api.price.BulkPriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -55,20 +55,25 @@ public class TotalDialog extends BaseDialog {
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
                 Asset.sortAscendingByType(keySet);
 
+                // For now, USD is the only fiat, and it's price is 1 by definition.
+                // Take it out of the array and deal with it ourselves.
+                ArrayList<Crypto> cryptoKeySet = new ArrayList<>();
                 for(Asset asset : keySet) {
-                    if(ProgressDialogFragment.isCancelled()) { return; }
-
                     if(asset instanceof Fiat) {
-                        // For now, USD is the only fiat, and it's price is 1 by definition.
                         newPriceMap.put(asset, new AssetAmount("1"));
                     }
                     else if(asset instanceof Crypto) {
-                        Crypto crypto = (Crypto)asset;
-                        PriceData priceData = PriceData.getPriceData(crypto);
+                        cryptoKeySet.add((Crypto)asset);
+                    }
+                }
 
-                        // We only need price data.
-                        if(priceData.isComplete()) {
-                            newPriceMap.put(crypto, priceData.price.assetAmount);
+                BulkPriceData bulkPriceData = BulkPriceData.getBulkPriceData(cryptoKeySet);
+                if(bulkPriceData.isPriceComplete()) {
+                    HashMap<Crypto, AssetQuantity> priceHashMap = bulkPriceData.priceHashMap;
+                    for(Crypto crypto : priceHashMap.keySet()) {
+                        AssetQuantity price = priceHashMap.get(crypto);
+                        if(price != null) {
+                            newPriceMap.put(crypto, price.assetAmount);
                         }
                     }
                 }

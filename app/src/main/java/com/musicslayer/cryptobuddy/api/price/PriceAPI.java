@@ -33,8 +33,20 @@ abstract public class PriceAPI extends API {
         }
     }
 
+    public boolean isSupported(ArrayList<Crypto> cryptoArrayList) {
+        // Everything in the array must be supported.
+        for(Crypto crypto : cryptoArrayList) {
+            if(!isSupported(crypto)) { return false; }
+        }
+
+        return true;
+    }
+
     abstract public boolean isSupported(Crypto crypto);
+
+    abstract public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList);
     abstract public AssetQuantity getPrice(Crypto crypto);
+    abstract public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList);
     abstract public AssetQuantity getMarketCap(Crypto crypto);
 
     public static PriceAPI getPriceAPIFromKey(String key) {
