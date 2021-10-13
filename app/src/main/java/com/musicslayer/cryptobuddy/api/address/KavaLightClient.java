@@ -302,6 +302,7 @@ public class KavaLightClient extends AddressAPI {
                 }
             }
 
+            // Overshooting the page produces errors, so we must calculate this.
             int page_total = json1.getInt("page_total");
             return page_total == 0 || page_total == page ? DONE : "NotDone";
         }
@@ -466,6 +467,7 @@ public class KavaLightClient extends AddressAPI {
                 }
             }
 
+            // Overshooting the page produces errors, so we must calculate this.
             int page_total = json2.getInt("page_total");
             return page_total == 0 || page_total == page ? DONE : "NotDone";
         }
@@ -554,6 +556,7 @@ public class KavaLightClient extends AddressAPI {
                 }
             }
 
+            // Overshooting the page produces errors, so we must calculate this.
             int page_total = json3.getInt("page_total");
             return page_total == 0 || page_total == page ? DONE : "NotDone";
         }

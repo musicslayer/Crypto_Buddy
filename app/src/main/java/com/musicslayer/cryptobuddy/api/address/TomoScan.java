@@ -143,7 +143,7 @@ public class TomoScan extends AddressAPI {
         // Process all normal.
         for(int page = 1; ; page++) {
             String url = baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100&page=" + page;
-            String status = processNormal(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -156,7 +156,7 @@ public class TomoScan extends AddressAPI {
         // Process all internal.
         for(int page = 1; ; page++) {
             String url = baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100&page=" + page;
-            String status = processInternal(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processInternal(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -169,7 +169,7 @@ public class TomoScan extends AddressAPI {
         // Process all rewards.
         for(int page = 1; ; page++) {
             String url = baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100&page=" + page;
-            String status = processRewards(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processRewards(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -182,7 +182,7 @@ public class TomoScan extends AddressAPI {
         // Process all votes.
         for(int page = 1; ; page++) {
             String url = "https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address + "?limit=100&page=" + page;
-            String status = processVotes(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processVotes(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -195,7 +195,7 @@ public class TomoScan extends AddressAPI {
         // Process all TRC20.
         for(int page = 1; ; page++) {
             String url = baseURL + "/api/token-txs/trc20?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
-            String status = processTokensTRC20(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processTokensTRC20(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -208,7 +208,7 @@ public class TomoScan extends AddressAPI {
         // Process all TRC21.
         for(int page = 1; ; page++) {
             String url = baseURL + "/api/token-txs/trc21?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
-            String status = processTokensTRC21(url, page, cryptoAddress, transactionNormalArrayList);
+            String status = processTokensTRC21(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -280,7 +280,7 @@ public class TomoScan extends AddressAPI {
         return transactionArrayList;
     }
 
-    public String processNormal(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
+    public String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         // Normal Transactions - These are all TOMO
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
@@ -363,7 +363,7 @@ public class TomoScan extends AddressAPI {
         }
     }
 
-    public String processInternal(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionInternalArrayList) {
+    public String processInternal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionInternalArrayList) {
         // Internal Transactions - These are all TOMO
         String addressDataInternalJSON = RESTUtil.get(url);
         if(addressDataInternalJSON == null) {
@@ -438,7 +438,7 @@ public class TomoScan extends AddressAPI {
         }
     }
 
-    public String processRewards(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
+    public String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
         // Rewards - These are all TOMO
         String addressDataRewardJSON = RESTUtil.get(url);
         if(addressDataRewardJSON == null) {
@@ -482,7 +482,7 @@ public class TomoScan extends AddressAPI {
         }
     }
 
-    public String processVotes(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionVotesArrayList) {
+    public String processVotes(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionVotesArrayList) {
         // Votes - Only for mainnet
         if(!cryptoAddress.network.isMainnet()) { return DONE; }
 
@@ -541,7 +541,7 @@ public class TomoScan extends AddressAPI {
         }
     }
 
-    public String processTokensTRC20(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC20ArrayList) {
+    public String processTokensTRC20(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC20ArrayList) {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
@@ -633,7 +633,7 @@ public class TomoScan extends AddressAPI {
         }
     }
 
-    public String processTokensTRC21(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC21ArrayList) {
+    public String processTokensTRC21(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC21ArrayList) {
         // TRC-21 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 

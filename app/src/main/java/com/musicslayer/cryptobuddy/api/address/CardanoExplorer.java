@@ -123,7 +123,7 @@ public class CardanoExplorer extends AddressAPI {
             baseURL = "https://explorer.cardano-testnet.iohkdev.io/graphql";
         }
 
-        for(int offset = 0; ;offset+=100) {
+        for(int offset = 0; ; offset+=100) {
             String body = "{" +
                 "\"query\": \"query getPaymentAddressTransactions($address: String!, $offset: Int!, $limit: Int!) {\\n  transactions(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}, offset: $offset, limit: $limit) {\\n    ...TransactionDetails\\n  }\\n}\\n\\nfragment TransactionDetails on Transaction {\\n  block {\\n    epochNo\\n    hash\\n    number\\n    slotNo\\n  }\\n  deposit\\n  fee\\n  hash\\n  includedAt\\n  mint {\\n    asset {\\n      assetName\\n      decimals\\n      description\\n      fingerprint\\n      name\\n      policyId\\n      ticker\\n    }\\n    quantity\\n  }\\n  inputs {\\n    address\\n    sourceTxHash\\n    sourceTxIndex\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  metadata {\\n    key\\n    value\\n  }\\n  outputs {\\n    address\\n    index\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  totalOutput\\n  withdrawals {\\n    address\\n    amount\\n  }\\n}\\n\"," +
                 "\"variables\": \"{\\\"offset\\\":" + offset + ", \\\"limit\\\":100, \\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +

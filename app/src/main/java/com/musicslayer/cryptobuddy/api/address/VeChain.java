@@ -105,9 +105,9 @@ public class VeChain extends AddressAPI {
             baseURL = "https://explore-testnet.vechain.org";
         }
 
-        for(int offset = 0; ; offset+=50) {
+        for(int offset = 0; ; offset += 50) {
             String url = baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=" + offset;
-            String status = processTransfers(url, offset, cryptoAddress, transactionArrayList);
+            String status = processTransfers(url, cryptoAddress, transactionArrayList);
 
             if(status == null) {
                 return null;
@@ -120,7 +120,7 @@ public class VeChain extends AddressAPI {
         return transactionArrayList;
     }
 
-    public String processTransfers(String url, int offset, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    public String processTransfers(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         // Transfers (VET, VTHO, and Tokens)
         String addressDataJSONTransfers = RESTUtil.get(url);
         if(addressDataJSONTransfers == null) {

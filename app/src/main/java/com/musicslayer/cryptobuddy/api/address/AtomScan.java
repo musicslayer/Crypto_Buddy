@@ -95,10 +95,9 @@ public class AtomScan extends AddressAPI {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
         String lastID = "";
-
-        for(int page = 0; ; page++) {
+        for(;;) {
             String url = "https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50&from=" + lastID;
-            lastID = process(url, page, cryptoAddress, transactionArrayList);
+            lastID = process(url, cryptoAddress, transactionArrayList);
 
             if(lastID == null) {
                 return null;
@@ -112,7 +111,7 @@ public class AtomScan extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;

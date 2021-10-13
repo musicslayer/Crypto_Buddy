@@ -73,10 +73,9 @@ public class Blockstream extends AddressAPI {
         }
 
         String lastID = "";
-
-        for(int page = 0; ; page++) {
+        for(;;) {
             String url = "https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs/chain/" + lastID;
-            lastID = process(url, page, cryptoAddress, transactionArrayList);
+            lastID = process(url, cryptoAddress, transactionArrayList);
 
             if(lastID == null) {
                 return null;
@@ -90,7 +89,7 @@ public class Blockstream extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
@@ -175,7 +174,6 @@ public class Blockstream extends AddressAPI {
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
-            // lastID will be the last ID we processed, or DONE if we didn't process anything.
             return lastID;
         }
         catch(Exception e) {

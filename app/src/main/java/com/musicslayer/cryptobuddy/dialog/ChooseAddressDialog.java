@@ -135,6 +135,10 @@ public class ChooseAddressDialog extends BaseDialog {
         B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 String address = E_ADDRESS.getTextString();
+
+                // Trim leading and trailing whitespace.
+                address = address.trim();
+
                 if(address.isEmpty()) {
                     ToastUtil.showToast(activity,"empty_address");
                     return;

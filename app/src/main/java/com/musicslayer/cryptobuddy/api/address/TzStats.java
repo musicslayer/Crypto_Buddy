@@ -188,22 +188,22 @@ public class TzStats extends AddressAPI {
         int LIMIT = getMaxTransactions();
 
         String urlReceive = baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
-        String statusReceive = processReceive(urlReceive, 0, cryptoAddress, transactionReceiveArrayList);
+        String statusReceive = processReceive(urlReceive, cryptoAddress, transactionReceiveArrayList);
         if(statusReceive == null) { return null; }
 
         String urlSend = baseURL + "/tables/op?sender=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
-        String statusSend = processSend(urlSend, 0, cryptoAddress, transactionSendArrayList);
+        String statusSend = processSend(urlSend, cryptoAddress, transactionSendArrayList);
         if(statusSend == null) { return null; }
 
         String urlCreate = baseURL + "/tables/op?creator=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
-        String statusCreate = processCreate(urlCreate, 0, cryptoAddress, transactionCreateArrayList);
+        String statusCreate = processCreate(urlCreate, cryptoAddress, transactionCreateArrayList);
         if(statusCreate == null) { return null; }
 
         // Process all tokens.
         String lastID = "";
-        for(int page = 0; ; page++) {
+        for(;;) {
             String url = "https://api.better-call.dev/v1/tokens/" + networkString + "/transfers/" + cryptoAddress.address + "?size=10&last_id=" + lastID;
-            lastID = processTokens(url, page, cryptoAddress, transactionTokenArrayList);
+            lastID = processTokens(url, cryptoAddress, transactionTokenArrayList);
 
             if(lastID == null) {
                 return null;
@@ -256,7 +256,7 @@ public class TzStats extends AddressAPI {
         return transactionArrayList;
     }
 
-    public String processReceive(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionReceiveArrayList) {
+    public String processReceive(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionReceiveArrayList) {
         String addressDataReceiveJSON = RESTUtil.get(url);
         if(addressDataReceiveJSON == null) {
             return null;
@@ -300,7 +300,7 @@ public class TzStats extends AddressAPI {
         }
     }
 
-    public String processSend(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList) {
+    public String processSend(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList) {
         String addressDataSendJSON = RESTUtil.get(url);
         if(addressDataSendJSON == null) {
             return null;
@@ -414,7 +414,7 @@ public class TzStats extends AddressAPI {
         }
     }
 
-    public String processCreate(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionCreateArrayList) {
+    public String processCreate(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionCreateArrayList) {
         String addressDataCreateJSON = RESTUtil.get(url);
         if(addressDataCreateJSON == null) {
             return null;
@@ -466,7 +466,7 @@ public class TzStats extends AddressAPI {
         }
     }
 
-    public String processTokens(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
+    public String processTokens(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
         String addressDataTokenJSON = RESTUtil.get(url);

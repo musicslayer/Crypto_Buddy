@@ -191,7 +191,7 @@ public class XRPLedger extends AddressAPI {
         }
 
         String marker = "";
-        for(int page = 0; ; page++) {
+        for(;;) {
             String markerString = marker.isEmpty() ? "" : "\"marker\": " + marker + ", ";
 
             String body = "{" +

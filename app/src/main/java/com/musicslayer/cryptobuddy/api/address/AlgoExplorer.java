@@ -117,7 +117,7 @@ public class AlgoExplorer extends AddressAPI {
 /*
         for(int page = 0; ; page++) {
             String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions" + "?page=" + page;
-            int status = process(url, page, cryptoAddress, transactionArrayList);
+            int status = process(url, cryptoAddress, transactionArrayList);
 
             if(status == -1) {
                 return null;
@@ -131,7 +131,7 @@ public class AlgoExplorer extends AddressAPI {
 
         // For now, just do it once. After V2 we can fix this.
         String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions";
-        String status = process(url, 0, cryptoAddress, transactionArrayList);
+        String status = process(url, cryptoAddress, transactionArrayList);
         if(status == null) {
             return null;
         }
@@ -140,7 +140,7 @@ public class AlgoExplorer extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;

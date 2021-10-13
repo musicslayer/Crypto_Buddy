@@ -13,6 +13,10 @@ import java.util.HashMap;
 
 // For now, SegWit is always bc1/ltc1, but in the future the number could change. There are also different kinds of SegWit.
 
+// Cardano ADA_Shelley has addresses that are 58 characters instead of 103
+// addr1v9s96gdnn9nmhmyz2duu0ghgnt6wvzdjkavkcv92smj69uc4rsp5h
+// CardanoExplorer.java can get balance but not transactions.
+
 abstract public class Network implements Serialization.SerializableToJSON {
     abstract public boolean isMainnet();
     abstract public Crypto getCrypto();

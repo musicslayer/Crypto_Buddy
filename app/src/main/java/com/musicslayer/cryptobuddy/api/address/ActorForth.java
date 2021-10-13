@@ -79,7 +79,7 @@ public class ActorForth extends AddressAPI {
         String baseURL = "https://rest.bitcoin.com";
         for(int page = 0; ; page++) {
             String url = baseURL + "/v2/address/transactions/" + cryptoAddress.address + "?page=" + page;
-            String status = process(url, page, cryptoAddress, transactionArrayList);
+            String status = process(url, cryptoAddress, transactionArrayList);
 
             if(status == null) {
                 return null;
@@ -93,18 +93,23 @@ public class ActorForth extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String status = DONE;
+
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray jsonData = json.getJSONArray("txs");
             String legacyAddress = json.getString("legacyAddress");
 
             for(int i = 0; i < jsonData.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
                 JSONObject vin = jsonTransaction.getJSONArray("vin").getJSONObject(0);
@@ -161,16 +166,7 @@ public class ActorForth extends AddressAPI {
                 }
             }
 
-            // See if we have more pages. They are indexed from 0 to pagesTotal - 1.
-            int pagesTotal = json.getInt("pagesTotal");
-            if(page < pagesTotal - 1) {
-                // Just return anything.
-                return "NotDone";
-            }
-            else {
-
-                return DONE;
-            }
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

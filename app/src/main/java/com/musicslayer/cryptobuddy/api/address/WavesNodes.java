@@ -129,9 +129,9 @@ public class WavesNodes extends AddressAPI {
 
         // 1000 is the limit that we can request, so we need pagination.
         String lastID = "";
-        for(int page = 0; ; page++) {
+        for(;;) {
             String url = baseURL + "/transactions/address/" + cryptoAddress.address + "/limit/1000?after=" + lastID;
-            lastID = processTransfers(url, page, cryptoAddress, transactionArrayList);
+            lastID = processTransfers(url, cryptoAddress, transactionArrayList);
 
             if(lastID == null) {
                 return null;
@@ -144,7 +144,7 @@ public class WavesNodes extends AddressAPI {
         return transactionArrayList;
     }
 
-    public String processTransfers(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    public String processTransfers(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;

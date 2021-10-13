@@ -123,7 +123,7 @@ public class TRONSCAN extends AddressAPI {
         // Process all normal.
         for(int start = 0; ; start += 50) {
             String url = baseURL + "/api/transaction?address=" + cryptoAddress.address + "&limit=50&start=" + start;
-            String status = processNormal(url, start, cryptoAddress, transactionNormalArrayList);
+            String status = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
             if(status == null) {
                 return null;
@@ -136,7 +136,7 @@ public class TRONSCAN extends AddressAPI {
         // Process all tokens from.
         for(int start = 0; ; start += 50) {
             String url = baseURL + "/api/token_trc20/transfers?fromAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
-            String status = processTokensFrom(url, start, cryptoAddress, transactionTokenFromArrayList);
+            String status = processTokensFrom(url, cryptoAddress, transactionTokenFromArrayList);
 
             if(status == null) {
                 return null;
@@ -149,7 +149,7 @@ public class TRONSCAN extends AddressAPI {
         // Process all rewards.
         for(int start = 0; ; start += 50) {
             String url = baseURL + "/api/token_trc20/transfers?toAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
-            String status = processTokensTo(url, start, cryptoAddress, transactionTokenToArrayList);
+            String status = processTokensTo(url, cryptoAddress, transactionTokenToArrayList);
 
             if(status == null) {
                 return null;
@@ -194,7 +194,7 @@ public class TRONSCAN extends AddressAPI {
         return transactionArrayList;
     }
 
-    public String processNormal(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
+    public String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         String addressDataTransactionsJSON = RESTUtil.get(url);
         if(addressDataTransactionsJSON == null) {
             return null;
@@ -347,7 +347,7 @@ public class TRONSCAN extends AddressAPI {
         }
     }
 
-    public String processTokensFrom(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenFromArrayList) {
+    public String processTokensFrom(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenFromArrayList) {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
@@ -435,7 +435,7 @@ public class TRONSCAN extends AddressAPI {
         }
     }
 
-    public String processTokensTo(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensToArrayList) {
+    public String processTokensTo(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensToArrayList) {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 

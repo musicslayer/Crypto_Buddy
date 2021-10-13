@@ -87,9 +87,9 @@ public class SoChain extends AddressAPI {
 
         // Process all received.
         String lastReceivedID = "";
-        for(int page = 0; page < MAXPAGES; page++) {
+        for(;;) {
             String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
-            lastReceivedID = processReceived(url, page, cryptoAddress, txnToValue, txnToDate);
+            lastReceivedID = processReceived(url, cryptoAddress, txnToValue, txnToDate);
 
             if(lastReceivedID == null) {
                 return null;
@@ -101,9 +101,9 @@ public class SoChain extends AddressAPI {
 
         // Process all spent.
         String lastSpentID = "";
-        for(int page = 0; page < MAXPAGES; page++) {
+        for(;;) {
             String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
-            lastSpentID = processSpent(url, page, cryptoAddress, txnToValue, txnToDate);
+            lastSpentID = processSpent(url, cryptoAddress, txnToValue, txnToDate);
 
             if(lastSpentID == null) {
                 return null;
@@ -138,7 +138,7 @@ public class SoChain extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processReceived(String url, int page, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+    private String processReceived(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONReceived = RESTUtil.get(url);
         if(addressDataJSONReceived == null) {
             return null;
@@ -188,7 +188,7 @@ public class SoChain extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processSpent(String url, int page, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+    private String processSpent(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONSpent = RESTUtil.get(url);
         if(addressDataJSONSpent == null) {
             return null;
