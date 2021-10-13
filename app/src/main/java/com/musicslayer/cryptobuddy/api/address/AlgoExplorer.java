@@ -21,6 +21,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO We need to update to V2
+// https://algoexplorerapi.io/idx2/v2/accounts/W2TVRKTHYB7HDVUGI6E6AVAXDGFT3RJT3XZGB2TVOT53TAISPBO2F5R3HE/transactions?limit=10000
+// https://algoexplorerapi.io/idx2/v2/accounts/W2TVRKTHYB7HDVUGI6E6AVAXDGFT3RJT3XZGB2TVOT53TAISPBO2F5R3HE/transactions?limit=99&next=2IfwAAAAAAASAAAA
+// This is paged, but also allows us to get a large number directly.
+
 public class AlgoExplorer extends AddressAPI {
     public String getName() { return "AlgoExplorer"; }
     public String getDisplayName() { return "AlgoExplorer REST API"; }
@@ -109,7 +114,34 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/v1/account/" + cryptoAddress.address + "/transactions");
+/*
+        for(int page = 0; ; page++) {
+            String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions" + "?page=" + page;
+            int status = process(url, page, cryptoAddress, transactionArrayList);
+
+            if(status == -1) {
+                return null;
+            }
+            else if(status == 0) {
+                break;
+            }
+        }
+
+ */
+
+        // For now, just do it once. After V2 we can fix this.
+        String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions";
+        String status = process(url, 0, cryptoAddress, transactionArrayList);
+        if(status == null) {
+            return null;
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
@@ -146,7 +178,7 @@ public class AlgoExplorer extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -177,7 +209,7 @@ public class AlgoExplorer extends AddressAPI {
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
                         transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, crypto), null, new Timestamp(block_time_date),"Staking Reward"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
                 else if(jsonTransaction.has("curxfer")) {
@@ -218,21 +250,33 @@ public class AlgoExplorer extends AddressAPI {
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
                         transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, crypto), null, new Timestamp(block_time_date),"Staking Reward"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
 
                 if(value.compareTo(BigDecimal.ZERO) > 0) {
                     transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(value.toString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            /*
+            // See if we have more pages. They are indexed from 0 to pagesTotal - 1.
+            int pagesTotal = json.getInt("pagesTotal");
+            if(page < pagesTotal - 1) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+
+             */
+
+            return DONE;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

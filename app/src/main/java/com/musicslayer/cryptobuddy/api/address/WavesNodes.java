@@ -127,13 +127,46 @@ public class WavesNodes extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/transactions/address/" + cryptoAddress.address + "/limit/1000");
+        // 1000 is the limit that we can request, so we need pagination.
+        String lastID = "";
+        for(int page = 0; ; page++) {
+            String url = baseURL + "/transactions/address/" + cryptoAddress.address + "/limit/1000?after=" + lastID;
+            lastID = processTransfers(url, page, cryptoAddress, transactionArrayList);
 
+            if(lastID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastID)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processTransfers(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://nodes.wavesnodes.com";
+        }
+        else if(cryptoAddress.network instanceof WAVES_Testnet) {
+            baseURL = "https://nodes-testnet.wavesnodes.com";
+        }
+        else if(cryptoAddress.network instanceof WAVES_Stagenet) {
+            baseURL = "https://nodes-stagenet.wavesnodes.com";
+        }
+        else {
+            return null;
+        }
+
         try {
+            String lastID = DONE;
+
             JSONArray json = new JSONArray(addressDataJSON);
             JSONArray jsonData = json.getJSONArray(0);
 
@@ -172,7 +205,7 @@ public class WavesNodes extends AddressAPI {
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     if(!(fee_crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                         transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, fee_crypto), null, new Timestamp(block_time_date),"Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
 
@@ -202,7 +235,7 @@ public class WavesNodes extends AddressAPI {
 
                         if(!(crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                             transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Payment"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                 }
@@ -232,7 +265,7 @@ public class WavesNodes extends AddressAPI {
 
                             if(!(crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transfer"));
-                                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                         }
                     }
@@ -246,7 +279,7 @@ public class WavesNodes extends AddressAPI {
 
                         if(!(crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                             transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                 }
@@ -275,7 +308,7 @@ public class WavesNodes extends AddressAPI {
 
                         if(!(crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                             transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Token Reissue"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                 }
@@ -342,12 +375,12 @@ public class WavesNodes extends AddressAPI {
 
                     if(!(amount_crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                         transactionArrayList.add(new Transaction(new Action(amount_action), new AssetQuantity(amount_balance.toPlainString(), amount_crypto), null, new Timestamp(block_time_date),amount_info));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
 
                     if(!(price_crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                         transactionArrayList.add(new Transaction(new Action(price_action), new AssetQuantity(price_balance.toPlainString(), price_crypto), null, new Timestamp(block_time_date),price_info));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
 
                     // We always pay the fee here.
@@ -368,17 +401,17 @@ public class WavesNodes extends AddressAPI {
                     if(matcher_fee.compareTo(BigDecimal.ZERO) > 0) {
                         if(!(matcher_fee_crypto instanceof Token) || shouldIncludeTokens(cryptoAddress)) {
                             transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(matcher_fee_s, matcher_fee_crypto), null, new Timestamp(block_time_date),"Transaction Fee"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                 }
             }
+
+            return lastID;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

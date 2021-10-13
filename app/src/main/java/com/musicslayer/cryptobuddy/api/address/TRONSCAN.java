@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.network.TRX_Testnet_Nile;
 import com.musicslayer.cryptobuddy.asset.network.TRX_Testnet_Shasta;
@@ -118,17 +116,114 @@ public class TRONSCAN extends AddressAPI {
             return null;
         }
 
-        String addressDataTransactionsJSON = RESTUtil.get(baseURL + "/api/transaction?address=" + cryptoAddress.address + "&limit=50");
-        String addressDataTransactions2JSON = RESTUtil.get(baseURL + "/api/transaction?address=" + cryptoAddress.address + "&limit=50&start=50");
-        if(addressDataTransactionsJSON == null || addressDataTransactions2JSON == null) {
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokenFromArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokenToArrayList = new ArrayList<>();
+
+        // Process all normal.
+        for(int start = 0; ; start += 50) {
+            String url = baseURL + "/api/transaction?address=" + cryptoAddress.address + "&limit=50&start=" + start;
+            String status = processNormal(url, start, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all tokens from.
+        for(int start = 0; ; start += 50) {
+            String url = baseURL + "/api/token_trc20/transfers?fromAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
+            String status = processTokensFrom(url, start, cryptoAddress, transactionTokenFromArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all rewards.
+        for(int start = 0; ; start += 50) {
+            String url = baseURL + "/api/token_trc20/transfers?toAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
+            String status = processTokensTo(url, start, cryptoAddress, transactionTokenToArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 1;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionTokenFromArrayList.subList(0, Math.min(splitMax, transactionTokenFromArrayList.size())));
+        transactionArrayList.addAll(transactionTokenToArrayList.subList(0, Math.min(splitMax, transactionTokenToArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionTokenFromArrayList.subList(0, Math.min(splitMax, transactionTokenFromArrayList.size())).clear();
+        transactionTokenToArrayList.subList(0, Math.min(splitMax, transactionTokenToArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionTokenFromArrayList.size() + transactionTokenToArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokenFromArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokenFromArrayList.get(0));
+                transactionTokenFromArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokenToArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokenToArrayList.get(0));
+                transactionTokenToArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processNormal(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
+        String addressDataTransactionsJSON = RESTUtil.get(url);
+        if(addressDataTransactionsJSON == null) {
+            return null;
+        }
+
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://apilist.tronscan.org";
+        }
+        else if(cryptoAddress.network instanceof TRX_Testnet_Nile) {
+            baseURL = "https://nileapi.tronscan.org";
+        }
+        else if(cryptoAddress.network instanceof TRX_Testnet_Shasta) {
+            baseURL = "https://shastapi.tronscan.org";
+        }
+        else {
             return null;
         }
 
         try {
+            String status = DONE;
+
             // Transactions
             JSONObject json = new JSONObject(addressDataTransactionsJSON);
             JSONArray jsonData = json.getJSONArray("data");
             for(int i = 0; i < jsonData.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject o = jsonData.getJSONObject(i);
 
                 BigInteger block_time = new BigInteger(o.getString("timestamp"));
@@ -177,13 +272,13 @@ public class TRONSCAN extends AddressAPI {
                 }
 
                 if(energy_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(energy_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Energy Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(energy_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Energy Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(network_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Network Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Network Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -215,8 +310,8 @@ public class TRONSCAN extends AddressAPI {
                     if("_".equals(id)) {
                         crypto = cryptoAddress.getCrypto();
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                     else if("trc10".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
@@ -224,8 +319,8 @@ public class TRONSCAN extends AddressAPI {
                         crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
 
                         if(shouldIncludeTokens(cryptoAddress)) {
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                     else if("trc20".equals(tokenType)) {
@@ -234,8 +329,8 @@ public class TRONSCAN extends AddressAPI {
                         crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
 
                         if(shouldIncludeTokens(cryptoAddress)) {
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
                     else {
@@ -244,277 +339,187 @@ public class TRONSCAN extends AddressAPI {
                 }
             }
 
-            JSONObject json2 = new JSONObject(addressDataTransactions2JSON);
-            JSONArray json2Data = json2.getJSONArray("data");
-            for(int i = 0; i < json2Data.length(); i++) {
-                JSONObject o = json2Data.getJSONObject(i);
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
 
-                BigInteger block_time = new BigInteger(o.getString("timestamp"));
-                Date block_time_date = new Date(block_time.longValue());
+    public String processTokensFrom(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenFromArrayList) {
+        // TRC-20 Tokens
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-                JSONObject cost = o.getJSONObject("cost");
-                if(cost.length() == 0) {
-                    // Sometimes the fee information is not here, so we need to fetch it.
-                    String hash = o.getString("hash");
-                    String addressDataAlternateJSON = RESTUtil.get(baseURL + "/api/transaction-info?hash=" + hash);
-                    if(addressDataAlternateJSON != null) {
-                        JSONObject o2 = new JSONObject(addressDataAlternateJSON);
-                        cost = o2.getJSONObject("cost");
-                    }
-                    else {
-                        // Indicate unknown fee?
-                    }
+        String addressDataTRC20FromJSON = RESTUtil.get(url);
+        if(addressDataTRC20FromJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            // TRC20 From
+            JSONObject jsonTRC20From = new JSONObject(addressDataTRC20FromJSON);
+            JSONArray jsonTRC20FromData = jsonTRC20From.getJSONArray("token_transfers");
+            for(int i = 0; i < jsonTRC20FromData.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject o = jsonTRC20FromData.getJSONObject(i);
+
+                if(!"SUCCESS".equals(o.getString("finalResult"))) {
+                    continue;
                 }
 
-                String to = o.getString("toAddress");
-                String from = o.getString("ownerAddress");
+                BigInteger block_time = new BigInteger(o.getString("block_ts"));
+                Date block_time_date = new Date(block_time.longValue());
+
+                JSONObject tokenInfo = o.getJSONObject("tokenInfo");
+
+                String to = o.getString("to_address");
+                String from = o.getString("from_address");
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) { continue; }
 
                 String action;
-                boolean isFee;
                 if(cryptoAddress.address.equals(to)) {
                     action = "Receive";
-                    isFee = false;
                 }
                 else if(cryptoAddress.address.equals(from)){
                     action = "Send";
-                    isFee = true;
                 }
                 else {
                     // Nothing to process here.
                     continue;
                 }
 
-                BigDecimal energy_fee = BigDecimal.ZERO;
-                if(isFee && cost.has("energy_fee")) {
-                    energy_fee = new BigDecimal(cost.getString("energy_fee")).movePointLeft(cryptoAddress.getCrypto().getScale());
+                int scale = tokenInfo.getInt("tokenDecimal");
+                String tokenType = tokenInfo.getString("tokenType");
+                String id = tokenInfo.getString("tokenId");
+
+                Crypto crypto;
+                if("_".equals(id)) {
+                    crypto = cryptoAddress.getCrypto();
                 }
-
-                BigDecimal network_fee = BigDecimal.ZERO;
-                if(isFee && cost.has("net_fee")) {
-                    network_fee = new BigDecimal(cost.getString("net_fee")).movePointLeft(cryptoAddress.getCrypto().getScale());
+                else if("trc10".equals(tokenType)) {
+                    String name = tokenInfo.getString("tokenAbbr");
+                    String display_name = tokenInfo.getString("tokenName");
+                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
                 }
+                else if("trc20".equals(tokenType)) {
+                    String name = tokenInfo.getString("tokenAbbr");
+                    String display_name = tokenInfo.getString("tokenName");
 
-                if(energy_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(energy_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Energy Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
                 }
-
-                if(network_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Network Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                }
-
-                // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
-
-                if(!"SUCCESS".equals(o.getString("result"))) {
+                else {
+                    // Don't deal with NFTs yet...
                     continue;
                 }
 
-                String contractType = o.getString("contractType");
+                BigDecimal amount = new BigDecimal(o.getString("quant")).movePointLeft(scale);
 
-                if("0".equals(contractType)) {
-                    // Account Creation - Nothing more to do.
-                }
-                else if("1".equals(contractType)){
-                    // Transaction
-                    JSONObject tokenInfo = o.getJSONObject("tokenInfo");
-                    int scale = tokenInfo.getInt("tokenDecimal");
-                    String tokenType = o.getString("tokenType");
-                    String id = tokenInfo.getString("tokenId");
-
-                    BigDecimal amount = new BigDecimal(o.getString("amount")).movePointLeft(scale);
-
-                    if(amount.compareTo(BigDecimal.ZERO) <= 0) {
-                        continue;
-                    }
-
-                    Crypto crypto;
-                    if("_".equals(id)) {
-                        crypto = cryptoAddress.getCrypto();
-
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                    else if("trc10".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-
-                        if(shouldIncludeTokens(cryptoAddress)) {
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                        }
-                    }
-                    else if("trc20".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-
-                        if(shouldIncludeTokens(cryptoAddress)) {
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                        }
-                    }
-                    else {
-                        // Don't deal with NFTs yet...
-                    }
-                }
-                else {
-                    // New type?
-                    Log.e("Crypto Buddy", "X");
+                if(amount.compareTo(BigDecimal.ZERO) > 0) {
+                    transactionTokenFromArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                    if(transactionTokenFromArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
+    }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTRC20FromJSON = RESTUtil.get(baseURL + "/api/token_trc20/transfers?fromAddress=" + cryptoAddress.address + "&limit=50");
-            String addressDataTRC20ToJSON = RESTUtil.get(baseURL + "/api/token_trc20/transfers?toAddress=" + cryptoAddress.address + "&limit=50");
-            if(addressDataTRC20FromJSON == null || addressDataTRC20ToJSON == null) {
-                return null;
-            }
+    public String processTokensTo(String url, int start, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensToArrayList) {
+        // TRC-20 Tokens
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-            try {
-                // TRC20 From
-                JSONObject jsonTRC20From = new JSONObject(addressDataTRC20FromJSON);
-                JSONArray jsonTRC20FromData = jsonTRC20From.getJSONArray("token_transfers");
-                for(int i = 0; i < jsonTRC20FromData.length(); i++) {
-                    JSONObject o = jsonTRC20FromData.getJSONObject(i);
-
-                    if(!"SUCCESS".equals(o.getString("finalResult"))) {
-                        continue;
-                    }
-
-                    BigInteger block_time = new BigInteger(o.getString("block_ts"));
-                    Date block_time_date = new Date(block_time.longValue());
-
-                    JSONObject tokenInfo = o.getJSONObject("tokenInfo");
-
-                    String to = o.getString("to_address");
-                    String from = o.getString("from_address");
-
-                    // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
-
-                    String action;
-                    if(cryptoAddress.address.equals(to)) {
-                        action = "Receive";
-                    }
-                    else if(cryptoAddress.address.equals(from)){
-                        action = "Send";
-                    }
-                    else {
-                        // Nothing to process here.
-                        continue;
-                    }
-
-                    int scale = tokenInfo.getInt("tokenDecimal");
-                    String tokenType = tokenInfo.getString("tokenType");
-                    String id = tokenInfo.getString("tokenId");
-
-                    Crypto crypto;
-                    if("_".equals(id)) {
-                        crypto = cryptoAddress.getCrypto();
-                    }
-                    else if("trc10".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-                    }
-                    else if("trc20".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-
-                        crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-                    }
-                    else {
-                        // Don't deal with NFTs yet...
-                        continue;
-                    }
-
-                    BigDecimal amount = new BigDecimal(o.getString("quant")).movePointLeft(scale);
-
-                    if(amount.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-
-                // TRC20 To
-                JSONObject jsonTRC20To = new JSONObject(addressDataTRC20ToJSON);
-                JSONArray jsonTRC20ToData = jsonTRC20To.getJSONArray("token_transfers");
-                for(int i = 0; i < jsonTRC20ToData.length(); i++) {
-                    JSONObject o = jsonTRC20ToData.getJSONObject(i);
-
-                    if(!"SUCCESS".equals(o.getString("finalResult"))) {
-                        continue;
-                    }
-
-                    BigInteger block_time = new BigInteger(o.getString("block_ts"));
-                    Date block_time_date = new Date(block_time.longValue());
-
-                    JSONObject tokenInfo = o.getJSONObject("tokenInfo");
-
-                    String to = o.getString("to_address");
-                    String from = o.getString("from_address");
-
-                    // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
-
-                    String action;
-                    if(cryptoAddress.address.equals(to)) {
-                        action = "Receive";
-                    }
-                    else if(cryptoAddress.address.equals(from)){
-                        action = "Send";
-                    }
-                    else {
-                        // Nothing to process here.
-                        continue;
-                    }
-
-                    int scale = tokenInfo.getInt("tokenDecimal");
-                    String tokenType = tokenInfo.getString("tokenType");
-                    String id = tokenInfo.getString("tokenId");
-
-                    Crypto crypto;
-                    if("_".equals(id)) {
-                        crypto = cryptoAddress.getCrypto();
-                    }
-                    else if("trc10".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-                    }
-                    else if("trc20".equals(tokenType)) {
-                        String name = tokenInfo.getString("tokenAbbr");
-                        String display_name = tokenInfo.getString("tokenName");
-
-                        crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
-                    }
-                    else {
-                        // Don't deal with NFTs yet...
-                        continue;
-                    }
-
-                    BigDecimal amount = new BigDecimal(o.getString("quant")).movePointLeft(scale);
-
-                    if(amount.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                return null;
-            }
+        String addressDataTRC20ToJSON = RESTUtil.get(url);
+        if(addressDataTRC20ToJSON == null) {
+            return null;
         }
 
-        return transactionArrayList;
+        try {
+            String status = DONE;
+
+            // TRC20 To
+            JSONObject jsonTRC20To = new JSONObject(addressDataTRC20ToJSON);
+            JSONArray jsonTRC20ToData = jsonTRC20To.getJSONArray("token_transfers");
+            for(int i = 0; i < jsonTRC20ToData.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject o = jsonTRC20ToData.getJSONObject(i);
+
+                if(!"SUCCESS".equals(o.getString("finalResult"))) {
+                    continue;
+                }
+
+                BigInteger block_time = new BigInteger(o.getString("block_ts"));
+                Date block_time_date = new Date(block_time.longValue());
+
+                JSONObject tokenInfo = o.getJSONObject("tokenInfo");
+
+                String to = o.getString("to_address");
+                String from = o.getString("from_address");
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) { continue; }
+
+                String action;
+                if(cryptoAddress.address.equals(to)) {
+                    action = "Receive";
+                }
+                else if(cryptoAddress.address.equals(from)){
+                    action = "Send";
+                }
+                else {
+                    // Nothing to process here.
+                    continue;
+                }
+
+                int scale = tokenInfo.getInt("tokenDecimal");
+                String tokenType = tokenInfo.getString("tokenType");
+                String id = tokenInfo.getString("tokenId");
+
+                Crypto crypto;
+                if("_".equals(id)) {
+                    crypto = cryptoAddress.getCrypto();
+                }
+                else if("trc10".equals(tokenType)) {
+                    String name = tokenInfo.getString("tokenAbbr");
+                    String display_name = tokenInfo.getString("tokenName");
+                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                }
+                else if("trc20".equals(tokenType)) {
+                    String name = tokenInfo.getString("tokenAbbr");
+                    String display_name = tokenInfo.getString("tokenName");
+
+                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                }
+                else {
+                    // Don't deal with NFTs yet...
+                    continue;
+                }
+
+                BigDecimal amount = new BigDecimal(o.getString("quant")).movePointLeft(scale);
+
+                if(amount.compareTo(BigDecimal.ZERO) > 0) {
+                    transactionTokensToArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
+                    if(transactionTokensToArrayList.size() == getMaxTransactions()) { return DONE; }
+                }
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 }

@@ -17,6 +17,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
+// Rate limit: 4 requests per 3 seconds.
+
 public class ActorForth extends AddressAPI {
     public String getName() { return "ActorForth"; }
     public String getDisplayName() { return "ActorForth BCH REST API V2"; }
@@ -75,8 +77,24 @@ public class ActorForth extends AddressAPI {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
         String baseURL = "https://rest.bitcoin.com";
+        for(int page = 0; ; page++) {
+            String url = baseURL + "/v2/address/transactions/" + cryptoAddress.address + "?page=" + page;
+            String status = process(url, page, cryptoAddress, transactionArrayList);
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/v2/address/transactions/" + cryptoAddress.address);
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
@@ -108,6 +126,9 @@ public class ActorForth extends AddressAPI {
                 JSONArray vout = jsonTransaction.getJSONArray("vout");
                 for(int ii = 0; ii < vout.length(); ii++) {
                     JSONObject o2 = vout.getJSONObject(ii);
+                    if(!o2.has("scriptPubKey") || !o2.getJSONObject("scriptPubKey").has("addresses")) {
+                        continue;
+                    }
 
                     String a = o2.getJSONObject("scriptPubKey").getJSONArray("addresses").getString(0);
 
@@ -131,20 +152,29 @@ public class ActorForth extends AddressAPI {
                     Crypto crypto = cryptoAddress.getCrypto();
 
                     transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
 
                     if(fee.compareTo(BigDecimal.ZERO) > 0) {
                         transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, crypto), null, new Timestamp(block_time_date),"Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
+            }
+
+            // See if we have more pages. They are indexed from 0 to pagesTotal - 1.
+            int pagesTotal = json.getInt("pagesTotal");
+            if(page < pagesTotal - 1) {
+                // Just return anything.
+                return "NotDone";
+            }
+            else {
+
+                return DONE;
             }
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

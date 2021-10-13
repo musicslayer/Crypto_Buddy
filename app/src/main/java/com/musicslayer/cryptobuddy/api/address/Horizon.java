@@ -49,6 +49,9 @@ Full list of possible operations:
     SetTrustLineFlags
  */
 
+// TODO Pagination.
+// TODO We need to do payments https://horizon.stellar.org/accounts/GADFXROGGR74V3MSWU2SUKCEUPQFZEIIF3IUHLRN3NKZ4JN2IPBMCODA/payments?limit=200&order=desc&include_failed=true
+
 public class Horizon extends AddressAPI {
     public String getName() { return "Horizon"; }
     public String getDisplayName() { return "Horizon API"; }
@@ -122,7 +125,13 @@ public class Horizon extends AddressAPI {
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 2; // Operations doesn't count.
+        int splitMax = getMaxTransactions()/splitNum;
+
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionEffectsArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionIssueArrayList = new ArrayList<>();
 
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
@@ -139,7 +148,7 @@ public class Horizon extends AddressAPI {
             // If all of these are null, it's possible that there are 0 transactions.
             // If this is true, there are probably no tokens.
             // We really need a better way to check if the account is active.
-            return transactionArrayList;
+            return new ArrayList<>();
         }
         else if(addressDataJSON == null || addressDataOperationsJSON == null || addressDataEffectsJSON == null) {
             return null;
@@ -170,8 +179,8 @@ public class Horizon extends AddressAPI {
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
 
@@ -219,8 +228,8 @@ public class Horizon extends AddressAPI {
                         action = "Receive";
                         amount = jsonTransaction.getString("starting_balance");
                         crypto = cryptoAddress.getCrypto();
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                         break;
 
                     case "account_credited":
@@ -244,8 +253,8 @@ public class Horizon extends AddressAPI {
                             crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
                         }
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                         break;
 
                     case "account_debited":
@@ -269,8 +278,8 @@ public class Horizon extends AddressAPI {
                             crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
                         }
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                         break;
 
                     case "trade":
@@ -309,8 +318,8 @@ public class Horizon extends AddressAPI {
 
                         if("native".equals(jsonTransaction.getString("bought_asset_type"))) {
                             bought_crypto = cryptoAddress.getCrypto();
-                            transactionArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                         }
                         else {
                             if(shouldIncludeTokens(cryptoAddress)) {
@@ -321,8 +330,8 @@ public class Horizon extends AddressAPI {
                                 String id = name + "-" + jsonTransaction.getString("bought_asset_issuer");
 
                                 bought_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-                                transactionArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
-                                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
+                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                             }
                         }
 
@@ -333,8 +342,8 @@ public class Horizon extends AddressAPI {
 
                         if("native".equals(jsonTransaction.getString("sold_asset_type"))) {
                             sold_crypto = cryptoAddress.getCrypto();
-                            transactionArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                            transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Transaction"));
+                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                         }
                         else {
                             if(shouldIncludeTokens(cryptoAddress)) {
@@ -345,8 +354,8 @@ public class Horizon extends AddressAPI {
                                 String id = name + "-" + jsonTransaction.getString("sold_asset_issuer");
 
                                 sold_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-                                transactionArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
-                                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
+                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
                             }
                         }
 
@@ -401,14 +410,44 @@ public class Horizon extends AddressAPI {
 
                     Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
 
-                    transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, token), null, new Timestamp(null),"Issued Asset"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionIssueArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, token), null, new Timestamp(null),"Issued Asset"));
+                    if(transactionIssueArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
                 return null;
             }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())));
+        transactionArrayList.addAll(transactionIssueArrayList.subList(0, Math.min(splitMax, transactionIssueArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())).clear();
+        transactionIssueArrayList.subList(0, Math.min(splitMax, transactionIssueArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionEffectsArrayList.size() + transactionIssueArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionEffectsArrayList.size() > 0) {
+                transactionArrayList.add(transactionEffectsArrayList.get(0));
+                transactionEffectsArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionIssueArrayList.size() > 0) {
+                transactionArrayList.add(transactionIssueArrayList.get(0));
+                transactionIssueArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
         }
 
         return transactionArrayList;

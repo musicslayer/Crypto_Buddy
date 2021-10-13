@@ -20,6 +20,8 @@ import java.util.Date;
 // TODO Include Proof of Stake Bridge.
 // TODO Bridge could also carry tokens.
 
+// PolygonScan has no pagination on its results.
+
 public class PolygonScan extends AddressAPI {
     public final String APIKEY_polygonscan = "P1JCB9EWXNTQGAN4ZSC5Z3CF8444DC3BMH";
 
@@ -86,7 +88,10 @@ public class PolygonScan extends AddressAPI {
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionInternalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionPlasmaArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokenArrayList = new ArrayList<>();
 
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
@@ -161,8 +166,8 @@ public class PolygonScan extends AddressAPI {
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -178,8 +183,8 @@ public class PolygonScan extends AddressAPI {
                 balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
             // Internal
@@ -230,8 +235,8 @@ public class PolygonScan extends AddressAPI {
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
+                    if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 BigInteger balance_diff = new BigInteger(oI.getString("value"));
@@ -239,8 +244,8 @@ public class PolygonScan extends AddressAPI {
                 balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
             }
 
             // Plasma
@@ -273,8 +278,8 @@ public class PolygonScan extends AddressAPI {
                     String amount = b.toPlainString();
 
                     // Assume this is a Receive of MATIC.
-                    transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Plasma Bridge Deposit"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionPlasmaArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Plasma Bridge Deposit"));
+                    if(transactionPlasmaArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
         }
@@ -347,14 +352,57 @@ public class PolygonScan extends AddressAPI {
 
                     Token token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getOrCreateToken(key, name, display_name, scale, id);
 
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
+                    if(transactionTokenArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
                 return null;
             }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 2;
+        splitNum += cryptoAddress.network.isMainnet() ? 1 : 0;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())));
+        transactionArrayList.addAll(transactionPlasmaArrayList.subList(0, Math.min(splitMax, transactionPlasmaArrayList.size())));
+        transactionArrayList.addAll(transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())).clear();
+        transactionPlasmaArrayList.subList(0, Math.min(splitMax, transactionPlasmaArrayList.size())).clear();
+        transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionInternalArrayList.size() + transactionPlasmaArrayList.size() + transactionTokenArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionInternalArrayList.size() > 0) {
+                transactionArrayList.add(transactionInternalArrayList.get(0));
+                transactionInternalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionPlasmaArrayList.size() > 0) {
+                transactionArrayList.add(transactionPlasmaArrayList.get(0));
+                transactionPlasmaArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokenArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokenArrayList.get(0));
+                transactionTokenArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
         }
 
         return transactionArrayList;

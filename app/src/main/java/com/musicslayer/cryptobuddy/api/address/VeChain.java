@@ -105,19 +105,46 @@ public class VeChain extends AddressAPI {
             baseURL = "https://explore-testnet.vechain.org";
         }
 
-        // Transfers (VET, VTHO, and Tokens)
-        String addressDataJSONTransfers = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50");
-        String addressDataJSONTransfers2 = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=50");
+        for(int offset = 0; ; offset+=50) {
+            String url = baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=" + offset;
+            String status = processTransfers(url, offset, cryptoAddress, transactionArrayList);
 
-        if(addressDataJSONTransfers == null || addressDataJSONTransfers2 == null) {
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processTransfers(String url, int offset, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        // Transfers (VET, VTHO, and Tokens)
+        String addressDataJSONTransfers = RESTUtil.get(url);
+        if(addressDataJSONTransfers == null) {
             return null;
         }
 
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://explore.vechain.org";
+        }
+        else {
+            baseURL = "https://explore-testnet.vechain.org";
+        }
+
         try {
+            String status = DONE;
+
             JSONObject jsonAddress3 = new JSONObject(addressDataJSONTransfers);
             JSONArray transfers = jsonAddress3.getJSONArray("transfers");
             for(int j = 0; j < transfers.length(); j++)
             {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject o = transfers.getJSONObject(j);
 
                 JSONObject meta = o.getJSONObject("meta");
@@ -141,7 +168,7 @@ public class VeChain extends AddressAPI {
                     fee = fee.movePointLeft(new VTHO().getScale());
                     if(fee.compareTo(BigDecimal.ZERO) > 0) {
                         transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), new VTHO()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
                 else if(cryptoAddress.address.equalsIgnoreCase(to)) {
@@ -180,83 +207,14 @@ public class VeChain extends AddressAPI {
                 String currentBalance = b.toString();
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(currentBalance, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
-            JSONObject jsonAddress4 = new JSONObject(addressDataJSONTransfers2);
-            JSONArray transfers2 = jsonAddress4.getJSONArray("transfers");
-            for(int j = 0; j < transfers2.length(); j++)
-            {
-                JSONObject o = transfers2.getJSONObject(j);
-
-                JSONObject meta = o.getJSONObject("meta");
-                BigInteger block_time = new BigInteger(meta.getString("blockTimestamp"));
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
-
-                String from = o.getString("sender");
-                String to = o.getString("recipient");
-
-                String action;
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
-                    action = "Send";
-
-                    // Get fee (in VeThor)
-                    String txID = o.getString("txID");
-                    String transactionJSON = RESTUtil.get(baseURL + "/api/transactions/" + txID);
-                    JSONObject transactionData = new JSONObject(transactionJSON);
-
-                    BigDecimal fee = new BigDecimal(new BigInteger(transactionData.getJSONObject("receipt").getString("paid").substring(2), 16).toString());
-                    fee = fee.movePointLeft(new VTHO().getScale());
-                    if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), new VTHO()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
-                    action = "Receive";
-                }
-                else {
-                    // Assume there is nothing to process here.
-                    continue;
-                }
-
-                // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
-
-                Crypto crypto;
-
-                String symbol = o.getString("symbol");
-                if("VET".equals(symbol)) {
-                    crypto = new VET();
-                }
-                else if("VTHO".equals(symbol)) {
-                    // Treat VeThor like a coin.
-                    crypto = new VTHO();
-                }
-                else {
-                    if(!shouldIncludeTokens(cryptoAddress)) {
-                        continue;
-                    }
-
-                    crypto = TokenManager.getTokenManagerFromKey("VETTokenManager").getToken(symbol, "?", "?", 18, "?");
-                }
-
-                // Value is in HEX and in WEI and needs to be converted.
-                String hexBalance = o.getString("amount");
-                BigDecimal b = new BigDecimal(new BigInteger(hexBalance.substring(2), 16).toString());
-                b = b.movePointLeft(crypto.getScale());
-                String currentBalance = b.toString();
-
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(currentBalance, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-            }
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

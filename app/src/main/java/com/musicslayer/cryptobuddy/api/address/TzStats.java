@@ -179,10 +179,86 @@ public class TzStats extends AddressAPI {
             return null;
         }
 
-        String addressDataReceiveJSON = RESTUtil.get(baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
-        String addressDataSendJSON = RESTUtil.get(baseURL + "/tables/op?sender=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
-        String addressDataCreateJSON = RESTUtil.get(baseURL + "/tables/op?creator=" + cryptoAddress.address + "&limit=3000&columns=is_success,reward,deposit,volume,time,type,fee,burned");
-        if(addressDataReceiveJSON == null || addressDataSendJSON == null || addressDataCreateJSON == null) {
+        ArrayList<Transaction> transactionReceiveArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionSendArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionCreateArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokenArrayList = new ArrayList<>();
+
+        // We can request as many as we want for these, so we don't need pagination.
+        int LIMIT = getMaxTransactions();
+
+        String urlReceive = baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
+        String statusReceive = processReceive(urlReceive, 0, cryptoAddress, transactionReceiveArrayList);
+        if(statusReceive == null) { return null; }
+
+        String urlSend = baseURL + "/tables/op?sender=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
+        String statusSend = processSend(urlSend, 0, cryptoAddress, transactionSendArrayList);
+        if(statusSend == null) { return null; }
+
+        String urlCreate = baseURL + "/tables/op?creator=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";
+        String statusCreate = processCreate(urlCreate, 0, cryptoAddress, transactionCreateArrayList);
+        if(statusCreate == null) { return null; }
+
+        // Process all tokens.
+        String lastID = "";
+        for(int page = 0; ; page++) {
+            String url = "https://api.better-call.dev/v1/tokens/" + networkString + "/transfers/" + cryptoAddress.address + "?size=10&last_id=" + lastID;
+            lastID = processTokens(url, page, cryptoAddress, transactionTokenArrayList);
+
+            if(lastID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastID)) {
+                break;
+            }
+        }
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 4 : 3;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())));
+        transactionArrayList.addAll(transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())));
+        transactionArrayList.addAll(transactionCreateArrayList.subList(0, Math.min(splitMax, transactionCreateArrayList.size())));
+        transactionArrayList.addAll(transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())));
+
+        transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())).clear();
+        transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())).clear();
+        transactionCreateArrayList.subList(0, Math.min(splitMax, transactionCreateArrayList.size())).clear();
+        transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())).clear();
+
+        while(transactionReceiveArrayList.size() + transactionSendArrayList.size() + transactionCreateArrayList.size() + transactionTokenArrayList.size() > 0) {
+            if(transactionReceiveArrayList.size() > 0) {
+                transactionArrayList.add(transactionReceiveArrayList.get(0));
+                transactionReceiveArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionSendArrayList.size() > 0) {
+                transactionArrayList.add(transactionSendArrayList.get(0));
+                transactionSendArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionCreateArrayList.size() > 0) {
+                transactionArrayList.add(transactionCreateArrayList.get(0));
+                transactionCreateArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokenArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokenArrayList.get(0));
+                transactionTokenArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processReceive(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionReceiveArrayList) {
+        String addressDataReceiveJSON = RESTUtil.get(url);
+        if(addressDataReceiveJSON == null) {
             return null;
         }
 
@@ -211,11 +287,26 @@ public class TzStats extends AddressAPI {
 
                 if(isSuccess && value.compareTo(BigDecimal.ZERO) > 0) {
                     String balance_diff_s = value.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionReceiveArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
+                    if(transactionReceiveArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
+            return DONE;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processSend(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList) {
+        String addressDataSendJSON = RESTUtil.get(url);
+        if(addressDataSendJSON == null) {
+            return null;
+        }
+
+        try {
             // Send
             // is_success, reward, deposit, volume, time, type, fee, burned
             JSONArray jsonSendData = new JSONArray(addressDataSendJSON);
@@ -298,23 +389,38 @@ public class TzStats extends AddressAPI {
 
                 if(isSuccess && value.compareTo(BigDecimal.ZERO) > 0) {
                     String balance_diff_s = value.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),transactionName));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionSendArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),transactionName));
+                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     String fee_s = fee.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),feeName));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),feeName));
+                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(burned.compareTo(BigDecimal.ZERO) > 0) {
                     String burned_s = burned.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),burnName));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),burnName));
+                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
+            return DONE;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processCreate(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionCreateArrayList) {
+        String addressDataCreateJSON = RESTUtil.get(url);
+        if(addressDataCreateJSON == null) {
+            return null;
+        }
+
+        try {
             // Create
             // is_success, reward, deposit, volume, time, type, fee, burned
             JSONArray jsonCreateData = new JSONArray(addressDataCreateJSON);
@@ -341,93 +447,102 @@ public class TzStats extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     String fee_s = fee.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Storage Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Storage Fee"));
+                    if(transactionCreateArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(burned.compareTo(BigDecimal.ZERO) > 0) {
                     String burned_s = burned.toPlainString();
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Burned For Storage"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Burned For Storage"));
+                    if(transactionCreateArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            return DONE;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
+    }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTokenJSON = RESTUtil.get("https://api.better-call.dev/v1/tokens/" + networkString + "/transfers/" + cryptoAddress.address + "?size=10");
-            if(addressDataTokenJSON == null) {
-                return null;
-            }
+    public String processTokens(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-            try {
-                // Tokens
-                JSONObject jsonTokenData = new JSONObject(addressDataTokenJSON);
-                JSONArray jsonTokenArray = jsonTokenData.getJSONArray("transfers");
-                for(int i = 0; i < jsonTokenArray.length(); i++) {
-                    JSONObject jsonTransaction = jsonTokenArray.getJSONObject(i);
-
-                    boolean isSuccess = "applied".equals(jsonTransaction.getString("status"));
-                    if(!isSuccess) {
-                        continue;
-                    }
-
-                    JSONObject tokenInfo = jsonTransaction.getJSONObject("token");
-                    if(!tokenInfo.has("symbol") || !tokenInfo.has("name") || !tokenInfo.has("decimals") || !tokenInfo.has("contract")) {
-                        // These are "invalid" tokens.
-                        continue;
-                    }
-
-                    String name = tokenInfo.getString("symbol");
-                    String display_name = tokenInfo.getString("name");
-                    int scale = tokenInfo.getInt("decimals");
-                    String id = tokenInfo.getString("contract");
-
-                    Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-
-                    String action;
-
-                    String from = jsonTransaction.getString("from");
-                    String to = jsonTransaction.getString("to");
-
-                    // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
-
-                    if(cryptoAddress.address.equalsIgnoreCase(from)) {
-                        action = "Send";
-                    }
-                    else if(cryptoAddress.address.equalsIgnoreCase(to)) {
-                        action = "Receive";
-                    }
-                    else {
-                        // Assume there is nothing else to process.
-                        continue;
-                    }
-
-                    String block_time = jsonTransaction.getString("timestamp");
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date block_time_date = format.parse(block_time);
-
-                    BigDecimal value = new BigDecimal(jsonTransaction.getString("amount"));
-                    value = value.movePointLeft(token.getScale());
-
-                    if(value.compareTo(BigDecimal.ZERO) > 0) {
-                        String balance_diff_s = value.toPlainString();
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                return null;
-            }
+        String addressDataTokenJSON = RESTUtil.get(url);
+        if(addressDataTokenJSON == null) {
+            return null;
         }
 
-        return transactionArrayList;
+        try {
+            String lastID = DONE;
+
+            // Tokens
+            JSONObject jsonTokenData = new JSONObject(addressDataTokenJSON);
+            JSONArray jsonTokenArray = jsonTokenData.getJSONArray("transfers");
+            for(int i = 0; i < jsonTokenArray.length(); i++) {
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                lastID = jsonTokenData.getString("last_id");
+
+                JSONObject jsonTransaction = jsonTokenArray.getJSONObject(i);
+
+                boolean isSuccess = "applied".equals(jsonTransaction.getString("status"));
+                if(!isSuccess) {
+                    continue;
+                }
+
+                JSONObject tokenInfo = jsonTransaction.getJSONObject("token");
+                if(!tokenInfo.has("symbol") || !tokenInfo.has("name") || !tokenInfo.has("decimals") || !tokenInfo.has("contract")) {
+                    // These are "invalid" tokens.
+                    continue;
+                }
+
+                String name = tokenInfo.getString("symbol");
+                String display_name = tokenInfo.getString("name");
+                int scale = tokenInfo.getInt("decimals");
+                String id = tokenInfo.getString("contract");
+
+                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+
+                String action;
+
+                String from = jsonTransaction.getString("from");
+                String to = jsonTransaction.getString("to");
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) { continue; }
+
+                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                    action = "Send";
+                }
+                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                    action = "Receive";
+                }
+                else {
+                    // Assume there is nothing else to process.
+                    continue;
+                }
+
+                String block_time = jsonTransaction.getString("timestamp");
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date block_time_date = format.parse(block_time);
+
+                BigDecimal value = new BigDecimal(jsonTransaction.getString("amount"));
+                value = value.movePointLeft(token.getScale());
+
+                if(value.compareTo(BigDecimal.ZERO) > 0) {
+                    String balance_diff_s = value.toPlainString();
+                    transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date),"Transaction"));
+                    if(transactionTokenArrayList.size() == getMaxTransactions()) { return DONE; }
+                }
+            }
+
+            return lastID;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 }

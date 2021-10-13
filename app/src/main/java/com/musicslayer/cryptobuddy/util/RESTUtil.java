@@ -14,6 +14,7 @@ import java.util.Date;
 public class RESTUtil {
     // This is the amount of time we want between web requests, to avoid overloading other APIs and triggering their rate limiting.
     public static final long limitTime = 1000;
+    public static final int numRetries = 5;
 
     // This is static because it needs to be shared between all of the methods.
     // All types of web requests need to be far enough apart from any other type of web request.
@@ -27,8 +28,15 @@ public class RESTUtil {
     }
 
     public static String get(String urlString) {
-        rateLimit();
-        return get_impl(urlString);
+        String result = null;
+
+        for(int r = 0; r < numRetries; r++) {
+            rateLimit();
+            result = get_impl(urlString);
+            if(result != null) { break; }
+        }
+
+        return result;
     }
 
     private static String get_impl(String urlString) {
@@ -50,8 +58,15 @@ public class RESTUtil {
     }
 
     public static String post(String urlString, String body) {
-        rateLimit();
-        return post_impl(urlString, body);
+        String result = null;
+
+        for(int r = 0; r < numRetries; r++) {
+            rateLimit();
+            result = post_impl(urlString, body);
+            if(result != null) { break; }
+        }
+
+        return result;
     }
 
     private static String post_impl(String urlString, String body) {
@@ -81,8 +96,15 @@ public class RESTUtil {
     }
 
     public static String postWithKey(String urlString, String body, String keyName, String key) {
-        rateLimit();
-        return postWithKey_impl(urlString, body, keyName, key);
+        String result = null;
+
+        for(int r = 0; r < numRetries; r++) {
+            rateLimit();
+            result = postWithKey_impl(urlString, body, keyName, key);
+            if(result != null) { break; }
+        }
+
+        return result;
     }
 
     private static String postWithKey_impl(String urlString, String body, String keyName, String key) {

@@ -190,26 +190,52 @@ public class XRPLedger extends AddressAPI {
             return null;
         }
 
-        String body = "{" +
-                "\"method\": \"account_tx\"," +
-                "\"params\": [" +
-                "{" +
-                "\"account\": \"" + cryptoAddress.address + "\"" +
-                "}" +
-                "]" +
-                "}";
-        String addressDataJSON = RESTUtil.post(baseURL, body);
+        String marker = "";
+        for(int page = 0; ; page++) {
+            String markerString = marker.isEmpty() ? "" : "\"marker\": " + marker + ", ";
 
+            String body = "{" +
+                    "\"method\": \"account_tx\"," +
+                    "\"params\": [" +
+                    "{" +
+                    "\"limit\": 1000, " + markerString + "\"account\": \"" + cryptoAddress.address + "\"" +
+                    "}" +
+                    "]" +
+                    "}";
+            marker = processTransfers(baseURL, body, cryptoAddress, transactionArrayList);
+
+            if(marker == null) {
+                return null;
+            }
+            else if(DONE.equals(marker)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processTransfers(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.post(url, body);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String marker = DONE;
+
             // Add account creation transaction (20 XRP).
             //transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity("20", cryptoAddress.crypto), null, new Timestamp(null), "", "Account Creation Fee"));
 
             JSONObject json = new JSONObject(addressDataJSON);
-            JSONArray jsonData = json.getJSONObject("result").getJSONArray("transactions");
+            JSONObject result = json.getJSONObject("result");
+
+            // If the marker value is present, then we are not done yet.
+            if(result.has("marker")) {
+                marker = result.getString("marker");
+            }
+
+            JSONArray jsonData = result.getJSONArray("transactions");
             for(int i = 0; i < jsonData.length(); i++) {
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
@@ -234,7 +260,7 @@ public class XRPLedger extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(!"tesSUCCESS".equals(meta.getString("TransactionResult"))) {
@@ -282,19 +308,19 @@ public class XRPLedger extends AddressAPI {
                     }
 
                     transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
                 else {
                     // New type?
                     Log.e("Crypto Buddy", "New Type = " + type);
                 }
             }
+
+            return marker;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

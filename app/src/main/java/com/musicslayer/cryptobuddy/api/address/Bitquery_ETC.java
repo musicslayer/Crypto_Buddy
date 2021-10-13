@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// Bitquery has no pagination on its results.
+
 public class Bitquery_ETC extends AddressAPI {
     final String APIKEYNAME = "X-API-KEY";
     final String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";

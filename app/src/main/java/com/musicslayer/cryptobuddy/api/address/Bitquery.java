@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// Bitquery has no pagination on its results.
+
 public class Bitquery extends AddressAPI {
     public String getName() { return "Bitquery"; }
     public String getDisplayName() { return "Binance Chain & Bitquery HTTP APIs"; }
@@ -128,30 +130,30 @@ public class Bitquery extends AddressAPI {
             "\"\n}";
 
         String bodyS = "{\"query\" : \"" +
-                "query{" +
-                "  binance{" +
-                "    transfers(options: {desc: \\\"block.timestamp.time\\\"}, sender: {is: \\\"" + cryptoAddress.address + "\\\"}) {" +
-                "      block{" +
-                "        timestamp{" +
-                "          time(format: \\\"%Y-%m-%d %H:%M:%S\\\")" +
-                "        }" +
-                "        height" +
-                "      }" +
-                "      currency{" +
-                "        address " +
-                "        symbol " +
-                "        tokenId " +
-                "        name " +
-                "      }" +
-                "      amount " +
-                "      transaction{" +
-                "        hash" +
-                "      }" +
-                "      transferType" +
-                "    }" +
-                "  }" +
-                "}" +
-                "\"\n}";
+            "query{" +
+            "  binance{" +
+            "    transfers(options: {desc: \\\"block.timestamp.time\\\"}, sender: {is: \\\"" + cryptoAddress.address + "\\\"}) {" +
+            "      block{" +
+            "        timestamp{" +
+            "          time(format: \\\"%Y-%m-%d %H:%M:%S\\\")" +
+            "        }" +
+            "        height" +
+            "      }" +
+            "      currency{" +
+            "        address " +
+            "        symbol " +
+            "        tokenId " +
+            "        name " +
+            "      }" +
+            "      amount " +
+            "      transaction{" +
+            "        hash" +
+            "      }" +
+            "      transferType" +
+            "    }" +
+            "  }" +
+            "}" +
+            "\"\n}";
 
         String APIKEYNAME = "X-API-KEY";
         String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";

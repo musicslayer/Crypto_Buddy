@@ -67,7 +67,7 @@ public class InfoUtil {
             case "ZEC":
             case "DOGE":
             case "LTC":
-                info = "Fees are included in the transaction amount.";
+                info = "Fees are included in the transaction amount. Fees for unsuccessful transactions are not shown.";
                 break;
             case "ETH":
                 if(isMainnet) {

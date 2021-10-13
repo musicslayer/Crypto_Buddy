@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import com.musicslayer.cryptobuddy.settings.MaxNumberTransactionsSetting;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -14,7 +15,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 public class SoChain extends AddressAPI {
     public String getName() { return "SoChain"; }
@@ -59,8 +59,6 @@ public class SoChain extends AddressAPI {
     // There is no flag for transactions that failed/errored.
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-
         String urlPart;
         if(cryptoAddress.network.isMainnet()) {
             urlPart = "/";
@@ -69,20 +67,87 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        String addressDataJSONReceived = RESTUtil.get("https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
-        String addressDataJSONSpent = RESTUtil.get("https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
-        if(addressDataJSONReceived == null || addressDataJSONSpent == null) {
+        HashMap <String, Double> txnToValue = new HashMap<>();
+        HashMap <String, Date> txnToDate = new HashMap<>();
+
+        // Since we don't count the transactions yet, just have a max number of pages.
+        // Each page has 100 transactions.
+        int MAXTRANSACTIONS = MaxNumberTransactionsSetting.value;
+
+        int MAXPAGES;
+        if(MAXTRANSACTIONS == 500) {
+            MAXPAGES = 5;
+        }
+        else if(MAXTRANSACTIONS == 1000) {
+            MAXPAGES = 10;
+        }
+        else { // 5000
+            MAXPAGES = 50;
+        }
+
+        // Process all received.
+        String lastReceivedID = "";
+        for(int page = 0; page < MAXPAGES; page++) {
+            String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
+            lastReceivedID = processReceived(url, page, cryptoAddress, txnToValue, txnToDate);
+
+            if(lastReceivedID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastReceivedID)) {
+                break;
+            }
+        }
+
+        // Process all spent.
+        String lastSpentID = "";
+        for(int page = 0; page < MAXPAGES; page++) {
+            String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
+            lastSpentID = processSpent(url, page, cryptoAddress, txnToValue, txnToDate);
+
+            if(lastSpentID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastSpentID)) {
+                break;
+            }
+        }
+
+        // Fill in all transactions.
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        for(String key : txnToValue.keySet()) {
+            Double sumValue_D = txnToValue.get(key);
+            if(sumValue_D == null) { continue; }
+
+            double sumValue = sumValue_D;
+
+            String action = "Receive";
+            if(sumValue < 0) {
+                sumValue = -sumValue;
+                action = "Send";
+            }
+
+            Date date = txnToDate.get(key);
+
+            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(Double.toString(sumValue), cryptoAddress.getCrypto()), null, new Timestamp(date), "Transaction"));
+            if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processReceived(String url, int page, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+        String addressDataJSONReceived = RESTUtil.get(url);
+        if(addressDataJSONReceived == null) {
             return null;
         }
 
         try {
+            String lastID = DONE;
+
             JSONObject jsonAddress1 = new JSONObject(addressDataJSONReceived);
-            JSONObject jsonAddress2 = new JSONObject(addressDataJSONSpent);
-
-            HashMap <String, Double> txnToValue = new HashMap<>();
-            HashMap <String, Date> txnToDate = new HashMap<>();
-
-            // Address1
             JSONObject jsonAddress1_2 = jsonAddress1.getJSONObject("data");
             JSONArray jsonAddress1_3 = jsonAddress1_2.getJSONArray("txs");
             for(int j = 0; j < jsonAddress1_3.length(); j++)
@@ -90,6 +155,9 @@ public class SoChain extends AddressAPI {
                 JSONObject o = jsonAddress1_3.getJSONObject(j);
 
                 String txn = o.getString("txid");
+
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                lastID = txn;
 
                 String balance_diff_s = o.getString("value");
                 double balance_diff_d = Double.parseDouble(balance_diff_s);
@@ -111,7 +179,25 @@ public class SoChain extends AddressAPI {
                 txnToDate.put(txn, block_time_date);
             }
 
-            // Address2
+            return lastID;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processSpent(String url, int page, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+        String addressDataJSONSpent = RESTUtil.get(url);
+        if(addressDataJSONSpent == null) {
+            return null;
+        }
+
+        try {
+            String lastID = DONE;
+
+            JSONObject jsonAddress2 = new JSONObject(addressDataJSONSpent);
             JSONObject jsonAddress2_2 = jsonAddress2.getJSONObject("data");
             JSONArray jsonAddress2_3 = jsonAddress2_2.getJSONArray("txs");
             for(int j = 0; j < jsonAddress2_3.length(); j++)
@@ -119,6 +205,9 @@ public class SoChain extends AddressAPI {
                 JSONObject o = jsonAddress2_3.getJSONObject(j);
 
                 String txn = o.getString("txid");
+
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                lastID = txn;
 
                 String balance_diff_s = o.getString("value");
                 double balance_diff_d = Double.parseDouble(balance_diff_s);
@@ -140,29 +229,11 @@ public class SoChain extends AddressAPI {
                 txnToDate.put(txn, block_time_date);
             }
 
-            List<String> keysValue = new ArrayList<>(txnToValue.keySet());
-            for (int k = 0; k < keysValue.size(); k++) {
-                String key =  keysValue.get(k);
-
-                double sumValue = txnToValue.get(key);
-
-                String action = "Receive";
-                if(sumValue < 0) {
-                    sumValue = -sumValue;
-                    action = "Send";
-                }
-
-                Date date = txnToDate.get(key);
-
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(Double.toString(sumValue), cryptoAddress.getCrypto()), null, new Timestamp(date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-            }
+            return lastID;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

@@ -72,16 +72,40 @@ public class Blockstream extends AddressAPI {
             urlPart = "/testnet/";
         }
 
-        String addressDataJSON = RESTUtil.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs");
+        String lastID = "";
+
+        for(int page = 0; ; page++) {
+            String url = "https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs/chain/" + lastID;
+            lastID = process(url, page, cryptoAddress, transactionArrayList);
+
+            if(lastID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastID)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String lastID = DONE;
+
             JSONArray jsonA = new JSONArray(addressDataJSON);
 
             for(int i = 0; i < jsonA.length(); i++) {
                 JSONObject json = jsonA.getJSONObject(i);
+
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                lastID = json.getString("txid");
 
                 // We don't have fee information. But in reality, we should count the fee even if the transaction fails.
                 JSONObject status = json.getJSONObject("status");
@@ -148,14 +172,15 @@ public class Blockstream extends AddressAPI {
                 String balance_diff_s = Double.toString(balance_diff_d);
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
+
+            // lastID will be the last ID we processed, or DONE if we didn't process anything.
+            return lastID;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

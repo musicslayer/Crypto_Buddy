@@ -125,8 +125,6 @@ public class TomoScan extends AddressAPI {
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
             baseURL = "https://scan.tomochain.com";
@@ -135,33 +133,169 @@ public class TomoScan extends AddressAPI {
             baseURL = "https://scan.testnet.tomochain.com";
         }
 
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionInternalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionRewardsArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionVotesArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokensTRC20ArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokensTRC21ArrayList = new ArrayList<>();
+
+        // Process all normal.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100&page=" + page;
+            String status = processNormal(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all internal.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100&page=" + page;
+            String status = processInternal(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all rewards.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100&page=" + page;
+            String status = processRewards(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all votes.
+        for(int page = 1; ; page++) {
+            String url = "https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address + "?limit=100&page=" + page;
+            String status = processVotes(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all TRC20.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/token-txs/trc20?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
+            String status = processTokensTRC20(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all TRC21.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/token-txs/trc21?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
+            String status = processTokensTRC21(url, page, cryptoAddress, transactionNormalArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = cryptoAddress.network.isMainnet() ? 4 : 3;
+        splitNum += shouldIncludeTokens(cryptoAddress) ? 2 : 0;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())));
+        transactionArrayList.addAll(transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())));
+        transactionArrayList.addAll(transactionVotesArrayList.subList(0, Math.min(splitMax, transactionVotesArrayList.size())));
+        transactionArrayList.addAll(transactionTokensTRC20ArrayList.subList(0, Math.min(splitMax, transactionTokensTRC20ArrayList.size())));
+        transactionArrayList.addAll(transactionTokensTRC21ArrayList.subList(0, Math.min(splitMax, transactionTokensTRC21ArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())).clear();
+        transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())).clear();
+        transactionVotesArrayList.subList(0, Math.min(splitMax, transactionVotesArrayList.size())).clear();
+        transactionTokensTRC20ArrayList.subList(0, Math.min(splitMax, transactionTokensTRC20ArrayList.size())).clear();
+        transactionTokensTRC21ArrayList.subList(0, Math.min(splitMax, transactionTokensTRC21ArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionInternalArrayList.size() + transactionRewardsArrayList.size() + transactionVotesArrayList.size() + transactionTokensTRC20ArrayList.size() + transactionTokensTRC21ArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionInternalArrayList.size() > 0) {
+                transactionArrayList.add(transactionInternalArrayList.get(0));
+                transactionInternalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionRewardsArrayList.size() > 0) {
+                transactionArrayList.add(transactionRewardsArrayList.get(0));
+                transactionRewardsArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionVotesArrayList.size() > 0) {
+                transactionArrayList.add(transactionVotesArrayList.get(0));
+                transactionVotesArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokensTRC20ArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokensTRC20ArrayList.get(0));
+                transactionTokensTRC20ArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokensTRC21ArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokensTRC21ArrayList.get(0));
+                transactionTokensTRC21ArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
+        return transactionArrayList;
+    }
+
+    public String processNormal(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         // Normal Transactions - These are all TOMO
-        String addressDataJSON = RESTUtil.get(baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100");
-
-        // Internal Transactions - These are all TOMO
-        String addressDataInternalJSON = RESTUtil.get(baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100");
-
-        // Rewards - These are all TOMO
-        String addressDataRewardJSON = RESTUtil.get(baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100");
-
-        // Votes - Only for mainnet
-        String addressDataVotesJSON;
-        if(cryptoAddress.network.isMainnet()) {
-            addressDataVotesJSON = RESTUtil.get("https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address);
-        }
-        else {
-            addressDataVotesJSON = "{}";
-        }
-
-        if(addressDataJSON == null || addressDataInternalJSON == null || addressDataRewardJSON == null || addressDataVotesJSON == null) {
+        String addressDataJSON = RESTUtil.get(url);
+        if(addressDataJSON == null) {
             return null;
         }
 
         try {
-            // Normal
+            String status = DONE;
+
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray jsonArray = json.getJSONArray("items");
             for(int j = 0; j < jsonArray.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject o = jsonArray.getJSONObject(j);
 
                 String from = o.getString("from");
@@ -200,8 +334,8 @@ public class TomoScan extends AddressAPI {
                 Date block_time_date = format.parse(block_time);
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -217,14 +351,34 @@ public class TomoScan extends AddressAPI {
                     continue;
                 }
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
-            // Internal
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processInternal(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionInternalArrayList) {
+        // Internal Transactions - These are all TOMO
+        String addressDataInternalJSON = RESTUtil.get(url);
+        if(addressDataInternalJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
             JSONObject jsonInternal = new JSONObject(addressDataInternalJSON);
             JSONArray jsonInternalArray = jsonInternal.getJSONArray("items");
             for(int j = 0; j < jsonInternalArray.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject oI = jsonInternalArray.getJSONObject(j);
 
                 // There is no flag for errors.
@@ -267,19 +421,39 @@ public class TomoScan extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Internal Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Internal Transaction Fee"));
+                    if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
-            // Rewards
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processRewards(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
+        // Rewards - These are all TOMO
+        String addressDataRewardJSON = RESTUtil.get(url);
+        if(addressDataRewardJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
             JSONObject jsonReward = new JSONObject(addressDataRewardJSON);
             JSONArray jsonRewardArray = jsonReward.getJSONArray("items");
             for(int j = 0; j < jsonRewardArray.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject oR = jsonRewardArray.getJSONObject(j);
 
                 // There is no flag for errors.
@@ -295,196 +469,259 @@ public class TomoScan extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Reward"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Reward"));
+                if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
-            // Votes
-            if(cryptoAddress.network.isMainnet()) {
-                JSONObject jsonVotes = new JSONObject(addressDataVotesJSON);
-                JSONArray jsonVotesArray = jsonVotes.getJSONArray("items");
-                for(int j = 0; j < jsonVotesArray.length(); j++) {
-                    JSONObject oV = jsonVotesArray.getJSONObject(j);
-
-                    // There is no flag for errors.
-
-                    String event = oV.getString("event");
-                    String action;
-
-                    if("Withdraw".equals(event)) { // Unvote???
-                        action = "Receive";
-                    }
-                    else if("Vote".equals(event) || "Propose".equals(event)) { // Unvote???
-                        action = "Send";
-                    }
-                    else {
-                        // Skip everything else to avoid double counting.
-                        continue;
-                    }
-
-                    BigDecimal balance_diff_d = new BigDecimal(oV.getString("capacity"));
-                    balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
-                    String balance_diff_s = balance_diff_d.toPlainString();
-
-                    String block_time = oV.getString("createdAt");
-
-                    // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date block_time_date = format.parse(block_time);
-
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), event));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                }
-            }
+            // IsDone?
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
+    }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            // TRC-20 and TRC-21 Transactions - Various Tokens
-            String addressDataTokenJSON20 = RESTUtil.get(baseURL + "/api/token-txs/trc20?limit=50&holder=" + cryptoAddress.address);
-            String addressDataTokenJSON21 = RESTUtil.get(baseURL + "/api/token-txs/trc21?limit=50&holder=" + cryptoAddress.address);
+    public String processVotes(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionVotesArrayList) {
+        // Votes - Only for mainnet
+        if(!cryptoAddress.network.isMainnet()) { return DONE; }
 
-            if(addressDataTokenJSON20 == null || addressDataTokenJSON21 == null) {
-                return null;
-            }
-
-            try {
-                // TRC-20 Tokens
-                JSONObject jsonToken20 = new JSONObject(addressDataTokenJSON20);
-                JSONArray jsonTokenArray20 = jsonToken20.getJSONArray("items");
-
-                for(int j = 0; j < jsonTokenArray20.length(); j++) {
-                    JSONObject oT = jsonTokenArray20.getJSONObject(j);
-
-                    // There is no flag for errors.
-
-                    String from = oT.getString("from");
-                    String to = oT.getString("to");
-
-                    // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
-
-                    String action;
-                    BigDecimal fee = BigDecimal.ZERO;
-
-                    if(cryptoAddress.address.equalsIgnoreCase(from)) {
-                        action = "Send";
-                    }
-                    else if(cryptoAddress.address.equalsIgnoreCase(to)) {
-                        action = "Receive";
-                    }
-                    else {
-                        // We shouldn't get here...
-                        continue;
-                    }
-
-                    BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
-
-                    // Shift by token decimal
-                    BigInteger tokenDecimal = new BigInteger(oT.getString("decimals"));
-                    balance_diff = balance_diff.movePointLeft(tokenDecimal.intValue());
-                    String balance_diff_s = balance_diff.toPlainString();
-
-                    String fee_s = fee.toPlainString();
-
-                    String block_time = oT.getString("blockTime");
-
-                    // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date block_time_date = format.parse(block_time);
-
-                    String key = oT.getString("address");
-                    String name = oT.getString("symbol");
-                    //String display_name = tokenObj.getString("name");
-                    int scale = oT.getInt("decimals");
-                    //String id = tokenObj.getString("id"); // What is this???
-                    String id = key;
-
-                    Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
-
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-
-                    if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, token), null, new Timestamp(block_time_date),"Token Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-
-                // TRC-21 Tokens
-                JSONObject jsonToken21 = new JSONObject(addressDataTokenJSON21);
-                JSONArray jsonTokenArray21 = jsonToken21.getJSONArray("items");
-
-                for(int j = 0; j < jsonTokenArray21.length(); j++) {
-                    JSONObject oT = jsonTokenArray21.getJSONObject(j);
-
-                    // There is no flag for errors.
-
-                    String from = oT.getString("from");
-                    String to = oT.getString("to");
-
-                    // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
-
-                    String action;
-                    BigDecimal fee = BigDecimal.ZERO;
-
-                    if(cryptoAddress.address.equalsIgnoreCase(from)) {
-                        action = "Send";
-                    }
-                    else if(cryptoAddress.address.equalsIgnoreCase(to)) {
-                        action = "Receive";
-                    }
-                    else {
-                        // We shouldn't get here...
-                        continue;
-                    }
-
-                    BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
-
-                    // Shift by token decimal
-                    BigInteger tokenDecimal = new BigInteger(oT.getString("decimals"));
-                    balance_diff = balance_diff.movePointLeft(tokenDecimal.intValue());
-                    String balance_diff_s = balance_diff.toPlainString();
-
-                    String fee_s = fee.toPlainString();
-
-                    String block_time = oT.getString("blockTime");
-
-                    // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date block_time_date = format.parse(block_time);
-
-                    String key = oT.getString("address");
-                    String name = oT.getString("symbol");
-                    //String display_name = tokenObj.getString("name");
-                    int scale = oT.getInt("decimals");
-                    //String id = tokenObj.getString("id"); // What is this???
-                    String id = key;
-
-                    Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
-
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-
-                    if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, token), null, new Timestamp(block_time_date),"Token Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                return null;
-            }
+        String addressDataVotesJSON = RESTUtil.get(url);
+        if(addressDataVotesJSON == null) {
+            return null;
         }
 
-        return transactionArrayList;
+        try {
+            String status = DONE;
+
+            JSONObject jsonVotes = new JSONObject(addressDataVotesJSON);
+            JSONArray jsonVotesArray = jsonVotes.getJSONArray("items");
+            for(int j = 0; j < jsonVotesArray.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject oV = jsonVotesArray.getJSONObject(j);
+
+                // There is no flag for errors.
+
+                String event = oV.getString("event");
+                String action;
+
+                if("Withdraw".equals(event)) { // Unvote???
+                    action = "Receive";
+                }
+                else if("Vote".equals(event) || "Propose".equals(event)) { // Unvote???
+                    action = "Send";
+                }
+                else {
+                    // Skip everything else to avoid double counting.
+                    continue;
+                }
+
+                BigDecimal balance_diff_d = new BigDecimal(oV.getString("capacity"));
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                String balance_diff_s = balance_diff_d.toPlainString();
+
+                String block_time = oV.getString("createdAt");
+
+                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date block_time_date = format.parse(block_time);
+
+                transactionVotesArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), event));
+                if(transactionVotesArrayList.size() == getMaxTransactions()) { return DONE; }
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processTokensTRC20(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC20ArrayList) {
+        // TRC-20 Tokens
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
+
+        String addressDataTokenJSON20 = RESTUtil.get(url);
+        if(addressDataTokenJSON20 == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            JSONObject jsonToken20 = new JSONObject(addressDataTokenJSON20);
+            JSONArray jsonTokenArray20 = jsonToken20.getJSONArray("items");
+
+            for(int j = 0; j < jsonTokenArray20.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject oT = jsonTokenArray20.getJSONObject(j);
+
+                // There is no flag for errors.
+
+                String from = oT.getString("from");
+                String to = oT.getString("to");
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) { continue; }
+
+                String action;
+                BigDecimal fee = BigDecimal.ZERO;
+
+                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                    action = "Send";
+                }
+                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                    action = "Receive";
+                }
+                else {
+                    // We shouldn't get here...
+                    continue;
+                }
+
+                BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
+
+                // Shift by token decimal
+                BigInteger tokenDecimal = new BigInteger(oT.getString("decimals"));
+                balance_diff = balance_diff.movePointLeft(tokenDecimal.intValue());
+                String balance_diff_s = balance_diff.toPlainString();
+
+                String fee_s = fee.toPlainString();
+
+                String block_time = oT.getString("blockTime");
+
+                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date block_time_date = format.parse(block_time);
+
+                String key = oT.getString("address");
+                String name = oT.getString("symbol");
+                //String display_name = tokenObj.getString("name");
+                int scale = oT.getInt("decimals");
+                //String id = tokenObj.getString("id"); // What is this???
+                String id = key;
+
+                String baseURL;
+                if(cryptoAddress.network.isMainnet()) {
+                    baseURL = "https://scan.tomochain.com";
+                }
+                else {
+                    baseURL = "https://scan.testnet.tomochain.com";
+                }
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
+
+                transactionTokensTRC20ArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
+                if(transactionTokensTRC20ArrayList.size() == getMaxTransactions()) { return DONE; }
+
+                if(fee.compareTo(BigDecimal.ZERO) > 0) {
+                    transactionTokensTRC20ArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, token), null, new Timestamp(block_time_date),"Token Transaction Fee"));
+                    if(transactionTokensTRC20ArrayList.size() == getMaxTransactions()) { return DONE; }
+                }
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processTokensTRC21(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokensTRC21ArrayList) {
+        // TRC-21 Tokens
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
+
+        String addressDataTokenJSON21 = RESTUtil.get(url);
+        if(addressDataTokenJSON21 == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            JSONObject jsonToken21 = new JSONObject(addressDataTokenJSON21);
+            JSONArray jsonTokenArray21 = jsonToken21.getJSONArray("items");
+
+            for(int j = 0; j < jsonTokenArray21.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject oT = jsonTokenArray21.getJSONObject(j);
+
+                // There is no flag for errors.
+
+                String from = oT.getString("from");
+                String to = oT.getString("to");
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) { continue; }
+
+                String action;
+                BigDecimal fee = BigDecimal.ZERO;
+
+                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                    action = "Send";
+                }
+                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                    action = "Receive";
+                }
+                else {
+                    // We shouldn't get here...
+                    continue;
+                }
+
+                BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
+
+                // Shift by token decimal
+                BigInteger tokenDecimal = new BigInteger(oT.getString("decimals"));
+                balance_diff = balance_diff.movePointLeft(tokenDecimal.intValue());
+                String balance_diff_s = balance_diff.toPlainString();
+
+                String fee_s = fee.toPlainString();
+
+                String block_time = oT.getString("blockTime");
+
+                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date block_time_date = format.parse(block_time);
+
+                String key = oT.getString("address");
+                String name = oT.getString("symbol");
+                //String display_name = tokenObj.getString("name");
+                int scale = oT.getInt("decimals");
+                //String id = tokenObj.getString("id"); // What is this???
+                String id = key;
+
+                String baseURL;
+                if(cryptoAddress.network.isMainnet()) {
+                    baseURL = "https://scan.tomochain.com";
+                }
+                else {
+                    baseURL = "https://scan.testnet.tomochain.com";
+                }
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
+
+                transactionTokensTRC21ArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
+                if(transactionTokensTRC21ArrayList.size() == getMaxTransactions()) { return DONE; }
+
+                if(fee.compareTo(BigDecimal.ZERO) > 0) {
+                    transactionTokensTRC21ArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, token), null, new Timestamp(block_time_date),"Token Transaction Fee"));
+                    if(transactionTokensTRC21ArrayList.size() == getMaxTransactions()) { return DONE; }
+                }
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 }

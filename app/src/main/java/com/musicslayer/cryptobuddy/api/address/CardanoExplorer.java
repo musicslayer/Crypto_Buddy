@@ -123,20 +123,42 @@ public class CardanoExplorer extends AddressAPI {
             baseURL = "https://explorer.cardano-testnet.iohkdev.io/graphql";
         }
 
-        String body = "{" +
-            "\"query\": \"query getPaymentAddressTransactions($address: String!, $offset: Int!, $limit: Int!) {\\n  transactions(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}, offset: $offset, limit: $limit) {\\n    ...TransactionDetails\\n  }\\n}\\n\\nfragment TransactionDetails on Transaction {\\n  block {\\n    epochNo\\n    hash\\n    number\\n    slotNo\\n  }\\n  deposit\\n  fee\\n  hash\\n  includedAt\\n  mint {\\n    asset {\\n      assetName\\n      decimals\\n      description\\n      fingerprint\\n      name\\n      policyId\\n      ticker\\n    }\\n    quantity\\n  }\\n  inputs {\\n    address\\n    sourceTxHash\\n    sourceTxIndex\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  metadata {\\n    key\\n    value\\n  }\\n  outputs {\\n    address\\n    index\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  totalOutput\\n  withdrawals {\\n    address\\n    amount\\n  }\\n}\\n\"," +
-            "\"variables\": \"{\\\"offset\\\":0, \\\"limit\\\":100, \\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +
-            "}";
-        String addressDataJSON = RESTUtil.post(baseURL, body);
+        for(int offset = 0; ;offset+=100) {
+            String body = "{" +
+                "\"query\": \"query getPaymentAddressTransactions($address: String!, $offset: Int!, $limit: Int!) {\\n  transactions(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}, offset: $offset, limit: $limit) {\\n    ...TransactionDetails\\n  }\\n}\\n\\nfragment TransactionDetails on Transaction {\\n  block {\\n    epochNo\\n    hash\\n    number\\n    slotNo\\n  }\\n  deposit\\n  fee\\n  hash\\n  includedAt\\n  mint {\\n    asset {\\n      assetName\\n      decimals\\n      description\\n      fingerprint\\n      name\\n      policyId\\n      ticker\\n    }\\n    quantity\\n  }\\n  inputs {\\n    address\\n    sourceTxHash\\n    sourceTxIndex\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  metadata {\\n    key\\n    value\\n  }\\n  outputs {\\n    address\\n    index\\n    value\\n    tokens {\\n      asset {\\n        assetName\\n        decimals\\n        description\\n        fingerprint\\n        name\\n        policyId\\n        ticker\\n      }\\n      quantity\\n    }\\n  }\\n  totalOutput\\n  withdrawals {\\n    address\\n    amount\\n  }\\n}\\n\"," +
+                "\"variables\": \"{\\\"offset\\\":" + offset + ", \\\"limit\\\":100, \\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +
+                "}";
+
+            String status = process(baseURL, body, cryptoAddress, transactionArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String process(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.post(url, body);
 
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String status = DONE;
+
             JSONObject jsonData = new JSONObject(addressDataJSON);
             JSONArray jsonArray = jsonData.getJSONObject("data").getJSONArray("transactions");
             for(int i = 0; i < jsonArray.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject tx = jsonArray.getJSONObject(i);
 
                 String block_time = tx.getString("includedAt");
@@ -263,7 +285,7 @@ public class CardanoExplorer extends AddressAPI {
                     amountMap.put(cryptoAddress.getCrypto(), amount);
 
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 // Resolve the map to add all transactions.
@@ -284,15 +306,15 @@ public class CardanoExplorer extends AddressAPI {
                     }
 
                     transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date), "Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

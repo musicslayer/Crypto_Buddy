@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // TODO For multisend, you get a pair of entries instead of the triplet.
+// cosmos1gzc54u4p67hh9r4m9vcml3ke9fc29tplsefy6k
 
 // Alternate base URL: https://lcd-cosmos.cosmostation.io/
 
@@ -93,21 +94,41 @@ public class AtomScan extends AddressAPI {
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
-        String addressDataJSON = RESTUtil.get("https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50");
+        String lastID = "";
 
-        // Next page:
-        // Use last ID from header.
-        // String addressDataJSON = REST.get("https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50&from=1234567");
+        for(int page = 0; ; page++) {
+            String url = "https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50&from=" + lastID;
+            lastID = process(url, page, cryptoAddress, transactionArrayList);
 
+            if(lastID == null) {
+                return null;
+            }
+            else if(DONE.equals(lastID)) {
+                break;
+            }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String process(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String lastID = DONE;
+
             ArrayList<String> txhashArrayList = new ArrayList<>();
 
             JSONArray jsonArray = new JSONArray(addressDataJSON);
             for(int i = 0; i < jsonArray.length(); i++) {
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                JSONObject jsonHeader = jsonArray.getJSONObject(i).getJSONObject("header");
+                lastID = jsonHeader.getString("id");
+
                 JSONObject jsonTransaction = jsonArray.getJSONObject(i).getJSONObject("data");
 
                 String txhash = jsonTransaction.getString("txhash");
@@ -208,7 +229,7 @@ public class AtomScan extends AddressAPI {
                                         value = value.movePointLeft(crypto.getScale());
                                         String balance_diff_s = value.toString();
                                         transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                     }
                                 }
                                 break;
@@ -229,7 +250,7 @@ public class AtomScan extends AddressAPI {
 
                                     String balance_diff_s = value.toString();
                                     transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Delegate"));
-                                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                 }
                                 break;
 
@@ -257,7 +278,7 @@ public class AtomScan extends AddressAPI {
                                         String undelegate_s = undelegate_d.toPlainString();
 
                                         transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(undelegate_s, cryptoAddress.getCrypto()), null, new Timestamp(undelegate_block_time_date),"Undelegate"));
-                                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                     }
                                 }
                                 break;
@@ -291,6 +312,11 @@ public class AtomScan extends AddressAPI {
                                 // Do nothing.
                                 break;
 
+                            // Other types:
+                            // ibc_transfer
+                            // send_packet
+                            // acknowledge_packet
+
                             default:
                                 Log.e("Crypto Buddy", "New Type = " + type);
                         }
@@ -298,15 +324,16 @@ public class AtomScan extends AddressAPI {
                 }
                 if(fee_enabled & fee.compareTo(BigDecimal.ZERO) > 0) {
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            // lastID will be the last ID we processed, or DONE if we didn't process anything.
+            return lastID;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

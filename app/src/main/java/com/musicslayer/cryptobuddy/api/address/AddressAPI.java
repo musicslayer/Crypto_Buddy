@@ -19,6 +19,8 @@ import java.util.HashMap;
 // TODO NFT View -> We have to support more token types.
 
 abstract public class AddressAPI extends API {
+    final public static String DONE = "!DONE!";
+
     public static ArrayList<AddressAPI> address_apis;
     public static HashMap<String, AddressAPI> address_api_map;
     public static ArrayList<String> address_api_names;

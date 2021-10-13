@@ -94,8 +94,6 @@ public class KavaLightClient extends AddressAPI {
     // There is no flag for transactions that failed/errored.
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
             baseURL = "https://api.kava.io";
@@ -104,18 +102,97 @@ public class KavaLightClient extends AddressAPI {
             baseURL = "https://api.data-testnet.kava.io";
         }
 
-        String addressDataJSON_Send = RESTUtil.get(baseURL + "/txs?transfer.sender=" + cryptoAddress.address + "&limit=100");
-        String addressDataJSON_Receive = RESTUtil.get(baseURL + "/txs?transfer.recipient=" + cryptoAddress.address + "&limit=100");
-        String addressDataJSON_Delegate = RESTUtil.get(baseURL + "/txs?message.action=delegate&message.sender=" + cryptoAddress.address + "&limit=100");
+        ArrayList<Transaction> transactionSendArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionReceiveArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionDelegateArrayList = new ArrayList<>();
 
-        if(addressDataJSON_Send == null || addressDataJSON_Receive == null || addressDataJSON_Delegate == null) {
+        // Make sure each transaction only pays the fee once.
+        ArrayList<String> feeList = new ArrayList<>();
+
+        // Process all send.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/txs?transfer.sender=" + cryptoAddress.address + "&limit=100&page=" + page;
+            String status = processSend(url, page, cryptoAddress, transactionSendArrayList, feeList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all receive.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/txs?transfer.recipient=" + cryptoAddress.address + "&limit=100&page=" + page;
+            String status = processReceive(url, page, cryptoAddress, transactionSendArrayList, feeList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        // Process all delegate.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/txs?message.action=delegate&message.sender=" + cryptoAddress.address + "&limit=100&page=" + page;
+            String status = processDelegate(url, page, cryptoAddress, transactionSendArrayList, feeList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = 3;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())));
+        transactionArrayList.addAll(transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())));
+        transactionArrayList.addAll(transactionDelegateArrayList.subList(0, Math.min(splitMax, transactionDelegateArrayList.size())));
+
+        transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())).clear();
+        transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())).clear();
+        transactionDelegateArrayList.subList(0, Math.min(splitMax, transactionDelegateArrayList.size())).clear();
+
+        while(transactionSendArrayList.size() + transactionReceiveArrayList.size() + transactionDelegateArrayList.size() > 0) {
+            if(transactionSendArrayList.size() > 0) {
+                transactionArrayList.add(transactionSendArrayList.get(0));
+                transactionSendArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionReceiveArrayList.size() > 0) {
+                transactionArrayList.add(transactionReceiveArrayList.get(0));
+                transactionReceiveArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionDelegateArrayList.size() > 0) {
+                transactionArrayList.add(transactionDelegateArrayList.get(0));
+                transactionDelegateArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processSend(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList, ArrayList<String> feeList) {
+        String addressDataJSON_Send = RESTUtil.get(url);
+        if(addressDataJSON_Send == null) {
             return null;
         }
 
         try {
-            // Make sure each transaction only pays the fee once.
-            ArrayList<String> feeList = new ArrayList<>();
-
             // Send
             JSONObject json1 = new JSONObject(addressDataJSON_Send);
             JSONArray jsonTxs1 = json1.getJSONArray("txs");
@@ -208,8 +285,8 @@ public class KavaLightClient extends AddressAPI {
 
                                     value = value.movePointLeft(crypto.getScale());
                                     String balance_diff_s = value.toString();
-                                    transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                    transactionSendArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
+                                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                                 }
                             }
                         }
@@ -220,11 +297,28 @@ public class KavaLightClient extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
                     feeList.add(txhash);
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
+            int page_total = json1.getInt("page_total");
+            return page_total == 0 || page_total == page ? DONE : "NotDone";
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processReceive(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList, ArrayList<String> feeList) {
+        String addressDataJSON_Receive = RESTUtil.get(url);
+        if(addressDataJSON_Receive == null) {
+            return null;
+        }
+
+        try {
             // Receive
             JSONObject json2 = new JSONObject(addressDataJSON_Receive);
             JSONArray jsonTxs2 = json2.getJSONArray("txs");
@@ -318,9 +412,7 @@ public class KavaLightClient extends AddressAPI {
                                         value = value.movePointLeft(crypto.getScale());
                                         String balance_diff_s = value.toString();
                                         transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction"));
-                                        if (transactionArrayList.size() == getMaxTransactions()) {
-                                            return transactionArrayList;
-                                        }
+                                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                     }
                                 }
                                 break;
@@ -357,9 +449,7 @@ public class KavaLightClient extends AddressAPI {
                                         String undelegate_s = undelegate_d.toPlainString();
 
                                         transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(undelegate_s, cryptoAddress.getCrypto()), null, new Timestamp(undelegate_block_time_date), "Undelegate"));
-                                        if (transactionArrayList.size() == getMaxTransactions()) {
-                                            return transactionArrayList;
-                                        }
+                                        if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                     }
                                 }
                                 break;
@@ -372,10 +462,27 @@ public class KavaLightClient extends AddressAPI {
                 if(fee_enabled && fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
                     feeList.add(txhash);
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
+            int page_total = json2.getInt("page_total");
+            return page_total == 0 || page_total == page ? DONE : "NotDone";
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processDelegate(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList, ArrayList<String> feeList) {
+        String addressDataJSON_Delegate = RESTUtil.get(url);
+        if(addressDataJSON_Delegate == null) {
+            return null;
+        }
+
+        try {
             // Delegate
             JSONObject json3 = new JSONObject(addressDataJSON_Delegate);
             JSONArray jsonTxs3 = json3.getJSONArray("txs");
@@ -393,7 +500,6 @@ public class KavaLightClient extends AddressAPI {
                 Date block_time_date = format.parse(block_time);
 
                 JSONObject tx = jsonTransaction.getJSONObject("tx");
-                //BigDecimal fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
 
                 BigDecimal fee;
                 try {
@@ -433,7 +539,7 @@ public class KavaLightClient extends AddressAPI {
 
                                 String balance_diff_s = value.toString();
                                 transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Delegate"));
-                                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                         }
                     }
@@ -444,15 +550,16 @@ public class KavaLightClient extends AddressAPI {
                 if(fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
                     feeList.add(txhash);
                     transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Delegate Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            int page_total = json3.getInt("page_total");
+            return page_total == 0 || page_total == page ? DONE : "NotDone";
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return transactionArrayList;
     }
 }

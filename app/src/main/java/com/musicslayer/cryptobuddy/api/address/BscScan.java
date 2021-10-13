@@ -19,6 +19,8 @@ import java.util.Date;
 
 // Note: BscScan has an api for balances, but you have to pay extra for it.
 
+// BscScan has no pagination on its results.
+
 public class BscScan extends AddressAPI {
     public final String APIKEY = "TZC4XB12731MQJH3MVNUXIUMT1P41BFI2B";
 
@@ -88,7 +90,9 @@ public class BscScan extends AddressAPI {
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionInternalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokenArrayList = new ArrayList<>();
 
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
@@ -153,8 +157,8 @@ public class BscScan extends AddressAPI {
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -170,8 +174,8 @@ public class BscScan extends AddressAPI {
                 balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
             // Internal
@@ -214,8 +218,8 @@ public class BscScan extends AddressAPI {
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
+                    if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 // If I send something to myself, just reject it!
@@ -231,8 +235,8 @@ public class BscScan extends AddressAPI {
                 balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
             }
         }
         catch(Exception e) {
@@ -301,14 +305,48 @@ public class BscScan extends AddressAPI {
 
                     Token token = TokenManager.getTokenManagerFromKey("BinanceSmartChainTokenManager").getOrCreateToken(id, name, display_name, scale, id);
 
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
+                    if(transactionTokenArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
                 return null;
             }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 2;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())));
+        transactionArrayList.addAll(transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionInternalArrayList.subList(0, Math.min(splitMax, transactionInternalArrayList.size())).clear();
+        transactionTokenArrayList.subList(0, Math.min(splitMax, transactionTokenArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionInternalArrayList.size() + transactionTokenArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionInternalArrayList.size() > 0) {
+                transactionArrayList.add(transactionInternalArrayList.get(0));
+                transactionInternalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokenArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokenArrayList.get(0));
+                transactionTokenArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
         }
 
         return transactionArrayList;
