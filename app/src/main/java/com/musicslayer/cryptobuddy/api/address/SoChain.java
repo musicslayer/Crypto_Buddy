@@ -70,21 +70,6 @@ public class SoChain extends AddressAPI {
         HashMap <String, Double> txnToValue = new HashMap<>();
         HashMap <String, Date> txnToDate = new HashMap<>();
 
-        // Since we don't count the transactions yet, just have a max number of pages.
-        // Each page has 100 transactions.
-        int MAXTRANSACTIONS = MaxNumberTransactionsSetting.value;
-
-        int MAXPAGES;
-        if(MAXTRANSACTIONS == 500) {
-            MAXPAGES = 5;
-        }
-        else if(MAXTRANSACTIONS == 1000) {
-            MAXPAGES = 10;
-        }
-        else { // 5000
-            MAXPAGES = 50;
-        }
-
         // Process all received.
         String lastReceivedID = "";
         for(;;) {
@@ -177,6 +162,8 @@ public class SoChain extends AddressAPI {
                 }
 
                 txnToDate.put(txn, block_time_date);
+
+                if(txnToValue.size() == getMaxTransactions()) { return DONE; }
             }
 
             return lastID;
@@ -227,6 +214,8 @@ public class SoChain extends AddressAPI {
                 }
 
                 txnToDate.put(txn, block_time_date);
+
+                if(txnToValue.size() == getMaxTransactions() * 2) { return DONE; }
             }
 
             return lastID;

@@ -49,8 +49,7 @@ Full list of possible operations:
     SetTrustLineFlags
  */
 
-// TODO Pagination.
-// TODO We need to do payments https://horizon.stellar.org/accounts/GADFXROGGR74V3MSWU2SUKCEUPQFZEIIF3IUHLRN3NKZ4JN2IPBMCODA/payments?limit=200&order=desc&include_failed=true
+// Note that we do not need to do payments, or any other link because they are already included in effects.
 
 public class Horizon extends AddressAPI {
     public String getName() { return "Horizon"; }
@@ -125,13 +124,9 @@ public class Horizon extends AddressAPI {
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        // Roughly split max transactions between each type (rounding is OK).
-        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 2; // Operations doesn't count.
-        int splitMax = getMaxTransactions()/splitNum;
-
         ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
         ArrayList<Transaction> transactionEffectsArrayList = new ArrayList<>();
-        ArrayList<Transaction> transactionIssueArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionTokensArrayList = new ArrayList<>();
 
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
@@ -150,16 +145,121 @@ public class Horizon extends AddressAPI {
             // We really need a better way to check if the account is active.
             return new ArrayList<>();
         }
-        else if(addressDataJSON == null || addressDataOperationsJSON == null || addressDataEffectsJSON == null) {
+
+        // Process all normal/fees.
+        String nextLinkNormal = baseURL + "/accounts/" + cryptoAddress.address + "/transactions?limit=200&order=desc&include_failed=true";
+        for(;;) {
+            String url = nextLinkNormal;
+            nextLinkNormal = processNormal(url, cryptoAddress, transactionNormalArrayList);
+
+            if(nextLinkNormal == null) {
+                return null;
+            }
+            else if(DONE.equals(nextLinkNormal)) {
+                break;
+            }
+        }
+
+        // Process operations to fill skipID.
+        ArrayList<BigInteger> skipID = new ArrayList<>();
+        String nextLinkOperations = baseURL + "/accounts/" + cryptoAddress.address + "/operations?limit=200&order=desc&include_failed=true";
+
+        // Only check "max transactions", even if skipID doesn't grow that large.
+        for(int i = 200; i <= getMaxTransactions(); i += 200) {
+            String url = nextLinkOperations;
+            nextLinkOperations = processOperations(url, cryptoAddress, skipID);
+
+            if(nextLinkOperations == null) {
+                return null;
+            }
+            else if(DONE.equals(nextLinkOperations)) {
+                break;
+            }
+        }
+
+        // Process all effects.
+        String nextLinkEffects = baseURL + "/accounts/" + cryptoAddress.address + "/effects?limit=200&order=desc&include_failed=true";
+        for(;;) {
+            String url = nextLinkEffects;
+            nextLinkEffects = processEffects(url, cryptoAddress, skipID, transactionEffectsArrayList);
+
+            if(nextLinkEffects == null) {
+                return null;
+            }
+            else if(DONE.equals(nextLinkEffects)) {
+                break;
+            }
+        }
+
+        // Process all tokens.
+        String nextLinkTokens = baseURL + "/assets?asset_issuer=" + cryptoAddress.address + "&limit=200&include_failed=true";
+        for(;;) {
+            String url = nextLinkTokens;
+            nextLinkTokens = processTokens(url, cryptoAddress, transactionTokensArrayList);
+
+            if(nextLinkTokens == null) {
+                return null;
+            }
+            else if(DONE.equals(nextLinkTokens)) {
+                break;
+            }
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = shouldIncludeTokens(cryptoAddress) ? 3 : 2;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())));
+        transactionArrayList.addAll(transactionTokensArrayList.subList(0, Math.min(splitMax, transactionTokensArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())).clear();
+        transactionTokensArrayList.subList(0, Math.min(splitMax, transactionTokensArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionEffectsArrayList.size() + transactionTokensArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionEffectsArrayList.size() > 0) {
+                transactionArrayList.add(transactionEffectsArrayList.get(0));
+                transactionEffectsArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionTokensArrayList.size() > 0) {
+                transactionArrayList.add(transactionTokensArrayList.get(0));
+                transactionTokensArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
+        return transactionArrayList;
+    }
+
+    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    private String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
+        if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String nextLink = DONE;
+
             // Only process fees here.
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray jsonData = json.getJSONObject("_embedded").getJSONArray("records");
 
             for(int i = 0; i < jsonData.length(); i++) {
+                // If we processed anything, then store the next link.
+                nextLink = json.getJSONObject("_links").getJSONObject("next").getString("href");
+
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
                 // Don't check for errors because failed transactions need to pay the fee too.
@@ -180,16 +280,34 @@ public class Horizon extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
-            // Look at operations to figure out which trades we should count in the next session.
-            ArrayList<BigInteger> skipID = new ArrayList<>();
+            return nextLink;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
 
+    private String processOperations(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID) {
+        String addressDataOperationsJSON = RESTUtil.get(url);
+        if(addressDataOperationsJSON == null) {
+            return null;
+        }
+
+        try {
+            String nextLink = DONE;
+
+            // Look at operations to figure out which trades we should count in the next session.
             JSONObject jsonOperations = new JSONObject(addressDataOperationsJSON);
             JSONArray jsonOperationsData = jsonOperations.getJSONObject("_embedded").getJSONArray("records");
             for(int i = 0; i < jsonOperationsData.length(); i++) {
+                // If we processed anything, then store the next link.
+                nextLink = jsonOperations.getJSONObject("_links").getJSONObject("next").getString("href");
+
                 JSONObject jsonTransaction = jsonOperationsData.getJSONObject(i);
 
                 // Should we check for errors? jsonTransaction.getBoolean("transaction_successful")
@@ -197,13 +315,34 @@ public class Horizon extends AddressAPI {
                 String type = jsonTransaction.getString("type");
                 if("path_payment_strict_send".equals(type) || "path_payment_strict_receive".equals(type)) {
                     skipID.add(new BigInteger(jsonTransaction.getString("id")));
+                    if(skipID.size() == getMaxTransactions()) { return DONE; }
                 }
             }
+
+            return nextLink;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    private String processEffects(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID, ArrayList<Transaction> transactionEffectsArrayList) {
+        String addressDataEffectsJSON = RESTUtil.get(url);
+        if(addressDataEffectsJSON == null) {
+            return null;
+        }
+
+        try {
+            String nextLink = DONE;
 
             // Process all real transactions here.
             JSONObject jsonEffects = new JSONObject(addressDataEffectsJSON);
             JSONArray jsonEffectsData = jsonEffects.getJSONObject("_embedded").getJSONArray("records");
             for(int i = 0; i < jsonEffectsData.length(); i++) {
+                // If we processed anything, then store the next link.
+                nextLink = jsonEffects.getJSONObject("_links").getJSONObject("next").getString("href");
+
                 JSONObject jsonTransaction = jsonEffectsData.getJSONObject(i);
 
                 String block_time = jsonTransaction.getString("created_at");
@@ -225,11 +364,26 @@ public class Horizon extends AddressAPI {
                     case "account_created":
                         //transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity("1", cryptoAddress.crypto), null, new Timestamp(block_time_date), "", "Account Creation Fee"));
 
-                        action = "Receive";
+                        String from = jsonTransaction.getString("funder");
+                        String to = jsonTransaction.getString("account");
+
+                        String info;
+                        if(cryptoAddress.address.equals(from)) {
+                            action = "Send";
+                            info = "Other Account Created";
+                        }
+                        else if(cryptoAddress.address.equals(to)) {
+                            action = "Receive";
+                            info = "This Account Created";
+                        }
+                        else {
+                            continue;
+                        }
+
                         amount = jsonTransaction.getString("starting_balance");
                         crypto = cryptoAddress.getCrypto();
-                        transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                        transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),info));
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         break;
 
                     case "account_credited":
@@ -254,7 +408,7 @@ public class Horizon extends AddressAPI {
                         }
 
                         transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         break;
 
                     case "account_debited":
@@ -279,7 +433,7 @@ public class Horizon extends AddressAPI {
                         }
 
                         transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                        if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         break;
 
                     case "trade":
@@ -319,7 +473,7 @@ public class Horizon extends AddressAPI {
                         if("native".equals(jsonTransaction.getString("bought_asset_type"))) {
                             bought_crypto = cryptoAddress.getCrypto();
                             transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                         else {
                             if(shouldIncludeTokens(cryptoAddress)) {
@@ -331,7 +485,7 @@ public class Horizon extends AddressAPI {
 
                                 bought_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
                                 transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
-                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                         }
 
@@ -343,7 +497,7 @@ public class Horizon extends AddressAPI {
                         if("native".equals(jsonTransaction.getString("sold_asset_type"))) {
                             sold_crypto = cryptoAddress.getCrypto();
                             transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Transaction"));
-                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                            if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                         else {
                             if(shouldIncludeTokens(cryptoAddress)) {
@@ -355,7 +509,7 @@ public class Horizon extends AddressAPI {
 
                                 sold_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
                                 transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
-                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { break; }
+                                if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                         }
 
@@ -371,8 +525,10 @@ public class Horizon extends AddressAPI {
                     case "account_inflation_destination_updated":
                     case "account_home_domain_updated":
                     case "claimable_balance_claimant_created":
+                    case "claimable_balance_sponsorship_created": //?
                     case "claimable_balance_sponsorship_removed":
                     case "claimable_balance_claimed": //?
+                    case "claimable_balance_created": //?
                         //Log.e("Crypto Buddy Horizon", "Old Type = " + type);
                         // NO-OP
                         break;
@@ -381,75 +537,54 @@ public class Horizon extends AddressAPI {
                         Log.e("Crypto Buddy Horizon", "New Type = " + type);
                 }
             }
+
+            return nextLink;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
+    }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataIssueJSON = RESTUtil.get(baseURL + "/assets?asset_issuer=" + cryptoAddress.address + "&limit=200&include_failed=true");
-            if(addressDataIssueJSON == null) {
-                return null;
-            }
+    private String processTokens(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-            try {
-                // Process assets that this account issued.
-                JSONObject jsonIssue = new JSONObject(addressDataIssueJSON);
-                JSONArray jsonIssueData = jsonIssue.getJSONObject("_embedded").getJSONArray("records");
-                for(int i = 0; i < jsonIssueData.length(); i++) {
-                    JSONObject jsonTransaction = jsonIssueData.getJSONObject(i);
-
-                    String amount = jsonTransaction.getString("amount");
-
-                    // The asset here should never be XLM.
-                    String name = jsonTransaction.getString("asset_code");
-                    String display_name = name;
-                    int scale = cryptoAddress.getCrypto().getScale();
-                    String id = name + "-" + jsonTransaction.getString("asset_issuer");
-
-                    Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-
-                    transactionIssueArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, token), null, new Timestamp(null),"Issued Asset"));
-                    if(transactionIssueArrayList.size() == getMaxTransactions()) { break; }
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                return null;
-            }
+        String addressDataIssueJSON = RESTUtil.get(url);
+        if(addressDataIssueJSON == null) {
+            return null;
         }
 
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        try {
+            String nextLink = DONE;
 
-        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
-        transactionArrayList.addAll(transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())));
-        transactionArrayList.addAll(transactionIssueArrayList.subList(0, Math.min(splitMax, transactionIssueArrayList.size())));
+            // Process assets that this account issued.
+            JSONObject jsonIssue = new JSONObject(addressDataIssueJSON);
+            JSONArray jsonIssueData = jsonIssue.getJSONObject("_embedded").getJSONArray("records");
+            for(int i = 0; i < jsonIssueData.length(); i++) {
+                // If we processed anything, then store the next link.
+                nextLink = jsonIssue.getJSONObject("_links").getJSONObject("next").getString("href");
 
-        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
-        transactionEffectsArrayList.subList(0, Math.min(splitMax, transactionEffectsArrayList.size())).clear();
-        transactionIssueArrayList.subList(0, Math.min(splitMax, transactionIssueArrayList.size())).clear();
+                JSONObject jsonTransaction = jsonIssueData.getJSONObject(i);
 
-        while(transactionNormalArrayList.size() + transactionEffectsArrayList.size() + transactionIssueArrayList.size() > 0) {
-            if(transactionNormalArrayList.size() > 0) {
-                transactionArrayList.add(transactionNormalArrayList.get(0));
-                transactionNormalArrayList.remove(0);
+                String amount = jsonTransaction.getString("amount");
+
+                // The asset here should never be XLM.
+                String name = jsonTransaction.getString("asset_code");
+                String display_name = name;
+                int scale = cryptoAddress.getCrypto().getScale();
+                String id = name + "-" + jsonTransaction.getString("asset_issuer");
+
+                Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+
+                transactionTokenArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, token), null, new Timestamp(null),"Issued Asset"));
+                if(transactionTokenArrayList.size() == getMaxTransactions()) { return DONE; }
             }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
 
-            if(transactionEffectsArrayList.size() > 0) {
-                transactionArrayList.add(transactionEffectsArrayList.get(0));
-                transactionEffectsArrayList.remove(0);
-            }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
-
-            if(transactionIssueArrayList.size() > 0) {
-                transactionArrayList.add(transactionIssueArrayList.get(0));
-                transactionIssueArrayList.remove(0);
-            }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+            return nextLink;
         }
-
-        return transactionArrayList;
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 }

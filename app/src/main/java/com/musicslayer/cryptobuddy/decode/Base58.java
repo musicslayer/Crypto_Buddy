@@ -36,8 +36,12 @@ public class Base58 {
         byte[] decoded = toBytes(address);
         if (decoded == null){return -1;}
 
+        // Array may be smaller than 25 bytes, so let's copy it in a 25 byte array so we get the extra zero digits.
+        byte[] decoded25 = new byte[25];
+        System.arraycopy(decoded, 0, decoded25, decoded25.length - decoded.length, decoded.length);
+
         // Each crypto has a different expected network ID in the first byte.
-        return decoded[0] & 0xff;
+        return decoded25[0] & 0xff;
     }
 
     public static boolean hasValidChecksum(String address) {
