@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
@@ -15,10 +16,8 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.musicslayer.cryptobuddy.crash.CrashAcknowledgePurchaseResponseListener;
-import com.musicslayer.cryptobuddy.crash.CrashBillingClientStateListener;
 import com.musicslayer.cryptobuddy.crash.CrashConsumeResponseListener;
 import com.musicslayer.cryptobuddy.crash.CrashPurchasesResponseListener;
-import com.musicslayer.cryptobuddy.crash.CrashPurchasesUpdatedListener;
 import com.musicslayer.cryptobuddy.crash.CrashSkuDetailsResponseListener;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -39,9 +38,9 @@ public class InAppPurchase {
 
     public static void initialize(Context context) {
         if(billingClient == null || !billingClient.isReady()) {
-            PurchasesUpdatedListener purchasesUpdatedListener = new CrashPurchasesUpdatedListener(context) {
+            PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
                 @Override
-                public void onPurchasesUpdatedImpl(@NonNull BillingResult billingResult, List<Purchase> purchases) {
+                public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
                     if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         for(Purchase purchase : purchases) {
                             if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
@@ -61,16 +60,16 @@ public class InAppPurchase {
                 .enablePendingPurchases()
                 .build();
 
-            billingClient.startConnection(new CrashBillingClientStateListener(context) {
+            billingClient.startConnection(new BillingClientStateListener() {
                 @Override
-                public void onBillingSetupFinishedImpl(@NonNull BillingResult billingResult) {
+                public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                     if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                         InAppPurchase.updateAllPurchases(context);
                     }
                 }
 
                 @Override
-                public void onBillingServiceDisconnectedImpl() {
+                public void onBillingServiceDisconnected() {
                 }
             });
         }

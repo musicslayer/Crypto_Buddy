@@ -22,9 +22,9 @@ public class RESTUtil {
 
     public static void rateLimit() {
         // Make sure that enough time has elapsed since last call.
-        long timeAlreadyElapsed = new Date().getTime() - lastTime;
+        long timeAlreadyElapsed = System.currentTimeMillis() - lastTime;
         PollingUtil.waitFor(RESTUtil.limitTime - timeAlreadyElapsed);
-        lastTime = new Date().getTime();
+        lastTime = System.currentTimeMillis();
     }
 
     public static String get(String urlString) {

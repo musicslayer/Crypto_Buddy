@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.util;
 
-import java.util.Date;
-
 public class PollingUtil {
     private static final long DEFAULT_waitTime = 10000000;
 
@@ -14,13 +12,12 @@ public class PollingUtil {
     }
 
     private void pollImpl() {
-        // Poll for a condition to be true.
-        long start = new Date().getTime();
-        long now = new Date().getTime();
+        long start = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
 
         while(now - start < waitTime) {
             if(pollingUtilListener.breakCondition(this)) { break; }
-            now = new Date().getTime();
+            now = System.currentTimeMillis();
         }
     }
 

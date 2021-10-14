@@ -29,7 +29,7 @@ abstract public class BaseActivity extends CrashActivity {
             });
 
             // Keep trying in every activity if the first call during initialization was not successful.
-            InAppPurchase.initialize(this);
+            InAppPurchase.initialize(getApplicationContext());
         }
 
         createLayout();
@@ -39,7 +39,7 @@ abstract public class BaseActivity extends CrashActivity {
     public void adjustActivity() {
         // Add the ads if the user did not purchase "Remove Ads".
         if(!Purchases.isRemoveAdsPurchased && getAdLayoutViewID() != -1) {
-            Ad.initializeAds(this);
+            Ad.initializeAds(getApplicationContext());
             ViewGroup v = findViewById(getAdLayoutViewID());
 
             AdView ad = Ad.createBannerAdView(this);

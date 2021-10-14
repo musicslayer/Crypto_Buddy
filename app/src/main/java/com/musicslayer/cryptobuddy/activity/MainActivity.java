@@ -36,9 +36,13 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.util.Date;
+import java.lang.ref.WeakReference;
 
 public class MainActivity extends BaseActivity {
+    WeakReference<BaseDialogFragment> chooseAddressDialogFragment_w;
+    WeakReference<BaseDialogFragment> privacyPolicyDialogFragment_w;
+    WeakReference<BaseDialogFragment> reviewDialogFragment_w;
+
     final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
 
     public int getAdLayoutViewID() {
@@ -129,8 +133,8 @@ public class MainActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
-        chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        chooseAddressDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseAddressDialog.class));
+        chooseAddressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
@@ -140,13 +144,13 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        chooseAddressDialogFragment.restoreListeners(this, "address");
+        chooseAddressDialogFragment_w.get().restoreListeners(this, "address");
 
         Button B_ADDRESS_EXPLORER = findViewById(R.id.main_addressExplorerButton);
         B_ADDRESS_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                chooseAddressDialogFragment.show(MainActivity.this, "address");
+                chooseAddressDialogFragment_w.get().show(MainActivity.this, "address");
             }
         });
 
@@ -255,8 +259,8 @@ public class MainActivity extends BaseActivity {
 
     public void checkPrivacyPolicy() {
         if(!PrivacyPolicy.settings_privacy_policy) {
-            BaseDialogFragment privacyPolicyDialogFragment = BaseDialogFragment.newInstance(PrivacyPolicyDialog.class);
-            privacyPolicyDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            privacyPolicyDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(PrivacyPolicyDialog.class));
+            privacyPolicyDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((PrivacyPolicyDialog)dialog).isComplete) {
@@ -264,19 +268,19 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             });
-            privacyPolicyDialogFragment.restoreListeners(this, "privacy_policy");
+            privacyPolicyDialogFragment_w.get().restoreListeners(this, "privacy_policy");
 
             if(BaseDialogFragment.isNotShowing(this, "privacy_policy")) {
-                privacyPolicyDialogFragment.show(this, "privacy_policy");
+                privacyPolicyDialogFragment_w.get().show(this, "privacy_policy");
             }
         }
     }
 
     public void checkReview() {
         // Check after 5 Days, and the user must have already agreed to the Privacy Policy
-        if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
-            BaseDialogFragment reviewDialogFragment = BaseDialogFragment.newInstance(ReviewDialog.class);
-            reviewDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        if(PrivacyPolicy.settings_privacy_policy && (System.currentTimeMillis() - Review.settings_review_time > 432000000L)) {
+            reviewDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ReviewDialog.class));
+            reviewDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {
@@ -289,10 +293,10 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             });
-            reviewDialogFragment.restoreListeners(this, "review");
+            reviewDialogFragment_w.get().restoreListeners(this, "review");
 
             if(BaseDialogFragment.isNotShowing(this, "review")) {
-                reviewDialogFragment.show(this, "review");
+                reviewDialogFragment_w.get().show(this, "review");
             }
         }
     }

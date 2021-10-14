@@ -41,6 +41,14 @@ abstract public class BaseDialog extends CrashDialog {
         adjustDialog();
     }
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+
+        // Clear this to prevent heap leaks.
+        this.activity = null;
+    }
+
     public void adjustDialog() {
         ViewGroup v = findViewById(getBaseViewID());
         ViewGroup p = (ViewGroup)v.getParent();
