@@ -30,12 +30,17 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 // TODO Have another screen which lists addresses in the portfolio.
 // Users can select one or more that they wish to analyze?
 
 public class AddressPortfolioViewerActivity extends BaseActivity {
+    WeakReference<BaseDialogFragment> confirmDeletePortfolioDialogFragment_w;
+    WeakReference<BaseDialogFragment> createPortfolioDialogFragment_w;
+    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
+
     String currentDeletePortfolioName;
 
     final ArrayList<CryptoAddress>[] cryptoAddressArrayList = new ArrayList[1];
@@ -65,8 +70,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment createPortfolioDialogFragment = BaseDialogFragment.newInstance(CreatePortfolioDialog.class);
-        createPortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        createPortfolioDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(CreatePortfolioDialog.class));
+        createPortfolioDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((CreatePortfolioDialog)dialog).isComplete) {
@@ -82,13 +87,13 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 }
             }
         });
-        createPortfolioDialogFragment.restoreListeners(this, "create");
+        createPortfolioDialogFragment_w.get().restoreListeners(this, "create");
 
         Button bCreate = findViewById(R.id.address_portfolio_viewer_addButton);
         bCreate.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                createPortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "create");
+                createPortfolioDialogFragment_w.get().show(AddressPortfolioViewerActivity.this, "create");
             }
         });
 
@@ -99,8 +104,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         TableLayout table = findViewById(R.id.address_portfolio_viewer_tableLayout);
         table.removeAllViews();
 
-        BaseDialogFragment confirmDeletePortfolioDialogFragment = BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class);
-        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        confirmDeletePortfolioDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class));
+        confirmDeletePortfolioDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
@@ -109,10 +114,10 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 }
             }
         });
-        confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
+        confirmDeletePortfolioDialogFragment_w.get().restoreListeners(this, "delete");
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
@@ -129,7 +134,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 ArrayList<AddressData> addressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
@@ -152,7 +157,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 finish();
             }
         });
-        progressDialogFragment.restoreListeners(this, "progress");
+        progressDialogFragment_w.get().restoreListeners(this, "progress");
 
         for(AddressPortfolioObj addressPortfolioObj : AddressPortfolio.settings_address_portfolio) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
@@ -164,7 +169,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                     cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
                     AddressPortfolioObjName[0] = addressPortfolioObj.name;
 
-                    progressDialogFragment.show(AddressPortfolioViewerActivity.this, "progress");
+                    progressDialogFragment_w.get().show(AddressPortfolioViewerActivity.this, "progress");
                 }
             });
 
@@ -175,7 +180,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 @Override
                 public void onClickImpl(View view) {
                     currentDeletePortfolioName = addressPortfolioObj.name;
-                    confirmDeletePortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "delete");
+                    confirmDeletePortfolioDialogFragment_w.get().show(AddressPortfolioViewerActivity.this, "delete");
                 }
             });
 

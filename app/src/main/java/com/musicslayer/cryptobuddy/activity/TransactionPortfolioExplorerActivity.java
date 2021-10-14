@@ -29,8 +29,11 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.Table;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
+import java.lang.ref.WeakReference;
+
 public class TransactionPortfolioExplorerActivity extends BaseActivity {
-    public BaseDialogFragment confirmBackDialogFragment;
+    WeakReference<BaseDialogFragment> addTransactionDialogFragment_w;
+    WeakReference<BaseDialogFragment> confirmBackDialogFragment_w;
 
     TransactionPortfolioObj transactionPortfolioObj;
 
@@ -40,14 +43,14 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        confirmBackDialogFragment.show(TransactionPortfolioExplorerActivity.this, "back");
+        confirmBackDialogFragment_w.get().show(TransactionPortfolioExplorerActivity.this, "back");
     }
 
     public void createLayout () {
         setContentView(R.layout.activity_transaction_portfolio_explorer);
 
-        confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        confirmBackDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmBackDialog.class));
+        confirmBackDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -56,7 +59,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        confirmBackDialogFragment.restoreListeners(this, "back");
+        confirmBackDialogFragment_w.get().restoreListeners(this, "back");
 
         transactionPortfolioObj = TransactionPortfolio.getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
 
@@ -87,8 +90,8 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
-        addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        addTransactionDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(AddTransactionDialog.class));
+        addTransactionDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
@@ -99,13 +102,13 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        addTransactionDialogFragment.restoreListeners(this, "transaction");
+        addTransactionDialogFragment_w.get().restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_portfolio_explorer_addButton);
         fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                addTransactionDialogFragment.show(TransactionPortfolioExplorerActivity.this, "transaction");
+                addTransactionDialogFragment_w.get().show(TransactionPortfolioExplorerActivity.this, "transaction");
             }
         });
 

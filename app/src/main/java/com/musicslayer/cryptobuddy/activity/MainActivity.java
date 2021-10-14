@@ -42,6 +42,7 @@ public class MainActivity extends BaseActivity {
     WeakReference<BaseDialogFragment> chooseAddressDialogFragment_w;
     WeakReference<BaseDialogFragment> privacyPolicyDialogFragment_w;
     WeakReference<BaseDialogFragment> reviewDialogFragment_w;
+    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
 
     final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
 
@@ -99,8 +100,8 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
@@ -131,7 +132,7 @@ public class MainActivity extends BaseActivity {
                 MainActivity.this.finish();
             }
         });
-        progressDialogFragment.restoreListeners(this, "progress");
+        progressDialogFragment_w.get().restoreListeners(this, "progress");
 
         chooseAddressDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseAddressDialog.class));
         chooseAddressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -140,7 +141,7 @@ public class MainActivity extends BaseActivity {
                 if(((ChooseAddressDialog)dialog).isComplete) {
                     cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
-                    progressDialogFragment.show(MainActivity.this, "progress");
+                    progressDialogFragment_w.get().show(MainActivity.this, "progress");
                 }
             }
         });

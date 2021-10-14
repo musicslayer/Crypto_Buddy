@@ -40,10 +40,15 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class AddressPortfolioExplorerActivity extends BaseActivity {
-    public BaseDialogFragment confirmBackDialogFragment;
+    WeakReference<BaseDialogFragment> addressFilterDialogFragment_w;
+    WeakReference<BaseDialogFragment> chooseAddressDialogFragment_w;
+    WeakReference<BaseDialogFragment> confirmBackDialogFragment_w;
+    WeakReference<ProgressDialogFragment> add_progressDialogFragment_w;
+    WeakReference<ProgressDialogFragment> refresh_progressDialogFragment_w;
 
     AddressTable table;
 
@@ -60,14 +65,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        confirmBackDialogFragment.show(AddressPortfolioExplorerActivity.this, "back");
+        confirmBackDialogFragment_w.get().show(AddressPortfolioExplorerActivity.this, "back");
     }
 
     public void createLayout () {
         setContentView(R.layout.activity_address_portfolio_explorer);
 
-        confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
-        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        confirmBackDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmBackDialog.class));
+        confirmBackDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -76,7 +81,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        confirmBackDialogFragment.restoreListeners(this, "back");
+        confirmBackDialogFragment_w.get().restoreListeners(this, "back");
 
         addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
         addressDataArrayList = Serialization.deserializeArrayList(getIntent().getStringExtra("AddressData_Array"), AddressData.class);
@@ -125,8 +130,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         table.pageView.setTable(table);
         table.pageView.updateLayout();
 
-        ProgressDialogFragment add_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        add_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+        add_progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        add_progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
@@ -138,7 +143,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        add_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        add_progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
@@ -159,10 +164,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        add_progressDialogFragment.restoreListeners(this, "progress_add");
+        add_progressDialogFragment_w.get().restoreListeners(this, "progress_add");
 
-        BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
-        chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        chooseAddressDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseAddressDialog.class));
+        chooseAddressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
@@ -173,18 +178,18 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                         ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
                     }
                     else {
-                        add_progressDialogFragment.show(AddressPortfolioExplorerActivity.this, "progress_add");
+                        add_progressDialogFragment_w.get().show(AddressPortfolioExplorerActivity.this, "progress_add");
                     }
                 }
             }
         });
-        chooseAddressDialogFragment.restoreListeners(this, "add");
+        chooseAddressDialogFragment_w.get().restoreListeners(this, "add");
 
         FloatingActionButton fab_add = findViewById(R.id.address_portfolio_explorer_addButton);
         fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                chooseAddressDialogFragment.show(AddressPortfolioExplorerActivity.this, "add");
+                chooseAddressDialogFragment_w.get().show(AddressPortfolioExplorerActivity.this, "add");
             }
         });
 
@@ -192,8 +197,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment addressInfoDialogFragment = BaseDialogFragment.newInstance(AddressInfoDialog.class, addressDataArrayList);
-                addressInfoDialogFragment.show(AddressPortfolioExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(AddressInfoDialog.class, addressDataArrayList).show(AddressPortfolioExplorerActivity.this, "info");
             }
         });
 
@@ -205,8 +209,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressDataArrayList);
-        addressFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        addressFilterDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressDataArrayList));
+        addressFilterDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddressFilterDialog)dialog).isComplete) {
@@ -215,19 +219,19 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        addressFilterDialogFragment.restoreListeners(this, "address_filter");
+        addressFilterDialogFragment_w.get().restoreListeners(this, "address_filter");
 
         FloatingActionButton fab_address_filter = findViewById(R.id.address_portfolio_explorer_addressFilterButton);
         fab_address_filter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressDataArrayList);
-                addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
+                addressFilterDialogFragment_w.get().updateArguments(AddressFilterDialog.class, filterIndex, addressDataArrayList);
+                addressFilterDialogFragment_w.get().show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
         });
 
-        ProgressDialogFragment refresh_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        refresh_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+        refresh_progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        refresh_progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ArrayList<CryptoAddress> cryptoAddressArrayList = addressPortfolioObj.cryptoAddressArrayList;
@@ -245,7 +249,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        refresh_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        refresh_progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
@@ -264,13 +268,13 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"refresh");
             }
         });
-        refresh_progressDialogFragment.restoreListeners(this, "progress_refresh");
+        refresh_progressDialogFragment_w.get().restoreListeners(this, "progress_refresh");
 
         FloatingActionButton fab_refresh = findViewById(R.id.address_portfolio_explorer_refreshButton);
         fab_refresh.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                refresh_progressDialogFragment.show(AddressPortfolioExplorerActivity.this, "progress_refresh");
+                refresh_progressDialogFragment_w.get().show(AddressPortfolioExplorerActivity.this, "progress_refresh");
             }
         });
 
