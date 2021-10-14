@@ -362,23 +362,12 @@ public class Horizon extends AddressAPI {
 
                 switch(type) {
                     case "account_created":
+                        // This only applies to this account being created, not this account creating another one.
+
                         //transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity("1", cryptoAddress.crypto), null, new Timestamp(block_time_date), "", "Account Creation Fee"));
 
-                        String from = jsonTransaction.getString("funder");
-                        String to = jsonTransaction.getString("account");
-
-                        String info;
-                        if(cryptoAddress.address.equals(from)) {
-                            action = "Send";
-                            info = "Other Account Created";
-                        }
-                        else if(cryptoAddress.address.equals(to)) {
-                            action = "Receive";
-                            info = "This Account Created";
-                        }
-                        else {
-                            continue;
-                        }
+                        action = "Receive";
+                        String info = "This Account Created";
 
                         amount = jsonTransaction.getString("starting_balance");
                         crypto = cryptoAddress.getCrypto();
