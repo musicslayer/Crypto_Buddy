@@ -24,10 +24,13 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TotalDialog extends BaseDialog {
+    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
+
     ArrayList<Transaction> transactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
@@ -46,8 +49,8 @@ public class TotalDialog extends BaseDialog {
 
         deltaMap = Transaction.resolveAssets(transactionArrayList);
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
+        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
@@ -82,7 +85,7 @@ public class TotalDialog extends BaseDialog {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetAmount.class);
@@ -99,12 +102,12 @@ public class TotalDialog extends BaseDialog {
                 updateLayout();
             }
         });
-        progressDialogFragment.restoreListeners(this.activity, "progress");
+        progressDialogFragment_w.get().restoreListeners(this.activity, "progress");
 
         Button B_PRICES = findViewById(R.id.total_dialog_priceButton);
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                progressDialogFragment.show(TotalDialog.this.activity, "progress");
+                progressDialogFragment_w.get().show(TotalDialog.this.activity, "progress");
             }
         });
 

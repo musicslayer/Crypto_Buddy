@@ -27,10 +27,14 @@ import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Date;
 
 public class AddTransactionDialog extends BaseDialog {
+    WeakReference<BaseDialogFragment> chooseDateDialogFragment_w;
+    WeakReference<BaseDialogFragment> chooseTimeDialogFragment_w;
+
     public Transaction user_TRANSACTION;
 
     int[] LASTCUSTOMDATE_INFO;
@@ -76,8 +80,8 @@ public class AddTransactionDialog extends BaseDialog {
         final TextView T_DATE_CHOICE = findViewById(R.id.add_transaction_dialog_dateTimeTextView);
         T_DATE_CHOICE.setText(nowString);
 
-        BaseDialogFragment chooseDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
-        chooseDateDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        chooseDateDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseDateDialog.class));
+        chooseDateDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
@@ -97,17 +101,17 @@ public class AddTransactionDialog extends BaseDialog {
                 }
             }
         });
-        chooseDateDialogFragment.restoreListeners(this.activity, "date");
+        chooseDateDialogFragment_w.get().restoreListeners(this.activity, "date");
 
         Button B_CHOOSEDATE = findViewById(R.id.add_transaction_dialog_chooseDateButton);
         B_CHOOSEDATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseDateDialogFragment.show(AddTransactionDialog.this.activity, "date");
+                chooseDateDialogFragment_w.get().show(AddTransactionDialog.this.activity, "date");
             }
         });
 
-        BaseDialogFragment chooseTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
-        chooseTimeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        chooseTimeDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseTimeDialog.class));
+        chooseTimeDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
@@ -126,12 +130,12 @@ public class AddTransactionDialog extends BaseDialog {
                 }
             }
         });
-        chooseTimeDialogFragment.restoreListeners(this.activity, "time");
+        chooseTimeDialogFragment_w.get().restoreListeners(this.activity, "time");
 
         Button B_CHOOSETIME = findViewById(R.id.add_transaction_dialog_chooseTimeButton);
         B_CHOOSETIME.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseTimeDialogFragment.show(AddTransactionDialog.this.activity, "time");
+                chooseTimeDialogFragment_w.get().show(AddTransactionDialog.this.activity, "time");
             }
         });
 

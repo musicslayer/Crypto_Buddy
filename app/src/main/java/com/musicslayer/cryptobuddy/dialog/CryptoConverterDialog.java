@@ -21,9 +21,12 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class CryptoConverterDialog extends BaseDialog {
+    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
+
     Crypto cryptoPrimary;
     Crypto cryptoSecondary;
 
@@ -50,8 +53,8 @@ public class CryptoConverterDialog extends BaseDialog {
         ssvSecondary.setIncludesFiat(false);
         ssvSecondary.setOptionsCoin();
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
+        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
@@ -66,7 +69,7 @@ public class CryptoConverterDialog extends BaseDialog {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 ArrayList<PriceData> priceDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), PriceData.class);
@@ -98,7 +101,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
             }
         });
-        progressDialogFragment.restoreListeners(this.activity, "progress");
+        progressDialogFragment_w.get().restoreListeners(this.activity, "progress");
 
         Button B_CONVERT = findViewById(R.id.crypto_converter_dialog_convertButton);
         B_CONVERT.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -114,7 +117,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
 
                 if(isValid) {
-                    progressDialogFragment.show(CryptoConverterDialog.this.activity, "progress");
+                    progressDialogFragment_w.get().show(CryptoConverterDialog.this.activity, "progress");
                 }
             }
         });

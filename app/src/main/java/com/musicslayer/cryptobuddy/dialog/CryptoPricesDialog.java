@@ -19,7 +19,11 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
+import java.lang.ref.WeakReference;
+
 public class CryptoPricesDialog extends BaseDialog {
+    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
+
     Crypto crypto;
 
     public CryptoPricesDialog(Activity activity) {
@@ -38,8 +42,8 @@ public class CryptoPricesDialog extends BaseDialog {
         ssv.setIncludesFiat(false);
         ssv.setOptionsCoin();
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
+        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
+        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 PriceData priceData = PriceData.getAllData(crypto);
@@ -47,7 +51,7 @@ public class CryptoPricesDialog extends BaseDialog {
             }
         });
 
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
@@ -70,13 +74,13 @@ public class CryptoPricesDialog extends BaseDialog {
                 }
             }
         });
-        progressDialogFragment.restoreListeners(this.activity, "progress");
+        progressDialogFragment_w.get().restoreListeners(this.activity, "progress");
 
         Button B = findViewById(R.id.crypto_prices_dialog_button);
         B.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 crypto = (Crypto)ssv.getChosenAsset();
-                progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");
+                progressDialogFragment_w.get().show(CryptoPricesDialog.this.activity, "progress");
             }
         });
     }

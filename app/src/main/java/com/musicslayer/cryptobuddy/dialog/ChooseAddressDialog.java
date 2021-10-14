@@ -21,9 +21,15 @@ import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class ChooseAddressDialog extends BaseDialog {
+    WeakReference<BaseDialogFragment> chooseCryptoDialogFragment_w;
+    WeakReference<BaseDialogFragment> chooseCryptoDialogFragment2_w;
+    WeakReference<BaseDialogFragment> chooseHistoryAddressDialogFragment_w;
+    WeakReference<BaseDialogFragment> scanQRDialogFragment_w;
+
     public boolean includeTokens = Purchases.isUnlockTokensPurchased;
 
     public CryptoAddress user_CRYPTOADDRESS;
@@ -70,8 +76,8 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        BaseDialogFragment scanQRDialogFragment = BaseDialogFragment.newInstance(ScanQRDialog.class);
-        scanQRDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        scanQRDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ScanQRDialog.class));
+        scanQRDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ScanQRDialog)dialog).isComplete) {
@@ -79,7 +85,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 }
             }
         });
-        scanQRDialogFragment.restoreListeners(this.activity, "scanqr");
+        scanQRDialogFragment_w.get().restoreListeners(this.activity, "scanqr");
 
         Button B_SCANQR = findViewById(R.id.choose_address_dialog_scanQRButton);
         B_SCANQR.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -92,12 +98,12 @@ public class ChooseAddressDialog extends BaseDialog {
                     return;
                 }
 
-                scanQRDialogFragment.show(ChooseAddressDialog.this.activity, "scanqr");
+                scanQRDialogFragment_w.get().show(ChooseAddressDialog.this.activity, "scanqr");
             }
         });
 
-        BaseDialogFragment chooseHistoryAddressDialogFragment = BaseDialogFragment.newInstance(ChooseHistoryAddressDialog.class);
-        chooseHistoryAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        chooseHistoryAddressDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseHistoryAddressDialog.class));
+        chooseHistoryAddressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseHistoryAddressDialog)dialog).isComplete) {
@@ -108,12 +114,12 @@ public class ChooseAddressDialog extends BaseDialog {
                 }
             }
         });
-        chooseHistoryAddressDialogFragment.restoreListeners(this.activity, "address_history");
+        chooseHistoryAddressDialogFragment_w.get().restoreListeners(this.activity, "address_history");
 
         Button B_HISTORY = findViewById(R.id.choose_address_dialog_historyButton);
         B_HISTORY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseHistoryAddressDialogFragment.show(ChooseAddressDialog.this.activity, "address_history");
+                chooseHistoryAddressDialogFragment_w.get().show(ChooseAddressDialog.this.activity, "address_history");
             }
         });
 
@@ -157,16 +163,16 @@ public class ChooseAddressDialog extends BaseDialog {
                     dismiss();
                 }
                 else {
-                    BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class, cryptoAddressArrayList);
-                    chooseCryptoDialogFragment.setOnDismissListener(chooseCryptoDialogFragmentListener);
-                    chooseCryptoDialogFragment.show(ChooseAddressDialog.this.activity, "choose");
+                    chooseCryptoDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseCryptoDialog.class, cryptoAddressArrayList));
+                    chooseCryptoDialogFragment_w.get().setOnDismissListener(chooseCryptoDialogFragmentListener);
+                    chooseCryptoDialogFragment_w.get().show(ChooseAddressDialog.this.activity, "choose");
                 }
             }
         });
 
-        BaseDialogFragment chooseCryptoDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("choose");
-        if (chooseCryptoDialogFragment2 != null) {
-            chooseCryptoDialogFragment2.setOnDismissListener(chooseCryptoDialogFragmentListener);
+        chooseCryptoDialogFragment2_w = new WeakReference<>((BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("choose"));
+        if (chooseCryptoDialogFragment2_w.get() != null) {
+            chooseCryptoDialogFragment2_w.get().setOnDismissListener(chooseCryptoDialogFragmentListener);
         }
 
         updateLayout();
