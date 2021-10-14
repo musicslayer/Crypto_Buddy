@@ -22,7 +22,11 @@ import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.view.AssetTextView;
 
+import java.lang.ref.WeakReference;
+
 public class TransactionTable extends Table {
+    WeakReference<BaseDialogFragment> confirmDeleteTransactionDialogFragment_w;
+
     public BaseRow getRow(Context context, Transaction transaction) {
         return new TransactionTable.TransactionRow(context, transaction);
     }
@@ -60,8 +64,8 @@ public class TransactionTable extends Table {
         public void makeRow(Context context, Transaction transaction) {
             final int ii = TransactionTable.this.getChildCount() - numHeaderRows;
 
-            BaseDialogFragment confirmDeleteTransactionDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTransactionDialog.class);
-            confirmDeleteTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+            confirmDeleteTransactionDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeleteTransactionDialog.class));
+            confirmDeleteTransactionDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ConfirmDeleteTransactionDialog)dialog).isComplete) {
@@ -74,7 +78,7 @@ public class TransactionTable extends Table {
                     }
                 }
             });
-            confirmDeleteTransactionDialogFragment.restoreListeners(context, "delete" + ii);
+            confirmDeleteTransactionDialogFragment_w.get().restoreListeners(context, "delete" + ii);
 
             AppCompatButton B_DELETE = new AppCompatButton(context);
             final AppCompatButton B_II = B_DELETE;
@@ -88,7 +92,7 @@ public class TransactionTable extends Table {
                         B_II.setBackgroundResource(R.drawable.border_round);
                         B_II.getBackground().clearColorFilter();
 
-                        confirmDeleteTransactionDialogFragment.show(context, "delete" + ii);
+                        confirmDeleteTransactionDialogFragment_w.get().show(context, "delete" + ii);
                     }
                     else {
                         // Set button status, and reset all other button statuses.
