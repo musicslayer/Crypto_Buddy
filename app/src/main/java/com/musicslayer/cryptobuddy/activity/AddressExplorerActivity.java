@@ -35,12 +35,10 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class AddressExplorerActivity extends BaseActivity {
-    WeakReference<BaseDialogFragment> confirmBackDialogFragment_w;
-    WeakReference<ProgressDialogFragment> progressDialogFragment_w;
+    public BaseDialogFragment confirmBackDialogFragment;
 
     AddressTable table;
     ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
@@ -51,14 +49,14 @@ public class AddressExplorerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        confirmBackDialogFragment_w.get().show(AddressExplorerActivity.this, "back");
+        confirmBackDialogFragment.show(AddressExplorerActivity.this, "back");
     }
 
     public void createLayout () {
         setContentView(R.layout.activity_address_explorer);
 
-        confirmBackDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmBackDialog.class));
-        confirmBackDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
+        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -67,7 +65,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
             }
         });
-        confirmBackDialogFragment_w.get().restoreListeners(this, "back");
+        confirmBackDialogFragment.restoreListeners(this, "back");
 
         AddressData addressData = Serialization.deserialize(getIntent().getStringExtra("AddressData"), AddressData.class);
         addressDataArrayList.add(addressData);
@@ -126,8 +124,8 @@ public class AddressExplorerActivity extends BaseActivity {
             }
         });
 
-        progressDialogFragment_w = new WeakReference<>(ProgressDialogFragment.newInstance(ProgressDialog.class));
-        progressDialogFragment_w.get().setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 AddressData newAddressData = AddressData.getAllData(addressDataArrayList.get(0).cryptoAddress);
@@ -138,7 +136,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 ProgressDialogFragment.setValue(Serialization.serialize(newAddressData));
             }
         });
-        progressDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
@@ -153,13 +151,13 @@ public class AddressExplorerActivity extends BaseActivity {
                 ToastUtil.showToast(AddressExplorerActivity.this,"refresh");
             }
         });
-        progressDialogFragment_w.get().restoreListeners(this, "progress");
+        progressDialogFragment.restoreListeners(this, "progress");
 
         FloatingActionButton fab_refresh = findViewById(R.id.address_explorer_refreshButton);
         fab_refresh.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                progressDialogFragment_w.get().show(AddressExplorerActivity.this, "progress");
+                progressDialogFragment.show(AddressExplorerActivity.this, "progress");
             }
         });
 

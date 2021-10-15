@@ -24,12 +24,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class TransactionPortfolioViewerActivity extends BaseActivity {
-    WeakReference<BaseDialogFragment> confirmDeletePortfolioDialogFragment_w;
-    WeakReference<BaseDialogFragment> createPortfolioDialogFragment_w;
-
     String currentDeletePortfolioName;
 
     public int getAdLayoutViewID() {
@@ -56,8 +51,8 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             }
         });
 
-        createPortfolioDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(CreatePortfolioDialog.class));
-        createPortfolioDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment createPortfolioDialogFragment = BaseDialogFragment.newInstance(CreatePortfolioDialog.class);
+        createPortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((CreatePortfolioDialog)dialog).isComplete) {
@@ -73,13 +68,13 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                 }
             }
         });
-        createPortfolioDialogFragment_w.get().restoreListeners(this, "create");
+        createPortfolioDialogFragment.restoreListeners(this, "create");
 
         Button bCreate = findViewById(R.id.transaction_portfolio_viewer_addButton);
         bCreate.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                createPortfolioDialogFragment_w.get().show(TransactionPortfolioViewerActivity.this, "create");
+                createPortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "create");
             }
         });
 
@@ -90,8 +85,8 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         TableLayout table = findViewById(R.id.choose_history_dialog_tableLayout);
         table.removeAllViews();
 
-        confirmDeletePortfolioDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class));
-        confirmDeletePortfolioDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment confirmDeletePortfolioDialogFragment = BaseDialogFragment.newInstance(ConfirmDeletePortfolioDialog.class);
+        confirmDeletePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
@@ -100,7 +95,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                 }
             }
         });
-        confirmDeletePortfolioDialogFragment_w.get().restoreListeners(this, "delete");
+        confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
         for(TransactionPortfolioObj transactionPortfolioObj : TransactionPortfolio.settings_transaction_portfolio) {
             TableRow TR = new TableRow(TransactionPortfolioViewerActivity.this);
@@ -125,7 +120,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                 @Override
                 public void onClickImpl(View view) {
                     currentDeletePortfolioName = transactionPortfolioObj.name;
-                    confirmDeletePortfolioDialogFragment_w.get().show(TransactionPortfolioViewerActivity.this, "delete");
+                    confirmDeletePortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "delete");
                 }
             });
 

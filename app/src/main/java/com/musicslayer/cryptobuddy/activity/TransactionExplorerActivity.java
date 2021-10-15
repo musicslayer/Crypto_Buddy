@@ -24,12 +24,8 @@ import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
-import java.lang.ref.WeakReference;
-
 public class TransactionExplorerActivity extends BaseActivity {
-    WeakReference<BaseDialogFragment> addTransactionDialogFragment_w;
-    WeakReference<BaseDialogFragment> confirmBackDialogFragment_w;
-    WeakReference<BaseDialogFragment> confirmResetTableDialogFragment_w;
+    public BaseDialogFragment confirmBackDialogFragment;
 
     public int getAdLayoutViewID() {
         return R.id.transaction_explorer_adLayout;
@@ -37,14 +33,14 @@ public class TransactionExplorerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        confirmBackDialogFragment_w.get().show(TransactionExplorerActivity.this, "back");
+        confirmBackDialogFragment.show(TransactionExplorerActivity.this, "back");
     }
 
     public void createLayout () {
         setContentView(R.layout.activity_transaction_explorer);
 
-        confirmBackDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmBackDialog.class));
-        confirmBackDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
+        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
@@ -53,7 +49,7 @@ public class TransactionExplorerActivity extends BaseActivity {
                 }
             }
         });
-        confirmBackDialogFragment_w.get().restoreListeners(this, "back");
+        confirmBackDialogFragment.restoreListeners(this, "back");
 
         Toolbar toolbar = findViewById(R.id.transaction_explorer_toolbar);
         setSupportActionBar(toolbar);
@@ -71,8 +67,8 @@ public class TransactionExplorerActivity extends BaseActivity {
         table.pageView.setTable(table);
         table.pageView.updateLayout();
 
-        addTransactionDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(AddTransactionDialog.class));
-        addTransactionDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
+        addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
@@ -80,13 +76,13 @@ public class TransactionExplorerActivity extends BaseActivity {
                 }
             }
         });
-        addTransactionDialogFragment_w.get().restoreListeners(this, "transaction");
+        addTransactionDialogFragment.restoreListeners(this, "transaction");
 
         FloatingActionButton fab_add = findViewById(R.id.transaction_explorer_addButton);
         fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                addTransactionDialogFragment_w.get().show(TransactionExplorerActivity.this, "transaction");
+                addTransactionDialogFragment.show(TransactionExplorerActivity.this, "transaction");
             }
         });
 
@@ -98,8 +94,8 @@ public class TransactionExplorerActivity extends BaseActivity {
             }
         });
 
-        confirmResetTableDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmResetTableDialog.class));
-        confirmResetTableDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment confirmResetTableDialogFragment = BaseDialogFragment.newInstance(ConfirmResetTableDialog.class);
+        confirmResetTableDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetTableDialog)dialog).isComplete) {
@@ -107,13 +103,13 @@ public class TransactionExplorerActivity extends BaseActivity {
                 }
             }
         });
-        confirmResetTableDialogFragment_w.get().restoreListeners(this, "reset");
+        confirmResetTableDialogFragment.restoreListeners(this, "reset");
 
         FloatingActionButton fab_reset = findViewById(R.id.transaction_explorer_resetButton);
         fab_reset.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                confirmResetTableDialogFragment_w.get().show(TransactionExplorerActivity.this, "reset");
+                confirmResetTableDialogFragment.show(TransactionExplorerActivity.this, "reset");
             }
         });
     }
