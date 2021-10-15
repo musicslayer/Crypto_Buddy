@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// TODO This address cannot have its balances read?
+// addr1qxe3xrf57vw667rsp2v4xa6jguvzmtc7wasvyzcrqe8eysy77kyvfqjp9409hu6t7dydufvxl2gxf9kjjsm4d5me0v2sjlsged
+
 public class CardanoExplorer extends AddressAPI {
     public String getName() { return "CardanoExplorer"; }
     public String getDisplayName() { return "Cardano Explorer API"; }

@@ -17,8 +17,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
-// Rate limit: 4 requests per 3 seconds.
-
 public class ActorForth extends AddressAPI {
     public String getName() { return "ActorForth"; }
     public String getDisplayName() { return "ActorForth BCH REST API V2"; }

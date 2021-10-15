@@ -19,7 +19,7 @@ import java.util.Date;
 
 // Note: BscScan has an api for balances, but you have to pay extra for it.
 
-// BscScan has no pagination on its results.
+// BscScan has no pagination on its results, but Covalent does.
 
 public class BscScan extends AddressAPI {
     public final String APIKEY = "TZC4XB12731MQJH3MVNUXIUMT1P41BFI2B";
@@ -42,18 +42,40 @@ public class BscScan extends AddressAPI {
             chainID = "97";
         }
 
-        String addressDataJSON = RESTUtil.get("https://api.covalenthq.com/v1/" + chainID + "/address/" + cryptoAddress.address + "/balances_v2/?key=ckey_65336bbeda304020862b0459dae");
+        // Process all balances.
+        for(int skip = 0; ; skip += 1000) {
+            String url = "https://api.covalenthq.com/v1/" + chainID + "/address/" + cryptoAddress.address + "/balances_v2/?key=ckey_65336bbeda304020862b0459dae&limit=1000&skip=" + skip;
+            String status = processBalance(url, cryptoAddress, currentBalanceArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        return currentBalanceArrayList;
+    }
+
+    public String processBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String status = DONE;
+
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray tokenArray = json.getJSONObject("data").getJSONArray("items");
             for(int i = 0; i < tokenArray.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject tokenData = tokenArray.getJSONObject(i);
 
-                if("null".equals(tokenData.getString("supports_erc"))) {
+                if(!tokenData.has("supports_erc") || "null".equals(tokenData.getString("supports_erc"))) {
                     // BNBs
                     BigDecimal value = new BigDecimal(tokenData.getString("balance"));
                     value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
@@ -80,13 +102,13 @@ public class BscScan extends AddressAPI {
                     currentBalanceArrayList.add(new AssetQuantity(amount, token));
                 }
             }
+
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return currentBalanceArrayList;
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {

@@ -62,66 +62,121 @@ public class TomoScan extends AddressAPI {
             return null;
         }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            String addressTRC20DataJSON = RESTUtil.get(baseURL + "/api/tokens/holding/TRC20/" + cryptoAddress.address);
-            String addressTRC21DataJSON = RESTUtil.get(baseURL + "/api/tokens/holding/TRC21/" + cryptoAddress.address);
-            if(addressTRC20DataJSON == null || addressTRC21DataJSON == null) {
+        // Process all TRC20.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/tokens/holding/TRC20/" + cryptoAddress.address + "?limit=50&page=" + page;
+            String status = processTokensTRC20Balance(url, cryptoAddress, currentBalanceArrayList);
+
+            if(status == null) {
                 return null;
             }
-
-            try {
-                // TRC20
-                JSONObject jsonTRC20 = new JSONObject(addressTRC20DataJSON);
-                JSONArray jsonTRC20Array = jsonTRC20.getJSONArray("items");
-                for(int i = 0; i < jsonTRC20Array.length(); i++) {
-                    JSONObject tokenData = jsonTRC20Array.getJSONObject(i);
-                    if("NaN".equals(tokenData.getString("quantity"))) { continue; }
-
-                    JSONObject tokenObj = tokenData.getJSONObject("tokenObj");
-
-                    String key = tokenData.getString("token");
-                    String name = tokenObj.getString("symbol");
-                    String display_name = tokenObj.getString("name");
-                    int scale = tokenObj.getInt("decimals");
-                    //String id = tokenObj.getString("id"); // What is this???
-                    String id = key;
-
-                    Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrCreateToken(key, name, display_name, scale, id);
-
-                    String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
-                    currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
-                }
-
-                // TRC21
-                JSONObject jsonTRC21 = new JSONObject(addressTRC21DataJSON);
-                JSONArray jsonTRC21Array = jsonTRC21.getJSONArray("items");
-                for(int i = 0; i < jsonTRC21Array.length(); i++) {
-                    JSONObject tokenData = jsonTRC21Array.getJSONObject(i);
-                    if("NaN".equals(tokenData.getString("quantity"))) { continue; }
-
-
-                    JSONObject tokenObj = tokenData.getJSONObject("tokenObj");
-
-                    String key = tokenData.getString("token");
-                    String name = tokenObj.getString("symbol");
-                    String display_name = tokenObj.getString("name");
-                    int scale = tokenObj.getInt("decimals");
-                    //String id = tokenObj.getString("id"); // What is this???
-                    String id = key;
-
-                    Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrCreateToken(key, name, display_name, scale, id);
-
-                    String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
-                    currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
-                }
+            else if(DONE.equals(status)) {
+                break;
             }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
+        }
+
+        // Process all TRC21.
+        for(int page = 1; ; page++) {
+            String url = baseURL + "/api/tokens/holding/TRC21/" + cryptoAddress.address + "?limit=50&page=" + page;
+            String status = processTokensTRC21Balance(url, cryptoAddress, currentBalanceArrayList);
+
+            if(status == null) {
                 return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
             }
         }
 
         return currentBalanceArrayList;
+    }
+
+    public String processTokensTRC20Balance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
+
+        String addressTRC20DataJSON = RESTUtil.get(url);
+        if(addressTRC20DataJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            // TRC20
+            JSONObject jsonTRC20 = new JSONObject(addressTRC20DataJSON);
+            JSONArray jsonTRC20Array = jsonTRC20.getJSONArray("items");
+            for(int i = 0; i < jsonTRC20Array.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject tokenData = jsonTRC20Array.getJSONObject(i);
+                if("NaN".equals(tokenData.getString("quantity"))) { continue; }
+
+                JSONObject tokenObj = tokenData.getJSONObject("tokenObj");
+
+                String key = tokenData.getString("token");
+                String name = tokenObj.getString("symbol");
+                String display_name = tokenObj.getString("name");
+                int scale = tokenObj.getInt("decimals");
+                //String id = tokenObj.getString("id"); // What is this???
+                String id = key;
+
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+
+                String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
+                currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+    }
+
+    public String processTokensTRC21Balance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
+
+        String addressTRC21DataJSON = RESTUtil.get(url);
+        if(addressTRC21DataJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            // TRC21
+            JSONObject jsonTRC21 = new JSONObject(addressTRC21DataJSON);
+            JSONArray jsonTRC21Array = jsonTRC21.getJSONArray("items");
+            for(int i = 0; i < jsonTRC21Array.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject tokenData = jsonTRC21Array.getJSONObject(i);
+                if("NaN".equals(tokenData.getString("quantity"))) { continue; }
+
+                JSONObject tokenObj = tokenData.getJSONObject("tokenObj");
+
+                String key = tokenData.getString("token");
+                String name = tokenObj.getString("symbol");
+                String display_name = tokenObj.getString("name");
+                int scale = tokenObj.getInt("decimals");
+                //String id = tokenObj.getString("id"); // What is this???
+                String id = key;
+
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+
+                String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
+                currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {

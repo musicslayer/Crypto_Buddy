@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 
 // Alternate base URL: https://lcd-cosmos.cosmostation.io/
 
+// "https://node.atomscan.com" has pagination for balances, but there are so few tokens that we aren't gonna bother with this right now.
+
 public class AtomScan extends AddressAPI {
     public String getName() { return "AtomScan"; }
     public String getDisplayName() { return "AtomScan & Cosmostation REST APIs"; }

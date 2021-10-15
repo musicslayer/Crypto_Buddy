@@ -84,68 +84,66 @@ public class TzStats extends AddressAPI {
             return null;
         }
 
-        if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTokenJSON = RESTUtil.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50");
-            String addressDataTokenJSON2 = RESTUtil.get("https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50&offset=50");
-            if(addressDataTokenJSON == null || addressDataTokenJSON2 == null) {
+        // Process all Tokens.
+        for(int offset = 0; ; offset += 50) {
+            String url = "https://api.better-call.dev/v1/account/" + networkString + "/" + cryptoAddress.address + "/token_balances?size=50&offset=" + offset;
+            String status = processTokensBalance(url, cryptoAddress, currentBalanceArrayList);
+
+            if(status == null) {
                 return null;
             }
-
-            try {
-                // Tokens
-                JSONObject jsonToken = new JSONObject(addressDataTokenJSON);
-                JSONArray jsonTokenArray = jsonToken.getJSONArray("balances");
-                for(int i = 0; i < jsonTokenArray.length(); i++) {
-                    JSONObject tokenData = jsonTokenArray.getJSONObject(i);
-
-                    if(!tokenData.has("symbol") || !tokenData.has("name") || !tokenData.has("decimals") || !tokenData.has("contract")) {
-                        // These are "invalid" tokens.
-                        continue;
-                    }
-
-                    String name = tokenData.getString("symbol");
-                    String display_name = tokenData.getString("name");
-                    int scale = tokenData.getInt("decimals");
-                    String id = tokenData.getString("contract");
-
-                    Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-
-                    BigDecimal b = new BigDecimal(tokenData.getString("balance"));
-                    b = b.movePointLeft(token.getScale());
-                    String currentTokenBalance = b.toPlainString();
-                    currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
-                }
-
-                JSONObject jsonToken2 = new JSONObject(addressDataTokenJSON2);
-                JSONArray jsonTokenArray2 = jsonToken2.getJSONArray("balances");
-                for(int i = 0; i < jsonTokenArray2.length(); i++) {
-                    JSONObject tokenData = jsonTokenArray2.getJSONObject(i);
-
-                    if(!tokenData.has("symbol") || !tokenData.has("name") || !tokenData.has("decimals") || !tokenData.has("contract")) {
-                        // These are "invalid" tokens.
-                        continue;
-                    }
-
-                    String name = tokenData.getString("symbol");
-                    String display_name = tokenData.getString("name");
-                    int scale = tokenData.getInt("decimals");
-                    String id = tokenData.getString("contract");
-
-                    Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
-
-                    BigDecimal b = new BigDecimal(tokenData.getString("balance"));
-                    b = b.movePointLeft(token.getScale());
-                    String currentTokenBalance = b.toPlainString();
-                    currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
-                }
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                return null;
+            else if(DONE.equals(status)) {
+                break;
             }
         }
 
         return currentBalanceArrayList;
+    }
+
+    public String processTokensBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
+
+        String addressDataTokenJSON = RESTUtil.get(url);
+        if(addressDataTokenJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            // Tokens
+            JSONObject jsonToken = new JSONObject(addressDataTokenJSON);
+            JSONArray jsonTokenArray = jsonToken.getJSONArray("balances");
+            for(int i = 0; i < jsonTokenArray.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject tokenData = jsonTokenArray.getJSONObject(i);
+
+                if(!tokenData.has("symbol") || !tokenData.has("name") || !tokenData.has("decimals") || !tokenData.has("contract")) {
+                    // These are "invalid" tokens.
+                    continue;
+                }
+
+                String name = tokenData.getString("symbol");
+                String display_name = tokenData.getString("name");
+                int scale = tokenData.getInt("decimals");
+                String id = tokenData.getString("contract");
+
+                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+
+                BigDecimal b = new BigDecimal(tokenData.getString("balance"));
+                b = b.movePointLeft(token.getScale());
+                String currentTokenBalance = b.toPlainString();
+                currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {

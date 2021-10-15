@@ -20,7 +20,7 @@ import java.util.Date;
 // TODO Include Proof of Stake Bridge.
 // TODO Bridge could also carry tokens.
 
-// PolygonScan has no pagination on its results.
+// PolygonScan has no pagination on its results, but Covalent does.
 
 public class PolygonScan extends AddressAPI {
     public final String APIKEY_polygonscan = "P1JCB9EWXNTQGAN4ZSC5Z3CF8444DC3BMH";
@@ -43,15 +43,37 @@ public class PolygonScan extends AddressAPI {
             chainID = "80001";
         }
 
-        String addressDataJSON = RESTUtil.get("https://api.covalenthq.com/v1/" + chainID + "/address/" + cryptoAddress.address + "/balances_v2/?key=ckey_65336bbeda304020862b0459dae");
+        // Process all balances.
+        for(int skip = 0; ; skip += 1000) {
+            String url = "https://api.covalenthq.com/v1/" + chainID + "/address/" + cryptoAddress.address + "/balances_v2/?key=ckey_65336bbeda304020862b0459dae&limit=1000&skip=" + skip;
+            String status = processBalance(url, cryptoAddress, currentBalanceArrayList);
+
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
+            }
+        }
+
+        return currentBalanceArrayList;
+    }
+
+    public String processBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
             return null;
         }
 
         try {
+            String status = DONE;
+
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray tokenArray = json.getJSONObject("data").getJSONArray("items");
             for(int i = 0; i < tokenArray.length(); i++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
                 JSONObject tokenData = tokenArray.getJSONObject(i);
 
                 if("0x0000000000000000000000000000000000001010".equals(tokenData.getString("contract_address"))) {
@@ -78,13 +100,13 @@ public class PolygonScan extends AddressAPI {
                     currentBalanceArrayList.add(new AssetQuantity(amount, token));
                 }
             }
+
+            return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return null;
         }
-
-        return currentBalanceArrayList;
     }
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
