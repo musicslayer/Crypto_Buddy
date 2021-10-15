@@ -58,14 +58,6 @@ abstract public class CrashDialog extends Dialog {
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
-
-        // Clear this to prevent heap leaks.
-        this.activity = null;
-    }
-
-    @Override
     final public void show() {
         try {
             super.show();
