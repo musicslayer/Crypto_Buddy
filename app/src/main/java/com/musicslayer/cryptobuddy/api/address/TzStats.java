@@ -26,6 +26,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// Negative token balances???
+// tz1RKWsgCD3X1uXsDDb9dxQZFmbFwSJNo4id
+// https://tzkt.io/tz1RKWsgCD3X1uXsDDb9dxQZFmbFwSJNo4id/tokens
+// https://api.better-call.dev/v1/account/mainnet/tz1RKWsgCD3X1uXsDDb9dxQZFmbFwSJNo4id/token_balances?size=50&offset=
+
 public class TzStats extends AddressAPI {
     public String getName() { return "TzStats"; }
     public String getDisplayName() { return "TzStats & Better Call Dev REST APIs"; }
@@ -182,7 +187,7 @@ public class TzStats extends AddressAPI {
         ArrayList<Transaction> transactionCreateArrayList = new ArrayList<>();
         ArrayList<Transaction> transactionTokenArrayList = new ArrayList<>();
 
-        // We can request as many as we want for these, so we don't need pagination.
+        // We can request up to 50000 from the table API, which is much more than our highest setting currently, so we don't need pagination.
         int LIMIT = getMaxTransactions();
 
         String urlReceive = baseURL + "/tables/op?receiver=" + cryptoAddress.address + "&limit=" + LIMIT + "&columns=is_success,reward,deposit,volume,time,type,fee,burned";

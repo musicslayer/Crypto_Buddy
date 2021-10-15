@@ -21,11 +21,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO We need to update to V2
-// https://algoexplorerapi.io/idx2/v2/accounts/W2TVRKTHYB7HDVUGI6E6AVAXDGFT3RJT3XZGB2TVOT53TAISPBO2F5R3HE/transactions?limit=10000
-// https://algoexplorerapi.io/idx2/v2/accounts/W2TVRKTHYB7HDVUGI6E6AVAXDGFT3RJT3XZGB2TVOT53TAISPBO2F5R3HE/transactions?limit=99&next=2IfwAAAAAAASAAAA
-// This is paged, but also allows us to get a large number directly.
-
 public class AlgoExplorer extends AddressAPI {
     public String getName() { return "AlgoExplorer"; }
     public String getDisplayName() { return "AlgoExplorer REST API"; }
@@ -51,7 +46,7 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/v1/account/" + cryptoAddress.address);
+        String addressDataJSON = RESTUtil.get(baseURL + "/v2/accounts/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -73,16 +68,18 @@ public class AlgoExplorer extends AddressAPI {
                     JSONObject asset = assets.getJSONObject(i);
                     String id = asset.getString("asset-id");
 
-                    String tokenData = RESTUtil.get("https://algoexplorerapi.io/v1/asset/" + id);
-                    JSONObject tokenJSON = new JSONObject(tokenData);
+                    String tokenData = RESTUtil.get(baseURL + "/v2/assets/" + id);
+                    JSONObject tokenJSON = new JSONObject(tokenData).getJSONObject("params");
 
-                    String name = tokenJSON.getString("unitname");
-                    String display_name = tokenJSON.getString("assetname");
+                    String name = tokenJSON.getString("unit-name");
+                    String display_name = tokenJSON.getString("name");
                     int scale = tokenJSON.getInt("decimals");
 
                     Token token = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getOrCreateToken(id, name, display_name, scale, id);
 
-                    BigDecimal value = new BigDecimal(asset.getString("amount")); // Don't shift
+                    BigDecimal value = new BigDecimal(asset.getString("amount"));
+                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
+
                     currentBalanceArrayList.add(new AssetQuantity(value.toPlainString(), token));
                 }
             }
@@ -114,26 +111,17 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-/*
-        for(int page = 0; ; page++) {
-            String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions" + "?page=" + page;
-            int status = process(url, cryptoAddress, transactionArrayList);
+        String next = "";
+        for(;;) {
+            String url = baseURL + "/idx2/v2/accounts/" + cryptoAddress.address + "/transactions" + "?limit=1000&next=" + next;
+            next = process(url, cryptoAddress, transactionArrayList);
 
-            if(status == -1) {
+            if(next == null) {
                 return null;
             }
-            else if(status == 0) {
+            else if(DONE.equals(next)) {
                 break;
             }
-        }
-
- */
-
-        // For now, just do it once. After V2 we can fix this.
-        String url = baseURL + "/v1/account/" + cryptoAddress.address + "/transactions";
-        String status = process(url, cryptoAddress, transactionArrayList);
-        if(status == null) {
-            return null;
         }
 
         return transactionArrayList;
@@ -146,32 +134,71 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://algoexplorerapi.io";
+        }
+        else if(cryptoAddress.network instanceof ALGO_Testnet) {
+            baseURL = "https://testnet.algoexplorerapi.io";
+        }
+        else if(cryptoAddress.network instanceof ALGO_Betanet) {
+            baseURL = "https://betanet.algoexplorerapi.io";
+        }
+        else {
+            return null;
+        }
+
         try {
+            String next = DONE;
             // Add account creation transaction (0.1 ALGO).
             //transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity("0.1", cryptoAddress.crypto), null, new Timestamp(null), "", "Account Creation Fee"));
 
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray jsonData = json.getJSONArray("transactions");
             for(int i = 0; i < jsonData.length(); i++) {
+                // If there is anything to process, store next token to get the next page.
+                if(json.has("next-token")) {
+                    next = json.getString("next-token");
+                }
+
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
-                BigInteger block_time = new BigInteger(jsonTransaction.getString("timestamp"));
+                BigInteger block_time = new BigInteger(jsonTransaction.getString("round-time"));
                 double block_time_d = block_time.doubleValue() * 1000;
                 Date block_time_date = new Date((long)block_time_d);
 
-                String from = jsonTransaction.getString("from");
+                String from = jsonTransaction.getString("sender");
+
+                // "to" may or may not exist.
+                String to = "";
+                if(jsonTransaction.has("payment-transaction") && jsonTransaction.getJSONObject("payment-transaction").has("receiver")) {
+                    to = jsonTransaction.getJSONObject("payment-transaction").getString("receiver");
+                }
+
+                if(jsonTransaction.has("asset-transfer-transaction") && jsonTransaction.getJSONObject("asset-transfer-transaction").has("receiver")) {
+                    to = jsonTransaction.getJSONObject("asset-transfer-transaction").getString("receiver");
+                }
 
                 String action;
                 BigDecimal fee;
-                boolean isFrom;
+                boolean isFrom = false;
+                boolean isTo = false;
+
+                // If the address is both form and to, we largely treat it as from but still set the isTo flag.
+                // For example, an address that is both still should pay the fee.
                 if(cryptoAddress.address.equals(from)) {
                     isFrom = true;
+                }
+                if(cryptoAddress.address.equals(to)) {
+                    isTo = true;
+                }
+
+                if(cryptoAddress.address.equals(from)) {
                     action = "Send";
                     fee = new BigDecimal(jsonTransaction.getString("fee"));
                     fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
                 }
                 else {
-                    isFrom = false;
                     action = "Receive";
                     fee = BigDecimal.ZERO;
                 }
@@ -181,77 +208,93 @@ public class AlgoExplorer extends AddressAPI {
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
-                // If I send something to myself, just reject it!
-                if(jsonTransaction.has("payment") && jsonTransaction.getJSONObject("payment").has("to") && jsonTransaction.getJSONObject("payment").getString("to").equals(from)) {
-                    continue;
-                }
-
                 Crypto crypto;
                 BigDecimal value;
-                if(jsonTransaction.has("payment")) {
+                if(jsonTransaction.has("payment-transaction")) {
                     // ALGO
-                    value = new BigDecimal(jsonTransaction.getJSONObject("payment").getString("amount"));
+                    value = new BigDecimal(jsonTransaction.getJSONObject("payment-transaction").getString("amount"));
                     value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                     crypto = cryptoAddress.getCrypto();
 
                     // Also add staking rewards here. Any kind of ALGO transaction triggers reward collection.
-                    BigDecimal reward;
+                    BigDecimal reward = BigDecimal.ZERO;
                     if(isFrom) {
-                        reward = new BigDecimal(jsonTransaction.getString("fromrewards"));
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("sender-rewards")));
                     }
-                    else {
-                        reward = new BigDecimal(jsonTransaction.getJSONObject("payment").getString("torewards"));
+                    if(isTo) {
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
                     }
 
                     reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
                     String reward_diff_s = reward.toString();
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, crypto), null, new Timestamp(block_time_date),"Staking Reward"));
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
-                else if(jsonTransaction.has("curxfer")) {
+                else if(jsonTransaction.has("asset-transfer-transaction")) {
+                    // Add staking rewards here even if we don't want tokens. Any kind of ALGO transaction triggers reward collection.
+                    BigDecimal reward = BigDecimal.ZERO;
+                    if(isFrom) {
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("sender-rewards")));
+                    }
+                    if(isTo) {
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
+                    }
+
+                    reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    String reward_diff_s = reward.toString();
+
+                    if(reward.compareTo(BigDecimal.ZERO) > 0) {
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
+                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
+                    }
+
                     if(!shouldIncludeTokens(cryptoAddress)) {
                         continue;
                     }
 
                     // TOKEN
-                    String id = jsonTransaction.getJSONObject("curxfer").getString("id");
-                    String tokenData = RESTUtil.get("https://algoexplorerapi.io/v1/asset/" + id);
-                    JSONObject tokenJSON = new JSONObject(tokenData);
+                    String id = jsonTransaction.getJSONObject("asset-transfer-transaction").getString("asset-id");
+                    String tokenData = RESTUtil.get(baseURL + "/v2/assets/" + id);
+                    JSONObject tokenJSON = new JSONObject(tokenData).getJSONObject("params");
 
-                    String name = tokenJSON.getString("unitname");
-                    String display_name = tokenJSON.getString("assetname");
+                    String name = tokenJSON.getString("unit-name");
+                    String display_name = tokenJSON.getString("name");
                     int scale = tokenJSON.getInt("decimals");
 
                     crypto = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getOrCreateToken(id, name, display_name, scale, id);
 
-                    value = new BigDecimal(jsonTransaction.getJSONObject("curxfer").getString("amt")); // Don't shift
+                    value = new BigDecimal(jsonTransaction.getJSONObject("asset-transfer-transaction").getString("amount"));
+                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
                 }
-                else { // curfrz ?
+                else { // application-transaction ?
                     // No transaction, but there could still be a fee and reward.
                     value = BigDecimal.ZERO;
                     crypto = cryptoAddress.getCrypto();
 
                     BigDecimal reward = BigDecimal.ZERO;
                     if(isFrom) {
-                        reward = new BigDecimal(jsonTransaction.getString("fromrewards"));
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("sender-rewards")));
                     }
-                    else {
-                        if(jsonTransaction.has("payment") && jsonTransaction.getJSONObject("payment").has("torewards")) {
-                            reward = new BigDecimal(jsonTransaction.getJSONObject("payment").getString("torewards"));
-                        }
+                    if(isTo) {
+                        reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
                     }
 
                     reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
                     String reward_diff_s = reward.toString();
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, crypto), null, new Timestamp(block_time_date),"Staking Reward"));
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
+                }
+
+                // If I send something to myself, just reject it!
+                if(from.equals(to)) {
+                    continue;
                 }
 
                 if(value.compareTo(BigDecimal.ZERO) > 0) {
@@ -260,19 +303,7 @@ public class AlgoExplorer extends AddressAPI {
                 }
             }
 
-            /*
-            // See if we have more pages. They are indexed from 0 to pagesTotal - 1.
-            int pagesTotal = json.getInt("pagesTotal");
-            if(page < pagesTotal - 1) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-
-             */
-
-            return DONE;
+            return next;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
