@@ -20,13 +20,9 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
-import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 
 public class AddCustomTokenDialog extends BaseDialog {
-    WeakReference<BaseDialogFragment> replaceCustomTokenDialogFragment_w;
-    WeakReference<BaseDialogFragment> replaceCustomTokenDialogFragment2_w;
-
     public TokenManager chosenTokenManager;
 
     public AddCustomTokenDialog(Activity activity) {
@@ -102,17 +98,17 @@ public class AddCustomTokenDialog extends BaseDialog {
                     }
                     else {
                         // Token already exists, so ask user if they want to override it.
-                        replaceCustomTokenDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ReplaceCustomTokenDialog.class, oldToken, newToken));
-                        replaceCustomTokenDialogFragment_w.get().setOnDismissListener(replaceCustomTokenDialogFragmentListener);
-                        replaceCustomTokenDialogFragment_w.get().show(AddCustomTokenDialog.this.activity, "replace_custom_token");
+                        BaseDialogFragment replaceCustomTokenDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomTokenDialog.class, oldToken, newToken);
+                        replaceCustomTokenDialogFragment.setOnDismissListener(replaceCustomTokenDialogFragmentListener);
+                        replaceCustomTokenDialogFragment.show(AddCustomTokenDialog.this.activity, "replace_custom_token");
                     }
                 }
             }
         });
 
-        replaceCustomTokenDialogFragment2_w = new WeakReference<>((BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("replace_custom_token"));
-        if(replaceCustomTokenDialogFragment2_w.get() != null) {
-            replaceCustomTokenDialogFragment2_w.get().setOnDismissListener(replaceCustomTokenDialogFragmentListener);
+        BaseDialogFragment replaceCustomTokenDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("replace_custom_token");
+        if (replaceCustomTokenDialogFragment2 != null) {
+            replaceCustomTokenDialogFragment2.setOnDismissListener(replaceCustomTokenDialogFragmentListener);
         }
     }
 }

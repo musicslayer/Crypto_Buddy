@@ -17,11 +17,7 @@ import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
-import java.lang.ref.WeakReference;
-
 public class ChooseHistoryAddressDialog extends BaseDialog {
-    WeakReference<BaseDialogFragment> confirmDeleteAddressHistoryDialogFragment_w;
-
     CryptoAddress currentDeleteHistoryCryptoAddress;
 
     public CryptoAddress user_CRYPTOADDRESS;
@@ -41,8 +37,8 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        confirmDeleteAddressHistoryDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeleteAddressHistoryDialog.class));
-        confirmDeleteAddressHistoryDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+        BaseDialogFragment confirmDeleteAddressHistoryDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAddressHistoryDialog.class);
+        confirmDeleteAddressHistoryDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAddressHistoryDialog)dialog).isComplete) {
@@ -51,7 +47,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
                 }
             }
         });
-        confirmDeleteAddressHistoryDialogFragment_w.get().restoreListeners(activity, "delete");
+        confirmDeleteAddressHistoryDialogFragment.restoreListeners(activity, "delete");
 
         TableLayout T = findViewById(R.id.choose_history_dialog_tableLayout);
         T.removeAllViews();
@@ -76,7 +72,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
                 @Override
                 public void onClickImpl(View view) {
                     currentDeleteHistoryCryptoAddress = addressHistoryObj.cryptoAddress;
-                    confirmDeleteAddressHistoryDialogFragment_w.get().show(activity, "delete");
+                    confirmDeleteAddressHistoryDialogFragment.show(activity, "delete");
                 }
             });
 

@@ -13,15 +13,9 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.filter.DateFilter;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
-import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
 public class DateFilterDialog extends BaseDialog {
-    WeakReference<BaseDialogFragment> chooseEndDateDialogFragment_w;
-    WeakReference<BaseDialogFragment> chooseEndTimeDialogFragment_w;
-    WeakReference<BaseDialogFragment> chooseStartDateDialogFragment_w;
-    WeakReference<BaseDialogFragment> chooseStartTimeDialogFragment_w;
-
     public DateFilter filter;
 
     int[] LASTCUSTOMDATE_START_INFO;
@@ -61,8 +55,8 @@ public class DateFilterDialog extends BaseDialog {
             }
         });
 
-        chooseStartDateDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseDateDialog.class));
-        chooseStartDateDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        BaseDialogFragment chooseStartDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
+        chooseStartDateDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
@@ -79,17 +73,17 @@ public class DateFilterDialog extends BaseDialog {
                 }
             }
         });
-        chooseStartDateDialogFragment_w.get().restoreListeners(this.activity, "start_date");
+        chooseStartDateDialogFragment.restoreListeners(this.activity, "start_date");
 
         Button B_START_DATE = findViewById(R.id.date_filter_dialog_startDateButton);
         B_START_DATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseStartDateDialogFragment_w.get().show(DateFilterDialog.this.activity, "start_date");
+                chooseStartDateDialogFragment.show(DateFilterDialog.this.activity, "start_date");
             }
         });
 
-        chooseStartTimeDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseTimeDialog.class));
-        chooseStartTimeDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        BaseDialogFragment chooseStartTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
+        chooseStartTimeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
@@ -106,17 +100,17 @@ public class DateFilterDialog extends BaseDialog {
                 }
             }
         });
-        chooseStartTimeDialogFragment_w.get().restoreListeners(this.activity, "start_time");
+        chooseStartTimeDialogFragment.restoreListeners(this.activity, "start_time");
 
         Button B_START_TIME = findViewById(R.id.date_filter_dialog_startTimeButton);
         B_START_TIME.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseStartTimeDialogFragment_w.get().show(DateFilterDialog.this.activity, "start_time");
+                chooseStartTimeDialogFragment.show(DateFilterDialog.this.activity, "start_time");
             }
         });
 
-        chooseEndDateDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseDateDialog.class));
-        chooseEndDateDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        BaseDialogFragment chooseEndDateDialogFragment = BaseDialogFragment.newInstance(ChooseDateDialog.class);
+        chooseEndDateDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
@@ -133,17 +127,17 @@ public class DateFilterDialog extends BaseDialog {
                 }
             }
         });
-        chooseEndDateDialogFragment_w.get().restoreListeners(this.activity, "end_date");
+        chooseEndDateDialogFragment.restoreListeners(this.activity, "end_date");
 
         Button B_END_DATE = findViewById(R.id.date_filter_dialog_endDateButton);
         B_END_DATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseEndDateDialogFragment_w.get().show(DateFilterDialog.this.activity, "end_date");
+                chooseEndDateDialogFragment.show(DateFilterDialog.this.activity, "end_date");
             }
         });
 
-        chooseEndTimeDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ChooseTimeDialog.class));
-        chooseEndTimeDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        BaseDialogFragment chooseEndTimeDialogFragment = BaseDialogFragment.newInstance(ChooseTimeDialog.class);
+        chooseEndTimeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
@@ -160,12 +154,12 @@ public class DateFilterDialog extends BaseDialog {
                 }
             }
         });
-        chooseEndTimeDialogFragment_w.get().restoreListeners(this.activity, "end_time");
+        chooseEndTimeDialogFragment.restoreListeners(this.activity, "end_time");
 
         Button B_END_TIME = findViewById(R.id.date_filter_dialog_endTimeButton);
         B_END_TIME.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseEndTimeDialogFragment_w.get().show(DateFilterDialog.this.activity, "end_time");
+                chooseEndTimeDialogFragment.show(DateFilterDialog.this.activity, "end_time");
             }
         });
 
