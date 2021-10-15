@@ -18,11 +18,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllPortfoliosDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> confirmDeleteAllPortfoliosDialogFragment_w;
-
     public DeleteAllPortfoliosSettingsView(Context context) {
         super(context);
 
@@ -36,8 +32,8 @@ public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all created portfolios.");
 
-        confirmDeleteAllPortfoliosDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeleteAllPortfoliosDialog.class));
-        confirmDeleteAllPortfoliosDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment confirmDeleteAllPortfoliosDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAllPortfoliosDialog.class);
+        confirmDeleteAllPortfoliosDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllPortfoliosDialog)dialog).isComplete) {
@@ -47,7 +43,7 @@ public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
                 }
             }
         });
-        confirmDeleteAllPortfoliosDialogFragment_w.get().restoreListeners(context, "delete_all_portfolios_settings_view");
+        confirmDeleteAllPortfoliosDialogFragment.restoreListeners(context, "delete_all_portfolios_settings_view");
 
         final AppCompatButton B_DELETEALL = new AppCompatButton(context);
         B_DELETEALL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -55,7 +51,7 @@ public class DeleteAllPortfoliosSettingsView extends CrashLinearLayout {
         B_DELETEALL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETEALL.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteAllPortfoliosDialogFragment_w.get().show(context, "delete_all_portfolios_settings_view");
+                confirmDeleteAllPortfoliosDialogFragment.show(context, "delete_all_portfolios_settings_view");
             }
         });
 

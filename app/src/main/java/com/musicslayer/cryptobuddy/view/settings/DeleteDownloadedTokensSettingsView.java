@@ -17,11 +17,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> confirmDeleteTokensDialogFragment_w;
-
     public DeleteDownloadedTokensSettingsView(Context context) {
         super(context);
 
@@ -35,8 +31,8 @@ public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all downloaded tokens from the app's database.");
 
-        confirmDeleteTokensDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "Downloaded"));
-        confirmDeleteTokensDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "Downloaded");
+        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
@@ -46,7 +42,7 @@ public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
                 }
             }
         });
-        confirmDeleteTokensDialogFragment_w.get().restoreListeners(context, "reset_delete_downloaded_tokens_settings_view");
+        confirmDeleteTokensDialogFragment.restoreListeners(context, "reset_delete_downloaded_tokens_settings_view");
 
         final AppCompatButton B_DELETE = new AppCompatButton(context);
         B_DELETE.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -54,7 +50,7 @@ public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
         B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteTokensDialogFragment_w.get().show(context, "reset_delete_downloaded_tokens_settings_view");
+                confirmDeleteTokensDialogFragment.show(context, "reset_delete_downloaded_tokens_settings_view");
             }
         });
 

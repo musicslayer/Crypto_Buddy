@@ -16,11 +16,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmResetEverythingDialog;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class ResetEverythingSettingsView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> confirmResetEverythingDialogFragment_w;
-
     public ResetEverythingSettingsView(Context context) {
         super(context);
 
@@ -34,8 +30,8 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("RESET EVERYTHING!\nApp will be like a new install. Purchase data will be temporarily reset, but will restore itself automatically shortly after restarting the app.\n(This always requires a confirmation code.)");
 
-        confirmResetEverythingDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmResetEverythingDialog.class));
-        confirmResetEverythingDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment confirmResetEverythingDialogFragment = BaseDialogFragment.newInstance(ConfirmResetEverythingDialog.class);
+        confirmResetEverythingDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
@@ -49,7 +45,7 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
                 }
             }
         });
-        confirmResetEverythingDialogFragment_w.get().restoreListeners(context, "reset_reset_everything_settings_view");
+        confirmResetEverythingDialogFragment.restoreListeners(context, "reset_reset_everything_settings_view");
 
         final AppCompatButton B_Reset = new AppCompatButton(context);
         B_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -57,7 +53,7 @@ public class ResetEverythingSettingsView extends CrashLinearLayout {
         B_Reset.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_Reset.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmResetEverythingDialogFragment_w.get().show(context, "reset_reset_everything_settings_view");
+                confirmResetEverythingDialogFragment.show(context, "reset_reset_everything_settings_view");
             }
         });
 

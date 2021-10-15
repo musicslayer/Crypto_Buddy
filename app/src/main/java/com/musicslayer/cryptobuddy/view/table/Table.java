@@ -27,12 +27,9 @@ import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 abstract public class Table extends CrashTableLayout {
-    ArrayList<WeakReference<BaseDialogFragment>> filter_fragments_w;
-
     abstract public BaseRow getRow(Context context, Transaction transaction);
 
     // Number of rows before the user input.
@@ -160,8 +157,6 @@ abstract public class Table extends CrashTableLayout {
             AppCompatButton[] b = new AppCompatButton[numColumns];
             TextView[] t = new TextView[numColumns];
 
-            filter_fragments_w = new ArrayList<>();
-
             for(int i = 0; i < numColumns; i++) {
                 l[i] = new LinearLayout(context);
                 l[i].setOrientation(LinearLayout.VERTICAL);
@@ -186,8 +181,8 @@ abstract public class Table extends CrashTableLayout {
 
                     t[i].setText(filterArrayList.get(i).getIncludedString());
 
-                    WeakReference<BaseDialogFragment> filterDialogFragment_w = new WeakReference<>(f.getGenericDialogFragment());
-                    filterDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+                    BaseDialogFragment filterDialogFragment = f.getGenericDialogFragment();
+                    filterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                         @Override
                         public void onDismissImpl(DialogInterface dialog) {
                             if(((BaseDialog)dialog).isComplete) {
@@ -197,16 +192,14 @@ abstract public class Table extends CrashTableLayout {
                             }
                         }
                     });
-                    filterDialogFragment_w.get().restoreListeners(context, "filter" + ii);
+                    filterDialogFragment.restoreListeners(context, "filter" + ii);
 
                     b[i].setOnClickListener(new CrashView.CrashOnClickListener(context) {
                         @Override
                         public void onClickImpl(View view) {
-                            filterDialogFragment_w.get().show(context, "filter" + ii);
+                            filterDialogFragment.show(context, "filter" + ii);
                         }
                     });
-
-                    filter_fragments_w.add(filterDialogFragment_w);
                 }
 
                 this.addView(l[i]);

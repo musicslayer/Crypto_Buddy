@@ -37,8 +37,8 @@ import java.util.Comparator;
 public class TokenManagerActivity extends BaseActivity {
     WeakReference<BaseDialogFragment> addCustomTokenDialogFragment_w;
     WeakReference<BaseDialogFragment> downloadTokensDialogFragment_w;
-    WeakReference<ProgressDialogFragment> progressDirectDialogFragment_w;
     WeakReference<ProgressDialogFragment> progressFixedDialogFragment_w;
+    WeakReference<ProgressDialogFragment> progressDirectDialogFragment_w;
 
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
 

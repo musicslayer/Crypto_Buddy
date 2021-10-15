@@ -29,7 +29,6 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,9 +36,8 @@ import java.util.Comparator;
 // This class is hardcoded to deal with all crypto, and optionally Fiat as well.
 
 public class SelectAndSearchView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> searchAssetDialogFragment_w;
-
     public BorderedSpinnerView bsv;
+    BaseDialogFragment searchAssetDialogFragment;
     public String lastButton;
     public Asset lastSearchAsset;
     public boolean includesFiat;
@@ -182,8 +180,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
         bsv = new BorderedSpinnerView(context);
 
-        searchAssetDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames()));
-        searchAssetDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames());
+        searchAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SearchDialog)dialog).isComplete) {
@@ -192,14 +190,14 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 }
             }
         });
-        searchAssetDialogFragment_w.get().restoreListeners(context, "search");
+        searchAssetDialogFragment.restoreListeners(context, "search");
 
         B_SEARCH = new AppCompatButton(context);
         B_SEARCH.setText("");
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
         B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                searchAssetDialogFragment_w.get().show(context, "search");
+                searchAssetDialogFragment.show(context, "search");
             }
         });
 

@@ -18,11 +18,7 @@ import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class ResetAllSettingsSettingsView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> confirmResetSettingsDialogFragment_w;
-
     public ResetAllSettingsSettingsView(Context context) {
         super(context);
 
@@ -36,8 +32,8 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
         T_Reset.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Reset all settings to default values.");
 
-        confirmResetSettingsDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmResetSettingsDialog.class));
-        confirmResetSettingsDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment confirmResetSettingsDialogFragment = BaseDialogFragment.newInstance(ConfirmResetSettingsDialog.class);
+        confirmResetSettingsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
@@ -47,7 +43,7 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
                 }
             }
         });
-        confirmResetSettingsDialogFragment_w.get().restoreListeners(context, "reset_reset_all_settings_view");
+        confirmResetSettingsDialogFragment.restoreListeners(context, "reset_reset_all_settings_view");
 
         final AppCompatButton B_Reset = new AppCompatButton(context);
         B_Reset.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -55,7 +51,7 @@ public class ResetAllSettingsSettingsView extends CrashLinearLayout {
         B_Reset.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_Reset.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmResetSettingsDialogFragment_w.get().show(context, "reset_reset_all_settings_view");
+                confirmResetSettingsDialogFragment.show(context, "reset_reset_all_settings_view");
             }
         });
 

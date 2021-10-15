@@ -16,11 +16,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.lang.ref.WeakReference;
-
 public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
-    WeakReference<BaseDialogFragment> confirmDeleteAllAddressHistoryDialogFragment_w;
-
     public DeleteAllAddressHistorySettingsView(Context context) {
         super(context);
 
@@ -34,8 +30,8 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all stored address history.");
 
-        confirmDeleteAllAddressHistoryDialogFragment_w = new WeakReference<>(BaseDialogFragment.newInstance(ConfirmDeleteAllAddressHistoryDialog.class));
-        confirmDeleteAllAddressHistoryDialogFragment_w.get().setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment confirmDeleteAllAddressHistoryDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAllAddressHistoryDialog.class);
+        confirmDeleteAllAddressHistoryDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
@@ -44,7 +40,7 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
                 }
             }
         });
-        confirmDeleteAllAddressHistoryDialogFragment_w.get().restoreListeners(context, "delete_all_address_history_settings_view");
+        confirmDeleteAllAddressHistoryDialogFragment.restoreListeners(context, "delete_all_address_history_settings_view");
 
         final AppCompatButton B_DELETEALL = new AppCompatButton(context);
         B_DELETEALL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -52,7 +48,7 @@ public class DeleteAllAddressHistorySettingsView extends CrashLinearLayout {
         B_DELETEALL.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_warning_24, 0, 0, 0);
         B_DELETEALL.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                confirmDeleteAllAddressHistoryDialogFragment_w.get().show(context, "delete_all_address_history_settings_view");
+                confirmDeleteAllAddressHistoryDialogFragment.show(context, "delete_all_address_history_settings_view");
             }
         });
 
