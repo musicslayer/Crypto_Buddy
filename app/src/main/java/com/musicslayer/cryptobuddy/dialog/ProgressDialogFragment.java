@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.PollingUtil;
 
+import java.util.ArrayList;
+
 public class ProgressDialogFragment extends BaseDialogFragment {
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
@@ -16,6 +18,8 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     public final static String[] stored_status = new String[1];
     public final static String[] stored_value = new String[1];
+
+    public static ArrayList<Thread> threadArrayList;
 
     public static ProgressDialogFragment newInstance(Class<?> clazz, Object... args) {
         Bundle bundle = new Bundle();
@@ -28,11 +32,19 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     }
 
     @Override
+    public void show(Context context, String tag) {
+        // Clear the stored state before every new ProgressDialog showing.
+        ProgressDialogFragment.clearAll();
+        threadArrayList = new ArrayList<>();
+        super.show(context, tag);
+    }
+
+    @Override
     public void onShow(@NonNull DialogInterface dialog) {
         // Uses both onShow and onDismiss listeners here.
         ProgressDialog currentProgressDialog = (ProgressDialog)dialog;
 
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             if(SL != null && !currentProgressDialog.isCancelled) {
                 if(ProgressDialogFragment.isStart()) {
                     // This is the first call, so actually do the work.
@@ -63,14 +75,10 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
                 currentProgressDialog.dismiss();
             });
-        }).start();
-    }
+        });
 
-    @Override
-    public void show(Context context, String tag) {
-        // Clear the stored state before every new ProgressDialog showing.
-        ProgressDialogFragment.clearAll();
-        super.show(context, tag);
+        threadArrayList.add(thread);
+        thread.start();
     }
 
     @Override
@@ -78,6 +86,13 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // Unlike in the superclass, here we do not want to use the onDismiss listener.
         // Instead, any dialog that gets dismissed needs to be cancelled.
         ((ProgressDialog)dialog).isCancelled = true;
+
+        // If we deliberately stopped the operation while it was still running, we must signal to the threads we need them to stop so they don't keep using up resources.
+        if(ProgressDialogFragment.isCancelled()) {
+            for(Thread thread : threadArrayList) {
+                thread.interrupt();
+            }
+        }
     }
 
     // These methods below enable us to start the progress function once, and then get the result shown even if the activity/dialog is recreated.

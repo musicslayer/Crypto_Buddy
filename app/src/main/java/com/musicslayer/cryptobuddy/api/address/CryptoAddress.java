@@ -9,9 +9,6 @@ import com.musicslayer.cryptobuddy.settings.NetworksSetting;
 
 import java.util.ArrayList;
 
-// TODO If we have the right prefix, those networks should be favored.
-
-// A string address could belong to more than one network
 public class CryptoAddress implements Serialization.SerializableToJSON {
     public String address;
     public Network network;

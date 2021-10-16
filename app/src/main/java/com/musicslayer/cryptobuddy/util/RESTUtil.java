@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.util;
 
+import com.musicslayer.cryptobuddy.crash.CrashBypassException;
 import com.musicslayer.cryptobuddy.settings.TimeoutSetting;
 
 import java.io.ByteArrayOutputStream;
@@ -9,7 +10,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Date;
 
 public class RESTUtil {
     // This is the amount of time we want between web requests, to avoid overloading other APIs and triggering their rate limiting.
@@ -27,10 +27,18 @@ public class RESTUtil {
         lastTime = System.currentTimeMillis();
     }
 
+    public static void checkForInterrupt() {
+        // If this thread has been interrupted, throw an error so the thread can stop running.
+        if(Thread.interrupted()) {
+            throw new CrashBypassException();
+        }
+    }
+
     public static String get(String urlString) {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
+            checkForInterrupt();
             rateLimit();
             result = get_impl(urlString);
             if(result != null) { break; }
@@ -61,6 +69,7 @@ public class RESTUtil {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
+            checkForInterrupt();
             rateLimit();
             result = post_impl(urlString, body);
             if(result != null) { break; }
@@ -99,6 +108,7 @@ public class RESTUtil {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
+            checkForInterrupt();
             rateLimit();
             result = postWithKey_impl(urlString, body, keyName, key);
             if(result != null) { break; }
