@@ -163,11 +163,6 @@ public class Solscan extends AddressAPI {
         ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
         ArrayList<Transaction> transactionTokensArrayList = new ArrayList<>();
 
-        // https://api.solscan.io/account/transaction?address=zPHwJvSkp6XcqjuWZcbUrDKcMHaUcwcFCLbToRHMEXv&before=
-        //String addressDataTokenJSON = RESTUtil.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10"); // &offset
-        //String addressDataTokenJSON2 = RESTUtil.get(baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10&offset=10"); // &offset
-
-
         String lastID = "";
         for(;;) {
             String url = baseURL + "/account/transaction?address=" + cryptoAddress.address + "&before=" + lastID;

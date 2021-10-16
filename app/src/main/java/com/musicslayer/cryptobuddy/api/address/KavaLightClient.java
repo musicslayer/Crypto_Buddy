@@ -210,7 +210,6 @@ public class KavaLightClient extends AddressAPI {
                 Date block_time_date = format.parse(block_time);
 
                 JSONObject tx = jsonTransaction.getJSONObject("tx");
-                //BigDecimal fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
 
                 BigDecimal fee;
                 try {

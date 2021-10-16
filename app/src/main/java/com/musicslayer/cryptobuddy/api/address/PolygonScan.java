@@ -209,7 +209,7 @@ public class PolygonScan extends AddressAPI {
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
-            // Internal
+            // Internal - Fees are already counted elsewhere.
             JSONObject jsonInternal = new JSONObject(addressDataInternalJSON);
             JSONArray jsonInternalArray = jsonInternal.getJSONArray("result");
 
@@ -225,21 +225,14 @@ public class PolygonScan extends AddressAPI {
                 String to = oI.getString("to");
 
                 String action;
-                BigDecimal fee;
 
                 if(cryptoAddress.address.equalsIgnoreCase(from)) {
                     // We are sending crypto away.
                     action = "Send";
-
-                    // We also have to add in the fee to the amount sent.
-                    BigDecimal gasAmount = new BigDecimal(oI.getString("gasUsed"));
-                    BigDecimal gasPrice = new BigDecimal(oI.getString("gasPrice"));
-                    fee = gasAmount.multiply(gasPrice);
                 }
                 else if(cryptoAddress.address.equalsIgnoreCase(to)) {
                     // We are receiving crypto. No fee.
                     action = "Receive";
-                    fee = BigDecimal.ZERO;
                 }
                 else {
                     // We shouldn't get here...
@@ -252,13 +245,6 @@ public class PolygonScan extends AddressAPI {
                 // If this has an error, skip it.
                 if("1".equals(oI.getString("isError"))) {
                     continue;
-                }
-
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
-
-                if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
-                    if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 BigInteger balance_diff = new BigInteger(oI.getString("value"));

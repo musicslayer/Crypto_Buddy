@@ -200,7 +200,7 @@ public class BscScan extends AddressAPI {
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
-            // Internal
+            // Internal - Fees are already counted elsewhere.
             JSONObject jsonInternal = new JSONObject(addressDataInternalJSON);
             JSONArray jsonInternalArray = jsonInternal.getJSONArray("result");
 
@@ -216,32 +216,17 @@ public class BscScan extends AddressAPI {
                 String to = oI.getString("to");
 
                 String action;
-                BigDecimal fee;
-
                 if(cryptoAddress.address.equalsIgnoreCase(from)) {
                     // We are sending crypto away.
                     action = "Send";
-
-                    // We also have to add in the fee to the amount sent.
-                    BigDecimal gasAmount = new BigDecimal(oI.getString("gasUsed"));
-                    BigDecimal gasPrice = new BigDecimal(oI.getString("gasPrice"));
-                    fee = gasAmount.multiply(gasPrice);
                 }
                 else if(cryptoAddress.address.equalsIgnoreCase(to)) {
                     // We are receiving crypto. No fee.
                     action = "Receive";
-                    fee = BigDecimal.ZERO;
                 }
                 else {
                     // We shouldn't get here...
                     continue;
-                }
-
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
-
-                if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction Fee"));
-                    if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
                 // If I send something to myself, just reject it!

@@ -419,7 +419,7 @@ public class TomoScan extends AddressAPI {
     }
 
     public String processInternal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionInternalArrayList) {
-        // Internal Transactions - These are all TOMO
+        // Internal Transactions - These are all TOMO. Fees are already counted elsewhere.
         String addressDataInternalJSON = RESTUtil.get(url);
         if(addressDataInternalJSON == null) {
             return null;
@@ -450,8 +450,6 @@ public class TomoScan extends AddressAPI {
                 }
 
                 String action;
-                BigDecimal fee = BigDecimal.ZERO;
-
                 if(cryptoAddress.address.equalsIgnoreCase(from)) {
                     action = "Send";
                 }
@@ -467,8 +465,6 @@ public class TomoScan extends AddressAPI {
                 balance_diff = balance_diff.movePointLeft(cryptoAddress.getCrypto().getScale());
                 String balance_diff_s = balance_diff.toPlainString();
 
-                String fee_s = fee.toPlainString();
-
                 String block_time = oI.getString("timestamp");
 
                 // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
@@ -478,11 +474,6 @@ public class TomoScan extends AddressAPI {
 
                 transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
-
-                if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionInternalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Internal Transaction Fee"));
-                    if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
-                }
             }
 
             return status;
