@@ -24,6 +24,11 @@ abstract public class Network implements Serialization.SerializableToJSON {
     abstract public String getDisplayName();
     abstract public boolean isValid(String address);
 
+    // Most coins have no prefixes but some could.
+    public String getPrefix() {
+        return null;
+    }
+
     // For now, just use the name as the key.
     public String getKey() {
         return getName();

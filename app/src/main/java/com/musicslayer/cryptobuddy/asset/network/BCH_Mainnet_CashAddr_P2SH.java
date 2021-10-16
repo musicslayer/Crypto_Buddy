@@ -20,12 +20,11 @@ public class BCH_Mainnet_CashAddr_P2SH extends Network {
         return this.getCrypto().getDisplayName() + " Mainnet CashAddr Script (p2sh)";
     }
 
-    public boolean isValid(String address) {
-        String prefix = "bitcoincash:";
-        if(address.startsWith(prefix)) {
-            address = address.substring(prefix.length());
-        }
+    public String getPrefix() {
+        return "bitcoincash:";
+    }
 
+    public boolean isValid(String address) {
         return address.startsWith("p");
     }
 }

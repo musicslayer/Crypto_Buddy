@@ -21,6 +21,10 @@ public class ALGO_Betanet extends Network {
         return this.getCrypto().getDisplayName() + " Betanet";
     }
 
+    public String getPrefix() {
+        return "algorand://";
+    }
+
     public boolean isValid(String address) {
         return address.length() == 58 && Base32.isAddress(address);
     }

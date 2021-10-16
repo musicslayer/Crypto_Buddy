@@ -21,12 +21,11 @@ public class LTC_Testnet_P2SH extends Network {
         return this.getCrypto().getDisplayName() + " Testnet Script (p2sh)";
     }
 
-    public boolean isValid(String address) {
-        String prefix = "litecoin:";
-        if(address.startsWith(prefix)) {
-            address = address.substring(prefix.length());
-        }
+    public String getPrefix() {
+        return "litecoin:";
+    }
 
+    public boolean isValid(String address) {
         if(!Base58.hasValidChecksum(address)) {
             return false;
         }

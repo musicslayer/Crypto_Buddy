@@ -9,6 +9,8 @@ import com.musicslayer.cryptobuddy.settings.NetworksSetting;
 
 import java.util.ArrayList;
 
+// TODO If we have the right prefix, those networks should be favored.
+
 // A string address could belong to more than one network
 public class CryptoAddress implements Serialization.SerializableToJSON {
     public String address;
@@ -56,16 +58,23 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
                 continue;
             }
 
+            // Remove the potential prefix this network may have (case sensitive).
+            String prefix = n.getPrefix();
+            String copyAddress = address;
+            if(prefix != null && address.startsWith(prefix)) {
+                copyAddress = copyAddress.substring(prefix.length());
+            }
+
             boolean isValid;
             try {
-                isValid = n.isValid(address);
+                isValid = n.isValid(copyAddress);
             }
             catch(Exception ignored) {
                 continue;
             }
 
             if(isValid) {
-                cryptoAddressArrayList.add(new CryptoAddress(address, n, includeTokens));
+                cryptoAddressArrayList.add(new CryptoAddress(copyAddress, n, includeTokens));
             }
         }
 

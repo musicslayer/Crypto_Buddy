@@ -20,6 +20,10 @@ public class ZEC_Testnet_Transparent extends Network {
         return this.getCrypto().getDisplayName() + " Testnet (Transparent Address)";
     }
 
+    public String getPrefix() {
+        return "zcash:";
+    }
+
     public boolean isValid(String address) {
         return address.length() == 35 && address.startsWith("tm");
     }

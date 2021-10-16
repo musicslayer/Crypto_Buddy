@@ -21,12 +21,11 @@ public class DASH_Mainnet_P2PKH extends Network {
         return this.getCrypto().getDisplayName() + " Mainnet Pubkey (p2pkh)";
     }
 
-    public boolean isValid(String address) {
-        String prefix = "dash:";
-        if(address.startsWith(prefix)) {
-            address = address.substring(prefix.length());
-        }
+    public String getPrefix() {
+        return "dash:";
+    }
 
+    public boolean isValid(String address) {
         if(!Base58.hasValidChecksum(address)) {
             return false;
         }

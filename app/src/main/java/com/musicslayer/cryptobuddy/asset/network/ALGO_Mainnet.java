@@ -21,6 +21,10 @@ public class ALGO_Mainnet extends Network {
         return this.getCrypto().getDisplayName() + " Mainnet";
     }
 
+    public String getPrefix() {
+        return "algorand://";
+    }
+
     public boolean isValid(String address) {
         return address.length() == 58 && Base32.isAddress(address);
     }
