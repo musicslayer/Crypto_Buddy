@@ -26,6 +26,9 @@ abstract public class CrashConsumeResponseListener implements ConsumeResponseLis
         try {
             onConsumeResponseImpl(billingResult, purchaseToken);
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

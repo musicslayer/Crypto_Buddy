@@ -17,6 +17,9 @@ abstract public class CrashActivity extends AppCompatActivity {
         try {
             onBackPressedImpl();
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 
@@ -33,6 +36,9 @@ abstract public class CrashActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             onCreateImpl(savedInstanceState);
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 
@@ -48,6 +54,9 @@ abstract public class CrashActivity extends AppCompatActivity {
     final public boolean onCreateOptionsMenu(Menu menu) {
         try {
             return onCreateOptionsMenuImpl(menu);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -67,6 +76,9 @@ abstract public class CrashActivity extends AppCompatActivity {
         try {
             return onOptionsItemSelectedImpl(item);
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 
@@ -85,6 +97,9 @@ abstract public class CrashActivity extends AppCompatActivity {
         try {
             super.onSaveInstanceState(bundle);
             onSaveInstanceStateImpl(bundle);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -109,6 +124,9 @@ abstract public class CrashActivity extends AppCompatActivity {
         try {
             onRestoreInstanceStateImpl(bundle);
             super.onRestoreInstanceState(bundle);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

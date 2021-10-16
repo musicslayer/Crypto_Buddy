@@ -30,6 +30,9 @@ abstract public class CrashSearchView extends SearchView {
             try {
                 return onQueryTextSubmitImpl(query);
             }
+            catch(CrashBypassException e) {
+                // Do nothing.
+            }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
 
@@ -46,6 +49,9 @@ abstract public class CrashSearchView extends SearchView {
         final public boolean onQueryTextChange(String newText) {
             try {
                 return onQueryTextChangeImpl(newText);
+            }
+            catch(CrashBypassException e) {
+                // Do nothing.
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

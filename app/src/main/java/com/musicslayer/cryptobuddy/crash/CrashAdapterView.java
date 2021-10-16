@@ -31,6 +31,9 @@ abstract public class CrashAdapterView<T extends Adapter> extends AdapterView<T>
             try {
                 onNothingSelectedImpl(parent);
             }
+            catch(CrashBypassException e) {
+                // Do nothing.
+            }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
 
@@ -46,6 +49,9 @@ abstract public class CrashAdapterView<T extends Adapter> extends AdapterView<T>
         final public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             try {
                 onItemSelectedImpl(parent, view, pos, id);
+            }
+            catch(CrashBypassException e) {
+                // Do nothing.
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

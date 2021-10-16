@@ -60,6 +60,9 @@ abstract public class CrashLinearLayout extends LinearLayout {
         try {
             super.onRestoreInstanceState(onRestoreInstanceStateImpl(state));
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

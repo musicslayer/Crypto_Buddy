@@ -22,6 +22,9 @@ abstract public class CrashRunnable implements Runnable {
         try {
             runImpl();
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

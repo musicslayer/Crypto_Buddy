@@ -61,6 +61,9 @@ abstract public class CrashTextView extends AppCompatTextView {
         try {
             super.onRestoreInstanceState(onRestoreInstanceStateImpl(state));
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

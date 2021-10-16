@@ -88,6 +88,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         ((ProgressDialog)dialog).isCancelled = true;
 
         // If we deliberately stopped the operation while it was still running, we must signal to the threads we need them to stop so they don't keep using up resources.
+        // Currently, most long-running operations involve REST web requests, so the only place that checks this is inside RESTUtil.
         if(ProgressDialogFragment.isCancelled()) {
             for(Thread thread : threadArrayList) {
                 thread.interrupt();

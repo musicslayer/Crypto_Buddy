@@ -29,6 +29,9 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
         try {
             onQueryPurchasesResponseImpl(billingResult, purchases);
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

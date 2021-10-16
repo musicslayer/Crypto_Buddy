@@ -61,6 +61,9 @@ abstract public class CrashEditText extends AppCompatEditText {
         try {
             super.onRestoreInstanceState(onRestoreInstanceStateImpl(state));
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

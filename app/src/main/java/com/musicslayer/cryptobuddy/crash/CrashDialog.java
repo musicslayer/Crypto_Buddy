@@ -28,6 +28,9 @@ abstract public class CrashDialog extends Dialog {
         try {
             onBackPressedImpl();
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 
@@ -44,6 +47,9 @@ abstract public class CrashDialog extends Dialog {
         try {
             super.onCreate(savedInstanceState);
             onCreateImpl(savedInstanceState);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -62,6 +68,9 @@ abstract public class CrashDialog extends Dialog {
         try {
             super.show();
             showImpl();
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -104,6 +113,9 @@ abstract public class CrashDialog extends Dialog {
         try {
             onRestoreInstanceStateImpl(bundle);
             super.onRestoreInstanceState(bundle);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

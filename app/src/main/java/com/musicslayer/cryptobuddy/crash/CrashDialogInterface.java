@@ -53,6 +53,9 @@ public interface CrashDialogInterface extends DialogInterface {
             try {
                 onDismissImpl(dialog);
             }
+            catch(CrashBypassException e) {
+                // Do nothing.
+            }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
 

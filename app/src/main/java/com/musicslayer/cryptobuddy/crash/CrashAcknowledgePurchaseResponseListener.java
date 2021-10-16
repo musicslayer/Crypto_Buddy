@@ -26,6 +26,9 @@ abstract public class CrashAcknowledgePurchaseResponseListener implements Acknow
         try {
             onAcknowledgePurchaseResponseImpl(billingResult);
         }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
 

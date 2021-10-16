@@ -30,6 +30,9 @@ abstract public class CrashPopupMenu extends PopupMenu {
             try {
                 return onMenuItemClickImpl(item);
             }
+            catch(CrashBypassException e) {
+                // Do nothing.
+            }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
 
