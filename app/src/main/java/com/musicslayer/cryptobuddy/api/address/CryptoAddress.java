@@ -51,6 +51,20 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
         ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
         boolean rejectTestnet = "Mainnet".equals(NetworksSetting.value);
 
+        // Search for prefix, and if found separate it from the address.
+        String address_prefix = null;
+        int idx = address.indexOf(":");
+        if(idx != -1) {
+            address_prefix = address.substring(0, idx + 1);
+            if("algorand:".equalsIgnoreCase(address_prefix)) {
+                // Special case for Algorand.
+                idx += 2;
+                address_prefix = address_prefix + "//";
+            }
+
+            address = address.substring(idx + 1);
+        }
+
         // Find all valid cryptos.
         for(Network n : Network.networks) {
             // Only support Testnets if the setting says to.
@@ -58,23 +72,21 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            // Remove the potential prefix this network may have (case sensitive).
-            String prefix = n.getPrefix();
-            String copyAddress = address;
-            if(prefix != null && address.startsWith(prefix)) {
-                copyAddress = copyAddress.substring(prefix.length());
+            // If address has a prefix, then only support networks with that prefix.
+            if(address_prefix != null && !address_prefix.equalsIgnoreCase(n.getPrefix())) {
+                continue;
             }
 
             boolean isValid;
             try {
-                isValid = n.isValid(copyAddress);
+                isValid = n.isValid(address);
             }
             catch(Exception ignored) {
                 continue;
             }
 
             if(isValid) {
-                cryptoAddressArrayList.add(new CryptoAddress(copyAddress, n, includeTokens));
+                cryptoAddressArrayList.add(new CryptoAddress(address, n, includeTokens));
             }
         }
 

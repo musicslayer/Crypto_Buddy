@@ -6,3 +6,18 @@ Addresses may be case sensitive, depending on the network.
 
 With an in-app purchase, you may toggle whether you wish to look at just coins, or both coins and tokens.
 If you do not care about tokens, choosing "Coins" may save time in analyzing the address.
+
+
+Some networks have case-insensitive prefixes that may optionally be prepended to an address (common when scanning QR codes).
+For example, some Bitcoin addresses may have the prefix "bitcoin:", which is not considered part of the actual address.
+If the Bitcoin prefix is present, then the app will only recognize the address as a Bitcoin address, even if it would be valid on other non-Bitcoin networks.
+
+Recognized prefixes:
+    algorand://
+    bitcoincash:
+    bchtest:
+    bitcoin:
+    dash:
+    dogecoin:
+    litecoin:
+    zcash:

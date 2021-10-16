@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.settings.NetworksSetting;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.PermissionUtil;
@@ -192,6 +193,14 @@ public class ChooseAddressDialog extends BaseDialog {
         else {
             B_TOGGLE.setVisibility(View.GONE);
             T.setVisibility(View.VISIBLE);
+        }
+
+        TextView T2 = findViewById(R.id.choose_address_dialog_message2TextView);
+        if("Mainnet".equals(NetworksSetting.value)) {
+            T2.setVisibility(View.VISIBLE);
+        }
+        else {
+            T2.setVisibility(View.GONE);
         }
     }
 
