@@ -10,6 +10,10 @@ BCH_Mainnet_CashAddr_P2PKH
 BCH_Mainnet_CashAddr_P2SH
 BCH_Mainnet_P2PKH
 BCH_Mainnet_P2SH
+BCH_Testnet_CashAddr_P2PKH
+BCH_Testnet_CashAddr_P2SH
+BCH_Testnet_P2PKH
+BCH_Testnet_P2SH
 BNBc_Mainnet
 BNBc_Testnet
 BNBs_Mainnet

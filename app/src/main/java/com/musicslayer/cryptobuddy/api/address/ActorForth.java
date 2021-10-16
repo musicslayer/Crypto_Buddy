@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.BCH;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -28,18 +27,6 @@ public class ActorForth extends AddressAPI {
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
-/*
-        String baseURL;
-        if(cryptoAddress.network.isMainnet()) {
-            baseURL = "https://rest.bch.actorforth.org";
-        }
-        else {
-            baseURL = "https://trest.bch.actorforth.org";
-        }
-
- */
-
-/*
         String baseURL;
         if(cryptoAddress.network.isMainnet()) {
             baseURL = "https://rest.bitcoin.com";
@@ -47,10 +34,6 @@ public class ActorForth extends AddressAPI {
         else {
             baseURL = "https://trest.bitcoin.com";
         }
-
- */
-
-        String baseURL = "https://rest.bitcoin.com";
 
         String addressDataJSON = RESTUtil.get(baseURL + "/v2/address/details/" + cryptoAddress.address);
         if(addressDataJSON == null) {
@@ -74,7 +57,14 @@ public class ActorForth extends AddressAPI {
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
-        String baseURL = "https://rest.bitcoin.com";
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://rest.bitcoin.com";
+        }
+        else {
+            baseURL = "https://trest.bitcoin.com";
+        }
+
         for(int page = 0; ; page++) {
             String url = baseURL + "/v2/address/transactions/" + cryptoAddress.address + "?page=" + page;
             String status = process(url, cryptoAddress, transactionArrayList);
@@ -110,58 +100,52 @@ public class ActorForth extends AddressAPI {
 
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
-                JSONObject vin = jsonTransaction.getJSONArray("vin").getJSONObject(0);
+                BigDecimal balance = BigDecimal.ZERO;
+
+                JSONArray vinArray = jsonTransaction.getJSONArray("vin");
+                for(int ii = 0; ii < vinArray.length(); ii++) {
+                    JSONObject vin = vinArray.getJSONObject(ii);
+
+                    if(!vin.has("addr")) { continue; }
+                    String addr = vin.getString("addr");
+                    if(!legacyAddress.equals(addr)) { continue; }
+
+                    balance = balance.subtract(new BigDecimal(vin.getString("value")));
+                }
+
+                JSONArray voutArray = jsonTransaction.getJSONArray("vout");
+                for(int ii = 0; ii < voutArray.length(); ii++) {
+                    JSONObject vout = voutArray.getJSONObject(ii);
+
+                    if(!vout.has("scriptPubKey") || !vout.getJSONObject("scriptPubKey").has("addresses")) {
+                        continue;
+                    }
+
+                    String addr = vout.getJSONObject("scriptPubKey").getJSONArray("addresses").getString(0);
+                    if(!legacyAddress.equals(addr)) { continue; }
+
+                    balance = balance.add(new BigDecimal(vout.getString("value")));
+                }
 
                 String action;
-                BigDecimal fee;
-                boolean isReceive;
-                if("0".equals(vin.getString("vout"))) {
+                if(balance.compareTo(BigDecimal.ZERO) > 0) {
                     action = "Receive";
-                    isReceive = true;
-                    fee = BigDecimal.ZERO;
+                }
+                else if(balance.compareTo(BigDecimal.ZERO) < 0) {
+                    balance = balance.negate();
+                    action = "Send";
                 }
                 else {
-                    action = "Send";
-                    isReceive = false;
-                    fee = new BigDecimal(jsonTransaction.getString("fees"));
+                    // Don't bother showing this transaction since there was no balance change.
+                    continue;
                 }
 
-                JSONArray vout = jsonTransaction.getJSONArray("vout");
-                for(int ii = 0; ii < vout.length(); ii++) {
-                    JSONObject o2 = vout.getJSONObject(ii);
-                    if(!o2.has("scriptPubKey") || !o2.getJSONObject("scriptPubKey").has("addresses")) {
-                        continue;
-                    }
+                BigInteger block_time = new BigInteger(jsonTransaction.getString("blocktime"));
+                double block_time_d = block_time.doubleValue() * 1000;
+                Date block_time_date = new Date((long)block_time_d);
 
-                    String a = o2.getJSONObject("scriptPubKey").getJSONArray("addresses").getString(0);
-
-                    // For a receive, we want the matching one.
-                    // For a send, we want the other one.
-                    boolean match = a.equals(legacyAddress);
-                    boolean want = (isReceive && match) || (!isReceive && !match);
-
-                    if(!want) {
-                        continue;
-                    }
-
-                    BigDecimal value = new BigDecimal(o2.getString("value"));
-
-                    BigInteger block_time = new BigInteger(jsonTransaction.getString("blocktime"));
-                    double block_time_d = block_time.doubleValue() * 1000;
-                    Date block_time_date = new Date((long)block_time_d);
-
-                    String balance_diff_s = value.toString();
-                    String fee_s = fee.toPlainString();
-                    Crypto crypto = cryptoAddress.getCrypto();
-
-                    transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
-
-                    if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, crypto), null, new Timestamp(block_time_date),"Transaction Fee"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
-                    }
-                }
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
+                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
             return status;

@@ -62,13 +62,6 @@ public class InfoUtil {
             case "MATIC":
                 info = "Transactions may not include smart contract operations, such as reflections and taxes.";
                 break;
-            case "BTC":
-            case "DASH":
-            case "ZEC":
-            case "DOGE":
-            case "LTC":
-                info = "Fees are included in the transaction amount. Fees for unsuccessful transactions are not shown.";
-                break;
             case "ETH":
                 if(isMainnet) {
                     info = "Transactions may not include smart contract operations, such as reflections and taxes.";
