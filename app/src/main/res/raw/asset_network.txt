@@ -5,7 +5,7 @@ ADA_Testnet_Shelley
 ALGO_Betanet
 ALGO_Mainnet
 ALGO_Testnet
-ATOM_Mainnet
+ATOM_Mainnet_COSMOSHUB4
 BCH_Mainnet_CashAddr_P2PKH
 BCH_Mainnet_CashAddr_P2SH
 BCH_Mainnet_P2PKH

@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-// Bitquery has no pagination on its results.
+// Bitquery has no pagination on its results, but https://api.binance.org does.
 
 public class Bitquery extends AddressAPI {
     public String getName() { return "Bitquery"; }
@@ -284,43 +284,59 @@ public class Bitquery extends AddressAPI {
         }
 
         // Staking rewards from validators.
-        // TODO use the "total" field to know when to stop.
-        // TODO if this is null, should we return the above transactions, return null, stop the loop?
-        for(int offsetNum = 0; offsetNum <= 400000; offsetNum += 100) {
-            // Bitquery doesn't give us this so use other API.
-            String addressDataRewardJSON = RESTUtil.get("https://api.binance.org/v1/staking/chains/bsc/delegators/" + cryptoAddress.address + "/rewards?limit=100&offset=" + offsetNum);
+        // Bitquery doesn't give us this so use this other API, which needs pagination.
+        for(int offset = 0; ; offset += 100) {
+            String url = "https://api.binance.org/v1/staking/chains/bsc/delegators/" + cryptoAddress.address + "/rewards?limit=100&offset=" + offset;
+            String status = processRewards(url, cryptoAddress, transactionArrayList);
 
-            if(addressDataRewardJSON != null) {
-                try {
-                    JSONObject jsonRewards = new JSONObject(addressDataRewardJSON);
-                    JSONArray jsonRewardsArray = jsonRewards.getJSONArray("rewardDetails");
-
-                    if(jsonRewardsArray.length() == 0) { break; }
-
-                    for(int j = 0; j < jsonRewardsArray.length(); j++) {
-                        JSONObject oRewards = jsonRewardsArray.getJSONObject(j);
-
-                        String balance_diff_s = oRewards.getString("reward");
-
-                        String block_time = oRewards.getString("rewardTime");
-
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000+00:00", Locale.ENGLISH);
-                        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        Date block_time_date = format.parse(block_time);
-
-                        String validatorName = oRewards.getString("valName");
-
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
-                        if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
-                    }
-                }
-                catch(Exception e) {
-                    ThrowableUtil.processThrowable(e);
-                    return null;
-                }
+            if(status == null) {
+                return null;
+            }
+            else if(DONE.equals(status)) {
+                break;
             }
         }
 
         return transactionArrayList;
+    }
+
+    private String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataRewardJSON = RESTUtil.get(url);
+        if(addressDataRewardJSON == null) {
+            return null;
+        }
+
+        try {
+            String status = DONE;
+
+            JSONObject jsonRewards = new JSONObject(addressDataRewardJSON);
+            JSONArray jsonRewardsArray = jsonRewards.getJSONArray("rewardDetails");
+
+            for(int j = 0; j < jsonRewardsArray.length(); j++) {
+                // If there is anything to process, we may not be done yet.
+                status = "NotDone";
+
+                JSONObject oRewards = jsonRewardsArray.getJSONObject(j);
+
+                String balance_diff_s = oRewards.getString("reward");
+
+                String block_time = oRewards.getString("rewardTime");
+
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000+00:00", Locale.ENGLISH);
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date block_time_date = format.parse(block_time);
+
+                String validatorName = oRewards.getString("valName");
+
+                transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
+                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
+            }
+
+            return status;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
     }
 }
