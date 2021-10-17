@@ -96,11 +96,12 @@ public class Bitquery extends AddressAPI {
     // There is no flag for transactions that failed/errored.
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionRewardsArrayList = new ArrayList<>();
 
         if(!cryptoAddress.network.isMainnet()) {
             // Return 0 transactions. We tell the user to expect this.
-            return transactionArrayList;
+            return transactionNormalArrayList;
         }
 
         String bodyR = "{\"query\" : \"" +
@@ -208,8 +209,8 @@ public class Bitquery extends AddressAPI {
                     }
                 }
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction (" + txType + ")"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction (" + txType + ")"));
+                if(transactionNormalArrayList.size() == getMaxTransactions()) { return transactionNormalArrayList; }
             }
 
             // Send
@@ -269,12 +270,12 @@ public class Bitquery extends AddressAPI {
                     }
                 }
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction (" + txType + ")"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction (" + txType + ")"));
+                if(transactionNormalArrayList.size() == getMaxTransactions()) { return transactionNormalArrayList; }
 
                 if(network_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee_s, crypto), null, new Timestamp(block_time_date),  "Binance Cross-Chain Network Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee_s, crypto), null, new Timestamp(block_time_date),  "Binance Cross-Chain Network Fee"));
+                    if(transactionNormalArrayList.size() == getMaxTransactions()) { return transactionNormalArrayList; }
                 }
             }
         }
@@ -287,9 +288,9 @@ public class Bitquery extends AddressAPI {
         // Bitquery doesn't give us this so use this other API, which needs pagination.
         for(int offset = 0; ; offset += 100) {
             String url = "https://api.binance.org/v1/staking/chains/bsc/delegators/" + cryptoAddress.address + "/rewards?limit=100&offset=" + offset;
-            String status = processRewards(url, cryptoAddress, transactionArrayList);
+            String status = processRewards(url, cryptoAddress, transactionRewardsArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -297,13 +298,39 @@ public class Bitquery extends AddressAPI {
             }
         }
 
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = 2;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionRewardsArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionRewardsArrayList.size() > 0) {
+                transactionArrayList.add(transactionRewardsArrayList.get(0));
+                transactionRewardsArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
         return transactionArrayList;
     }
 
-    private String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+    private String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
         String addressDataRewardJSON = RESTUtil.get(url);
         if(addressDataRewardJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -314,7 +341,7 @@ public class Bitquery extends AddressAPI {
 
             for(int j = 0; j < jsonRewardsArray.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oRewards = jsonRewardsArray.getJSONObject(j);
 
@@ -328,15 +355,15 @@ public class Bitquery extends AddressAPI {
 
                 String validatorName = oRewards.getString("valName");
 
-                transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
-                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
+                transactionRewardsArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
+                if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
             return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

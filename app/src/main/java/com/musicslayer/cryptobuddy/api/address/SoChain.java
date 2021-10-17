@@ -76,7 +76,7 @@ public class SoChain extends AddressAPI {
             String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
             lastReceivedID = processReceived(url, cryptoAddress, txnToValue, txnToDate);
 
-            if(lastReceivedID == null) {
+            if(ERROR.equals(lastReceivedID)) {
                 return null;
             }
             else if(DONE.equals(lastReceivedID)) {
@@ -90,7 +90,7 @@ public class SoChain extends AddressAPI {
             String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
             lastSpentID = processSpent(url, cryptoAddress, txnToValue, txnToDate);
 
-            if(lastSpentID == null) {
+            if(ERROR.equals(lastSpentID)) {
                 return null;
             }
             else if(DONE.equals(lastSpentID)) {
@@ -126,7 +126,7 @@ public class SoChain extends AddressAPI {
     private String processReceived(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONReceived = RESTUtil.get(url);
         if(addressDataJSONReceived == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -170,7 +170,7 @@ public class SoChain extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -178,7 +178,7 @@ public class SoChain extends AddressAPI {
     private String processSpent(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONSpent = RESTUtil.get(url);
         if(addressDataJSONSpent == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -222,7 +222,7 @@ public class SoChain extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

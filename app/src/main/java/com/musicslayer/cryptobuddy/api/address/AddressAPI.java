@@ -20,6 +20,8 @@ import java.util.HashMap;
 
 abstract public class AddressAPI extends API {
     final public static String DONE = "!DONE!";
+    final public static String NOTDONE = "!NOTDONE!";
+    final public static String ERROR = "!ERROR!";
 
     public static ArrayList<AddressAPI> address_apis;
     public static HashMap<String, AddressAPI> address_api_map;

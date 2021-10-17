@@ -125,7 +125,7 @@ public class TRONSCAN extends AddressAPI {
             String url = baseURL + "/api/transaction?address=" + cryptoAddress.address + "&limit=50&start=" + start;
             String status = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -138,7 +138,7 @@ public class TRONSCAN extends AddressAPI {
             String url = baseURL + "/api/token_trc20/transfers?fromAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
             String status = processTokensFrom(url, cryptoAddress, transactionTokenFromArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -151,7 +151,7 @@ public class TRONSCAN extends AddressAPI {
             String url = baseURL + "/api/token_trc20/transfers?toAddress=" + cryptoAddress.address + "&limit=50&start=" + start;
             String status = processTokensTo(url, cryptoAddress, transactionTokenToArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -197,7 +197,7 @@ public class TRONSCAN extends AddressAPI {
     public String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         String addressDataTransactionsJSON = RESTUtil.get(url);
         if(addressDataTransactionsJSON == null) {
-            return null;
+            return ERROR;
         }
 
         String baseURL;
@@ -211,7 +211,7 @@ public class TRONSCAN extends AddressAPI {
             baseURL = "https://shastapi.tronscan.org";
         }
         else {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -222,7 +222,7 @@ public class TRONSCAN extends AddressAPI {
             JSONArray jsonData = json.getJSONArray("data");
             for(int i = 0; i < jsonData.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = jsonData.getJSONObject(i);
 
@@ -343,7 +343,7 @@ public class TRONSCAN extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -353,7 +353,7 @@ public class TRONSCAN extends AddressAPI {
 
         String addressDataTRC20FromJSON = RESTUtil.get(url);
         if(addressDataTRC20FromJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -364,7 +364,7 @@ public class TRONSCAN extends AddressAPI {
             JSONArray jsonTRC20FromData = jsonTRC20From.getJSONArray("token_transfers");
             for(int i = 0; i < jsonTRC20FromData.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = jsonTRC20FromData.getJSONObject(i);
 
@@ -431,7 +431,7 @@ public class TRONSCAN extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -441,7 +441,7 @@ public class TRONSCAN extends AddressAPI {
 
         String addressDataTRC20ToJSON = RESTUtil.get(url);
         if(addressDataTRC20ToJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -452,7 +452,7 @@ public class TRONSCAN extends AddressAPI {
             JSONArray jsonTRC20ToData = jsonTRC20To.getJSONArray("token_transfers");
             for(int i = 0; i < jsonTRC20ToData.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = jsonTRC20ToData.getJSONObject(i);
 
@@ -519,7 +519,7 @@ public class TRONSCAN extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

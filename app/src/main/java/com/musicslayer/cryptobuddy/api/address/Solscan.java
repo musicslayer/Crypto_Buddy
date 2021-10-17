@@ -168,7 +168,7 @@ public class Solscan extends AddressAPI {
             String url = baseURL + "/account/transaction?address=" + cryptoAddress.address + "&before=" + lastID;
             lastID = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
-            if(lastID == null) {
+            if(ERROR.equals(lastID)) {
                 return null;
             }
             else if(DONE.equals(lastID)) {
@@ -180,7 +180,7 @@ public class Solscan extends AddressAPI {
             String url = baseURL + "/account/token/txs?address=" + cryptoAddress.address + "&limit=10&offset=" + offset;
             String status = processTokens(url, cryptoAddress, transactionTokensArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -220,7 +220,7 @@ public class Solscan extends AddressAPI {
     private String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         String baseURL;
@@ -234,7 +234,7 @@ public class Solscan extends AddressAPI {
             baseURL = "https://api-devnet.solscan.io";
         }
         else {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -314,7 +314,7 @@ public class Solscan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -335,7 +335,7 @@ public class Solscan extends AddressAPI {
             JSONArray jsonTokenData = jsonToken.getJSONObject("data").getJSONObject("tx").getJSONArray("transactions");
             for(int i = 0; i < jsonTokenData.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = jsonTokenData.getJSONObject(i);
 
@@ -394,7 +394,7 @@ public class Solscan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

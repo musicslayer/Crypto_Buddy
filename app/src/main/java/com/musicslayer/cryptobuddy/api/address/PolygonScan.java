@@ -48,7 +48,7 @@ public class PolygonScan extends AddressAPI {
             String url = "https://api.covalenthq.com/v1/" + chainID + "/address/" + cryptoAddress.address + "/balances_v2/?key=ckey_65336bbeda304020862b0459dae&limit=1000&skip=" + skip;
             String status = processBalance(url, cryptoAddress, currentBalanceArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -62,7 +62,7 @@ public class PolygonScan extends AddressAPI {
     public String processBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -72,7 +72,7 @@ public class PolygonScan extends AddressAPI {
             JSONArray tokenArray = json.getJSONObject("data").getJSONArray("items");
             for(int i = 0; i < tokenArray.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject tokenData = tokenArray.getJSONObject(i);
 
@@ -105,7 +105,7 @@ public class PolygonScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 

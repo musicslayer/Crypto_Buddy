@@ -24,10 +24,11 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 // Alternate base URL: https://lcd-cosmos.cosmostation.io/
 
 // "https://node.atomscan.com" has pagination for balances, but there are so few tokens that we aren't gonna bother with this right now.
+
+// ATOM balances must take into account transactions on all chains, cosmoshub-4, cosmoshub-3, etc...
 
 public class AtomScan extends AddressAPI {
     public String getName() { return "AtomScan"; }
@@ -100,7 +101,7 @@ public class AtomScan extends AddressAPI {
             String url = "https://api.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50&from=" + lastID;
             lastID = process(url, cryptoAddress, transactionArrayList);
 
-            if(lastID == null) {
+            if(ERROR.equals(lastID)) {
                 return null;
             }
             else if(DONE.equals(lastID)) {
@@ -115,7 +116,7 @@ public class AtomScan extends AddressAPI {
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -129,11 +130,8 @@ public class AtomScan extends AddressAPI {
                 JSONObject jsonHeader = jsonArray.getJSONObject(i).getJSONObject("header");
                 lastID = jsonHeader.getString("id");
 
-                // Only consider transactions on the latest mainnet.
-                String chain_id = jsonHeader.getString("chain_id");
-                if(!"cosmoshub-4".equals(chain_id)) {
-                    continue;
-                }
+                String chain_id_string = " [" + jsonHeader.getString("chain_id") + "]";
+                String info_string = "";
 
                 JSONObject jsonTransaction = jsonArray.getJSONObject(i).getJSONObject("data");
 
@@ -151,13 +149,18 @@ public class AtomScan extends AddressAPI {
 
                 JSONObject tx = jsonTransaction.getJSONObject("tx");
 
-                BigDecimal fee;
-                try {
-                    fee = new BigDecimal(tx.getJSONObject("auth_info").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                BigDecimal fee = BigDecimal.ZERO;
+                if(tx.has("value")) {
+                    if(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").length() > 0) {
+                        fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                    }
                 }
-                catch(Exception ignored) {
-                    fee = BigDecimal.ZERO;
+                else if(tx.has("auth_info")) {
+                    if(tx.getJSONObject("auth_info").getJSONObject("fee").getJSONArray("amount").length() > 0) {
+                        fee = new BigDecimal(tx.getJSONObject("auth_info").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                    }
                 }
+
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
                 boolean fee_enabled = false;
@@ -165,11 +168,31 @@ public class AtomScan extends AddressAPI {
 
                 // We look at the logs for transfers, because only these have token information,
                 // but we look at the tx messages for other things, because only they specify all the addresses involved.
-                JSONArray messages = tx.getJSONObject("body").getJSONArray("messages");
+                JSONArray messages;
+                if(tx.has("value")) {
+                    messages = tx.getJSONObject("value").getJSONArray("msg");
+                }
+                else if(tx.has("body")) {
+                    messages = tx.getJSONObject("body").getJSONArray("messages");
+                }
+                else {
+                    messages = new JSONArray("[]");
+                }
+
                 for(int ii = 0; ii < messages.length(); ii++) {
                     JSONObject message = messages.getJSONObject(ii);
-                    String type = message.getString("@type");
+                    String type;
+
+                    if(message.has("value")) {
+                        type = message.getString("type");
+                        message = message.getJSONObject("value");
+                    }
+                    else {
+                        type = message.getString("@type");
+                    }
+
                     switch(type) {
+                        case "cosmos-sdk/MsgSend":
                         case "/cosmos.bank.v1beta1.MsgSend":
                             // Do nothing - transactions are handled elsewhere.
                             // However, enable the fee here because if the transaction failed there may not be a log entry to do so.
@@ -177,14 +200,17 @@ public class AtomScan extends AddressAPI {
 
                             fee_enabled = true;
                             fee_string = "Transaction Fee";
+                            info_string = "Transaction";
 
                             break;
 
+                        case "cosmos-sdk/MsgDelegate":
                         case "/cosmos.staking.v1beta1.MsgDelegate":
                             if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Delegate Fee";
+                            info_string = "Delegate";
 
                             JSONObject amount = message.getJSONObject("amount");
                             String name = amount.getString("denom");
@@ -207,16 +233,18 @@ public class AtomScan extends AddressAPI {
                             value = value.movePointLeft(crypto.getScale());
 
                             String balance_diff_s = value.toString();
-                            transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Delegate"));
+                            transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),info_string + chain_id_string));
                             if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
 
                             break;
 
+                        case "cosmos-sdk/MsgUndelegate":
                         case "/cosmos.staking.v1beta1.MsgUndelegate":
                             if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Undelegate Fee";
+                            info_string = "Undelegate";
 
                             JSONObject amount2 = message.getJSONObject("amount");
                             String name2 = amount2.getString("denom");
@@ -239,11 +267,12 @@ public class AtomScan extends AddressAPI {
                             value2 = value2.movePointLeft(crypto2.getScale());
 
                             String balance_diff_s2 = value2.toString();
-                            transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s2, crypto2), null, new Timestamp(block_time_date),"Undelegate"));
+                            transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s2, crypto2), null, new Timestamp(block_time_date),info_string + chain_id_string));
                             if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
 
                             break;
 
+                        case "cosmos-sdk/MsgBeginRedelegate":
                         case "/cosmos.staking.v1beta1.MsgBeginRedelegate":
                             // Don't do any additional processing, but we still may have a fee to pay.
                             if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
@@ -252,12 +281,23 @@ public class AtomScan extends AddressAPI {
                             fee_string = "Redelegate Fee";
                             break;
 
+                        case "cosmos-sdk/MsgVote":
                         case "/cosmos.gov.v1beta1.MsgVote":
                             // Don't do any additional processing, but we still may have a fee to pay.
                             if(!cryptoAddress.address.equalsIgnoreCase(message.getString("voter"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Vote Fee";
+                            break;
+
+                        case "cosmos-sdk/MsgWithdrawDelegationReward":
+                        case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
+                            // Don't do any additional processing, but we still may have a fee to pay.
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+
+                            fee_enabled = true;
+                            fee_string = "Reward Fee";
+                            info_string = "Reward";
                             break;
 
                         default:
@@ -283,6 +323,10 @@ public class AtomScan extends AddressAPI {
 
                             switch(type) {
                                 case "transfer":
+                                    if("".equals(info_string)) {
+                                        info_string = "Transaction";
+                                    }
+
                                     // For a transfer, keys come in sets of 3 - recipient, sender, amount
                                     // Or sets of 2, recipient, amount
                                     // Or sets of 2, sender, amount (?)
@@ -293,8 +337,6 @@ public class AtomScan extends AddressAPI {
                                     String rAddress = cryptoAddress.address;
                                     String sAddress = cryptoAddress.address;
 
-                                    //String rAddress = null;
-                                    //String sAddress = null;
                                     for(int iii = 0; iii < attributes.length(); iii++) {
                                         JSONObject attribute = attributes.getJSONObject(iii);
                                         if("recipient".equals(attribute.getString("key"))) {
@@ -335,8 +377,8 @@ public class AtomScan extends AddressAPI {
                                             Crypto crypto;
 
                                             // In the future, there may be other COSMOS tokens.
-                                            String name = amountS.substring(idx).toUpperCase();
-                                            if("UATOM".equals(name)) {
+                                            String name = amountS.substring(idx);
+                                            if("uatom".equalsIgnoreCase(name)) {
                                                 crypto = cryptoAddress.getCrypto();
                                             }
                                             else {
@@ -354,7 +396,7 @@ public class AtomScan extends AddressAPI {
 
                                             value = value.movePointLeft(crypto.getScale());
                                             String balance_diff_s = value.toString();
-                                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
+                                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),info_string + chain_id_string));
                                             if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                         }
                                     }
@@ -411,7 +453,7 @@ public class AtomScan extends AddressAPI {
                     }
                 }
                 if(fee_enabled & fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), fee_string));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
@@ -421,7 +463,7 @@ public class AtomScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

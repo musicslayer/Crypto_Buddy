@@ -69,7 +69,7 @@ public class ActorForth extends AddressAPI {
             String url = baseURL + "/v2/address/transactions/" + cryptoAddress.address + "?page=" + page;
             String status = process(url, cryptoAddress, transactionArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -84,7 +84,7 @@ public class ActorForth extends AddressAPI {
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -96,7 +96,7 @@ public class ActorForth extends AddressAPI {
 
             for(int i = 0; i < jsonData.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
@@ -152,7 +152,7 @@ public class ActorForth extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

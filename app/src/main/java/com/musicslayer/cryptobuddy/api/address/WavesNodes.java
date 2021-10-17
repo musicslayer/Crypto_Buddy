@@ -133,7 +133,7 @@ public class WavesNodes extends AddressAPI {
             String url = baseURL + "/transactions/address/" + cryptoAddress.address + "/limit/1000?after=" + lastID;
             lastID = processTransfers(url, cryptoAddress, transactionArrayList);
 
-            if(lastID == null) {
+            if(ERROR.equals(lastID)) {
                 return null;
             }
             else if(DONE.equals(lastID)) {
@@ -147,7 +147,7 @@ public class WavesNodes extends AddressAPI {
     public String processTransfers(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         String baseURL;
@@ -161,7 +161,7 @@ public class WavesNodes extends AddressAPI {
             baseURL = "https://nodes-stagenet.wavesnodes.com";
         }
         else {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -172,6 +172,9 @@ public class WavesNodes extends AddressAPI {
 
             for(int i = 0; i < jsonData.length(); i++) {
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
+
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                lastID = jsonTransaction.getString("id");
 
                 String sender = jsonTransaction.getString("sender");
 
@@ -411,7 +414,7 @@ public class WavesNodes extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

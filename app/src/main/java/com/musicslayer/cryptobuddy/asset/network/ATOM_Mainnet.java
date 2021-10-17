@@ -4,7 +4,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.decode.Bech32;
 
-public class ATOM_Mainnet_COSMOSHUB4 extends Network {
+public class ATOM_Mainnet extends Network {
     public boolean isMainnet() {
         return true;
     }
@@ -14,11 +14,11 @@ public class ATOM_Mainnet_COSMOSHUB4 extends Network {
     }
 
     public String getName() {
-        return "ATOM_Mainnet_COSMOSHUB4";
+        return "ATOM_Mainnet";
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Mainnet (cosmoshub-4)";
+        return this.getCrypto().getDisplayName() + " Mainnet";
     }
 
     public boolean isValid(String address) {

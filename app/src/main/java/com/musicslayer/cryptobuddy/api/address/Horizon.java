@@ -152,7 +152,7 @@ public class Horizon extends AddressAPI {
             String url = nextLinkNormal;
             nextLinkNormal = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
-            if(nextLinkNormal == null) {
+            if(ERROR.equals(nextLinkNormal)) {
                 return null;
             }
             else if(DONE.equals(nextLinkNormal)) {
@@ -169,7 +169,7 @@ public class Horizon extends AddressAPI {
             String url = nextLinkOperations;
             nextLinkOperations = processOperations(url, cryptoAddress, skipID);
 
-            if(nextLinkOperations == null) {
+            if(ERROR.equals(nextLinkOperations)) {
                 return null;
             }
             else if(DONE.equals(nextLinkOperations)) {
@@ -183,7 +183,7 @@ public class Horizon extends AddressAPI {
             String url = nextLinkEffects;
             nextLinkEffects = processEffects(url, cryptoAddress, skipID, transactionEffectsArrayList);
 
-            if(nextLinkEffects == null) {
+            if(ERROR.equals(nextLinkEffects)) {
                 return null;
             }
             else if(DONE.equals(nextLinkEffects)) {
@@ -197,7 +197,7 @@ public class Horizon extends AddressAPI {
             String url = nextLinkTokens;
             nextLinkTokens = processTokens(url, cryptoAddress, transactionTokensArrayList);
 
-            if(nextLinkTokens == null) {
+            if(ERROR.equals(nextLinkTokens)) {
                 return null;
             }
             else if(DONE.equals(nextLinkTokens)) {
@@ -246,7 +246,7 @@ public class Horizon extends AddressAPI {
     private String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -288,14 +288,14 @@ public class Horizon extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
     private String processOperations(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID) {
         String addressDataOperationsJSON = RESTUtil.get(url);
         if(addressDataOperationsJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -323,14 +323,14 @@ public class Horizon extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
     private String processEffects(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID, ArrayList<Transaction> transactionEffectsArrayList) {
         String addressDataEffectsJSON = RESTUtil.get(url);
         if(addressDataEffectsJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -531,7 +531,7 @@ public class Horizon extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -539,7 +539,7 @@ public class Horizon extends AddressAPI {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
         String addressDataIssueJSON = RESTUtil.get(url);
-        if(addressDataIssueJSON == null) {
+        if(addressDataIssueJSON == ERROR) {
             return null;
         }
 
@@ -573,7 +573,7 @@ public class Horizon extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

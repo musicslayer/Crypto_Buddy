@@ -116,7 +116,7 @@ public class AlgoExplorer extends AddressAPI {
             String url = baseURL + "/idx2/v2/accounts/" + cryptoAddress.address + "/transactions" + "?limit=1000&next=" + next;
             next = process(url, cryptoAddress, transactionArrayList);
 
-            if(next == null) {
+            if(ERROR.equals(next)) {
                 return null;
             }
             else if(DONE.equals(next)) {
@@ -131,7 +131,7 @@ public class AlgoExplorer extends AddressAPI {
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         String baseURL;
@@ -307,7 +307,7 @@ public class AlgoExplorer extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

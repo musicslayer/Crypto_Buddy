@@ -25,6 +25,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// KAVA balances must take into account transactions on all chains, kava-8, kava-7, etc...
+
 public class KavaLightClient extends AddressAPI {
     public String getName() { return "KavaLightClient"; }
     public String getDisplayName() { return "Kava Light Client RPC API"; }
@@ -91,477 +93,370 @@ public class KavaLightClient extends AddressAPI {
         return currentBalanceArrayList;
     }
 
-    // There is no flag for transactions that failed/errored.
+    // Unsuccessful transaction changes are omitted, so we do not have to check ourselves.
 
     public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress) {
-        String baseURL;
-        if(cryptoAddress.network.isMainnet()) {
-            baseURL = "https://api.kava.io";
-        }
-        else {
-            baseURL = "https://api.data-testnet.kava.io";
-        }
-
-        ArrayList<Transaction> transactionSendArrayList = new ArrayList<>();
-        ArrayList<Transaction> transactionReceiveArrayList = new ArrayList<>();
-        ArrayList<Transaction> transactionDelegateArrayList = new ArrayList<>();
-
-        // Make sure each transaction only pays the fee once.
-        ArrayList<String> feeList = new ArrayList<>();
-
-        // Process all send.
-        for(int page = 1; ; page++) {
-            String url = baseURL + "/txs?transfer.sender=" + cryptoAddress.address + "&limit=100&page=" + page;
-            String status = processSend(url, page, cryptoAddress, transactionSendArrayList, feeList);
-
-            if(status == null) {
-                return null;
-            }
-            else if(DONE.equals(status)) {
-                break;
-            }
-        }
-
-        // Process all receive.
-        for(int page = 1; ; page++) {
-            String url = baseURL + "/txs?transfer.recipient=" + cryptoAddress.address + "&limit=100&page=" + page;
-            String status = processReceive(url, page, cryptoAddress, transactionSendArrayList, feeList);
-
-            if(status == null) {
-                return null;
-            }
-            else if(DONE.equals(status)) {
-                break;
-            }
-        }
-
-        // Process all delegate.
-        for(int page = 1; ; page++) {
-            String url = baseURL + "/txs?message.action=delegate&message.sender=" + cryptoAddress.address + "&limit=100&page=" + page;
-            String status = processDelegate(url, page, cryptoAddress, transactionSendArrayList, feeList);
-
-            if(status == null) {
-                return null;
-            }
-            else if(DONE.equals(status)) {
-                break;
-            }
-        }
-
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
-        // Roughly split max transactions between each type (rounding is OK).
-        int splitNum = 3;
-        int splitMax = getMaxTransactions()/splitNum;
+        String lastID = "";
+        for(;;) {
+            String url = "https://api-kava.cosmostation.io/v1/account/new_txs/" + cryptoAddress.address + "?limit=50&from=" + lastID;
+            lastID = process(url, cryptoAddress, transactionArrayList);
 
-        transactionArrayList.addAll(transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())));
-        transactionArrayList.addAll(transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())));
-        transactionArrayList.addAll(transactionDelegateArrayList.subList(0, Math.min(splitMax, transactionDelegateArrayList.size())));
-
-        transactionSendArrayList.subList(0, Math.min(splitMax, transactionSendArrayList.size())).clear();
-        transactionReceiveArrayList.subList(0, Math.min(splitMax, transactionReceiveArrayList.size())).clear();
-        transactionDelegateArrayList.subList(0, Math.min(splitMax, transactionDelegateArrayList.size())).clear();
-
-        while(transactionSendArrayList.size() + transactionReceiveArrayList.size() + transactionDelegateArrayList.size() > 0) {
-            if(transactionSendArrayList.size() > 0) {
-                transactionArrayList.add(transactionSendArrayList.get(0));
-                transactionSendArrayList.remove(0);
+            if(ERROR.equals(lastID)) {
+                return null;
             }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
-
-            if(transactionReceiveArrayList.size() > 0) {
-                transactionArrayList.add(transactionReceiveArrayList.get(0));
-                transactionReceiveArrayList.remove(0);
+            else if(DONE.equals(lastID)) {
+                break;
             }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
-
-            if(transactionDelegateArrayList.size() > 0) {
-                transactionArrayList.add(transactionDelegateArrayList.get(0));
-                transactionDelegateArrayList.remove(0);
-            }
-            if(transactionArrayList.size() == getMaxTransactions()) { break; }
         }
 
         return transactionArrayList;
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processSend(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList, ArrayList<String> feeList) {
-        String addressDataJSON_Send = RESTUtil.get(url);
-        if(addressDataJSON_Send == null) {
-            return null;
+    private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = RESTUtil.get(url);
+        if(addressDataJSON == null) {
+            return ERROR;
         }
 
         try {
-            // Send
-            JSONObject json1 = new JSONObject(addressDataJSON_Send);
-            JSONArray jsonTxs1 = json1.getJSONArray("txs");
+            String lastID = DONE;
 
-            for(int i = 0; i < jsonTxs1.length(); i++) {
-                JSONObject jsonTransaction = jsonTxs1.getJSONObject(i);
+            ArrayList<String> txhashArrayList = new ArrayList<>();
+
+            JSONArray jsonArray = new JSONArray(addressDataJSON);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
+                JSONObject jsonHeader = jsonArray.getJSONObject(i).getJSONObject("header");
+                lastID = jsonHeader.getString("id");
+
+                String chain_id_string = " [" + jsonHeader.getString("chain_id") + "]";
+                String info_string = "";
+
+                JSONObject jsonTransaction = jsonArray.getJSONObject(i).getJSONObject("data");
 
                 String txhash = jsonTransaction.getString("txhash");
+                if(txhashArrayList.contains(txhash)) {
+                    continue;
+                }
+
+                txhashArrayList.add(txhash);
 
                 String block_time = jsonTransaction.getString("timestamp");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
                 JSONObject tx = jsonTransaction.getJSONObject("tx");
 
-                BigDecimal fee;
-                try {
-                    fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                BigDecimal fee = BigDecimal.ZERO;
+                if(tx.has("value")) {
+                    if(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").length() > 0) {
+                        fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                    }
                 }
-                catch(Exception ignored) {
-                    fee = BigDecimal.ZERO;
+                else if(tx.has("auth_info")) {
+                    if(tx.getJSONObject("auth_info").getJSONObject("fee").getJSONArray("amount").length() > 0) {
+                        fee = new BigDecimal(tx.getJSONObject("auth_info").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
+                    }
                 }
 
                 fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
-                JSONArray logs = jsonTransaction.getJSONArray("logs");
+                boolean fee_enabled = false;
+                String fee_string = "";
 
-                for(int iL = 0; iL < logs.length(); iL++) {
-                    JSONObject log = logs.getJSONObject(iL);
-                    JSONArray events = log.getJSONArray("events");
+                // We look at the logs for transfers, because only these have token information,
+                // but we look at the tx messages for other things, because only they specify all the addresses involved.
+                JSONArray messages;
+                if(tx.has("value")) {
+                    messages = tx.getJSONObject("value").getJSONArray("msg");
+                }
+                else if(tx.has("body")) {
+                    messages = tx.getJSONObject("body").getJSONArray("messages");
+                }
+                else {
+                    messages = new JSONArray("[]");
+                }
 
-                    Log.e("Crypto T", "SEND");
+                for(int ii = 0; ii < messages.length(); ii++) {
+                    JSONObject message = messages.getJSONObject(ii);
+                    String type;
 
-                    for(int ii = 0; ii < events.length(); ii++) {
-                        JSONObject event = events.getJSONObject(ii);
-                        String type = event.getString("type");
+                    if(message.has("value")) {
+                        type = message.getString("type");
+                        message = message.getJSONObject("value");
+                    }
+                    else {
+                        type = message.getString("@type");
+                    }
 
-                        Log.e("Crypto T", "Type = " + type);
+                    switch(type) {
+                        case "cosmos-sdk/MsgSend":
+                        case "/cosmos.bank.v1beta1.MsgSend":
+                            // Do nothing - transactions are handled elsewhere.
+                            // However, enable the fee here because if the transaction failed there may not be a log entry to do so.
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("from_address"))) { break; }
 
-                        if("transfer".equals(type)) {
-                            // For a transfer, keys come in sets of 3 - recipient, sender, amount
-                            // Note that we could have multiple transfers, and we could have either "sends" or "receives" here.
-                            JSONArray attributes = event.getJSONArray("attributes");
+                            fee_enabled = true;
+                            fee_string = "Transaction Fee";
+                            info_string = "Transaction";
 
-                            for(int iii = 0; iii < attributes.length(); iii+=3) {
-                                JSONObject attributeR = attributes.getJSONObject(iii);
-                                JSONObject attributeS = attributes.getJSONObject(iii + 1);
-                                JSONObject attributeA = attributes.getJSONObject(iii + 2);
+                            break;
 
-                                String rAddress = attributeR.getString("value");
-                                String sAddress = attributeS.getString("value");
+                        case "cosmos-sdk/MsgDelegate":
+                        case "/cosmos.staking.v1beta1.MsgDelegate":
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
 
-                                // Only process sends
-                                if(!cryptoAddress.address.equals(sAddress)) {
-                                    continue;
+                            fee_enabled = true;
+                            fee_string = "Delegate Fee";
+                            info_string = "Delegate";
+
+                            JSONObject amount = message.getJSONObject("amount");
+                            String name = amount.getString("denom").toUpperCase();
+                            Crypto crypto;
+                            if("ukava".equalsIgnoreCase(name)) {
+                                crypto = cryptoAddress.getCrypto();
+                            }
+                            else {
+                                if(!shouldIncludeTokens(cryptoAddress)) {
+                                    break;
                                 }
 
-                                String[] amountSA = attributeA.getString("value").split(",");
-                                for(String amountS : amountSA) {
-                                    // Separate into amount and name
-                                    Pattern pattern = Pattern.compile("[a-zA-Z]");
-                                    Matcher matcher = pattern.matcher(amountS);
+                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                            }
 
-                                    matcher.find();
-                                    int idx = matcher.start();
+                            BigDecimal value2 = new BigDecimal(amount.getString("amount"));
+                            value2 = value2.movePointLeft(crypto.getScale());
 
-                                    Crypto crypto;
+                            String balance_diff_s = value2.toString();
+                            transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),info_string + chain_id_string));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
 
-                                    String name = amountS.substring(idx).toUpperCase();
-                                    if("UKAVA".equals(name)) {
-                                        crypto = cryptoAddress.getCrypto();
+                            break;
+
+                        case "cosmos-sdk/MsgUndelegate":
+                        case "/cosmos.staking.v1beta1.MsgUndelegate":
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+
+                            fee_enabled = true;
+                            fee_string = "Undelegate Fee";
+                            info_string = "Undelegate";
+
+                            JSONObject amount2 = message.getJSONObject("amount");
+                            String name2 = amount2.getString("denom").toUpperCase();
+                            Crypto crypto2;
+                            if("ukava".equalsIgnoreCase(name2)) {
+                                crypto2 = cryptoAddress.getCrypto();
+                            }
+                            else {
+                                if(!shouldIncludeTokens(cryptoAddress)) {
+                                    break;
+                                }
+
+                                crypto2 = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name2, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                            }
+
+                            BigDecimal value3 = new BigDecimal(amount2.getString("amount"));
+                            value3 = value3.movePointLeft(crypto2.getScale());
+
+                            String balance_diff_s2 = value3.toString();
+                            transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s2, crypto2), null, new Timestamp(block_time_date),info_string + chain_id_string));
+                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
+
+                            break;
+
+                        case "cosmos-sdk/MsgBeginRedelegate":
+                        case "/cosmos.staking.v1beta1.MsgBeginRedelegate":
+                            // Don't do any additional processing, but we still may have a fee to pay.
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+
+                            fee_enabled = true;
+                            fee_string = "Redelegate Fee";
+                            break;
+
+                        case "cosmos-sdk/MsgVote":
+                        case "/cosmos.gov.v1beta1.MsgVote":
+                            // Don't do any additional processing, but we still may have a fee to pay.
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("voter"))) { break; }
+
+                            fee_enabled = true;
+                            fee_string = "Vote Fee";
+                            break;
+
+                        case "cosmos-sdk/MsgWithdrawDelegationReward":
+                        case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
+                            // Don't do any additional processing, but we still may have a fee to pay.
+                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+
+                            fee_enabled = true;
+                            fee_string = "Reward Fee";
+                            info_string = "Reward";
+                            break;
+
+                        default:
+                            //Log.e("Crypto Buddy", "New Type = " + type);
+                    }
+                }
+
+                if(jsonTransaction.has("logs")) {
+                    JSONArray logs = jsonTransaction.getJSONArray("logs");
+
+                    for(int iL = 0; iL < logs.length(); iL++) {
+                        JSONObject log = logs.getJSONObject(iL);
+
+                        if(!log.has("events")) {
+                            continue;
+                        }
+
+                        JSONArray events = log.getJSONArray("events");
+
+                        for(int ii = 0; ii < events.length(); ii++) {
+                            JSONObject event = events.getJSONObject(ii);
+                            String type = event.getString("type");
+
+                            switch(type) {
+                                case "transfer":
+                                    if("".equals(info_string)) {
+                                        info_string = "Transaction";
                                     }
-                                    else {
-                                        if(!shouldIncludeTokens(cryptoAddress)) {
+
+                                    // For a transfer, keys come in sets of 3 - recipient, sender, amount
+                                    // Or sets of 2, recipient, amount
+                                    // Or sets of 2, sender, amount (?)
+                                    // Note that we could have multiple transfers, and we could have either "sends" or "receives" here.
+                                    JSONArray attributes = event.getJSONArray("attributes");
+
+                                    // If an address is not filled in, it is assumed to be this one.
+                                    String rAddress = cryptoAddress.address;
+                                    String sAddress = cryptoAddress.address;
+
+                                    for(int iii = 0; iii < attributes.length(); iii++) {
+                                        JSONObject attribute = attributes.getJSONObject(iii);
+                                        if("recipient".equals(attribute.getString("key"))) {
+                                            rAddress = attribute.getString("value");
+                                            continue;
+                                        }
+                                        else if("sender".equals(attribute.getString("key"))) {
+                                            sAddress = attribute.getString("value");
                                             continue;
                                         }
 
-                                        crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", 0, "?");
-                                    }
+                                        // This attribute is the one with the amounts.
+                                        // We reached the end of the set. Continue on and process the transactions.
+                                        String action;
 
-                                    BigDecimal value = new BigDecimal(amountS.substring(0, idx));
+                                        // Pay fee if there are any sends.
+                                        if(cryptoAddress.address.equals(sAddress)) {
+                                            fee_enabled = true;
+                                            fee_string = "Transaction Fee";
+                                            action = "Send";
+                                        }
+                                        else if(cryptoAddress.address.equals(rAddress)) {
+                                            action = "Receive";
+                                        }
+                                        else {
+                                            continue;
+                                        }
 
-                                    if(crypto == null) {
-                                        Log.e("Crypto Buddy", "N");
-                                    }
+                                        String[] amountSA = attribute.getString("value").split(",");
+                                        for(String amountS : amountSA) {
+                                            // Separate into amount and name
+                                            Pattern pattern = Pattern.compile("[a-zA-Z]");
+                                            Matcher matcher = pattern.matcher(amountS);
 
-                                    value = value.movePointLeft(crypto.getScale());
-                                    String balance_diff_s = value.toString();
-                                    transactionSendArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
-                                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
-                                }
-                            }
-                        }
-                    }
-                }
+                                            matcher.find();
+                                            int idx = matcher.start();
 
-                String fee_s = fee.toPlainString();
+                                            Crypto crypto;
 
-                if(fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
-                    feeList.add(txhash);
-                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
-                }
-            }
+                                            // In the future, there may be other COSMOS tokens.
+                                            String name = amountS.substring(idx).toUpperCase();
+                                            if("ukava".equalsIgnoreCase(name)) {
+                                                crypto = cryptoAddress.getCrypto();
+                                            }
+                                            else {
+                                                if(!shouldIncludeTokens(cryptoAddress)) {
+                                                    continue;
+                                                }
 
-            // Overshooting the page produces errors, so we must calculate this.
-            int page_total = json1.getInt("page_total");
-            return page_total == 0 || page_total == page ? DONE : "NotDone";
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            return null;
-        }
-    }
-
-    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processReceive(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList, ArrayList<String> feeList) {
-        String addressDataJSON_Receive = RESTUtil.get(url);
-        if(addressDataJSON_Receive == null) {
-            return null;
-        }
-
-        try {
-            // Receive
-            JSONObject json2 = new JSONObject(addressDataJSON_Receive);
-            JSONArray jsonTxs2 = json2.getJSONArray("txs");
-
-            for(int i = 0; i < jsonTxs2.length(); i++) {
-                JSONObject jsonTransaction = jsonTxs2.getJSONObject(i);
-
-                String txhash = jsonTransaction.getString("txhash");
-
-                String block_time = jsonTransaction.getString("timestamp");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
-
-                JSONObject tx = jsonTransaction.getJSONObject("tx");
-
-                BigDecimal fee;
-                try {
-                    fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
-                }
-                catch(Exception ignored) {
-                    fee = BigDecimal.ZERO;
-                }
-
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
-
-                JSONArray logs = jsonTransaction.getJSONArray("logs");
-
-                boolean fee_enabled = false;
-
-                for(int iL = 0; iL < logs.length(); iL++) {
-                    JSONObject log = logs.getJSONObject(iL);
-                    JSONArray events = log.getJSONArray("events");
-
-                    Log.e("Crypto T", "Receive");
-
-                    for(int ii = 0; ii < events.length(); ii++) {
-                        JSONObject event = events.getJSONObject(ii);
-                        String type = event.getString("type");
-
-                        Log.e("Crypto T", "Type = " + type);
-
-                        switch (type) {
-                            case "transfer":
-                                // For a transfer, keys come in sets of 3 - recipient, sender, amount
-                                // Note that we could have multiple transfers, and we could have either "sends" or "recieves" here.
-                                JSONArray attributes = event.getJSONArray("attributes");
-
-                                for (int iii = 0; iii < attributes.length(); iii += 3) {
-                                    JSONObject attributeR = attributes.getJSONObject(iii);
-                                    JSONObject attributeS = attributes.getJSONObject(iii + 1);
-                                    JSONObject attributeA = attributes.getJSONObject(iii + 2);
-
-                                    String rAddress = attributeR.getString("value");
-
-                                    // Only process sends
-                                    if (!cryptoAddress.address.equals(rAddress)) {
-                                        continue;
-                                    }
-
-                                    String[] amountSA = attributeA.getString("value").split(",");
-                                    for (String amountS : amountSA) {
-                                        // Separate into amount and name
-                                        Pattern pattern = Pattern.compile("[a-zA-Z]");
-                                        Matcher matcher = pattern.matcher(amountS);
-
-                                        matcher.find();
-                                        int idx = matcher.start();
-
-                                        Crypto crypto;
-
-                                        String name = amountS.substring(idx).toUpperCase();
-                                        if ("UKAVA".equals(name)) {
-                                            crypto = cryptoAddress.getCrypto();
-                                        } else {
-                                            if (!shouldIncludeTokens(cryptoAddress)) {
-                                                continue;
+                                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
                                             }
 
-                                            crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", 0, "?");
+                                            BigDecimal value = new BigDecimal(amountS.substring(0, idx));
+
+                                            value = value.movePointLeft(crypto.getScale());
+                                            String balance_diff_s = value.toString();
+                                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),info_string + chain_id_string));
+                                            if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                         }
-
-                                        BigDecimal value = new BigDecimal(amountS.substring(0, idx));
-
-                                        if (crypto == null) {
-                                            Log.e("Crypto Buddy", "N");
-                                        }
-
-                                        value = value.movePointLeft(crypto.getScale());
-                                        String balance_diff_s = value.toString();
-                                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction"));
-                                        if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                                     }
-                                }
-                                break;
-                            case "cdp_draw":
-                            case "withdraw_rewards":
-                            case "claim_reward":
-                            case "claim_atomic_swap":
-                            case "hard_withdrawal":
-                            case "cdp_withdrawal":
-                                // Don't do any additional processing, but we know that we have to pay the fee here.
-                                fee_enabled = true;
-                                break;
-                            case "unbond":
-                                // Unbonding fee is charged immediately, but the actual unbonding may or may not be finished yet.
-                                fee_enabled = true;
+                                    break;
 
-                                Date now = new Date();
+                                case "delegate":
+                                    // Do nothing - these are handled elsewhere.
+                                    break;
 
-                                JSONArray undelegate_attributes = event.getJSONArray("attributes");
+                                case "unbond":
+                                    // Do nothing - these are handled elsewhere.
+                                    break;
 
-                                for (int iii = 0; iii < undelegate_attributes.length(); iii += 3) {
-                                    //JSONObject attributeValidator = undelegate_attributes.getJSONObject(iii);
-                                    JSONObject attributeAmount = undelegate_attributes.getJSONObject(iii + 1);
-                                    JSONObject attributeTime = undelegate_attributes.getJSONObject(iii + 2);
+                                case "proposal_vote":
+                                    // Do nothing - these are handled elsewhere.
+                                    break;
 
-                                    String undelegate_block_time = attributeTime.getString("value");
-                                    DateFormat undelegate_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                                    undelegate_format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                                    Date undelegate_block_time_date = undelegate_format.parse(undelegate_block_time);
+                                case "redelegate":
+                                    // Do nothing - these are handled elsewhere.
+                                    break;
 
-                                    if (now.after(undelegate_block_time_date)) {
-                                        BigDecimal undelegate_d = new BigDecimal(attributeAmount.getString("value"));
-                                        undelegate_d = undelegate_d.movePointLeft(cryptoAddress.getCrypto().getScale());
-                                        String undelegate_s = undelegate_d.toPlainString();
+                                case "cdp_draw":
+                                case "withdraw_rewards":
+                                case "claim_reward":
+                                case "claim_atomic_swap":
+                                case "hard_withdrawal":
+                                case "cdp_withdrawal":
+                                case "message":
+                                case "denomination_trace":
+                                case "fungible_token_packet":
+                                case "recv_packet":
+                                case "write_acknowledgement":
+                                case "create_client":
+                                case "update_client":
+                                case "channel_open_confirm":
+                                case "channel_open_try":
+                                case "connection_open_confirm":
+                                case "connection_open_try":
+                                case "swap_within_batch":
+                                case "withdraw_within_batch":
+                                case "deposit_within_batch":
+                                    // Do nothing.
+                                    break;
 
-                                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(undelegate_s, cryptoAddress.getCrypto()), null, new Timestamp(undelegate_block_time_date), "Undelegate"));
-                                        if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
+                                // Other types:
+                                // ibc_transfer
+                                // send_packet
+                                // acknowledge_packet
 
-                String fee_s = fee.toPlainString();
-
-                if(fee_enabled && fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
-                    feeList.add(txhash);
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
-                    if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
-                }
-            }
-
-            // Overshooting the page produces errors, so we must calculate this.
-            int page_total = json2.getInt("page_total");
-            return page_total == 0 || page_total == page ? DONE : "NotDone";
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            return null;
-        }
-    }
-
-    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processDelegate(String url, int page, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList, ArrayList<String> feeList) {
-        String addressDataJSON_Delegate = RESTUtil.get(url);
-        if(addressDataJSON_Delegate == null) {
-            return null;
-        }
-
-        try {
-            // Delegate
-            JSONObject json3 = new JSONObject(addressDataJSON_Delegate);
-            JSONArray jsonTxs3 = json3.getJSONArray("txs");
-
-            for(int i = 0; i < jsonTxs3.length(); i++) {
-                JSONObject jsonTransaction = jsonTxs3.getJSONObject(i);
-
-                String txhash = jsonTransaction.getString("txhash");
-
-                String block_time = jsonTransaction.getString("timestamp");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
-
-                JSONObject tx = jsonTransaction.getJSONObject("tx");
-
-                BigDecimal fee;
-                try {
-                    fee = new BigDecimal(tx.getJSONObject("value").getJSONObject("fee").getJSONArray("amount").getJSONObject(0).getString("amount"));
-                }
-                catch(Exception ignored) {
-                    fee = BigDecimal.ZERO;
-                }
-
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
-
-                JSONArray logs = jsonTransaction.getJSONArray("logs");
-
-                for(int iL = 0; iL < logs.length(); iL++) {
-                    JSONObject log = logs.getJSONObject(iL);
-                    JSONArray events = log.getJSONArray("events");
-
-                    Log.e("Crypto T", "Delegate");
-
-                    for(int ii = 0; ii < events.length(); ii++) {
-                        JSONObject event = events.getJSONObject(ii);
-                        String type = event.getString("type");
-
-                        Log.e("Crypto T", "Type = " + type);
-
-                        if("delegate".equals(type)) {
-                            JSONArray attributes = event.getJSONArray("attributes");
-
-                            for(int iii = 0; iii < attributes.length(); iii+=2) {
-                                //JSONObject attributeValidator = attributes.getJSONObject(iii);
-                                JSONObject attributeAmount = attributes.getJSONObject(iii + 1);
-
-                                Crypto crypto = cryptoAddress.getCrypto();
-
-                                BigDecimal value = new BigDecimal(attributeAmount.getString("value"));
-                                value = value.movePointLeft(crypto.getScale());
-
-                                String balance_diff_s = value.toString();
-                                transactionArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Delegate"));
-                                if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
+                                default:
+                                    Log.e("Crypto Buddy", "New Type = " + type);
                             }
                         }
                     }
                 }
-
-                String fee_s = fee.toPlainString();
-
-                if(fee.compareTo(BigDecimal.ZERO) > 0 && !feeList.contains(txhash)) {
-                    feeList.add(txhash);
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Delegate Fee"));
+                if(fee_enabled & fee.compareTo(BigDecimal.ZERO) > 0) {
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
 
-            // Overshooting the page produces errors, so we must calculate this.
-            int page_total = json3.getInt("page_total");
-            return page_total == 0 || page_total == page ? DONE : "NotDone";
+            // lastID will be the last ID we processed, or DONE if we didn't process anything.
+            return lastID;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

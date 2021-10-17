@@ -67,7 +67,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/tokens/holding/TRC20/" + cryptoAddress.address + "?limit=50&page=" + page;
             String status = processTokensTRC20Balance(url, cryptoAddress, currentBalanceArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -80,7 +80,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/tokens/holding/TRC21/" + cryptoAddress.address + "?limit=50&page=" + page;
             String status = processTokensTRC21Balance(url, cryptoAddress, currentBalanceArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -96,7 +96,7 @@ public class TomoScan extends AddressAPI {
 
         String addressTRC20DataJSON = RESTUtil.get(url);
         if(addressTRC20DataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -107,7 +107,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonTRC20Array = jsonTRC20.getJSONArray("items");
             for(int i = 0; i < jsonTRC20Array.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject tokenData = jsonTRC20Array.getJSONObject(i);
                 if("NaN".equals(tokenData.getString("quantity"))) { continue; }
@@ -131,7 +131,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -140,7 +140,7 @@ public class TomoScan extends AddressAPI {
 
         String addressTRC21DataJSON = RESTUtil.get(url);
         if(addressTRC21DataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -151,7 +151,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonTRC21Array = jsonTRC21.getJSONArray("items");
             for(int i = 0; i < jsonTRC21Array.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject tokenData = jsonTRC21Array.getJSONObject(i);
                 if("NaN".equals(tokenData.getString("quantity"))) { continue; }
@@ -175,7 +175,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -200,7 +200,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/txs/listByAccount/" + cryptoAddress.address + "?limit=100&page=" + page;
             String status = processNormal(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -213,7 +213,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/txs/internal/" + cryptoAddress.address + "?limit=100&page=" + page;
             String status = processInternal(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -226,7 +226,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/rewards/" + cryptoAddress.address + "?limit=100&page=" + page;
             String status = processRewards(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -239,7 +239,7 @@ public class TomoScan extends AddressAPI {
             String url = "https://master.tomochain.com/api/transactions/voter/" + cryptoAddress.address + "?limit=100&page=" + page;
             String status = processVotes(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -252,7 +252,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/token-txs/trc20?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
             String status = processTokensTRC20(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -265,7 +265,7 @@ public class TomoScan extends AddressAPI {
             String url = baseURL + "/api/token-txs/trc21?holder=" + cryptoAddress.address + "&limit=50&page=" + page;
             String status = processTokensTRC21(url, cryptoAddress, transactionNormalArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -339,7 +339,7 @@ public class TomoScan extends AddressAPI {
         // Normal Transactions - These are all TOMO
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -349,7 +349,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonArray = json.getJSONArray("items");
             for(int j = 0; j < jsonArray.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = jsonArray.getJSONObject(j);
 
@@ -414,7 +414,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -422,7 +422,7 @@ public class TomoScan extends AddressAPI {
         // Internal Transactions - These are all TOMO. Fees are already counted elsewhere.
         String addressDataInternalJSON = RESTUtil.get(url);
         if(addressDataInternalJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -432,7 +432,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonInternalArray = jsonInternal.getJSONArray("items");
             for(int j = 0; j < jsonInternalArray.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oI = jsonInternalArray.getJSONObject(j);
 
@@ -480,7 +480,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -488,7 +488,7 @@ public class TomoScan extends AddressAPI {
         // Rewards - These are all TOMO
         String addressDataRewardJSON = RESTUtil.get(url);
         if(addressDataRewardJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -498,7 +498,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonRewardArray = jsonReward.getJSONArray("items");
             for(int j = 0; j < jsonRewardArray.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oR = jsonRewardArray.getJSONObject(j);
 
@@ -519,12 +519,11 @@ public class TomoScan extends AddressAPI {
                 if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
-            // IsDone?
             return status;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -534,7 +533,7 @@ public class TomoScan extends AddressAPI {
 
         String addressDataVotesJSON = RESTUtil.get(url);
         if(addressDataVotesJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -544,7 +543,7 @@ public class TomoScan extends AddressAPI {
             JSONArray jsonVotesArray = jsonVotes.getJSONArray("items");
             for(int j = 0; j < jsonVotesArray.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oV = jsonVotesArray.getJSONObject(j);
 
@@ -583,7 +582,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -593,7 +592,7 @@ public class TomoScan extends AddressAPI {
 
         String addressDataTokenJSON20 = RESTUtil.get(url);
         if(addressDataTokenJSON20 == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -604,7 +603,7 @@ public class TomoScan extends AddressAPI {
 
             for(int j = 0; j < jsonTokenArray20.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oT = jsonTokenArray20.getJSONObject(j);
 
@@ -675,7 +674,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 
@@ -685,7 +684,7 @@ public class TomoScan extends AddressAPI {
 
         String addressDataTokenJSON21 = RESTUtil.get(url);
         if(addressDataTokenJSON21 == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -696,7 +695,7 @@ public class TomoScan extends AddressAPI {
 
             for(int j = 0; j < jsonTokenArray21.length(); j++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject oT = jsonTokenArray21.getJSONObject(j);
 
@@ -767,7 +766,7 @@ public class TomoScan extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

@@ -109,7 +109,7 @@ public class VeChain extends AddressAPI {
             String url = baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase() + "/transfers?limit=50&offset=" + offset;
             String status = processTransfers(url, cryptoAddress, transactionArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -124,7 +124,7 @@ public class VeChain extends AddressAPI {
         // Transfers (VET, VTHO, and Tokens)
         String addressDataJSONTransfers = RESTUtil.get(url);
         if(addressDataJSONTransfers == null) {
-            return null;
+            return ERROR;
         }
 
         String baseURL;
@@ -143,7 +143,7 @@ public class VeChain extends AddressAPI {
             for(int j = 0; j < transfers.length(); j++)
             {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject o = transfers.getJSONObject(j);
 
@@ -214,7 +214,7 @@ public class VeChain extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

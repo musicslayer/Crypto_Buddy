@@ -204,7 +204,7 @@ public class XRPLedger extends AddressAPI {
                     "}";
             marker = processTransfers(baseURL, body, cryptoAddress, transactionArrayList);
 
-            if(marker == null) {
+            if(ERROR.equals(marker)) {
                 return null;
             }
             else if(DONE.equals(marker)) {
@@ -218,7 +218,7 @@ public class XRPLedger extends AddressAPI {
     public String processTransfers(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.post(url, body);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -320,7 +320,7 @@ public class XRPLedger extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

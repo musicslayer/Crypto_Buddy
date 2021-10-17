@@ -134,7 +134,7 @@ public class CardanoExplorer extends AddressAPI {
 
             String status = process(baseURL, body, cryptoAddress, transactionArrayList);
 
-            if(status == null) {
+            if(ERROR.equals(status)) {
                 return null;
             }
             else if(DONE.equals(status)) {
@@ -148,9 +148,8 @@ public class CardanoExplorer extends AddressAPI {
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String process(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.post(url, body);
-
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -160,7 +159,7 @@ public class CardanoExplorer extends AddressAPI {
             JSONArray jsonArray = jsonData.getJSONObject("data").getJSONArray("transactions");
             for(int i = 0; i < jsonArray.length(); i++) {
                 // If there is anything to process, we may not be done yet.
-                status = "NotDone";
+                status = NOTDONE;
 
                 JSONObject tx = jsonArray.getJSONObject(i);
 
@@ -317,7 +316,7 @@ public class CardanoExplorer extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }

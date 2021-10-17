@@ -77,7 +77,7 @@ public class Blockstream extends AddressAPI {
             String url = "https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address + "/txs/chain/" + lastID;
             lastID = process(url, cryptoAddress, transactionArrayList);
 
-            if(lastID == null) {
+            if(ERROR.equals(lastID)) {
                 return null;
             }
             else if(DONE.equals(lastID)) {
@@ -92,7 +92,7 @@ public class Blockstream extends AddressAPI {
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.get(url);
         if(addressDataJSON == null) {
-            return null;
+            return ERROR;
         }
 
         try {
@@ -178,7 +178,7 @@ public class Blockstream extends AddressAPI {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            return null;
+            return ERROR;
         }
     }
 }
