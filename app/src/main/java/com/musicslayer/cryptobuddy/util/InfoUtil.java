@@ -76,6 +76,9 @@ public class InfoUtil {
             case "XRP":
                 info = "Negative balances of an asset represent obligations in the XRP Ledger.";
                 break;
+            case "SOL":
+                info = "Transactions do not include block rewards, such as rent, that occur on the block level outside of any particular transaction.";
+                break;
             default:
                 return null;
         }

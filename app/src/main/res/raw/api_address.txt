@@ -12,7 +12,7 @@ Horizon
 KavaLightClient
 PolygonScan
 SoChain
-Solscan
+Solana
 TomoScan
 TRONSCAN
 TzStats
