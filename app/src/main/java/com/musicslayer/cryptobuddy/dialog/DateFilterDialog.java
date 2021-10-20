@@ -21,14 +21,51 @@ public class DateFilterDialog extends BaseDialog {
     int[] LASTCUSTOMDATE_START_INFO;
     int[] LASTCUSTOMDATE_END_INFO;
 
+    boolean isStartDate;
+    boolean isStartTime;
+    boolean isEndDate;
+    boolean isEndTime;
+
     public DateFilterDialog(Activity activity, DateFilter filter) {
         super(activity);
         this.filter = filter;
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendarStart = Calendar.getInstance();
+        Calendar calendarEnd = Calendar.getInstance();
 
-        LASTCUSTOMDATE_START_INFO = new int[]{calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),0,0,0};
-        LASTCUSTOMDATE_END_INFO = new int[]{calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),23,59,59};
+        // Use the filter's data if it was previously used, otherwise fill in defaults.
+        if(filter.user_startDate == null) {
+            isStartDate = false;
+            isStartTime = false;
+
+            calendarStart.set(Calendar.HOUR_OF_DAY, 0);
+            calendarStart.set(Calendar.MINUTE, 0);
+            calendarStart.set(Calendar.SECOND, 0);
+        }
+        else {
+            isStartDate = true;
+            isStartTime = true;
+
+            calendarStart.setTime(filter.user_startDate);
+        }
+
+        if(filter.user_endDate == null) {
+            isEndDate = false;
+            isEndTime = false;
+
+            calendarEnd.set(Calendar.HOUR_OF_DAY, 23);
+            calendarEnd.set(Calendar.MINUTE, 59);
+            calendarEnd.set(Calendar.SECOND, 59);
+        }
+        else {
+            isEndDate = true;
+            isEndTime = true;
+
+            calendarEnd.setTime(filter.user_endDate);
+        }
+
+        LASTCUSTOMDATE_START_INFO = new int[]{calendarStart.get(Calendar.YEAR),calendarStart.get(Calendar.MONTH),calendarStart.get(Calendar.DAY_OF_MONTH),calendarStart.get(Calendar.HOUR_OF_DAY),calendarStart.get(Calendar.MINUTE),calendarStart.get(Calendar.SECOND)};
+        LASTCUSTOMDATE_END_INFO = new int[]{calendarEnd.get(Calendar.YEAR),calendarEnd.get(Calendar.MONTH),calendarEnd.get(Calendar.DAY_OF_MONTH),calendarEnd.get(Calendar.HOUR_OF_DAY),calendarEnd.get(Calendar.MINUTE),calendarEnd.get(Calendar.SECOND)};
     }
 
     public int getBaseViewID() {
@@ -41,6 +78,14 @@ public class DateFilterDialog extends BaseDialog {
         Button B_FILTER = findViewById(R.id.date_filter_dialog_applyFilterButton);
         B_FILTER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                if(isStartDate || isStartTime) {
+                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
+                }
+
+                if(isEndDate || isEndTime) {
+                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
+                }
+
                 isComplete = true;
                 dismiss();
             }
@@ -51,6 +96,12 @@ public class DateFilterDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 filter.user_startDate = null;
                 filter.user_endDate = null;
+
+                isStartDate = false;
+                isStartTime = false;
+                isEndDate = false;
+                isEndTime = false;
+
                 updateLayout();
             }
         });
@@ -60,6 +111,8 @@ public class DateFilterDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
+                    isStartDate = true;
+
                     int year  = ((ChooseDateDialog) dialog).user_YEAR;
                     int month = ((ChooseDateDialog) dialog).user_MONTH;
                     int day = ((ChooseDateDialog) dialog).user_DAY;
@@ -68,7 +121,6 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_START_INFO[1] = month;
                     LASTCUSTOMDATE_START_INFO[2] = day;
 
-                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
                     updateLayout();
                 }
             }
@@ -87,6 +139,8 @@ public class DateFilterDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
+                    isStartTime = true;
+
                     int hour = ((ChooseTimeDialog) dialog).user_HOUR;
                     int minute = ((ChooseTimeDialog) dialog).user_MINUTE;
                     int second  = ((ChooseTimeDialog) dialog).user_SECOND;
@@ -95,7 +149,6 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_START_INFO[4] = minute;
                     LASTCUSTOMDATE_START_INFO[5] = second;
 
-                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
                     updateLayout();
                 }
             }
@@ -114,6 +167,8 @@ public class DateFilterDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseDateDialog)dialog).isComplete) {
+                    isEndDate = true;
+
                     int year  = ((ChooseDateDialog) dialog).user_YEAR;
                     int month = ((ChooseDateDialog) dialog).user_MONTH;
                     int day = ((ChooseDateDialog) dialog).user_DAY;
@@ -122,7 +177,6 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_END_INFO[1] = month;
                     LASTCUSTOMDATE_END_INFO[2] = day;
 
-                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
                     updateLayout();
                 }
             }
@@ -141,6 +195,8 @@ public class DateFilterDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseTimeDialog)dialog).isComplete) {
+                    isEndTime = true;
+
                     int hour = ((ChooseTimeDialog) dialog).user_HOUR;
                     int minute = ((ChooseTimeDialog) dialog).user_MINUTE;
                     int second  = ((ChooseTimeDialog) dialog).user_SECOND;
@@ -149,7 +205,6 @@ public class DateFilterDialog extends BaseDialog {
                     LASTCUSTOMDATE_END_INFO[4] = minute;
                     LASTCUSTOMDATE_END_INFO[5] = second;
 
-                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
                     updateLayout();
                 }
             }
@@ -169,20 +224,20 @@ public class DateFilterDialog extends BaseDialog {
     public void updateLayout() {
         TextView T_START = findViewById(R.id.date_filter_dialog_startDateTextView);
 
-        if(filter.user_startDate == null) {
+        if(!(isStartDate || isStartTime)) {
             T_START.setText("No Lower Limit");
         }
         else {
-            T_START.setText(DateTimeUtil.toDateString(filter.user_startDate));
+            T_START.setText(DateTimeUtil.toDateString(DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5])));
         }
 
         TextView T_END = findViewById(R.id.date_filter_dialog_endDateTextView);
 
-        if(filter.user_endDate == null) {
+        if(!(isEndDate || isEndTime)) {
             T_END.setText("No Upper Limit");
         }
         else {
-            T_END.setText(DateTimeUtil.toDateString(filter.user_endDate));
+            T_END.setText(DateTimeUtil.toDateString(DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5])));
         }
     }
 
@@ -190,6 +245,11 @@ public class DateFilterDialog extends BaseDialog {
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putIntArray("lastcustomdate_start_info", LASTCUSTOMDATE_START_INFO);
         bundle.putIntArray("lastcustomdate_end_info", LASTCUSTOMDATE_END_INFO);
+
+        bundle.putBoolean("isStartDate", isStartDate);
+        bundle.putBoolean("isStartTime", isStartTime);
+        bundle.putBoolean("isEndDate", isEndDate);
+        bundle.putBoolean("isEndTime", isEndTime);
         return bundle;
     }
 
@@ -198,6 +258,11 @@ public class DateFilterDialog extends BaseDialog {
         if(bundle != null) {
             LASTCUSTOMDATE_START_INFO = bundle.getIntArray("lastcustomdate_start_info");
             LASTCUSTOMDATE_END_INFO = bundle.getIntArray("lastcustomdate_end_info");
+
+            isStartDate = bundle.getBoolean("isStartDate");
+            isStartTime = bundle.getBoolean("isStartTime");
+            isEndDate = bundle.getBoolean("isEndDate");
+            isEndTime = bundle.getBoolean("isEndTime");
         }
     }
 }

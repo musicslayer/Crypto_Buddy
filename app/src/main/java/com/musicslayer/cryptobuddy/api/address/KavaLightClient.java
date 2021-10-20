@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class KavaLightClient extends AddressAPI {
     public String getName() { return "KavaLightClient"; }
-    public String getDisplayName() { return "Kava Light Client RPC API"; }
+    public String getDisplayName() { return "Kava Light Client RPC & Cosmostation REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
         return "KAVA".equals(cryptoAddress.getCrypto().getName());

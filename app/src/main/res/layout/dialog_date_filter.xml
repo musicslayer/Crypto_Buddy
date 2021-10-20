@@ -52,13 +52,15 @@
                 android:id="@+id/date_filter_dialog_startDateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Start Date" />
+                android:text="Choose\nStart Date"
+                app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/date_filter_dialog_startTimeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Start Time" />
+                android:text="Choose\nStart Time"
+                app:drawableLeftCompat="@drawable/ic_baseline_access_time_24" />
         </TableRow>
 
         <TableRow
@@ -82,13 +84,15 @@
                 android:id="@+id/date_filter_dialog_endDateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose End Date" />
+                android:text="Choose\nEnd Date"
+                app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/date_filter_dialog_endTimeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose End Time" />
+                android:text="Choose\nEnd Time"
+                app:drawableLeftCompat="@drawable/ic_baseline_access_time_24" />
         </TableRow>
 
         <TableRow
