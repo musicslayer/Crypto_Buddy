@@ -26,6 +26,6 @@ public class BNBc_Testnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.startsWith("tbnb") && Bech32.hasValidChecksum(address);
+        return address.startsWith("tbnb1") && Bech32.hasValidChecksum(address);
     }
 }

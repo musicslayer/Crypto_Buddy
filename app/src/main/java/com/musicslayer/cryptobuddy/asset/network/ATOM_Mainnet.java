@@ -9,9 +9,8 @@ public class ATOM_Mainnet extends Network {
         return true;
     }
 
-    // TODO Needs adjustment.
     public boolean isCaseSensitive() {
-        return false;
+        return true;
     }
 
     public Crypto getCrypto() {

@@ -26,6 +26,6 @@ public class BNBc_Mainnet extends Network {
     }
 
     public boolean isValid(String address) {
-        return address.startsWith("bnb") && Bech32.hasValidChecksum(address);
+        return address.startsWith("bnb1") && Bech32.hasValidChecksum(address);
     }
 }

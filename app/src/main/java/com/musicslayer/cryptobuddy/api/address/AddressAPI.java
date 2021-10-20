@@ -14,7 +14,6 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO Which network addresses are case sensitive/insensitive?
 // TODO NFT View -> We have to support more token types.
 
 abstract public class AddressAPI extends API {
