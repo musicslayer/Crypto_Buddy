@@ -178,7 +178,7 @@ public class CardanoExplorer extends AddressAPI {
                 for(int j = 0; j < outputs.length(); j++) {
                     JSONObject output = outputs.getJSONObject(j);
 
-                    if(!cryptoAddress.address.equalsIgnoreCase(output.getString("address"))) {
+                    if(!cryptoAddress.matchesAddress(output.getString("address"))) {
                         continue;
                     }
 
@@ -228,7 +228,7 @@ public class CardanoExplorer extends AddressAPI {
                 for(int j = 0; j < inputs.length(); j++) {
                     JSONObject input = inputs.getJSONObject(j);
 
-                    if(!cryptoAddress.address.equalsIgnoreCase(input.getString("address"))) {
+                    if(!cryptoAddress.matchesAddress(input.getString("address"))) {
                         continue;
                     }
 

@@ -19,6 +19,14 @@ import java.util.HashMap;
 
 abstract public class Network implements Serialization.SerializableToJSON {
     abstract public boolean isMainnet();
+
+    // TODO add these everywhere
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
+
+    //abstract public boolean isCaseSensitive();
     abstract public Crypto getCrypto();
     abstract public String getName();
     abstract public String getDisplayName();
@@ -32,6 +40,16 @@ abstract public class Network implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.
     public String getKey() {
         return getName();
+    }
+
+    public boolean matchesAddress(String address, String other) {
+        // Compare addresses using the case sensitivity of the network.
+        if(isCaseSensitive()) {
+            return address.equals(other);
+        }
+        else {
+            return address.equalsIgnoreCase(other);
+        }
     }
 
     @Override

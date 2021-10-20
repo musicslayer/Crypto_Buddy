@@ -195,7 +195,7 @@ public class Etherscan extends AddressAPI {
                 String action;
                 BigDecimal fee;
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     // We are sending crypto away.
                     action = "Send";
 
@@ -204,7 +204,7 @@ public class Etherscan extends AddressAPI {
                     BigDecimal gasPrice = new BigDecimal(o.getString("gasPrice"));
                     fee = gasAmount.multiply(gasPrice);
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     // We are receiving crypto. No fee.
                     action = "Receive";
                     fee = BigDecimal.ZERO;
@@ -222,7 +222,7 @@ public class Etherscan extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 // If this has an error, skip the rest.
                 if("1".equals(o.getString("isError"))) {
@@ -255,11 +255,11 @@ public class Etherscan extends AddressAPI {
 
                 String action;
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     // We are sending crypto away.
                     action = "Send";
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     // We are receiving crypto. No fee.
                     action = "Receive";
                 }
@@ -269,7 +269,7 @@ public class Etherscan extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 // If this has an error, skip the rest.
                 if("1".equals(oI.getString("isError"))) {
@@ -314,14 +314,14 @@ public class Etherscan extends AddressAPI {
                     String to = oT.getString("to");
 
                     // If I send something to myself, just reject it!
-                    if(from.equals(to)) { continue; }
+                    if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                     String action;
-                    if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                    if(cryptoAddress.matchesAddress(from)) {
                         // We are sending crypto away.
                         action = "Send";
                     }
-                    else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                    else if(cryptoAddress.matchesAddress(to)) {
                         // We are receiving crypto. No fee.
                         action = "Receive";
                     }

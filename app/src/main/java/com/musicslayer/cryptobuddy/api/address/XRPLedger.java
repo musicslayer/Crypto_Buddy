@@ -250,7 +250,7 @@ public class XRPLedger extends AddressAPI {
                 String type = tx.getString("TransactionType");
 
                 BigDecimal fee;
-                if("Payment".equals(type) && cryptoAddress.address.equals(tx.getString("Destination"))) {
+                if("Payment".equals(type) && cryptoAddress.matchesAddress(tx.getString("Destination"))) {
                     fee = BigDecimal.ZERO;
                 }
                 else {
@@ -273,7 +273,7 @@ public class XRPLedger extends AddressAPI {
                     // Nothing else to process.
                 }
                 else if("Payment".equals(type)) {
-                    if(cryptoAddress.address.equals(tx.getString("Destination"))) {
+                    if(cryptoAddress.matchesAddress(tx.getString("Destination"))) {
                         action = "Receive";
                     }
                     else {

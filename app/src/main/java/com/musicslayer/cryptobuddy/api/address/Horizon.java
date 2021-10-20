@@ -273,7 +273,7 @@ public class Horizon extends AddressAPI {
 
                 BigDecimal fee = BigDecimal.ZERO;
 
-                if(cryptoAddress.address.equals(jsonTransaction.getString("fee_account"))) {
+                if(cryptoAddress.matchesAddress(jsonTransaction.getString("fee_account"))) {
                     fee = new BigDecimal(jsonTransaction.getString("fee_charged"));
                     fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
                 }
@@ -441,11 +441,11 @@ public class Horizon extends AddressAPI {
                         String thisAction;
                         String otherAction;
 
-                        if(cryptoAddress.address.equals(jsonTransaction.getString("account"))) {
+                        if(cryptoAddress.matchesAddress(jsonTransaction.getString("account"))) {
                             thisAction = "Receive";
                             otherAction = "Send";
                         }
-                        else if(cryptoAddress.address.equals(jsonTransaction.getString("seller"))) {
+                        else if(cryptoAddress.matchesAddress(jsonTransaction.getString("seller"))) {
                             thisAction = "Send";
                             otherAction = "Receive";
                         }

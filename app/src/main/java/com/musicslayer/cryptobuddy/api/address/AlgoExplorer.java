@@ -186,14 +186,14 @@ public class AlgoExplorer extends AddressAPI {
 
                 // If the address is both form and to, we largely treat it as from but still set the isTo flag.
                 // For example, an address that is both still should pay the fee.
-                if(cryptoAddress.address.equals(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     isFrom = true;
                 }
-                if(cryptoAddress.address.equals(to)) {
+                if(cryptoAddress.matchesAddress(to)) {
                     isTo = true;
                 }
 
-                if(cryptoAddress.address.equals(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                     fee = new BigDecimal(jsonTransaction.getString("fee"));
                     fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
@@ -293,7 +293,7 @@ public class AlgoExplorer extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) {
+                if(cryptoAddress.network.matchesAddress(from, to)) {
                     continue;
                 }
 

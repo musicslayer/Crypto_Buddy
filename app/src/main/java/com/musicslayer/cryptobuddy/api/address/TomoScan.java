@@ -359,7 +359,7 @@ public class TomoScan extends AddressAPI {
                 String action;
                 BigDecimal fee = BigDecimal.ZERO;
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
 
                     BigDecimal gasPrice = new BigDecimal(o.getString("gasPrice"));
@@ -367,7 +367,7 @@ public class TomoScan extends AddressAPI {
                     fee = gasPrice.multiply(gasUsed);
                     fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {
@@ -394,11 +394,10 @@ public class TomoScan extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 // Don't count vote/unvote/withdraw here
-                if("0x0000000000000000000000000000000000000088".equals(to) || "0x0000000000000000000000000000000000000088".equals(from)) {
-                    Log.e("Crypto Buddy", "X");
+                if(cryptoAddress.network.matchesAddress("0x0000000000000000000000000000000000000088", to) || cryptoAddress.network.matchesAddress("0x0000000000000000000000000000000000000088", from)) {
                     continue;
                 }
 
@@ -442,7 +441,7 @@ public class TomoScan extends AddressAPI {
                 String to = oI.getString("to");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 // Don't count vote/unvote/withdraw here
                 if("0x0000000000000000000000000000000000000088".equals(to) || "0x0000000000000000000000000000000000000088".equals(from)) {
@@ -450,10 +449,10 @@ public class TomoScan extends AddressAPI {
                 }
 
                 String action;
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {
@@ -613,15 +612,15 @@ public class TomoScan extends AddressAPI {
                 String to = oT.getString("to");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 String action;
                 BigDecimal fee = BigDecimal.ZERO;
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {
@@ -705,15 +704,15 @@ public class TomoScan extends AddressAPI {
                 String to = oT.getString("to");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 String action;
                 BigDecimal fee = BigDecimal.ZERO;
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {

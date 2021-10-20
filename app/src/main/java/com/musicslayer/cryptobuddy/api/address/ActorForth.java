@@ -92,6 +92,9 @@ public class ActorForth extends AddressAPI {
 
             JSONObject json = new JSONObject(addressDataJSON);
             JSONArray jsonData = json.getJSONArray("txs");
+
+            // Currently, transaction data still uses legacy addresses, which are always case sensitive.
+            // Thus, we do not use CryptoAddress.matchesAddress here.
             String legacyAddress = json.getString("legacyAddress");
 
             for(int i = 0; i < jsonData.length(); i++) {

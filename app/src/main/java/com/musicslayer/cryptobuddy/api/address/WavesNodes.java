@@ -194,7 +194,7 @@ public class WavesNodes extends AddressAPI {
                 }
 
                 BigDecimal fee;
-                if(cryptoAddress.address.equals(sender)) {
+                if(cryptoAddress.matchesAddress(sender)) {
                     action = "Send";
                     fee = new BigDecimal(jsonTransaction.getString("fee"));
                     fee = fee.movePointLeft(fee_crypto.getScale());
@@ -324,7 +324,7 @@ public class WavesNodes extends AddressAPI {
                     }
 
                     JSONObject orderJSON = jsonTransaction.getJSONObject(orderName);
-                    if(!cryptoAddress.address.equals(orderJSON.getString("sender"))) {
+                    if(!cryptoAddress.matchesAddress(orderJSON.getString("sender"))) {
                         continue;
                     }
 

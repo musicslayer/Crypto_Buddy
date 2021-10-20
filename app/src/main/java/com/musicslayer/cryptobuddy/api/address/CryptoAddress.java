@@ -25,6 +25,16 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
         return network.getCrypto();
     }
 
+    public boolean matchesAddress(String address) {
+        // Compare addresses using the case sensitivity of the network.
+        if(network.isCaseSensitive()) {
+            return this.address.equals(address);
+        }
+        else {
+            return this.address.equalsIgnoreCase(address);
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         return (other instanceof CryptoAddress) &&

@@ -299,7 +299,7 @@ public class Solana extends AddressAPI {
 
                 // Search for fee. The first account in the list is the fee payer.
                 String feePayer = transactionObj.getJSONObject("result").getJSONObject("transaction").getJSONObject("message").getJSONArray("accountKeys").getJSONObject(0).getString("pubkey");
-                if(cryptoAddress.address.equalsIgnoreCase(feePayer)) {
+                if(cryptoAddress.matchesAddress(feePayer)) {
                     BigDecimal fee = new BigDecimal(transactionObj.getJSONObject("result").getJSONObject("meta").getString("fee"));
                     fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
 
@@ -334,7 +334,7 @@ public class Solana extends AddressAPI {
                 for(int j = 0; j < rewards.length(); j++) {
                     JSONObject reward = rewards.getJSONObject(j);
                     String pubkey = reward.getString("pubkey");
-                    if(cryptoAddress.address.equalsIgnoreCase(pubkey)) {
+                    if(cryptoAddress.matchesAddress(pubkey)) {
                         String rewardType = reward.getString("rewardType");
 
                         BigDecimal b = new BigDecimal(reward.getString("lamports"));
@@ -418,15 +418,15 @@ public class Solana extends AddressAPI {
                                 String amount = b.toPlainString();
 
                                 // If I send something to myself, just reject it!
-                                if (from.equals(to)) {
+                                if (cryptoAddress.network.matchesAddress(from, to)) {
                                     continue;
                                 }
 
                                 String action;
-                                if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                                if (cryptoAddress.matchesAddress(to)) {
                                     action = "Receive";
                                     subtract(map, from, b);
-                                } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                                } else if (cryptoAddress.matchesAddress(from)) {
                                     action = "Send";
                                     add(map, to, b);
                                 } else {
@@ -485,15 +485,15 @@ public class Solana extends AddressAPI {
                             String amount = b.toPlainString();
 
                             // If I send something to myself, just reject it!
-                            if (from.equals(to)) {
+                            if (cryptoAddress.network.matchesAddress(from, to)) {
                                 continue;
                             }
 
                             String action;
-                            if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                            if (cryptoAddress.matchesAddress(to)) {
                                 action = "Receive";
                                 subtract(map, from, b);
-                            } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                            } else if (cryptoAddress.matchesAddress(from)) {
                                 action = "Send";
                                 add(map, to, b);
                             } else {
@@ -519,15 +519,15 @@ public class Solana extends AddressAPI {
                             String amount = b.toPlainString();
 
                             // If I send something to myself, just reject it!
-                            if (from.equals(to)) {
+                            if (cryptoAddress.network.matchesAddress(from, to)) {
                                 continue;
                             }
 
                             String action;
-                            if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                            if (cryptoAddress.matchesAddress(to)) {
                                 action = "Receive";
                                 subtract(map, from, b);
-                            } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                            } else if (cryptoAddress.matchesAddress(from)) {
                                 action = "Send";
                                 add(map, to, b);
                             } else {
@@ -569,7 +569,7 @@ public class Solana extends AddressAPI {
                         boolean isTo = ownerList.contains(info.getString("destination"));
 
                         // If I send something to myself, just reject it!
-                        if (from.equals(to)) {
+                        if (cryptoAddress.network.matchesAddress(from, to)) {
                             continue;
                         }
 
@@ -601,10 +601,10 @@ public class Solana extends AddressAPI {
                             String amount = b.toPlainString();
 
                             String action;
-                            if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                            if (cryptoAddress.matchesAddress(to)) {
                                 action = "Receive";
                                 subtract(map, from, b);
-                            } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                            } else if (cryptoAddress.matchesAddress(from)) {
                                 action = "Send";
                                 add(map, to, b);
                             } else {
@@ -663,15 +663,15 @@ public class Solana extends AddressAPI {
                         String amount = b.toPlainString();
 
                         // If I send something to myself, just reject it!
-                        if (from.equals(to)) {
+                        if (cryptoAddress.network.matchesAddress(from, to)) {
                             continue;
                         }
 
                         String action;
-                        if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                        if (cryptoAddress.matchesAddress(to)) {
                             action = "Receive";
                             subtract(map, from, b);
-                        } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                        } else if (cryptoAddress.matchesAddress(from)) {
                             action = "Send";
                             add(map, to, b);
                         } else {
@@ -697,15 +697,15 @@ public class Solana extends AddressAPI {
                         String amount = b.toPlainString();
 
                         // If I send something to myself, just reject it!
-                        if (from.equals(to)) {
+                        if (cryptoAddress.network.matchesAddress(from, to)) {
                             continue;
                         }
 
                         String action;
-                        if (cryptoAddress.address.equalsIgnoreCase(to)) {
+                        if (cryptoAddress.matchesAddress(to)) {
                             action = "Receive";
                             subtract(map, from, b);
-                        } else if (cryptoAddress.address.equalsIgnoreCase(from)) {
+                        } else if (cryptoAddress.matchesAddress(from)) {
                             action = "Send";
                             add(map, to, b);
                         } else {

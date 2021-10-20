@@ -133,7 +133,7 @@ public class Blockstream extends AddressAPI {
                     JSONObject o = json2.getJSONObject(j);
 
                     String scriptpubkey_address = o.getString("scriptpubkey_address");
-                    if(!cryptoAddress.address.equals(scriptpubkey_address)) { continue; }
+                    if(!cryptoAddress.matchesAddress(scriptpubkey_address)) { continue; }
 
                     voutFound = true;
                     BigInteger N = new BigInteger(o.getString("value"));
@@ -149,7 +149,7 @@ public class Blockstream extends AddressAPI {
                     JSONObject o2 = o.getJSONObject("prevout");
 
                     String scriptpubkey_address = o2.getString("scriptpubkey_address");
-                    if(!cryptoAddress.address.equals(scriptpubkey_address)) { continue; }
+                    if(!cryptoAddress.matchesAddress(scriptpubkey_address)) { continue; }
 
                     vinFound = true;
                     BigInteger N = new BigInteger(o2.getString("value"));

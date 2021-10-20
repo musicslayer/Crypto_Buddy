@@ -196,7 +196,7 @@ public class AtomScan extends AddressAPI {
                         case "/cosmos.bank.v1beta1.MsgSend":
                             // Do nothing - transactions are handled elsewhere.
                             // However, enable the fee here because if the transaction failed there may not be a log entry to do so.
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("from_address"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("from_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Transaction Fee";
@@ -206,7 +206,7 @@ public class AtomScan extends AddressAPI {
 
                         case "cosmos-sdk/MsgDelegate":
                         case "/cosmos.staking.v1beta1.MsgDelegate":
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Delegate Fee";
@@ -240,7 +240,7 @@ public class AtomScan extends AddressAPI {
 
                         case "cosmos-sdk/MsgUndelegate":
                         case "/cosmos.staking.v1beta1.MsgUndelegate":
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Undelegate Fee";
@@ -275,7 +275,7 @@ public class AtomScan extends AddressAPI {
                         case "cosmos-sdk/MsgBeginRedelegate":
                         case "/cosmos.staking.v1beta1.MsgBeginRedelegate":
                             // Don't do any additional processing, but we still may have a fee to pay.
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Redelegate Fee";
@@ -284,7 +284,7 @@ public class AtomScan extends AddressAPI {
                         case "cosmos-sdk/MsgVote":
                         case "/cosmos.gov.v1beta1.MsgVote":
                             // Don't do any additional processing, but we still may have a fee to pay.
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("voter"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("voter"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Vote Fee";
@@ -293,7 +293,7 @@ public class AtomScan extends AddressAPI {
                         case "cosmos-sdk/MsgWithdrawDelegationReward":
                         case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
                             // Don't do any additional processing, but we still may have a fee to pay.
-                            if(!cryptoAddress.address.equalsIgnoreCase(message.getString("delegator_address"))) { break; }
+                            if(!cryptoAddress.matchesAddress(message.getString("delegator_address"))) { break; }
 
                             fee_enabled = true;
                             fee_string = "Reward Fee";
@@ -353,12 +353,12 @@ public class AtomScan extends AddressAPI {
                                         String action;
 
                                         // Pay fee if there are any sends.
-                                        if(cryptoAddress.address.equals(sAddress)) {
+                                        if(cryptoAddress.matchesAddress(sAddress)) {
                                             fee_enabled = true;
                                             fee_string = "Transaction Fee";
                                             action = "Send";
                                         }
-                                        else if(cryptoAddress.address.equals(rAddress)) {
+                                        else if(cryptoAddress.matchesAddress(rAddress)) {
                                             action = "Receive";
                                         }
                                         else {

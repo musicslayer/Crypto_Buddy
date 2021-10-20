@@ -156,7 +156,7 @@ public class VeChain extends AddressAPI {
                 String to = o.getString("recipient");
 
                 String action;
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
 
                     // Get fee (in VeThor)
@@ -171,7 +171,7 @@ public class VeChain extends AddressAPI {
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {
@@ -180,7 +180,7 @@ public class VeChain extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 Crypto crypto;
 

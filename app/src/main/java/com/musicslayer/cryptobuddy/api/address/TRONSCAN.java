@@ -248,11 +248,11 @@ public class TRONSCAN extends AddressAPI {
 
                 String action;
                 boolean isFee;
-                if(cryptoAddress.address.equals(to)) {
+                if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                     isFee = false;
                 }
-                else if(cryptoAddress.address.equals(from)){
+                else if(cryptoAddress.matchesAddress(from)){
                     action = "Send";
                     isFee = true;
                 }
@@ -282,7 +282,7 @@ public class TRONSCAN extends AddressAPI {
                 }
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 if(!"SUCCESS".equals(o.getString("result"))) {
                     continue;
@@ -381,13 +381,13 @@ public class TRONSCAN extends AddressAPI {
                 String from = o.getString("from_address");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 String action;
-                if(cryptoAddress.address.equals(to)) {
+                if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
-                else if(cryptoAddress.address.equals(from)){
+                else if(cryptoAddress.matchesAddress(from)){
                     action = "Send";
                 }
                 else {
@@ -469,13 +469,13 @@ public class TRONSCAN extends AddressAPI {
                 String from = o.getString("from_address");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
                 String action;
-                if(cryptoAddress.address.equals(to)) {
+                if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
-                else if(cryptoAddress.address.equals(from)){
+                else if(cryptoAddress.matchesAddress(from)){
                     action = "Send";
                 }
                 else {

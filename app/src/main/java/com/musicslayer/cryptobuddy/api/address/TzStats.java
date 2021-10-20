@@ -513,12 +513,12 @@ public class TzStats extends AddressAPI {
                 String to = jsonTransaction.getString("to");
 
                 // If I send something to myself, just reject it!
-                if(from.equals(to)) { continue; }
+                if(cryptoAddress.network.matchesAddress(from, to)) { continue; }
 
-                if(cryptoAddress.address.equalsIgnoreCase(from)) {
+                if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                 }
-                else if(cryptoAddress.address.equalsIgnoreCase(to)) {
+                else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
                 }
                 else {
