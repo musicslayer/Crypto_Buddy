@@ -9,6 +9,10 @@ public class DOGE_Testnet_P2SH extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("DOGE");
     }

@@ -8,6 +8,10 @@ public class XTZ_Testnet_Granadanet extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("XTZ");
     }

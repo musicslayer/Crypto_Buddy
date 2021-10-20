@@ -9,6 +9,10 @@ public class BTC_Testnet_SegWit extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BTC");
     }

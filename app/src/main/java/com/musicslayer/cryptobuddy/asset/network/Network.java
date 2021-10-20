@@ -19,14 +19,7 @@ import java.util.HashMap;
 
 abstract public class Network implements Serialization.SerializableToJSON {
     abstract public boolean isMainnet();
-
-    // TODO add these everywhere
-    public boolean isCaseSensitive() {
-        return true;
-    }
-
-
-    //abstract public boolean isCaseSensitive();
+    abstract public boolean isCaseSensitive();
     abstract public Crypto getCrypto();
     abstract public String getName();
     abstract public String getDisplayName();

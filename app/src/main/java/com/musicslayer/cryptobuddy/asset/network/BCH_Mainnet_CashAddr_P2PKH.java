@@ -8,6 +8,10 @@ public class BCH_Mainnet_CashAddr_P2PKH extends Network {
         return true;
     }
 
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BCH");
     }

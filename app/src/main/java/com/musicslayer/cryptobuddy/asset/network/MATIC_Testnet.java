@@ -9,6 +9,10 @@ public class MATIC_Testnet extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("MATIC");
     }

@@ -12,6 +12,10 @@ public class UnknownNetwork extends Network {
         return true;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return UnknownCoin.createUnknownCoin(null);
     }

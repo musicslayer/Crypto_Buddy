@@ -9,6 +9,10 @@ public class XRP_Mainnet extends Network {
         return true;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("XRP");
     }

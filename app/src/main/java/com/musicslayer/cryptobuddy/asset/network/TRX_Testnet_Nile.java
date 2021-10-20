@@ -9,6 +9,10 @@ public class TRX_Testnet_Nile extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("TRX");
     }

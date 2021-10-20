@@ -8,6 +8,10 @@ public class ADA_Mainnet_Icarus extends Network {
         return true;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("ADA");
     }

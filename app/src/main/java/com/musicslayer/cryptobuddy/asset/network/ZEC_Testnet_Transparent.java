@@ -8,6 +8,10 @@ public class ZEC_Testnet_Transparent extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("ZEC");
     }

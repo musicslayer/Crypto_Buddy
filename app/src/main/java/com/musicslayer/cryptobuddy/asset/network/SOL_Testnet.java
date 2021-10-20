@@ -9,6 +9,10 @@ public class SOL_Testnet extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("SOL");
     }

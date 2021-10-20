@@ -9,6 +9,10 @@ public class BNBs_Testnet extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BNBs");
     }

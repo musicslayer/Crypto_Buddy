@@ -9,6 +9,10 @@ public class BTC_Testnet_P2PKH extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BTC");
     }

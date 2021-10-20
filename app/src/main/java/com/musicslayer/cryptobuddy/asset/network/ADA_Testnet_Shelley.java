@@ -9,6 +9,10 @@ public class ADA_Testnet_Shelley extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("ADA");
     }

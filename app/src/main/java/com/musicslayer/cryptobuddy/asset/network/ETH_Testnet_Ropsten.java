@@ -9,6 +9,10 @@ public class ETH_Testnet_Ropsten extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("ETH");
     }

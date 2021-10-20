@@ -9,6 +9,10 @@ public class WAVES_Testnet extends Network {
         return false;
     }
 
+    public boolean isCaseSensitive() {
+        return true;
+    }
+
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("WAVES");
     }
