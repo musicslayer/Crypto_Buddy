@@ -48,8 +48,8 @@ public class AddressExplorerActivity extends BaseActivity {
     HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 
-    public boolean includeBalances = true;
-    public boolean includeTransactions = true;
+    public ArrayList<Boolean> includeBalances;
+    public ArrayList<Boolean> includeTransactions;
 
     public int getAdLayoutViewID() {
         return R.id.address_explorer_adLayout;
@@ -121,7 +121,7 @@ public class AddressExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressInfoDialog.class, new ArrayList<>(addressDataMap.values())).show(AddressExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(AddressInfoDialog.class, cryptoAddressArrayList, addressDataMap).show(AddressExplorerActivity.this, "info");
             }
         });
 
@@ -147,13 +147,13 @@ public class AddressExplorerActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 AddressData newAddressData;
 
-                if(includeBalances && includeTransactions) {
+                if(includeBalances.get(0) && includeTransactions.get(0)) {
                     newAddressData = AddressData.getAllData(cryptoAddressArrayList.get(0));
                 }
-                else if(includeBalances) {
+                else if(includeBalances.get(0)) {
                     newAddressData = AddressData.getCurrentBalanceData(cryptoAddressArrayList.get(0));
                 }
-                else if(includeTransactions) {
+                else if(includeTransactions.get(0)) {
                     newAddressData = AddressData.getTransactionsData(cryptoAddressArrayList.get(0));
                 }
                 else {
@@ -172,13 +172,13 @@ public class AddressExplorerActivity extends BaseActivity {
                 AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 boolean isComplete;
-                if(includeBalances && includeTransactions) {
+                if(includeBalances.get(0) && includeTransactions.get(0)) {
                     isComplete = newAddressData.isComplete();
                 }
-                else if(includeBalances) {
+                else if(includeBalances.get(0)) {
                     isComplete = newAddressData.isCurrentBalanceComplete();
                 }
-                else if(includeTransactions) {
+                else if(includeTransactions.get(0)) {
                     isComplete = newAddressData.isTransactionsComplete();
                 }
                 else {
@@ -198,7 +198,7 @@ public class AddressExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -265,16 +265,16 @@ public class AddressExplorerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
-        bundle.putString("includeBalances", Serialization.boolean_serialize(includeBalances));
-        bundle.putString("includeTransactions", Serialization.boolean_serialize(includeTransactions));
+        bundle.putString("includeBalances", Serialization.boolean_serializeArrayList(includeBalances));
+        bundle.putString("includeTransactions", Serialization.boolean_serializeArrayList(includeTransactions));
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
-            includeBalances = Serialization.boolean_deserialize(bundle.getString("includeBalances"));
-            includeTransactions = Serialization.boolean_deserialize(bundle.getString("includeTransactions"));
+            includeBalances = Serialization.boolean_deserializeArrayList(bundle.getString("includeBalances"));
+            includeTransactions = Serialization.boolean_deserializeArrayList(bundle.getString("includeTransactions"));
 
             updateLayout();
         }

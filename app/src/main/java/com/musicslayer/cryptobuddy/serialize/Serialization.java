@@ -323,6 +323,43 @@ public class Serialization {
         return Boolean.parseBoolean(string_deserialize(s));
     }
 
+    public static String boolean_serializeArrayList(ArrayList<Boolean> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(boolean b : arrayList) {
+                a.put(Serialization.boolean_serialize(b));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Boolean> boolean_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Boolean> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.boolean_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static String int_serialize(int i) {
         return string_serialize(Integer.toString(i));
     }

@@ -18,22 +18,6 @@
         app:subtitle="Select which types of data to download:"
         app:title="Download Data" />
 
-    <CheckBox
-        android:id="@+id/download_data_dialog_balancesCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Balances"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_toolbar" />
-
-    <CheckBox
-        android:id="@+id/download_data_dialog_transactionsCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Transactions"
-        app:layout_constraintStart_toEndOf="@id/download_data_dialog_balancesCheckBox"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_toolbar" />
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/download_data_dialog_downloadButton"
         android:layout_width="wrap_content"
@@ -41,6 +25,34 @@
         android:text="Download"
         app:drawableLeftCompat="@drawable/ic_baseline_download_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_transactionsCheckBox" />
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_data_dialog_selectAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_select_all_24"
+        android:text="Select All"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_downloadButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_data_dialog_clearAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
+        android:text="Clear All"
+        app:layout_constraintStart_toEndOf="@+id/download_data_dialog_selectAllButton"
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_downloadButton" />
+
+    <LinearLayout
+        android:id="@+id/download_data_dialog_checkBoxLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_clearAllButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

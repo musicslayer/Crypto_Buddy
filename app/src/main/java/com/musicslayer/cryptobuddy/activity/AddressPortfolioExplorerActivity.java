@@ -59,8 +59,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     DiscreteFilter addressFilter = new DiscreteFilter();
 
-    public boolean includeBalances = true;
-    public boolean includeTransactions = true;
+    public ArrayList<Boolean> includeBalances;
+    public ArrayList<Boolean> includeTransactions;
 
     public int getAdLayoutViewID() {
         return R.id.address_portfolio_explorer_adLayout;
@@ -87,6 +87,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
+
+        updateFilter();
 
         boolean includeTokens = false;
         for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
@@ -159,6 +161,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 addressPortfolioObj.addData(newCryptoAddress[0]);
                 AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
+                updateFilter();
+
                 // Add this new address to both maps. New addresses do not start filtered.
                 addressDataMap.put(newCryptoAddress[0], addressData);
                 addressDataFilterMap.put(newCryptoAddress[0], addressData);
@@ -198,7 +202,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment addressInfoDialogFragment = BaseDialogFragment.newInstance(AddressInfoDialog.class, new ArrayList<>(addressDataMap.values()));
+                BaseDialogFragment addressInfoDialogFragment = BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList, addressDataMap);
                 addressInfoDialogFragment.show(AddressPortfolioExplorerActivity.this, "info");
             }
         });
@@ -226,18 +230,20 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 ArrayList<CryptoAddress> cryptoAddressArrayList = addressPortfolioObj.cryptoAddressArrayList;
 
                 ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
-                for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+                for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+                    CryptoAddress cryptoAddress = cryptoAddressArrayList.get(i);
+
                     if(ProgressDialogFragment.isCancelled()) { return; }
 
                     AddressData newAddressData;
 
-                    if(includeBalances && includeTransactions) {
+                    if(includeBalances.get(i) && includeTransactions.get(i)) {
                         newAddressData = AddressData.getAllData(cryptoAddress);
                     }
-                    else if(includeBalances) {
+                    else if(includeBalances.get(i)) {
                         newAddressData = AddressData.getCurrentBalanceData(cryptoAddress);
                     }
-                    else if(includeTransactions) {
+                    else if(includeTransactions.get(i)) {
                         newAddressData = AddressData.getTransactionsData(cryptoAddress);
                     }
                     else {
@@ -259,15 +265,17 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
 
-                for(AddressData newAddressData : newAddressDataArrayList) {
+                for(int i = 0; i < newAddressDataArrayList.size(); i++) {
+                    AddressData newAddressData = newAddressDataArrayList.get(i);
+
                     boolean isComplete;
-                    if(includeBalances && includeTransactions) {
+                    if(includeBalances.get(i) && includeTransactions.get(i)) {
                         isComplete = newAddressData.isComplete();
                     }
-                    else if(includeBalances) {
+                    else if(includeBalances.get(i)) {
                         isComplete = newAddressData.isCurrentBalanceComplete();
                     }
-                    else if(includeTransactions) {
+                    else if(includeTransactions.get(i)) {
                         isComplete = newAddressData.isTransactionsComplete();
                     }
                     else {
@@ -304,7 +312,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, addressPortfolioObj.cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -351,12 +359,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         filterAddressButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                ArrayList<String> data = new ArrayList<>();
-                for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
-                    data.add(cryptoAddress.toString());
-                }
-
-                addressFilter.updateFilterData(data);
                 addressFilterDialogFragment.updateArguments(DiscreteFilterDialog.class, addressFilter);
                 addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
@@ -372,6 +374,15 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         T.setText("Portfolio = " + addressPortfolioObj.name);
 
         table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataFilterMap.values()));
+    }
+
+    public void updateFilter() {
+        ArrayList<String> data = new ArrayList<>();
+        for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+            data.add(cryptoAddress.toString());
+        }
+
+        addressFilter.updateFilterData(data);
     }
 
     @Override
@@ -409,8 +420,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
         bundle.putString("addressDataFilterMap", Serialization.serializeHashMap(addressDataMap));
-        bundle.putString("includeBalances", Serialization.boolean_serialize(includeBalances));
-        bundle.putString("includeTransactions", Serialization.boolean_serialize(includeTransactions));
+        bundle.putString("includeBalances", Serialization.boolean_serializeArrayList(includeBalances));
+        bundle.putString("includeTransactions", Serialization.boolean_serializeArrayList(includeTransactions));
         bundle.putString("filter", Serialization.serialize(addressFilter));
     }
 
@@ -419,8 +430,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         if(bundle != null) {
             addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
             addressDataFilterMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
-            includeBalances = Serialization.boolean_deserialize(bundle.getString("includeBalances"));
-            includeTransactions = Serialization.boolean_deserialize(bundle.getString("includeTransactions"));
+            includeBalances = Serialization.boolean_deserializeArrayList(bundle.getString("includeBalances"));
+            includeTransactions = Serialization.boolean_deserializeArrayList(bundle.getString("includeTransactions"));
             addressFilter = Serialization.deserialize(bundle.getString("filter"), DiscreteFilter.class);
 
             updateLayout();

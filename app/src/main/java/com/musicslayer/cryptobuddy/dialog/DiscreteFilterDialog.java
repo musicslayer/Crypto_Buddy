@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -81,12 +82,21 @@ public class DiscreteFilterDialog extends FilterDialog {
                 C[i] = new CheckBox(this.activity);
                 C[i].setChecked(discreteFilter.isIncluded(discreteFilter.choices.get(i)));
                 C[i].setText(discreteFilter.choices.get(i));
+
+                LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LP.setMargins(0,0,0,50);
+                C[i].setLayoutParams(LP);
+
                 L.addView(C[i]);
             }
         }
         else {
             // After onRestore
             for(int i = 0; i < discreteFilter.choices.size(); i++) {
+                LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LP.setMargins(0,0,0,50);
+                C[i].setLayoutParams(LP);
+
                 L.addView(C[i]);
             }
         }
