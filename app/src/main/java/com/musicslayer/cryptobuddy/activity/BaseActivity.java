@@ -29,7 +29,8 @@ abstract public class BaseActivity extends CrashActivity {
             });
 
             // Keep trying in every activity if the first call during initialization was not successful.
-            InAppPurchase.initialize(getApplicationContext());
+            // Do not pass in the application context here.
+            InAppPurchase.initialize(this);
         }
 
         createLayout();
