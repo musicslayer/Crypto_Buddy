@@ -30,6 +30,8 @@ public class AddressTable extends Table {
     }
 
     public void addRowsFromAddressDataArray(Context context, ArrayList<AddressData> addressDataArrayList) {
+        if(addressDataArrayList == null) { return; }
+
         boolean isAny = false;
         for(AddressData addressData : addressDataArrayList) {
             if(addressData.isTransactionsComplete()) {
@@ -44,6 +46,8 @@ public class AddressTable extends Table {
     }
 
     public void addRowsFromAddressData(Context context, AddressData addressData) {
+        if(addressData == null) { return; }
+
         if(addressData.isTransactionsComplete()) {
             addRowsImpl(context, addressData.transactionArrayList);
             finishRows(context);

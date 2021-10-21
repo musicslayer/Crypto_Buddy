@@ -38,12 +38,13 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AddressExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     AddressTable table;
-    ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
+    HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 
     // Whether the "Download Data" button was pressed.
@@ -118,7 +119,7 @@ public class AddressExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressInfoDialog.class, addressDataArrayList).show(AddressExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(AddressInfoDialog.class, new ArrayList<>(addressDataMap.values())).show(AddressExplorerActivity.this, "info");
             }
         });
 
@@ -151,8 +152,9 @@ public class AddressExplorerActivity extends BaseActivity {
                     ToastUtil.showToast(AddressExplorerActivity.this,"no_address_data");
                 }
 
-                addressDataArrayList.clear();
-                addressDataArrayList.add(newAddressData);
+                addressDataMap.clear();
+                addressDataMap.put(cryptoAddressArrayList.get(0), newAddressData);
+
                 updateLayout();
                 ToastUtil.showToast(AddressExplorerActivity.this,"refresh");
             }
@@ -224,7 +226,7 @@ public class AddressExplorerActivity extends BaseActivity {
         TextView T = findViewById(R.id.address_explorer_infoTextView);
         T.setText("Address = " + cryptoAddressArrayList.get(0).toString());
 
-        table.addRowsFromAddressDataArray(this, addressDataArrayList);
+        table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataMap.values()));
     }
 
     @Override
@@ -260,14 +262,14 @@ public class AddressExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList));
+        bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
         bundle.putString("isPressed", Serialization.boolean_serialize(isPressed));
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            addressDataArrayList = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
+            addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
             isPressed = Serialization.boolean_deserialize(bundle.getString("isPressed"));
 
             updateLayout();

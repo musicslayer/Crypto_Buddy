@@ -13,33 +13,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
-import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
-import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-
-import java.util.ArrayList;
 
 // TODO Have another screen which lists addresses in the portfolio.
 // Users can select one or more that they wish to analyze?
 
 public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
-
-    //final ArrayList<CryptoAddress>[] cryptoAddressArrayList = new ArrayList[1];
-    //final String[] AddressPortfolioObjName = new String[1];
 
     public int getAdLayoutViewID() {
         return R.id.address_portfolio_viewer_adLayout;
@@ -111,52 +100,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-/*
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
-            @Override
-            public void onShowImpl(DialogInterface dialog) {
-                ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
-
-                for(CryptoAddress cryptoAddress : cryptoAddressArrayList[0]) {
-                    if(ProgressDialogFragment.isCancelled()) { return; }
-                    addressDataArrayList.add(AddressData.getAllData(cryptoAddress));
-
-                    // Save found tokens, potentially from multiple TokenManagers.
-                    TokenManagerList.saveAllData(AddressPortfolioViewerActivity.this);
-                }
-
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(addressDataArrayList));
-            }
-        });
-
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<AddressData> addressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
-
-                for(AddressData addressData : addressDataArrayList) {
-                    if(!addressData.isComplete()) {
-                        // Only alert once. Others would be redundant.
-                        ToastUtil.showToast(AddressPortfolioViewerActivity.this,"no_address_data");
-                        break;
-                    }
-                }
-
-                // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
-                // Note that serialization does shrink this somewhat.
-                Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
-                intent.putExtra("AddressPortfolioName",  AddressPortfolioObjName[0]);
-                intent.putExtra("AddressData_Array", Serialization.serializeArrayList(addressDataArrayList));
-                AddressPortfolioViewerActivity.this.startActivity(intent);
-
-                finish();
-            }
-        });
-        progressDialogFragment.restoreListeners(this, "progress");
-
- */
-
         for(AddressPortfolioObj addressPortfolioObj : AddressPortfolio.settings_address_portfolio) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B.setText(addressPortfolioObj.name);
@@ -164,11 +107,6 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    //cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
-                    //AddressPortfolioObjName[0] = addressPortfolioObj.name;
-
-                    //progressDialogFragment.show(AddressPortfolioViewerActivity.this, "progress");
-
                     Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
                     intent.putExtra("AddressPortfolioName",  addressPortfolioObj.name);
                     AddressPortfolioViewerActivity.this.startActivity(intent);
@@ -201,16 +139,12 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("PortfolioName", currentDeletePortfolioName);
-        //bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
-        //bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
-            //cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
-            //AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
     }
 }

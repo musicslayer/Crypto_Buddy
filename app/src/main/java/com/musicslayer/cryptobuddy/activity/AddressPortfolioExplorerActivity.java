@@ -42,6 +42,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AddressPortfolioExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
@@ -51,7 +52,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     final static CryptoAddress[] newCryptoAddress = new CryptoAddress[1];
 
     AddressPortfolioObj addressPortfolioObj;
-    ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
+    HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
 
     int filterIndex = -1;
 
@@ -153,7 +154,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 addressPortfolioObj.addData(newCryptoAddress[0]);
                 AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
-                addressDataArrayList.add(addressData);
+                addressDataMap.put(newCryptoAddress[0], addressData);
                 updateLayout();
 
                 if(filterIndex != -1) {
@@ -194,7 +195,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment addressInfoDialogFragment = BaseDialogFragment.newInstance(AddressInfoDialog.class, addressDataArrayList);
+                BaseDialogFragment addressInfoDialogFragment = BaseDialogFragment.newInstance(AddressInfoDialog.class, new ArrayList<>(addressDataMap.values()));
                 addressInfoDialogFragment.show(AddressPortfolioExplorerActivity.this, "info");
             }
         });
@@ -260,8 +261,13 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
-                addressDataArrayList.clear();
-                addressDataArrayList.addAll(newAddressDataArrayList);
+                addressDataMap.clear();
+                for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+                    CryptoAddress cryptoAddress = addressPortfolioObj.cryptoAddressArrayList.get(i);
+                    AddressData addressData = newAddressDataArrayList.get(i);
+                    addressDataMap.put(cryptoAddress, addressData);
+                }
+
                 updateLayout();
                 ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"refresh");
             }
@@ -342,17 +348,23 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
         if(filterIndex == -1) {
             T.setText("Portfolio = " + addressPortfolioObj.name);
-            table.addRowsFromAddressDataArray(this, addressDataArrayList);
+            table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataMap.values()));
         }
         else {
             T.setText("Portfolio = " + addressPortfolioObj.name + "\nAddress = " + addressPortfolioObj.cryptoAddressArrayList.get(filterIndex).toString());
-
-            //todo hashmap
-            try {
-                table.addRowsFromAddressData(this, addressDataArrayList.get(filterIndex));
-            }
-            catch(Exception ignored) {}
+            table.addRowsFromAddressData(this, getValueFromMap(addressPortfolioObj.cryptoAddressArrayList.get(filterIndex)));
         }
+    }
+
+    public AddressData getValueFromMap(CryptoAddress cryptoAddress) {
+        // We need this because HashMap isn't using the equals method as we expect.
+        ArrayList<CryptoAddress> keys = new ArrayList<>(addressDataMap.keySet());
+        for(CryptoAddress key : keys) {
+            if(key.equals(cryptoAddress)) {
+                return addressDataMap.get(key);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -389,7 +401,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putInt("filterIndex", filterIndex);
-        bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList));
+        bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
         bundle.putString("isPressed", Serialization.boolean_serialize(isPressed));
     }
 
@@ -397,7 +409,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             filterIndex = bundle.getInt("filterIndex", -1);
-            addressDataArrayList = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
+            addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
             isPressed = Serialization.boolean_deserialize(bundle.getString("isPressed"));
 
             updateLayout();

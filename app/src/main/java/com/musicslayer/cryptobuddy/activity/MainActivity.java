@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
@@ -21,8 +20,6 @@ import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.PrivacyPolicyDialog;
-import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
-import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReviewDialog;
@@ -31,7 +28,6 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -39,8 +35,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.Date;
 
 public class MainActivity extends BaseActivity {
-    //final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
-
     public int getAdLayoutViewID() {
         return R.id.main_adLayout;
     }
@@ -95,49 +89,12 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-/*
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
-            @Override
-            public void onShowImpl(DialogInterface dialog) {
-                AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
-
-                // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(MainActivity.this);
-
-                ProgressDialogFragment.setValue(Serialization.serialize(addressData));
-            }
-        });
-
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                AddressData addressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
-
-                if(!addressData.isComplete()) {
-                    ToastUtil.showToast(MainActivity.this,"no_address_data");
-                }
-
-                Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
-                intent.putExtra("AddressData", Serialization.serialize(addressData));
-                MainActivity.this.startActivity(intent);
-
-                MainActivity.this.finish();
-            }
-        });
-        progressDialogFragment.restoreListeners(this, "progress");
-
- */
-
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
         chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
-                    //cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
                     CryptoAddress cryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
-
-                    //progressDialogFragment.show(MainActivity.this, "progress");
 
                     Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
                     intent.putExtra("CryptoAddress", Serialization.serialize(cryptoAddress));
