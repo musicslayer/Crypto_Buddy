@@ -42,7 +42,6 @@ public class ToastUtil {
         toastMap.put("unknown_google_play_error", Toast.makeText(context, "Unknown error accessing Google Play services.", getToastDuration()));
 
         toastMap.put("new_transaction_filtered", Toast.makeText(context, "Added transaction(s) are being filtered.", getToastDuration()));
-        toastMap.put("new_address_filtered", Toast.makeText(context, "Added address is being filtered.", getToastDuration()));
 
         toastMap.put("portfolio_name_used", Toast.makeText(context, "A portfolio with this name already exists.", getToastDuration()));
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", getToastDuration()));

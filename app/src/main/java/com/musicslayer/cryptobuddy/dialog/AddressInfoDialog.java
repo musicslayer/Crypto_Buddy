@@ -1,21 +1,15 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
-import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
-
-import net.glxn.qrgen.android.QRCode;
 
 import java.util.ArrayList;
 

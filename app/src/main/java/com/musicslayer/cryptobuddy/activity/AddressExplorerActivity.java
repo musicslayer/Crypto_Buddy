@@ -77,6 +77,7 @@ public class AddressExplorerActivity extends BaseActivity {
 
         CryptoAddress cryptoAddress = Serialization.deserialize(getIntent().getStringExtra("CryptoAddress"), CryptoAddress.class);
         cryptoAddressArrayList.add(cryptoAddress);
+        addressDataMap.put(cryptoAddress, AddressData.getNoData(cryptoAddress));
 
         boolean includeTokens = cryptoAddress.includeTokens;
 

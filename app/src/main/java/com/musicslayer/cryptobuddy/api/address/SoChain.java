@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.settings.MaxNumberTransactionsSetting;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;

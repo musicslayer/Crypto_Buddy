@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.coin.TOMO;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;

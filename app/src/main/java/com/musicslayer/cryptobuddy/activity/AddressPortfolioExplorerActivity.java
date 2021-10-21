@@ -18,14 +18,15 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.dialog.AddressFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
+import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
+import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.R;
@@ -54,8 +55,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     AddressPortfolioObj addressPortfolioObj;
     HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
+    HashMap<CryptoAddress, AddressData> addressDataFilterMap = new HashMap<>();
 
-    int filterIndex = -1;
+    DiscreteFilter addressFilter = new DiscreteFilter();
 
     public boolean includeBalances = true;
     public boolean includeTransactions = true;
@@ -88,9 +90,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
         boolean includeTokens = false;
         for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+            addressDataMap.put(cryptoAddress, AddressData.getNoData(cryptoAddress));
+            addressDataFilterMap.put(cryptoAddress, AddressData.getNoData(cryptoAddress));
+
             if(cryptoAddress.includeTokens) {
                 includeTokens = true;
-                break;
             }
         }
 
@@ -155,12 +159,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 addressPortfolioObj.addData(newCryptoAddress[0]);
                 AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
+                // Add this new address to both maps. New addresses do not start filtered.
                 addressDataMap.put(newCryptoAddress[0], addressData);
+                addressDataFilterMap.put(newCryptoAddress[0], addressData);
                 updateLayout();
-
-                if(filterIndex != -1) {
-                    ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"new_address_filtered");
-                }
             }
         });
         add_progressDialogFragment.restoreListeners(this, "progress_add");
@@ -286,6 +288,16 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     addressDataMap.put(cryptoAddress, addressData);
                 }
 
+                // Apply filter after downloading data.
+                ArrayList<String> choices = addressFilter.user_choices;
+
+                addressDataFilterMap.clear();
+                for(CryptoAddress cryptoAddress : new ArrayList<>(addressDataMap.keySet())) {
+                    if(choices.contains(cryptoAddress.toString())) {
+                        addressDataFilterMap.put(cryptoAddress, addressDataMap.get(cryptoAddress));
+                    }
+                }
+
                 updateLayout();
                 ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_data_downloaded");
             }
@@ -313,12 +325,22 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
+        BaseDialogFragment addressFilterDialogFragment = addressFilter.getGenericDialogFragment();
         addressFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((AddressFilterDialog)dialog).isComplete) {
-                    filterIndex = ((AddressFilterDialog)dialog).user_INDEX;
+                if(((DiscreteFilterDialog)dialog).isComplete) {
+                    addressFilter = ((DiscreteFilterDialog)dialog).discreteFilter;
+
+                    ArrayList<String> choices = addressFilter.user_choices;
+
+                    addressDataFilterMap.clear();
+                    for(CryptoAddress cryptoAddress : new ArrayList<>(addressDataMap.keySet())) {
+                        if(choices.contains(cryptoAddress.toString())) {
+                            addressDataFilterMap.put(cryptoAddress, addressDataMap.get(cryptoAddress));
+                        }
+                    }
+
                     updateLayout();
                 }
             }
@@ -329,7 +351,13 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         filterAddressButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
+                ArrayList<String> data = new ArrayList<>();
+                for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+                    data.add(cryptoAddress.toString());
+                }
+
+                addressFilter.updateFilterData(data);
+                addressFilterDialogFragment.updateArguments(DiscreteFilterDialog.class, addressFilter);
                 addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
         });
@@ -341,26 +369,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         table.resetTable();
 
         TextView T = findViewById(R.id.address_portfolio_explorer_infoTextView);
+        T.setText("Portfolio = " + addressPortfolioObj.name);
 
-        if(filterIndex == -1) {
-            T.setText("Portfolio = " + addressPortfolioObj.name);
-            table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataMap.values()));
-        }
-        else {
-            T.setText("Portfolio = " + addressPortfolioObj.name + "\nAddress = " + addressPortfolioObj.cryptoAddressArrayList.get(filterIndex).toString());
-            table.addRowsFromAddressData(this, getValueFromMap(addressPortfolioObj.cryptoAddressArrayList.get(filterIndex)));
-        }
-    }
-
-    public AddressData getValueFromMap(CryptoAddress cryptoAddress) {
-        // We need this because HashMap isn't using the equals method as we expect.
-        ArrayList<CryptoAddress> keys = new ArrayList<>(addressDataMap.keySet());
-        for(CryptoAddress key : keys) {
-            if(key.equals(cryptoAddress)) {
-                return addressDataMap.get(key);
-            }
-        }
-        return null;
+        table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataFilterMap.values()));
     }
 
     @Override
@@ -396,19 +407,21 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putInt("filterIndex", filterIndex);
         bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
+        bundle.putString("addressDataFilterMap", Serialization.serializeHashMap(addressDataMap));
         bundle.putString("includeBalances", Serialization.boolean_serialize(includeBalances));
         bundle.putString("includeTransactions", Serialization.boolean_serialize(includeTransactions));
+        bundle.putString("filter", Serialization.serialize(addressFilter));
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            filterIndex = bundle.getInt("filterIndex", -1);
             addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
+            addressDataFilterMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
             includeBalances = Serialization.boolean_deserialize(bundle.getString("includeBalances"));
             includeTransactions = Serialization.boolean_deserialize(bundle.getString("includeTransactions"));
+            addressFilter = Serialization.deserialize(bundle.getString("filter"), DiscreteFilter.class);
 
             updateLayout();
         }

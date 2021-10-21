@@ -22,8 +22,8 @@ import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
+import com.musicslayer.cryptobuddy.dialog.FilterDialog;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -187,7 +187,10 @@ abstract public class Table extends CrashTableLayout {
                     filterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                         @Override
                         public void onDismissImpl(DialogInterface dialog) {
-                            if(((BaseDialog)dialog).isComplete) {
+                            if(((FilterDialog)dialog).isComplete) {
+                                // We need to update the filter because it is a different handle.
+                                filterArrayList.set(ii, ((FilterDialog)dialog).filter);
+
                                 filterTable(context);
                                 t[ii].setText(filterArrayList.get(ii).getIncludedString());
                                 redrawHeaderRows(context);

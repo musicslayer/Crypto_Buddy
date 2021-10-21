@@ -15,8 +15,8 @@ import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
 import java.util.Calendar;
 
-public class DateFilterDialog extends BaseDialog {
-    public DateFilter filter;
+public class DateFilterDialog extends FilterDialog {
+    public DateFilter dateFilter;
 
     int[] LASTCUSTOMDATE_START_INFO;
     int[] LASTCUSTOMDATE_END_INFO;
@@ -26,15 +26,15 @@ public class DateFilterDialog extends BaseDialog {
     boolean isEndDate;
     boolean isEndTime;
 
-    public DateFilterDialog(Activity activity, DateFilter filter) {
-        super(activity);
-        this.filter = filter;
+    public DateFilterDialog(Activity activity, DateFilter dateFilter) {
+        super(activity, dateFilter);
+        this.dateFilter = dateFilter;
 
         Calendar calendarStart = Calendar.getInstance();
         Calendar calendarEnd = Calendar.getInstance();
 
         // Use the filter's data if it was previously used, otherwise fill in defaults.
-        if(filter.user_startDate == null) {
+        if(dateFilter.user_startDate == null) {
             isStartDate = false;
             isStartTime = false;
 
@@ -46,10 +46,10 @@ public class DateFilterDialog extends BaseDialog {
             isStartDate = true;
             isStartTime = true;
 
-            calendarStart.setTime(filter.user_startDate);
+            calendarStart.setTime(dateFilter.user_startDate);
         }
 
-        if(filter.user_endDate == null) {
+        if(dateFilter.user_endDate == null) {
             isEndDate = false;
             isEndTime = false;
 
@@ -61,7 +61,7 @@ public class DateFilterDialog extends BaseDialog {
             isEndDate = true;
             isEndTime = true;
 
-            calendarEnd.setTime(filter.user_endDate);
+            calendarEnd.setTime(dateFilter.user_endDate);
         }
 
         LASTCUSTOMDATE_START_INFO = new int[]{calendarStart.get(Calendar.YEAR),calendarStart.get(Calendar.MONTH),calendarStart.get(Calendar.DAY_OF_MONTH),calendarStart.get(Calendar.HOUR_OF_DAY),calendarStart.get(Calendar.MINUTE),calendarStart.get(Calendar.SECOND)};
@@ -79,11 +79,11 @@ public class DateFilterDialog extends BaseDialog {
         B_FILTER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(isStartDate || isStartTime) {
-                    filter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
+                    dateFilter.user_startDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_START_INFO[0], LASTCUSTOMDATE_START_INFO[1], LASTCUSTOMDATE_START_INFO[2], LASTCUSTOMDATE_START_INFO[3], LASTCUSTOMDATE_START_INFO[4], LASTCUSTOMDATE_START_INFO[5]);
                 }
 
                 if(isEndDate || isEndTime) {
-                    filter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
+                    dateFilter.user_endDate = DateTimeUtil.getDateTime(LASTCUSTOMDATE_END_INFO[0], LASTCUSTOMDATE_END_INFO[1], LASTCUSTOMDATE_END_INFO[2], LASTCUSTOMDATE_END_INFO[3], LASTCUSTOMDATE_END_INFO[4], LASTCUSTOMDATE_END_INFO[5]);
                 }
 
                 isComplete = true;
@@ -94,8 +94,8 @@ public class DateFilterDialog extends BaseDialog {
         Button B_CLEAR = findViewById(R.id.date_filter_dialog_clearDatesButton);
         B_CLEAR.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                filter.user_startDate = null;
-                filter.user_endDate = null;
+                dateFilter.user_startDate = null;
+                dateFilter.user_endDate = null;
 
                 isStartDate = false;
                 isStartTime = false;
