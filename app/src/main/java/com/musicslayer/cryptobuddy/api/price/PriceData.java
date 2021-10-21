@@ -120,6 +120,15 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
+    public static PriceData getNoData(Crypto crypto) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        AssetQuantity price_f = null;
+        AssetQuantity marketCap_f = null;
+
+        return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
+    }
+
     public boolean isComplete() {
         return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && price != null && marketCap != null;
     }

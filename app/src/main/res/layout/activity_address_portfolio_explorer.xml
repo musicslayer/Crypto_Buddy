@@ -69,7 +69,7 @@
         app:layout_constraintTop_toBottomOf="@id/address_portfolio_explorer_infoTextView" />
 
     <HorizontalScrollView
-        android:id="@+id/address_portfolio_explorer_horizontalScrollView"
+        android:id="@+id/address_portfolio_explorer_horizontalScrollView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,7 +77,7 @@
         app:layout_constraintTop_toBottomOf="@id/address_portfolio_explorer_messageTextView">
 
         <LinearLayout
-            android:id="@+id/address_portfolio_explorer_linearLayout"
+            android:id="@+id/address_portfolio_explorer_linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
@@ -88,6 +88,23 @@
                 android:layout_height="wrap_content"
                 app:drawableLeftCompat="@drawable/ic_baseline_download_24"
                 android:text="Download Data" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/address_portfolio_explorer_horizontalScrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_portfolio_explorer_horizontalScrollView1">
+
+        <LinearLayout
+            android:id="@+id/address_portfolio_explorer_linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/address_portfolio_explorer_addButton"
@@ -118,13 +135,6 @@
                 app:srcCompat="@drawable/ic_baseline_filter_list_24" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/address_portfolio_explorer_refreshButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:srcCompat="@drawable/ic_baseline_refresh_24" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/address_portfolio_explorer_qrCodeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,7 +150,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_portfolio_explorer_horizontalScrollView">
+        app:layout_constraintTop_toBottomOf="@+id/address_portfolio_explorer_horizontalScrollView2">
     </view>
 
     <com.musicslayer.cryptobuddy.view.TwoDScrollView

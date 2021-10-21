@@ -88,7 +88,7 @@ public class TotalDialog extends BaseDialog {
                 HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetAmount.class);
 
                 if(newPriceMap.size() != deltaMap.size()) {
-                    ToastUtil.showToast(activity,"no_price_data");
+                    ToastUtil.showToast(activity,"incomplete_price_data");
                 }
 
                 priceMap.clear();

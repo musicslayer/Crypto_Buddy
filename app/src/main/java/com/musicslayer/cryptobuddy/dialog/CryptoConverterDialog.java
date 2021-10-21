@@ -94,7 +94,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
                 else {
                     T.setText("");
-                    ToastUtil.showToast(activity,"no_price_data");
+                    ToastUtil.showToast(activity,"incomplete_price_data");
                 }
             }
         });

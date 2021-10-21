@@ -25,6 +25,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.DownloadDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -47,8 +48,8 @@ public class AddressExplorerActivity extends BaseActivity {
     HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 
-    // Whether the "Download Data" button was pressed.
-    public boolean isPressed = false;
+    public boolean includeBalances = true;
+    public boolean includeTransactions = true;
 
     public int getAdLayoutViewID() {
         return R.id.address_explorer_adLayout;
@@ -131,11 +132,32 @@ public class AddressExplorerActivity extends BaseActivity {
             }
         });
 
+        FloatingActionButton fab_qrcode = findViewById(R.id.address_explorer_qrCodeButton);
+        fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, cryptoAddressArrayList).show(AddressExplorerActivity.this, "qrcode");
+            }
+        });
+
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData newAddressData = AddressData.getAllData(cryptoAddressArrayList.get(0));
+                AddressData newAddressData;
+
+                if(includeBalances && includeTransactions) {
+                    newAddressData = AddressData.getAllData(cryptoAddressArrayList.get(0));
+                }
+                else if(includeBalances) {
+                    newAddressData = AddressData.getCurrentBalanceData(cryptoAddressArrayList.get(0));
+                }
+                else if(includeTransactions) {
+                    newAddressData = AddressData.getTransactionsData(cryptoAddressArrayList.get(0));
+                }
+                else {
+                    newAddressData = AddressData.getNoData(cryptoAddressArrayList.get(0));
+                }
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressExplorerActivity.this);
@@ -148,51 +170,51 @@ public class AddressExplorerActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
-                if(!newAddressData.isComplete()) {
-                    ToastUtil.showToast(AddressExplorerActivity.this,"no_address_data");
+                boolean isComplete;
+                if(includeBalances && includeTransactions) {
+                    isComplete = newAddressData.isComplete();
+                }
+                else if(includeBalances) {
+                    isComplete = newAddressData.isCurrentBalanceComplete();
+                }
+                else if(includeTransactions) {
+                    isComplete = newAddressData.isTransactionsComplete();
+                }
+                else {
+                    isComplete = true;
+                }
+
+                if(!isComplete) {
+                    ToastUtil.showToast(AddressExplorerActivity.this,"incomplete_address_data");
                 }
 
                 addressDataMap.clear();
                 addressDataMap.put(cryptoAddressArrayList.get(0), newAddressData);
 
                 updateLayout();
-                ToastUtil.showToast(AddressExplorerActivity.this,"refresh");
+                ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        FloatingActionButton fab_refresh = findViewById(R.id.address_explorer_refreshButton);
-        fab_refresh.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class);
+        downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
-            public void onClickImpl(View view) {
-                progressDialogFragment.show(AddressExplorerActivity.this, "progress");
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((DownloadDataDialog)dialog).isComplete) {
+                    includeBalances = ((DownloadDataDialog)dialog).user_BALANCES;
+                    includeTransactions = ((DownloadDataDialog)dialog).user_TRANSACTIONS;
+                    progressDialogFragment.show(AddressExplorerActivity.this, "progress");
+                }
             }
         });
+        downloadDialogFragment.restoreListeners(this, "download");
 
-        FloatingActionButton fab_qrcode = findViewById(R.id.address_explorer_qrCodeButton);
-        fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, cryptoAddressArrayList).show(AddressExplorerActivity.this, "qrcode");
-            }
-        });
-
-        // Download data is same as refresh, but we will change the visibility of buttons after.
         AppCompatButton downloadDataButton = findViewById(R.id.address_explorer_downloadDataButton);
         downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                progressDialogFragment.show(AddressExplorerActivity.this, "progress");
-
-                // Even if this fails, or the user backs out, we still consider it pressed.
-                isPressed = true;
-
-                downloadDataButton.setVisibility(View.GONE);
-
-                fab_info.setVisibility(View.VISIBLE);
-                fab_total.setVisibility(View.VISIBLE);
-                fab_refresh.setVisibility(View.VISIBLE);
-                fab_qrcode.setVisibility(View.VISIBLE);
+                downloadDialogFragment.show(AddressExplorerActivity.this, "download");
             }
         });
 
@@ -201,27 +223,6 @@ public class AddressExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
-
-        AppCompatButton downloadDataButton = findViewById(R.id.address_explorer_downloadDataButton);
-        FloatingActionButton fab_info = findViewById(R.id.address_explorer_infoButton);
-        FloatingActionButton fab_total = findViewById(R.id.address_explorer_totalButton);
-        FloatingActionButton fab_refresh = findViewById(R.id.address_explorer_refreshButton);
-        FloatingActionButton fab_qrcode = findViewById(R.id.address_explorer_qrCodeButton);
-
-        if(isPressed) {
-            downloadDataButton.setVisibility(View.GONE);
-            fab_info.setVisibility(View.VISIBLE);
-            fab_total.setVisibility(View.VISIBLE);
-            fab_refresh.setVisibility(View.VISIBLE);
-            fab_qrcode.setVisibility(View.VISIBLE);
-        }
-        else {
-            downloadDataButton.setVisibility(View.VISIBLE);
-            fab_info.setVisibility(View.GONE);
-            fab_total.setVisibility(View.GONE);
-            fab_refresh.setVisibility(View.GONE);
-            fab_qrcode.setVisibility(View.GONE);
-        }
 
         TextView T = findViewById(R.id.address_explorer_infoTextView);
         T.setText("Address = " + cryptoAddressArrayList.get(0).toString());
@@ -263,14 +264,16 @@ public class AddressExplorerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
-        bundle.putString("isPressed", Serialization.boolean_serialize(isPressed));
+        bundle.putString("includeBalances", Serialization.boolean_serialize(includeBalances));
+        bundle.putString("includeTransactions", Serialization.boolean_serialize(includeTransactions));
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
-            isPressed = Serialization.boolean_deserialize(bundle.getString("isPressed"));
+            includeBalances = Serialization.boolean_deserialize(bundle.getString("includeBalances"));
+            includeTransactions = Serialization.boolean_deserialize(bundle.getString("includeTransactions"));
 
             updateLayout();
         }

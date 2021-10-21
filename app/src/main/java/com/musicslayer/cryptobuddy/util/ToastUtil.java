@@ -28,8 +28,8 @@ public class ToastUtil {
 
         toastMap.put("empty_address", Toast.makeText(context, "A crypto address cannot be empty.", getToastDuration()));
         toastMap.put("unrecognized_address", Toast.makeText(context, "This address is not recognized as a valid crypto address.", getToastDuration()));
-        toastMap.put("no_address_data", Toast.makeText(context, "Could not access all address information. Check your internet connection and try again.", getToastDuration()));
-        toastMap.put("no_price_data", Toast.makeText(context, "Could not access all price information. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("incomplete_address_data", Toast.makeText(context, "Could not access all address information. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", getToastDuration()));
         toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", getToastDuration()));
@@ -47,7 +47,7 @@ public class ToastUtil {
         toastMap.put("portfolio_name_used", Toast.makeText(context, "A portfolio with this name already exists.", getToastDuration()));
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", getToastDuration()));
 
-        toastMap.put("refresh", Toast.makeText(context, "Data has been refreshed.", getToastDuration()));
+        toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", getToastDuration()));
 
         toastMap.put("assets_same", Toast.makeText(context, "Assets must be different.", getToastDuration()));
         toastMap.put("cryptos_same", Toast.makeText(context, "Cryptos must be different.", getToastDuration()));

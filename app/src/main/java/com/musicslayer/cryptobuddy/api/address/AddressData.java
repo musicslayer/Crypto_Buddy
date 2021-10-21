@@ -126,6 +126,15 @@ public class AddressData implements Serialization.SerializableToJSON {
         return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
+    public static AddressData getNoData(CryptoAddress cryptoAddress) {
+        AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
+        ArrayList<Transaction> transactionArrayList_f = null;
+
+        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+    }
+
     public boolean isComplete() {
         return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && !(addressAPI_transactions instanceof UnknownAddressAPI) && currentBalanceArrayList != null && transactionArrayList != null;
     }
