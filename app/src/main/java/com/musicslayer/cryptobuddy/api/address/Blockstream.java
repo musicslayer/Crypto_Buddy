@@ -15,7 +15,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Discrepancy
+// Discrepancy
 // mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt
 // Balance = 1028.73669102
 // Delta T = 2723.13489677

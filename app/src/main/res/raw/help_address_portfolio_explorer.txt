@@ -1,12 +1,18 @@
 View transactions on all crypto addresses in the portfolio, and then get the net values of all assets involved, including a total USD value.
 
 Buttons left to right:
---> Add new address to portfolio
---> Address information
---> Get net values*
---> Filter Address
---> Refresh table
---> QR Codes
+--> First Row
+-----> Download Data*
+-----> Address Filter
 
-*Note - this is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses.
+--> Second Row
+-----> Add new address to portfolio
+-----> Address information
+-----> Get net values**
+-----> QR Codes
+
+*This will ask which types of data should be downloaded for each address in the portfolio.
+When any download is finished, even if nothing is selected, all existing data is cleared before new data is displayed.
+
+**This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses in the portfolio.
 For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.
