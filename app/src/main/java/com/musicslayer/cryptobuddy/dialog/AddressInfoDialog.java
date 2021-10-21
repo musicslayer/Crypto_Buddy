@@ -39,7 +39,6 @@ public class AddressInfoDialog extends BaseDialog {
     }
 
     public String getInfoString(AddressData addressData) {
-        //StringBuilder s = new StringBuilder("Address = (" + addressData.cryptoAddress.network.getDisplayName() + ") " + addressData.cryptoAddress.address);
         StringBuilder s = new StringBuilder("Address = " + addressData.cryptoAddress.toString());
 
         if(addressData.addressAPI_transactions == null || addressData.transactionArrayList == null) {

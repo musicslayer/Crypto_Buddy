@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,6 +21,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -473,11 +475,13 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public static class TablePageView extends CrashLinearLayout {
+        public static final int numItemsPerPage = 100;
+
         public Table outer_table;
+        BaseDialogFragment choosePageDialogFragment;
         public int currentPage = 1;
         public int lastPage;
         public int numItems;
-        public static final int numItemsPerPage = 100;
 
         public FloatingActionButton fab_first;
         public FloatingActionButton fab_left;
@@ -521,6 +525,19 @@ abstract public class Table extends CrashTableLayout {
         }
 
         public void makeLayout(Context context) {
+            choosePageDialogFragment = BaseDialogFragment.newInstance(ChoosePageDialog.class, 1, lastPage);
+            choosePageDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+                @Override
+                public void onDismissImpl(DialogInterface dialog) {
+                    if(((ChoosePageDialog)dialog).isComplete) {
+                        currentPage = ((ChoosePageDialog)dialog).user_PAGE;
+                        updateLayout();
+                        outer_table.filterTable(context);
+                    }
+                }
+            });
+            choosePageDialogFragment.restoreListeners(context, "page");
+
             fab_first = new FloatingActionButton(context);
             fab_first.setImageResource(R.drawable.ic_baseline_first_page_24);
             fab_first.setOnClickListener(new CrashView.CrashOnClickListener(context) {
@@ -547,9 +564,15 @@ abstract public class Table extends CrashTableLayout {
                 }
             });
 
-            pageTextView = new TextView(context);
-            pageTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            this.setGravity(Gravity.CENTER_VERTICAL);
+            ContextThemeWrapper newContext = new ContextThemeWrapper(context, R.style.TextInverseTheme);
+            pageTextView = new TextView(newContext);
+            pageTextView.setGravity(Gravity.CENTER);
+            pageTextView.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+                @Override
+                public void onClickImpl(View view) {
+                    choosePageDialogFragment.show(context, "page");
+                }
+            });
 
             fab_right = new FloatingActionButton(context);
             fab_right.setImageResource(R.drawable.ic_baseline_chevron_right_24);
@@ -588,12 +611,20 @@ abstract public class Table extends CrashTableLayout {
 
         public void updateLayout() {
             pageTextView.setText(currentPage + "/" + lastPage);
+            choosePageDialogFragment.updateArguments(ChoosePageDialog.class, 1, lastPage);
 
             // Artificially make the text width match the floating action button width.
             final int width = getContext().getResources().getConfiguration().screenWidthDp;
             final int height = getContext().getResources().getConfiguration().screenHeightDp;
-            final int size = Math.max(width, height) < 470 ? 113 : 158;
-            pageTextView.setWidth(size);
+
+            if(Math.max(width, height) < 470) {
+                pageTextView.setBackgroundResource(R.drawable.circle_small);
+                pageTextView.setWidth(113);
+            }
+            else {
+                pageTextView.setBackgroundResource(R.drawable.circle);
+                pageTextView.setWidth(158);
+            }
 
             // Hide this view if there is only 1 page.
             if(lastPage < 2) {

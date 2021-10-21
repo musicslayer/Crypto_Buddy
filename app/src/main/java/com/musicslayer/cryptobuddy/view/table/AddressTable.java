@@ -32,7 +32,7 @@ public class AddressTable extends Table {
     public void addRowsFromAddressDataArray(Context context, ArrayList<AddressData> addressDataArrayList) {
         boolean isAny = false;
         for(AddressData addressData : addressDataArrayList) {
-            if(addressData.addressAPI_transactions != null && addressData.transactionArrayList != null) {
+            if(addressData.isTransactionsComplete()) {
                 isAny = true;
                 addRowsImpl(context, addressData.transactionArrayList);
             }
@@ -44,7 +44,7 @@ public class AddressTable extends Table {
     }
 
     public void addRowsFromAddressData(Context context, AddressData addressData) {
-        if(addressData.addressAPI_transactions != null && addressData.transactionArrayList != null) {
+        if(addressData.isTransactionsComplete()) {
             addRowsImpl(context, addressData.transactionArrayList);
             finishRows(context);
         }

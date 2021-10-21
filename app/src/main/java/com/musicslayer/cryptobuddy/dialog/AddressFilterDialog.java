@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
@@ -13,15 +13,15 @@ import java.util.ArrayList;
 
 public class AddressFilterDialog extends BaseDialog {
     Integer filterIndex;
-    public ArrayList<AddressData> addressDataArrayList;
+    public ArrayList<CryptoAddress> cryptoAddressArrayList;
 
     // Info that the user is providing.
     public int user_INDEX;
 
-    public AddressFilterDialog(Activity activity, Integer filterIndex, ArrayList<AddressData> addressDataArrayList) {
+    public AddressFilterDialog(Activity activity, Integer filterIndex, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
         this.filterIndex = filterIndex;
-        this.addressDataArrayList = addressDataArrayList;
+        this.cryptoAddressArrayList = cryptoAddressArrayList;
     }
 
     public int getBaseViewID() {
@@ -33,8 +33,8 @@ public class AddressFilterDialog extends BaseDialog {
 
         ArrayList<String> options = new ArrayList<>();
         options.add("(ALL)");
-        for(AddressData addressData : addressDataArrayList) {
-            options.add(addressData.cryptoAddress.toString());
+        for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+            options.add(cryptoAddress.toString());
         }
 
         BorderedSpinnerView bsv = findViewById(R.id.address_filter_dialog_spinner);

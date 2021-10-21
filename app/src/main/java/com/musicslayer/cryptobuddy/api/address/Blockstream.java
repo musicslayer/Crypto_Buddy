@@ -15,6 +15,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO Discrepancy
+// mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt
+// Balance = 1028.73669102
+// Delta T = 2723.13489677
+
 public class Blockstream extends AddressAPI {
     public String getName() { return "Blockstream"; }
     public String getDisplayName() { return "Blockstream Esplora HTTP API"; }
@@ -132,8 +137,9 @@ public class Blockstream extends AddressAPI {
                 {
                     JSONObject o = json2.getJSONObject(j);
 
-                    String scriptpubkey_address = o.getString("scriptpubkey_address");
-                    if(!cryptoAddress.matchesAddress(scriptpubkey_address)) { continue; }
+                    if(!o.has("scriptpubkey_address") || !cryptoAddress.matchesAddress(o.getString("scriptpubkey_address"))) {
+                        continue;
+                    }
 
                     voutFound = true;
                     BigInteger N = new BigInteger(o.getString("value"));
@@ -146,10 +152,16 @@ public class Blockstream extends AddressAPI {
                 for(int j = 0; j < json3.length(); j++)
                 {
                     JSONObject o = json3.getJSONObject(j);
+
+                    if(o.isNull("prevout")) {
+                        continue;
+                    }
+
                     JSONObject o2 = o.getJSONObject("prevout");
 
-                    String scriptpubkey_address = o2.getString("scriptpubkey_address");
-                    if(!cryptoAddress.matchesAddress(scriptpubkey_address)) { continue; }
+                    if(!o2.has("scriptpubkey_address") || !cryptoAddress.matchesAddress(o2.getString("scriptpubkey_address"))) {
+                        continue;
+                    }
 
                     vinFound = true;
                     BigInteger N = new BigInteger(o2.getString("value"));

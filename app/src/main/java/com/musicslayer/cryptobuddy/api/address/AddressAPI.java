@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 // TODO NFT View -> We have to support more token types.
+// TODO Create collection of bridges to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 
 abstract public class AddressAPI extends API {
     final public static String DONE = "!DONE!";
@@ -55,7 +56,7 @@ abstract public class AddressAPI extends API {
     }
 
     public boolean shouldIncludeTokens(CryptoAddress cryptoAddress) {
-        // Exclude tokens if person did not purchase "Unlock Tokens", or if they chose not to analyze them.
+        // Exclude tokens if the user did not purchase "Unlock Tokens", or if they chose not to analyze them.
         return Purchases.isUnlockTokensPurchased && cryptoAddress.includeTokens;
     }
 

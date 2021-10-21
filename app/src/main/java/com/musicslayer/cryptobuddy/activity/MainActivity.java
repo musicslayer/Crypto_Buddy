@@ -39,7 +39,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.Date;
 
 public class MainActivity extends BaseActivity {
-    final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
+    //final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
 
     public int getAdLayoutViewID() {
         return R.id.main_adLayout;
@@ -95,6 +95,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+/*
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
@@ -118,9 +119,6 @@ public class MainActivity extends BaseActivity {
                 }
 
                 Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
-
-                // TODO we should only pass the cryptoaddress here, NOT all the addressdata, which could be super large based on balance/transaction count. Then we can increase the setting limit.
-                // Note that serialization does shrink this somewhat.
                 intent.putExtra("AddressData", Serialization.serialize(addressData));
                 MainActivity.this.startActivity(intent);
 
@@ -129,14 +127,23 @@ public class MainActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
+ */
+
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
         chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
-                    cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
+                    //cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
+                    CryptoAddress cryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
-                    progressDialogFragment.show(MainActivity.this, "progress");
+                    //progressDialogFragment.show(MainActivity.this, "progress");
+
+                    Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
+                    intent.putExtra("CryptoAddress", Serialization.serialize(cryptoAddress));
+
+                    MainActivity.this.startActivity(intent);
+                    MainActivity.this.finish();
                 }
             }
         });

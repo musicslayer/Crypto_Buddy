@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.InfoDialog;
 
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 // Class to store crypto-specific info we want to show the user.
 public class InfoUtil {
-    public static boolean hasInfo(ArrayList<AddressData> addressDataArray) {
+    public static boolean hasInfo(ArrayList<CryptoAddress> cryptoAddressArrayList) {
         // Return true if there is any info to show for any crypto.
-        for(AddressData addressData : addressDataArray) {
-            if(InfoUtil.getInfo(addressData) != null) {
+        for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+            if(InfoUtil.getInfo(cryptoAddress) != null) {
                 return true;
             }
         }
@@ -21,29 +21,29 @@ public class InfoUtil {
         return false;
     }
 
-    public static void showInfo(Context context, ArrayList<AddressData> addressDataArray) {
+    public static void showInfo(Context context, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         StringBuilder infoText = new StringBuilder();
         ArrayList<String> seenNames = new ArrayList<>();
 
-        for(AddressData addressData : addressDataArray) {
-            if(seenNames.contains(addressData.cryptoAddress.getCrypto().getName())) { continue; }
+        for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+            if(seenNames.contains(cryptoAddress.getCrypto().getName())) { continue; }
 
-            String info = InfoUtil.getInfo(addressData);
+            String info = InfoUtil.getInfo(cryptoAddress);
             if(info != null) {
-                infoText.append(InfoUtil.getInfo(addressData));
+                infoText.append(info);
             }
 
-            seenNames.add(addressData.cryptoAddress.getCrypto().getName());
+            seenNames.add(cryptoAddress.getCrypto().getName());
         }
 
         BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(InfoDialog.class, infoText.toString());
         infoDialogFragment.show(context, "crypto_info");
     }
 
-    public static String getInfo(AddressData addressData) {
-        String cryptoName = addressData.cryptoAddress.getCrypto().getName();
-        boolean isMainnet = addressData.cryptoAddress.network.isMainnet();
-        String cryptoDisplayName = addressData.cryptoAddress.getCrypto().getDisplayName();
+    public static String getInfo(CryptoAddress cryptoAddress) {
+        String cryptoName = cryptoAddress.getCrypto().getName();
+        boolean isMainnet = cryptoAddress.network.isMainnet();
+        String cryptoDisplayName = cryptoAddress.getCrypto().getDisplayName();
 
         String info;
         switch(cryptoName) {

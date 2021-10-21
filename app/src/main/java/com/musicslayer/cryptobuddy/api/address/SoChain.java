@@ -70,9 +70,10 @@ public class SoChain extends AddressAPI {
         HashMap <String, Double> txnToValue = new HashMap<>();
         HashMap <String, Date> txnToDate = new HashMap<>();
 
-        // Process all received.
+        // Process all received. There is an implicit limit of 100.
+        // Only check "max transactions", even if txnToValue/txnToDate don't grow that large.
         String lastReceivedID = "";
-        for(;;) {
+        for(int i = 100; i <= getMaxTransactions(); i += 100) {
             String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
             lastReceivedID = processReceived(url, cryptoAddress, txnToValue, txnToDate);
 
@@ -84,9 +85,10 @@ public class SoChain extends AddressAPI {
             }
         }
 
-        // Process all spent.
+        // Process all spent. There is an implicit limit of 100.
+        // Only check "max transactions", even if txnToValue/txnToDate don't grow that large.
         String lastSpentID = "";
-        for(;;) {
+        for(int i = 100; i <= getMaxTransactions(); i += 100) {
             String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
             lastSpentID = processSpent(url, cryptoAddress, txnToValue, txnToDate);
 

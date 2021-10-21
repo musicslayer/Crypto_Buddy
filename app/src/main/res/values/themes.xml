@@ -72,6 +72,10 @@
         <item name="pressedTranslationZ">0dp</item>
     </style>
 
+    <style name="TextInverseTheme" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="ToolbarTheme" parent="@style/Widget.AppCompat.Toolbar">
         <item name="titleTextAppearance">@style/ToolbarTheme.Title</item>
     </style>

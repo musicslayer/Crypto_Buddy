@@ -16,14 +16,18 @@ public class MaxNumberTransactionsSetting extends Setting {
         optionNames.add("500");
         optionNames.add("1000");
         optionNames.add("5000");
+        optionNames.add("10000");
+        optionNames.add("50000");
         return optionNames;
     }
 
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
-        optionDisplays.add("Analyze up to 500 transactions per address.");
-        optionDisplays.add("Analyze up to 1000 transactions per address.");
-        optionDisplays.add("Analyze up to 5000 transactions per address.\n** May Cause Crashes **");
+        optionDisplays.add("Analyze up to 500 transactions per address.\n** Excessive transactions may crash lesser devices. **");
+        optionDisplays.add("Analyze up to 1000 transactions per address.\n** Excessive transactions may crash lesser devices. **");
+        optionDisplays.add("Analyze up to 5000 transactions per address.\n** Excessive transactions may crash lesser devices. **");
+        optionDisplays.add("Analyze up to 10000 transactions per address.\n** Excessive transactions may crash lesser devices. **");
+        optionDisplays.add("Analyze up to 50000 transactions per address.\n** Excessive transactions may crash lesser devices. **");
         return optionDisplays;
     }
 
@@ -33,6 +37,8 @@ public class MaxNumberTransactionsSetting extends Setting {
         optionValues.add(500);
         optionValues.add(1000);
         optionValues.add(5000);
+        optionValues.add(10000);
+        optionValues.add(50000);
         return (ArrayList<T>)optionValues;
     }
 }

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
@@ -21,11 +21,11 @@ import net.glxn.qrgen.android.QRCode;
 import java.util.ArrayList;
 
 public class AddressQRCodeDialog extends BaseDialog {
-    public ArrayList<AddressData> addressDataArrayList;
+    public ArrayList<CryptoAddress> cryptoAddressArrayList;
 
-    public AddressQRCodeDialog(Activity activity, ArrayList<AddressData> addressDataArrayList) {
+    public AddressQRCodeDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
-        this.addressDataArrayList = addressDataArrayList;
+        this.cryptoAddressArrayList = cryptoAddressArrayList;
     }
 
     public int getBaseViewID() {
@@ -36,8 +36,8 @@ public class AddressQRCodeDialog extends BaseDialog {
         setContentView(R.layout.dialog_address_qr_code);
 
         ArrayList<String> options = new ArrayList<>();
-        for(AddressData addressData : addressDataArrayList) {
-            options.add(addressData.cryptoAddress.toString());
+        for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
+            options.add(cryptoAddress.toString());
         }
 
         TextView T = findViewById(R.id.address_qr_code_dialog_textView);
@@ -52,27 +52,27 @@ public class AddressQRCodeDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                AddressData addressData = addressDataArrayList.get(pos);
+                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos);
 
-                T.setText(addressData.cryptoAddress.toString());
+                T.setText(cryptoAddress.toString());
 
                 B.setOnClickListener(new CrashView.CrashOnClickListener(AddressQRCodeDialog.this.activity) {
                     @Override
                     public void onClickImpl(View view) {
-                        ClipboardUtil.copy(AddressQRCodeDialog.this.activity, "wallet_address", addressData.cryptoAddress.address);
+                        ClipboardUtil.copy(AddressQRCodeDialog.this.activity, "wallet_address", cryptoAddress.address);
                     }
                 });
 
-                Bitmap bitmap = QRCode.from(addressData.cryptoAddress.address).withSize(s, s).bitmap();
+                Bitmap bitmap = QRCode.from(cryptoAddress.address).withSize(s, s).bitmap();
                 I.setImageBitmap(bitmap);
             }
         });
 
-        if(addressDataArrayList.size() == 1) {
+        if(cryptoAddressArrayList.size() == 1) {
             bsv.setVisibility(View.GONE);
         }
 
-        if(addressDataArrayList.size() == 0) {
+        if(cryptoAddressArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
             B.setVisibility(View.GONE);
             T.setText("No addresses found.");

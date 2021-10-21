@@ -17,9 +17,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Include Proof of Stake Bridge.
-// TODO Bridge could also carry tokens.
-
 // PolygonScan has no pagination on its results, but Covalent does.
 
 public class PolygonScan extends AddressAPI {

@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,12 +48,15 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     AddressTable table;
 
-    final static CryptoAddress[] cryptoAddress = new CryptoAddress[1];
+    final static CryptoAddress[] newCryptoAddress = new CryptoAddress[1];
 
     AddressPortfolioObj addressPortfolioObj;
-    ArrayList<AddressData> addressDataArrayList;
+    ArrayList<AddressData> addressDataArrayList = new ArrayList<>();
 
     int filterIndex = -1;
+
+    // Whether the "Download Data" button was pressed.
+    public boolean isPressed = false;
 
     public int getAdLayoutViewID() {
         return R.id.address_portfolio_explorer_adLayout;
@@ -79,11 +83,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
-        addressDataArrayList = Serialization.deserializeArrayList(getIntent().getStringExtra("AddressData_Array"), AddressData.class);
 
         boolean includeTokens = false;
-        for(AddressData addressData : addressDataArrayList) {
-            if(addressData.cryptoAddress.includeTokens) {
+        for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+            if(cryptoAddress.includeTokens) {
                 includeTokens = true;
                 break;
             }
@@ -104,11 +107,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         infoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo(AddressPortfolioExplorerActivity.this, addressDataArrayList);
+                InfoUtil.showInfo(AddressPortfolioExplorerActivity.this, addressPortfolioObj.cryptoAddressArrayList);
             }
         });
 
-        if(!InfoUtil.hasInfo(addressDataArrayList)) {
+        if(!InfoUtil.hasInfo(addressPortfolioObj.cryptoAddressArrayList)) {
             infoButton.setVisibility(View.GONE);
         }
 
@@ -129,7 +132,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         add_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData addressData = AddressData.getAllData(cryptoAddress[0]);
+                AddressData addressData = AddressData.getAllData(newCryptoAddress[0]);
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
@@ -147,8 +150,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"no_address_data");
                 }
 
-                addressPortfolioObj.addData(cryptoAddress[0]);
-                //AddressPortfolio.saveAllData(AddressPortfolioExplorerActivity.this);
+                addressPortfolioObj.addData(newCryptoAddress[0]);
                 AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
                 addressDataArrayList.add(addressData);
@@ -167,9 +169,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
                     // Save new address and then fill it into the table.
-                    cryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
+                    newCryptoAddress[0] = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
-                    if(addressPortfolioObj.isSaved(cryptoAddress[0])) {
+                    if(addressPortfolioObj.isSaved(newCryptoAddress[0])) {
                         ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
                     }
                     else {
@@ -205,7 +207,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressDataArrayList);
+        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
         addressFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -221,7 +223,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_address_filter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressDataArrayList);
+                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
                 addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
         });
@@ -278,7 +280,28 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressDataArrayList).show(AddressPortfolioExplorerActivity.this, "qrcode");
+                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "qrcode");
+            }
+        });
+
+        // Download data is same as refresh, but we will change the visibility of buttons after.
+        AppCompatButton downloadDataButton = findViewById(R.id.address_portfolio_explorer_downloadDataButton);
+        downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                refresh_progressDialogFragment.show(AddressPortfolioExplorerActivity.this, "progress_refresh");
+
+                // Even if this fails, or the user backs out, we still consider it pressed.
+                isPressed = true;
+
+                downloadDataButton.setVisibility(View.GONE);
+
+                fab_add.setVisibility(View.VISIBLE);
+                fab_info.setVisibility(View.VISIBLE);
+                fab_total.setVisibility(View.VISIBLE);
+                fab_address_filter.setVisibility(View.VISIBLE);
+                fab_refresh.setVisibility(View.VISIBLE);
+                fab_qrcode.setVisibility(View.VISIBLE);
             }
         });
 
@@ -287,6 +310,34 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
+
+        AppCompatButton downloadDataButton = findViewById(R.id.address_portfolio_explorer_downloadDataButton);
+        FloatingActionButton fab_add = findViewById(R.id.address_portfolio_explorer_addButton);
+        FloatingActionButton fab_info = findViewById(R.id.address_portfolio_explorer_infoButton);
+        FloatingActionButton fab_total = findViewById(R.id.address_portfolio_explorer_totalButton);
+        FloatingActionButton fab_address_filter = findViewById(R.id.address_portfolio_explorer_addressFilterButton);
+        FloatingActionButton fab_refresh = findViewById(R.id.address_portfolio_explorer_refreshButton);
+        FloatingActionButton fab_qrcode = findViewById(R.id.address_portfolio_explorer_qrCodeButton);
+
+        if(isPressed) {
+            downloadDataButton.setVisibility(View.GONE);
+            fab_add.setVisibility(View.VISIBLE);
+            fab_info.setVisibility(View.VISIBLE);
+            fab_total.setVisibility(View.VISIBLE);
+            fab_address_filter.setVisibility(View.VISIBLE);
+            fab_refresh.setVisibility(View.VISIBLE);
+            fab_qrcode.setVisibility(View.VISIBLE);
+        }
+        else {
+            downloadDataButton.setVisibility(View.VISIBLE);
+            fab_add.setVisibility(View.GONE);
+            fab_info.setVisibility(View.GONE);
+            fab_total.setVisibility(View.GONE);
+            fab_address_filter.setVisibility(View.GONE);
+            fab_refresh.setVisibility(View.GONE);
+            fab_qrcode.setVisibility(View.GONE);
+        }
+
         TextView T = findViewById(R.id.address_portfolio_explorer_infoTextView);
 
         if(filterIndex == -1) {
@@ -295,7 +346,12 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         }
         else {
             T.setText("Portfolio = " + addressPortfolioObj.name + "\nAddress = " + addressPortfolioObj.cryptoAddressArrayList.get(filterIndex).toString());
-            table.addRowsFromAddressData(this, addressDataArrayList.get(filterIndex));
+
+            //todo hashmap
+            try {
+                table.addRowsFromAddressData(this, addressDataArrayList.get(filterIndex));
+            }
+            catch(Exception ignored) {}
         }
     }
 
@@ -334,6 +390,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putInt("filterIndex", filterIndex);
         bundle.putString("addressDataArrayList", Serialization.serializeArrayList(addressDataArrayList));
+        bundle.putString("isPressed", Serialization.boolean_serialize(isPressed));
     }
 
     @Override
@@ -341,6 +398,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         if(bundle != null) {
             filterIndex = bundle.getInt("filterIndex", -1);
             addressDataArrayList = Serialization.deserializeArrayList(bundle.getString("addressDataArrayList"), AddressData.class);
+            isPressed = Serialization.boolean_deserialize(bundle.getString("isPressed"));
 
             updateLayout();
         }

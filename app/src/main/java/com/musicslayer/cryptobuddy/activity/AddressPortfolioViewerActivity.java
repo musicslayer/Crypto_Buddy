@@ -38,8 +38,8 @@ import java.util.ArrayList;
 public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 
-    final ArrayList<CryptoAddress>[] cryptoAddressArrayList = new ArrayList[1];
-    final String[] AddressPortfolioObjName = new String[1];
+    //final ArrayList<CryptoAddress>[] cryptoAddressArrayList = new ArrayList[1];
+    //final String[] AddressPortfolioObjName = new String[1];
 
     public int getAdLayoutViewID() {
         return R.id.address_portfolio_viewer_adLayout;
@@ -111,6 +111,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
+/*
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
@@ -154,6 +155,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
+ */
+
         for(AddressPortfolioObj addressPortfolioObj : AddressPortfolio.settings_address_portfolio) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B.setText(addressPortfolioObj.name);
@@ -161,10 +164,16 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
-                    AddressPortfolioObjName[0] = addressPortfolioObj.name;
+                    //cryptoAddressArrayList[0] = addressPortfolioObj.cryptoAddressArrayList;
+                    //AddressPortfolioObjName[0] = addressPortfolioObj.name;
 
-                    progressDialogFragment.show(AddressPortfolioViewerActivity.this, "progress");
+                    //progressDialogFragment.show(AddressPortfolioViewerActivity.this, "progress");
+
+                    Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
+                    intent.putExtra("AddressPortfolioName",  addressPortfolioObj.name);
+                    AddressPortfolioViewerActivity.this.startActivity(intent);
+
+                    finish();
                 }
             });
 
@@ -192,16 +201,16 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("PortfolioName", currentDeletePortfolioName);
-        bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
-        bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
+        //bundle.putString("cryptoAddressArrayList", Serialization.serializeArrayList(cryptoAddressArrayList[0]));
+        //bundle.putString("AddressPortfolioObjName", AddressPortfolioObjName[0]);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("PortfolioName");
-            cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
-            AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
+            //cryptoAddressArrayList[0] = Serialization.deserializeArrayList(bundle.getString("cryptoAddressArrayList"), CryptoAddress.class);
+            //AddressPortfolioObjName[0] = bundle.getString("AddressPortfolioObjName");
         }
     }
 }
