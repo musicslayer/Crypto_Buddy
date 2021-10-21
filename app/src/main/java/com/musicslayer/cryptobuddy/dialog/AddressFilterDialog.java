@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
 
+// TODO This should be checkboxes, so people can multi-select.
+
 public class AddressFilterDialog extends BaseDialog {
     Integer filterIndex;
     public ArrayList<CryptoAddress> cryptoAddressArrayList;

@@ -31,15 +31,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Transactions"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_balancesCheckBox" />
+        app:layout_constraintStart_toEndOf="@id/download_data_dialog_balancesCheckBox"
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_toolbar" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/download_data_dialog_downloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
         android:text="Download"
         app:drawableLeftCompat="@drawable/ic_baseline_download_24"
         app:layout_constraintStart_toStartOf="parent"

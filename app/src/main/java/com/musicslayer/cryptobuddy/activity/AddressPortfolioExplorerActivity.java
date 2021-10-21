@@ -209,27 +209,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
-        addressFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((AddressFilterDialog)dialog).isComplete) {
-                    filterIndex = ((AddressFilterDialog)dialog).user_INDEX;
-                    updateLayout();
-                }
-            }
-        });
-        addressFilterDialogFragment.restoreListeners(this, "address_filter");
-
-        FloatingActionButton fab_address_filter = findViewById(R.id.address_portfolio_explorer_addressFilterButton);
-        fab_address_filter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
-                addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
-            }
-        });
-
         FloatingActionButton fab_qrcode = findViewById(R.id.address_portfolio_explorer_qrCodeButton);
         fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
@@ -331,6 +310,27 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 downloadDialogFragment.show(AddressPortfolioExplorerActivity.this, "download");
+            }
+        });
+
+        BaseDialogFragment addressFilterDialogFragment = BaseDialogFragment.newInstance(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
+        addressFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((AddressFilterDialog)dialog).isComplete) {
+                    filterIndex = ((AddressFilterDialog)dialog).user_INDEX;
+                    updateLayout();
+                }
+            }
+        });
+        addressFilterDialogFragment.restoreListeners(this, "address_filter");
+
+        AppCompatButton filterAddressButton = findViewById(R.id.address_portfolio_explorer_filterAddressButton);
+        filterAddressButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                addressFilterDialogFragment.updateArguments(AddressFilterDialog.class, filterIndex, addressPortfolioObj.cryptoAddressArrayList);
+                addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
         });
 

@@ -17,11 +17,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Address Info" />
 
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/address_info_dialog_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_info_dialog_toolbar">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
     <TextView
         android:id="@+id/address_info_dialog_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_info_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/address_info_dialog_spinner" />
 </androidx.constraintlayout.widget.ConstraintLayout>

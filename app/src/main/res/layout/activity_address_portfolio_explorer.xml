@@ -89,6 +89,13 @@
                 app:drawableLeftCompat="@drawable/ic_baseline_download_24"
                 android:text="Download Data" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/address_portfolio_explorer_filterAddressButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_filter_list_24"
+                android:text="Filter Address" />
+
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -126,13 +133,6 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 app:srcCompat="@drawable/ic_baseline_price_check_24" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/address_portfolio_explorer_addressFilterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:srcCompat="@drawable/ic_baseline_filter_list_24" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/address_portfolio_explorer_qrCodeButton"

@@ -1,11 +1,21 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.util.ClipboardUtil;
+import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+
+import net.glxn.qrgen.android.QRCode;
 
 import java.util.ArrayList;
 
@@ -24,18 +34,31 @@ public class AddressInfoDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_address_info);
 
-        StringBuilder s = new StringBuilder();
-        if(addressDataArrayList.size() == 0) {
-            s = new StringBuilder("No addresses found.");
-        }
-        else {
-            for(AddressData addressData : addressDataArrayList) {
-                s.append(getInfoString(addressData)).append("\n\n");
-            }
+        TextView T = findViewById(R.id.address_info_dialog_textView);
+
+        ArrayList<String> options = new ArrayList<>();
+        for(AddressData addressData : addressDataArrayList) {
+            options.add(addressData.cryptoAddress.toString());
         }
 
-        TextView T = findViewById(R.id.address_info_dialog_textView);
-        T.setText(s.toString());
+        BorderedSpinnerView bsv = findViewById(R.id.address_info_dialog_spinner);
+        bsv.setOptions(options);
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent) {}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
+                AddressData addressData = addressDataArrayList.get(pos);
+                T.setText(getInfoString(addressData));
+            }
+        });
+
+        if(addressDataArrayList.size() == 1) {
+            bsv.setVisibility(View.GONE);
+        }
+
+        if(addressDataArrayList.size() == 0) {
+            bsv.setVisibility(View.GONE);
+            T.setText("No addresses found.");
+        }
     }
 
     public String getInfoString(AddressData addressData) {
