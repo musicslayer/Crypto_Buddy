@@ -314,11 +314,11 @@ abstract public class Table extends CrashTableLayout {
         }
 
         // pageView may be null at this point when the Table is first inflated from XML.
+        // Don't draw anything yet because we could be drawing extra things that aren't needed.
         if(pageView != null) {
             pageView.setNumItems(newTransactionArrayList.size());
+            redrawRows(context, newTransactionArrayList);
         }
-
-        redrawRows(context, newTransactionArrayList);
     }
 
     public ArrayList<Transaction> getFilteredMaskedTransactionArrayList() {
