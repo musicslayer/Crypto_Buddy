@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
 
 // Alternate base URL: https://lcd-cosmos.cosmostation.io/
 
+// TODO Liqudity pool token swaps not fully taken into account:
+// cosmos1aj2yhukrny6l2es489qyt0uvna4zsr7fmpmpsv
+
 // "https://node.atomscan.com" has pagination for balances, but there are so few tokens that we aren't gonna bother with this right now.
 
 // ATOM balances must take into account transactions on all chains, cosmoshub-4, cosmoshub-3, etc...

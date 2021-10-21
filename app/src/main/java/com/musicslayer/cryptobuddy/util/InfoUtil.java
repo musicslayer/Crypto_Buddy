@@ -48,7 +48,7 @@ public class InfoUtil {
         String info;
         switch(cryptoName) {
             case "ATOM":
-                info = "Some token swap operations will not show up as transactions.";
+                info = "Some liquidity pool token swap operations will not show up as transactions.";
                 break;
             case "BNBc":
                 if(isMainnet) {
@@ -58,23 +58,16 @@ public class InfoUtil {
                     info = "Transactions for testnet addresses are not available.";
                 }
                 break;
-            case "BNBs":
-            case "MATIC":
-                info = "Transactions may not include smart contract operations, such as reflections and taxes.";
-                break;
             case "ETH":
                 if(isMainnet) {
-                    info = "Transactions may not include smart contract operations, such as reflections and taxes.";
+                    return null;
                 }
                 else {
-                    info = "Transactions may not include smart contract operations, such as reflections and taxes. Also, token balances for testnet addresses are not available.";
+                    info = "Token balances for testnet addresses are not available.";
                 }
                 break;
             case "VET":
                 info = "VTHO balance includes generated rewards from holding VET, but these rewards do not show up as transactions.";
-                break;
-            case "XRP":
-                info = "Negative balances of an asset represent obligations in the XRP Ledger.";
                 break;
             case "SOL":
                 info = "Transactions do not include block rewards, such as rent, that occur on the block level outside of any particular transaction.";

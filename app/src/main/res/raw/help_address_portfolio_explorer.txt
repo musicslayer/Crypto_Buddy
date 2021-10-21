@@ -9,3 +9,4 @@ Buttons left to right:
 --> QR Codes
 
 *Note - this is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses.
+For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.
