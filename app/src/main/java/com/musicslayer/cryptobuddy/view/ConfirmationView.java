@@ -14,7 +14,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
 
 import java.util.ArrayList;
@@ -222,14 +221,15 @@ public class ConfirmationView extends CrashLinearLayout {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
 
-        bundle.putString("randomCode", Serialization.int_serializeArrayList(randomCode));
-        bundle.putString("lastDigits", Serialization.int_serializeArrayList(lastDigits));
+        bundle.putSerializable("randomCode", randomCode);
+        bundle.putSerializable("lastDigits", lastDigits);
         bundle.putInt("numDigits", numDigits);
 
         return bundle;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
@@ -237,8 +237,8 @@ public class ConfirmationView extends CrashLinearLayout {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
 
-            randomCode = Serialization.int_deserializeArrayList(bundle.getString("randomCode"));
-            lastDigits = Serialization.int_deserializeArrayList(bundle.getString("lastDigits"));
+            randomCode = (ArrayList<Integer>)bundle.getSerializable("randomCode");
+            lastDigits = (ArrayList<Integer>)bundle.getSerializable("lastDigits");
             numDigits = bundle.getInt("numDigits");
 
             this.removeAllViews();

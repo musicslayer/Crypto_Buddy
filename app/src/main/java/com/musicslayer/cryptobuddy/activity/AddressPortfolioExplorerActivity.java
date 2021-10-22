@@ -416,20 +416,21 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("addressDataMap", Serialization.serializeHashMap(addressDataMap));
-        bundle.putString("addressDataFilterMap", Serialization.serializeHashMap(addressDataMap));
-        bundle.putString("includeBalances", Serialization.boolean_serializeArrayList(includeBalances));
-        bundle.putString("includeTransactions", Serialization.boolean_serializeArrayList(includeTransactions));
+        bundle.putSerializable("addressDataMap", addressDataMap);
+        bundle.putSerializable("addressDataFilterMap", addressDataMap);
+        bundle.putSerializable("includeBalances", includeBalances);
+        bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putString("filter", Serialization.serialize(addressFilter));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
-            addressDataFilterMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
-            includeBalances = Serialization.boolean_deserializeArrayList(bundle.getString("includeBalances"));
-            includeTransactions = Serialization.boolean_deserializeArrayList(bundle.getString("includeTransactions"));
+            addressDataMap = (HashMap<CryptoAddress, AddressData>)bundle.getSerializable("addressDataMap");
+            addressDataFilterMap = (HashMap<CryptoAddress, AddressData>)bundle.getSerializable("addressDataMap");
+            includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
+            includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
             addressFilter = Serialization.deserialize(bundle.getString("filter"), DiscreteFilter.class);
         }
     }

@@ -416,15 +416,17 @@ abstract public class Table extends CrashTableLayout {
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
-        bundle.putString("filters", Serialization.serializeArrayList(filterArrayList));
-        bundle.putString("transactions", Serialization.serializeArrayList(transactionArrayList));
-        bundle.putString("masked_transactions", Serialization.serializeArrayList(maskedTransactionArrayList));
+        bundle.putSerializable("filters", filterArrayList);
+        bundle.putSerializable("transactions", transactionArrayList);
+        bundle.putSerializable("masked_transactions", maskedTransactionArrayList);
+
         bundle.putIntegerArrayList("sortState", sortState);
 
         return bundle;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         // Load dynamically added rows.
@@ -435,9 +437,10 @@ abstract public class Table extends CrashTableLayout {
             pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));
 
             sortingColumn = bundle.getInt("sortingColumn");
-            filterArrayList = Serialization.deserializeArrayList(bundle.getString("filters"), Filter.class);
-            transactionArrayList = Serialization.deserializeArrayList(bundle.getString("transactions"), Transaction.class);
-            maskedTransactionArrayList = Serialization.deserializeArrayList(bundle.getString("masked_transactions"), Transaction.class);
+            filterArrayList = (ArrayList<Filter>)bundle.getSerializable("filters");
+            transactionArrayList = (ArrayList<Transaction>)bundle.getSerializable("transactions");
+            maskedTransactionArrayList = (ArrayList<Transaction>)bundle.getSerializable("masked_transactions");
+
             sortState = bundle.getIntegerArrayList("sortState");
 
             // Remove and add the filter and sort row

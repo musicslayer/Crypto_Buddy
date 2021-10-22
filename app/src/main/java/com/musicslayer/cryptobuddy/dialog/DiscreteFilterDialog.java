@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
@@ -102,15 +101,16 @@ public class DiscreteFilterDialog extends FilterDialog {
             state.add(checkBox.isChecked());
         }
 
-        bundle.putString("state", Serialization.boolean_serializeArrayList(state));
+        bundle.putSerializable("state", state);
 
         return bundle;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            state = Serialization.boolean_deserializeArrayList(bundle.getString("state"));
+            state = (ArrayList<Boolean>)bundle.getSerializable("state");
         }
     }
 }

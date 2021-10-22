@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-// Note Serialization has to be perfect, or we throw errors. There are no "default" values here.
+// Note: Serialization has to be perfect, or we throw errors. There are no "default" values here.
 
 public class Serialization {
     // Keep this short because it will appear on every piece of stored data.

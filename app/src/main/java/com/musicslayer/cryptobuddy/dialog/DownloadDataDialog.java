@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
@@ -120,17 +119,18 @@ public class DownloadDataDialog extends BaseDialog {
             state_T.add(C_T[i].isChecked());
         }
 
-        bundle.putString("state_B", Serialization.boolean_serializeArrayList(state_B));
-        bundle.putString("state_T", Serialization.boolean_serializeArrayList(state_T));
+        bundle.putSerializable("state_B", state_B);
+        bundle.putSerializable("state_T", state_T);
 
         return bundle;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            state_B = Serialization.boolean_deserializeArrayList(bundle.getString("state_B"));
-            state_T = Serialization.boolean_deserializeArrayList(bundle.getString("state_T"));
+            state_B = (ArrayList<Boolean>)bundle.getSerializable("state_B");
+            state_T = (ArrayList<Boolean>)bundle.getSerializable("state_T");
         }
     }
 }

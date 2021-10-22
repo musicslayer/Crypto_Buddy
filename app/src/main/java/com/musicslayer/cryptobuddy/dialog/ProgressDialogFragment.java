@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.PollingUtil;
 
-import java.util.ArrayList;
-
 public class ProgressDialogFragment extends BaseDialogFragment {
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
