@@ -17,6 +17,9 @@ abstract public class BaseActivity extends CrashActivity {
     abstract public void createLayout();
     abstract public int getAdLayoutViewID();
 
+    // True on an activity's first creation, and false if the activity is being recreated.
+    boolean isFirstCreate;
+
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
         if(App.isAppInitialized) {
@@ -32,6 +35,8 @@ abstract public class BaseActivity extends CrashActivity {
             // Do not pass in the application context here.
             InAppPurchase.initialize(this);
         }
+
+        isFirstCreate = savedInstanceState == null;
 
         createLayout();
         adjustActivity();

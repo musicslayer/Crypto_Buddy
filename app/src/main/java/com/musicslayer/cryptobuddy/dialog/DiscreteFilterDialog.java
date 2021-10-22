@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,6 +10,7 @@ import android.widget.LinearLayout;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
@@ -18,10 +18,15 @@ public class DiscreteFilterDialog extends FilterDialog {
     public DiscreteFilter discreteFilter;
 
     CheckBox[] C;
+    ArrayList<Boolean> state = new ArrayList<>();
 
     public DiscreteFilterDialog(Activity activity, DiscreteFilter discreteFilter) {
         super(activity, discreteFilter);
         this.discreteFilter = discreteFilter;
+
+        for(int i = 0; i < discreteFilter.choices.size(); i++) {
+            state.add(discreteFilter.isIncluded(discreteFilter.choices.get(i)));
+        }
     }
 
     public int getBaseViewID() {
@@ -75,38 +80,29 @@ public class DiscreteFilterDialog extends FilterDialog {
     public void updateLayout() {
         LinearLayout L = findViewById(R.id.discrete_filter_dialog_checkBoxLayout);
 
-        if(C == null) {
-            // First time displaying dialog.
-            C = new CheckBox[discreteFilter.choices.size()];
-            for(int i = 0; i < discreteFilter.choices.size(); i++) {
-                C[i] = new CheckBox(this.activity);
-                C[i].setChecked(discreteFilter.isIncluded(discreteFilter.choices.get(i)));
-                C[i].setText(discreteFilter.choices.get(i));
+        C = new CheckBox[discreteFilter.choices.size()];
+        for(int i = 0; i < discreteFilter.choices.size(); i++) {
+            C[i] = new CheckBox(this.activity);
+            C[i].setChecked(state.get(i));
+            C[i].setText(discreteFilter.choices.get(i));
 
-                LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                LP.setMargins(0,0,0,50);
-                C[i].setLayoutParams(LP);
+            LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LP.setMargins(0,0,0,50);
+            C[i].setLayoutParams(LP);
 
-                L.addView(C[i]);
-            }
-        }
-        else {
-            // After onRestore
-            for(int i = 0; i < discreteFilter.choices.size(); i++) {
-                LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                LP.setMargins(0,0,0,50);
-                C[i].setLayoutParams(LP);
-
-                L.addView(C[i]);
-            }
+            L.addView(C[i]);
         }
     }
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        for(int i = 0; i < C.length; i++) {
-            bundle.putBoolean("checkbox" + i, C[i].isChecked());
+        state.clear();
+
+        for(CheckBox checkBox : C) {
+            state.add(checkBox.isChecked());
         }
+
+        bundle.putString("state", Serialization.boolean_serializeArrayList(state));
 
         return bundle;
     }
@@ -114,12 +110,7 @@ public class DiscreteFilterDialog extends FilterDialog {
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            C = new CheckBox[discreteFilter.choices.size()];
-            for(int i = 0; i < discreteFilter.choices.size(); i++) {
-                C[i] = new CheckBox(this.activity);
-                C[i].setChecked(bundle.getBoolean("checkbox" + i));
-                C[i].setText(discreteFilter.choices.get(i));
-            }
+            state = Serialization.boolean_deserializeArrayList(bundle.getString("state"));
         }
     }
 }

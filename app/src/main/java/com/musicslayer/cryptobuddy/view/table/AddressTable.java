@@ -45,13 +45,6 @@ public class AddressTable extends Table {
         }
     }
 
-    public void addRowsFromAddressData(Context context, AddressData addressData) {
-        if(addressData != null && addressData.isTransactionsComplete()) {
-            addRowsImpl(context, addressData.transactionArrayList);
-            finishRows(context);
-        }
-    }
-
     static class AddressRow extends BaseRow {
         public AddressRow(Context context) {
             super(context);

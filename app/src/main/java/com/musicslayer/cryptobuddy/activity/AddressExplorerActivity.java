@@ -79,14 +79,17 @@ public class AddressExplorerActivity extends BaseActivity {
         cryptoAddressArrayList.add(cryptoAddress);
         addressDataMap.put(cryptoAddress, AddressData.getNoData(cryptoAddress));
 
+        TextView T_INFO = findViewById(R.id.address_explorer_infoTextView);
+        T_INFO.setText("Address = " + cryptoAddressArrayList.get(0).toString());
+
         boolean includeTokens = cryptoAddress.includeTokens;
 
-        TextView T = findViewById(R.id.address_explorer_messageTextView);
+        TextView T_MESSAGE = findViewById(R.id.address_explorer_messageTextView);
         if(!Purchases.isUnlockTokensPurchased && includeTokens) {
-            T.setVisibility(View.VISIBLE);
+            T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
-            T.setVisibility(View.GONE);
+            T_MESSAGE.setVisibility(View.GONE);
         }
 
         Toolbar toolbar = findViewById(R.id.address_explorer_toolbar);
@@ -218,15 +221,10 @@ public class AddressExplorerActivity extends BaseActivity {
                 downloadDialogFragment.show(AddressExplorerActivity.this, "download");
             }
         });
-
-        updateLayout();
     }
 
     public void updateLayout() {
         table.resetTable();
-
-        TextView T = findViewById(R.id.address_explorer_infoTextView);
-        T.setText("Address = " + cryptoAddressArrayList.get(0).toString());
 
         table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataMap.values()));
     }
@@ -275,8 +273,6 @@ public class AddressExplorerActivity extends BaseActivity {
             addressDataMap = Serialization.deserializeHashMap(bundle.getString("addressDataMap"), CryptoAddress.class, AddressData.class);
             includeBalances = Serialization.boolean_deserializeArrayList(bundle.getString("includeBalances"));
             includeTransactions = Serialization.boolean_deserializeArrayList(bundle.getString("includeTransactions"));
-
-            updateLayout();
         }
     }
 }

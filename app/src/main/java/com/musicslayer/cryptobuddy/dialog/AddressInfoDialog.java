@@ -45,7 +45,7 @@ public class AddressInfoDialog extends BaseDialog {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos);
-                AddressData addressData = addressDataMap.get(cryptoAddress);
+                AddressData addressData = getValueFromMap(cryptoAddress);
                 T.setText(getInfoString(addressData));
             }
         });
@@ -58,6 +58,17 @@ public class AddressInfoDialog extends BaseDialog {
             bsv.setVisibility(View.GONE);
             T.setText("No addresses found.");
         }
+    }
+
+    public AddressData getValueFromMap(CryptoAddress cryptoAddress) {
+        // We need this because HashMap isn't using the equals method as we expect.
+        ArrayList<CryptoAddress> keys = new ArrayList<>(addressDataMap.keySet());
+        for(CryptoAddress key : keys) {
+            if(key.equals(cryptoAddress)) {
+                return addressDataMap.get(key);
+            }
+        }
+        return null;
     }
 
     public String getInfoString(AddressData addressData) {

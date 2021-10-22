@@ -134,7 +134,7 @@ abstract public class Table extends CrashTableLayout {
     // Anything that adds rows should call this to finish the process.
     // These are expensive operations that should only be done once all new rows are added to the table.
     public void finishRows(Context context) {
-        doSort(context);
+        doSortImpl();
         updateFilters();
         filterTable(context);
     }
@@ -331,14 +331,17 @@ abstract public class Table extends CrashTableLayout {
         return newTransactionArrayList;
     }
 
-    public void doSort(Context context) {
+    public void doSortImpl() {
         if(sortState.get(sortingColumn) == 0) {
             Transaction.sortDescendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
         else if(sortState.get(sortingColumn) == 2) {
             Transaction.sortAscendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
+    }
 
+    public void doSort(Context context) {
+        doSortImpl();
         filterTable(context);
     }
 
@@ -426,9 +429,9 @@ abstract public class Table extends CrashTableLayout {
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
+        bundle.putString("filters", Serialization.serializeArrayList(filterArrayList));
         bundle.putString("transactions", Serialization.serializeArrayList(transactionArrayList));
         bundle.putString("masked_transactions", Serialization.serializeArrayList(maskedTransactionArrayList));
-        bundle.putString("filters", Serialization.serializeArrayList(filterArrayList));
         bundle.putIntegerArrayList("sortState", sortState);
 
         return bundle;

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
@@ -19,6 +20,8 @@ public class DownloadDataDialog extends BaseDialog {
 
     CheckBox[] C_B;
     CheckBox[] C_T;
+    ArrayList<Boolean> state_B = new ArrayList<>();
+    ArrayList<Boolean> state_T = new ArrayList<>();
 
     public ArrayList<Boolean> user_BALANCES = new ArrayList<>();
     public ArrayList<Boolean> user_TRANSACTIONS = new ArrayList<>();
@@ -26,6 +29,12 @@ public class DownloadDataDialog extends BaseDialog {
     public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
         this.cryptoAddressArrayList = cryptoAddressArrayList;
+
+        // By default, everything starts selected no matter what the previous action was.
+        for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+            state_B.add(true);
+            state_T.add(true);
+        }
     }
 
     public int getBaseViewID() {
@@ -75,57 +84,44 @@ public class DownloadDataDialog extends BaseDialog {
     public void updateLayout() {
         LinearLayout L = findViewById(R.id.download_data_dialog_checkBoxLayout);
 
-        if(C_B == null && C_T == null) {
-            // First time displaying dialog.
-            C_B = new CheckBox[cryptoAddressArrayList.size()];
-            C_T = new CheckBox[cryptoAddressArrayList.size()];
+        C_B = new CheckBox[cryptoAddressArrayList.size()];
+        C_T = new CheckBox[cryptoAddressArrayList.size()];
 
-            for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-                TextView T = new TextView(this.activity);
-                T.setText(cryptoAddressArrayList.get(i).toString());
+        for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+            TextView T = new TextView(this.activity);
+            T.setText(cryptoAddressArrayList.get(i).toString());
 
-                LinearLayout L_ROW = new LinearLayout(activity);
-                L_ROW.setPadding(0, 0, 0, 50);
+            LinearLayout L_ROW = new LinearLayout(activity);
+            L_ROW.setPadding(0, 0, 0, 50);
 
-                C_B[i] = new CheckBox(this.activity);
-                C_B[i].setChecked(true);
-                C_B[i].setText("Balances");
+            C_B[i] = new CheckBox(this.activity);
+            C_B[i].setChecked(state_B.get(i));
+            C_B[i].setText("Balances");
 
-                C_T[i] = new CheckBox(this.activity);
-                C_T[i].setChecked(true);
-                C_T[i].setText("Transactions");
+            C_T[i] = new CheckBox(this.activity);
+            C_T[i].setChecked(state_T.get(i));
+            C_T[i].setText("Transactions");
 
-                L_ROW.addView(C_B[i]);
-                L_ROW.addView(C_T[i]);
+            L_ROW.addView(C_B[i]);
+            L_ROW.addView(C_T[i]);
 
-                L.addView(T);
-                L.addView(L_ROW);
-            }
-        }
-        else {
-            // After onRestore
-            for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-                TextView T = new TextView(this.activity);
-                T.setText(cryptoAddressArrayList.get(i).toString());
-
-                LinearLayout L_ROW = new LinearLayout(activity);
-                L_ROW.setPadding(0, 0, 0, 50);
-
-                L_ROW.addView(C_B[i]);
-                L_ROW.addView(C_T[i]);
-
-                L.addView(T);
-                L.addView(L_ROW);
-            }
+            L.addView(T);
+            L.addView(L_ROW);
         }
     }
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
+        state_B.clear();
+        state_T.clear();
+
         for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-            bundle.putBoolean("checkbox_b" + i, C_B[i].isChecked());
-            bundle.putBoolean("checkbox_t" + i, C_T[i].isChecked());
+            state_B.add(C_B[i].isChecked());
+            state_T.add(C_T[i].isChecked());
         }
+
+        bundle.putString("state_B", Serialization.boolean_serializeArrayList(state_B));
+        bundle.putString("state_T", Serialization.boolean_serializeArrayList(state_T));
 
         return bundle;
     }
@@ -133,17 +129,8 @@ public class DownloadDataDialog extends BaseDialog {
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            C_B = new CheckBox[cryptoAddressArrayList.size()];
-            C_T = new CheckBox[cryptoAddressArrayList.size()];
-            for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-                C_B[i] = new CheckBox(this.activity);
-                C_B[i].setChecked(bundle.getBoolean("checkbox_b" + i));
-                C_B[i].setText("Balances");
-
-                C_T[i] = new CheckBox(this.activity);
-                C_T[i].setChecked(bundle.getBoolean("checkbox_t" + i));
-                C_T[i].setText("Transactions");
-            }
+            state_B = Serialization.boolean_deserializeArrayList(bundle.getString("state_B"));
+            state_T = Serialization.boolean_deserializeArrayList(bundle.getString("state_T"));
         }
     }
 }

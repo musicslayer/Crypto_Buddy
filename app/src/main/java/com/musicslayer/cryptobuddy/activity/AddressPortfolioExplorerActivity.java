@@ -363,8 +363,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
             }
         });
-
-        updateLayout();
     }
 
     public void updateLayout() {
@@ -433,8 +431,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             includeBalances = Serialization.boolean_deserializeArrayList(bundle.getString("includeBalances"));
             includeTransactions = Serialization.boolean_deserializeArrayList(bundle.getString("includeTransactions"));
             addressFilter = Serialization.deserialize(bundle.getString("filter"), DiscreteFilter.class);
-
-            updateLayout();
         }
     }
 }

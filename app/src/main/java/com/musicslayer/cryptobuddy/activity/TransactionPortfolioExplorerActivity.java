@@ -117,7 +117,9 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        table.addRows(this, transactionPortfolioObj.transactionArrayList);
+        if(isFirstCreate) {
+            table.addRows(this, transactionPortfolioObj.transactionArrayList);
+        }
     }
 
     @Override
