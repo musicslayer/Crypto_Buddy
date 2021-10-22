@@ -64,6 +64,7 @@ public class SettingsActivity extends BaseActivity {
                     L.addView(new SettingsView(SettingsActivity.this, Setting.getSettingFromKey("NetworksSetting")));
                     L.addView(new SettingsView(SettingsActivity.this, Setting.getSettingFromKey("TimeoutSetting")));
                     L.addView(new SettingsView(SettingsActivity.this, Setting.getSettingFromKey("MaxNumberTransactionsSetting")));
+                    L.addView(new SettingsView(SettingsActivity.this, Setting.getSettingFromKey("NumberTransactionsPerPageSetting")));
                 }
                 else if(pos == 3) {
                     L.addView(new MessageSettingsView(SettingsActivity.this, Setting.getSettingFromKey("MessageLengthSetting")));

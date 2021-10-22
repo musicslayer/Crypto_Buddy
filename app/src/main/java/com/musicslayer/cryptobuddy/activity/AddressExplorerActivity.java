@@ -225,7 +225,6 @@ public class AddressExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
-
         table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataMap.values()));
     }
 

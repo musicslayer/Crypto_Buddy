@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.dialog.FilterDialog;
+import com.musicslayer.cryptobuddy.settings.NumberTransactionsPerPageSetting;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
@@ -112,12 +113,9 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public void addRowsImpl(Context context, ArrayList<Transaction> transactionArrayList) {
-        int minIdx = pageView == null ? 0 : pageView.getMinIdx();
-        int maxIdx = pageView == null ? TablePageView.numItemsPerPage - 1 : pageView.getMaxIdx();
-
         for(int i = 0; i < transactionArrayList.size(); i++) {
             // Only draw current page of rows. If null, assume it's the first page.
-            if(i >= minIdx && i <= maxIdx) {
+            if(i >= pageView.getMinIdx() && i <= pageView.getMaxIdx()) {
                 drawRow(context, transactionArrayList.get(i));
             }
             this.transactionArrayList.add(transactionArrayList.get(i));
@@ -368,11 +366,8 @@ abstract public class Table extends CrashTableLayout {
         ViewGroup group = this;
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
 
-        // Only draw current page of rows. If null, assume it's the first page.
-        int minIdx = pageView == null ? 0 : pageView.getMinIdx();
-        int maxIdx = pageView == null ? TablePageView.numItemsPerPage - 1 : pageView.getMaxIdx();
         for(int i = 0; i < newTransactionArrayList.size(); i++) {
-            if(i >= minIdx && i <= maxIdx) {
+            if(i >= pageView.getMinIdx() && i <= pageView.getMaxIdx()) {
                 drawRow(context, newTransactionArrayList.get(i));
             }
         }
@@ -481,8 +476,6 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public static class TablePageView extends CrashLinearLayout {
-        public static final int numItemsPerPage = 100;
-
         public Table outer_table;
         BaseDialogFragment choosePageDialogFragment;
         public int currentPage = 1;
@@ -508,11 +501,15 @@ abstract public class Table extends CrashTableLayout {
             this.outer_table = inner_table;
         }
 
+        public int getNumberTransactionsPerPage() {
+            return NumberTransactionsPerPageSetting.value;
+        }
+
         public void setNumItems(int numItems) {
             this.numItems = numItems;
 
             int oldLastPage = this.lastPage;
-            this.lastPage = ((numItems - 1) / numItemsPerPage) + 1;
+            this.lastPage = ((numItems - 1) / getNumberTransactionsPerPage()) + 1;
 
             // If the number of pages decreased, and we are past the new last page, then update our page to be the new last page.
             if(lastPage < oldLastPage) {
@@ -523,11 +520,11 @@ abstract public class Table extends CrashTableLayout {
         }
 
         public int getMinIdx() {
-            return (currentPage - 1) * numItemsPerPage;
+            return (currentPage - 1) * getNumberTransactionsPerPage();
         }
 
         public int getMaxIdx() {
-            return (currentPage * numItemsPerPage) - 1;
+            return (currentPage * getNumberTransactionsPerPage()) - 1;
         }
 
         public void makeLayout(Context context) {
