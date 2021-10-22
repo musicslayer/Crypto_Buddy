@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
 import com.musicslayer.cryptobuddy.crash.CrashBypassException;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.settings.TimeoutSetting;
 
 import java.io.ByteArrayOutputStream;
@@ -28,8 +29,8 @@ public class RESTUtil {
     }
 
     public static void checkForInterrupt() {
-        // If this thread has been interrupted, throw an error so the thread can stop running.
-        if(Thread.interrupted()) {
+        // If ProgressDialog was cancelled, throw an error so the thread can stop running.
+        if(!ProgressDialogFragment.allowThreads[0]) {
             throw new CrashBypassException();
         }
     }

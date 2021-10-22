@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.PollingUtil;
 
-import java.util.ArrayList;
-
 public class ProgressDialogFragment extends BaseDialogFragment {
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
@@ -19,7 +17,8 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     public final static String[] stored_status = new String[1];
     public final static String[] stored_value = new String[1];
 
-    public static ArrayList<Thread> threadArrayList;
+    // Global switch that determines if threads created here should proceed on.
+    public final static boolean[] allowThreads = new boolean[1];
 
     public static ProgressDialogFragment newInstance(Class<?> clazz, Object... args) {
         Bundle bundle = new Bundle();
@@ -35,7 +34,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     public void show(Context context, String tag) {
         // Clear the stored state before every new ProgressDialog showing.
         ProgressDialogFragment.clearAll();
-        threadArrayList = new ArrayList<>();
+        allowThreads[0] = true;
         super.show(context, tag);
     }
 
@@ -44,7 +43,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // Uses both onShow and onDismiss listeners here.
         ProgressDialog currentProgressDialog = (ProgressDialog)dialog;
 
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             if(SL != null && !currentProgressDialog.isCancelled) {
                 if(ProgressDialogFragment.isStart()) {
                     // This is the first call, so actually do the work.
@@ -75,10 +74,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
                 currentProgressDialog.dismiss();
             });
-        });
-
-        threadArrayList.add(thread);
-        thread.start();
+        }).start();
     }
 
     @Override
@@ -87,12 +83,11 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // Instead, any dialog that gets dismissed needs to be cancelled.
         ((ProgressDialog)dialog).isCancelled = true;
 
-        // If we deliberately stopped the operation while it was still running, we must signal to the threads we need them to stop so they don't keep using up resources.
+        // When the operation is finished, or if we deliberately stopped the operation while it was still running,
+        // we must signal to the threads we need them to stop so they don't keep using up resources.
         // Currently, most long-running operations involve REST web requests, so the only place that checks this is inside RESTUtil.
-        if(ProgressDialogFragment.isCancelled()) {
-            for(Thread thread : threadArrayList) {
-                thread.interrupt();
-            }
+        if(ProgressDialogFragment.isCancelled() || ProgressDialogFragment.isDone()) {
+            allowThreads[0] = false;
         }
     }
 
