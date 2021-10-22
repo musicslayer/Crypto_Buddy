@@ -91,6 +91,8 @@ public class AddTransactionDialog extends BaseDialog {
                     LASTCUSTOMDATE_INFO[2] = day;
 
                     LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+                    CHOSENDATE = LASTCUSTOMDATE;
+
                     String newDateText = DateTimeUtil.toDateString(LASTCUSTOMDATE);
                     T_DATE_CHOICE.setText(newDateText);
                     LASTCUSTOMDATE_TEXT = newDateText;
@@ -120,6 +122,8 @@ public class AddTransactionDialog extends BaseDialog {
                     LASTCUSTOMDATE_INFO[5] = second;
 
                     LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+                    CHOSENDATE = LASTCUSTOMDATE;
+
                     String newDateText = DateTimeUtil.toDateString(LASTCUSTOMDATE);
                     T_DATE_CHOICE.setText(newDateText);
                     LASTCUSTOMDATE_TEXT = newDateText;
@@ -280,6 +284,8 @@ public class AddTransactionDialog extends BaseDialog {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             LASTCUSTOMDATE_INFO = bundle.getIntArray("lastcustomdate_info");
+            LASTCUSTOMDATE = DateTimeUtil.getDateTime(LASTCUSTOMDATE_INFO[0], LASTCUSTOMDATE_INFO[1], LASTCUSTOMDATE_INFO[2], LASTCUSTOMDATE_INFO[3], LASTCUSTOMDATE_INFO[4], LASTCUSTOMDATE_INFO[5]);
+
             LASTCUSTOMDATE_TEXT = bundle.getString("lastcustomdate");
             LAST_CHECK = bundle.getInt("lastcheck");
         }
