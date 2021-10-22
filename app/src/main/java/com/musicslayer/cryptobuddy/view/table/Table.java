@@ -608,7 +608,7 @@ abstract public class Table extends CrashTableLayout {
         }
 
         public void updateLayout() {
-            pageTextView.setText(currentPage + "/" + lastPage);
+            pageTextView.setText(currentPage + "\n/" + lastPage);
             choosePageDialogFragment.updateArguments(ChoosePageDialog.class, 1, lastPage);
 
             // Artificially make the text width match the floating action button width.
