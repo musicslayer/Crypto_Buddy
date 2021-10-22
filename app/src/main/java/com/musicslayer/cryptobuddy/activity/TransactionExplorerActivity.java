@@ -72,7 +72,7 @@ public class TransactionExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
-                    table.addRow(TransactionExplorerActivity.this, ((AddTransactionDialog) dialog).user_TRANSACTION);
+                    table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
                 }
             }
         });

@@ -33,7 +33,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.ArrayList;
 
 abstract public class Table extends CrashTableLayout {
-    abstract public BaseRow getRow(Context context, Transaction transaction);
+    abstract public BaseRow getRow(Transaction transaction);
 
     // Number of rows before the user input.
     final int numHeaderRows = 3;
@@ -81,66 +81,72 @@ abstract public class Table extends CrashTableLayout {
         this.addView(new BaseHeaderRow(context));
     }
 
-    public void addColumn(Context context, String columnType, String columnHeader, String filterType, int initialSortState) {
+    public void addColumn(String columnType, String columnHeader, String filterType, int initialSortState) {
         numColumns++;
         this.columnTypes.add(columnType);
         this.columnHeaders.add(columnHeader);
         this.filterArrayList.add(Filter.fromType(filterType));
         this.sortState.add(initialSortState);
-    }
 
-    public void addRows(Context context, ArrayList<Transaction> transactionArrayList) {
-        // Add all rows, and then do sorting and filtering.
-        addRowsImpl(context, transactionArrayList);
-        finishRows(context);
-    }
-
-    public void addRow(Context context, Transaction transaction) {
-        addRowImpl(context, transaction);
-        finishRows(context);
-
-        if(transaction.isFiltered(filterArrayList, columnTypes)) {
-            ToastUtil.showToast(context,"new_transaction_filtered");
+        if(initialSortState != 1) {
+            sortingColumn = numColumns - 1;
         }
     }
 
-    public void addRowsImpl(Context context, ArrayList<Transaction> transactionArrayList) {
+    public void addRows(ArrayList<Transaction> transactionArrayList) {
+        // Add all rows, and then do sorting and filtering.
+        addRowsImpl(transactionArrayList);
+        finishRows();
+    }
+
+    public void addRow(Transaction transaction) {
+        addRowImpl(transaction);
+        finishRows();
+
+        if(transaction.isFiltered(filterArrayList, columnTypes)) {
+            ToastUtil.showToast(getContext(),"new_transaction_filtered");
+        }
+    }
+
+    public void addRowsImpl(ArrayList<Transaction> transactionArrayList) {
         for(int i = 0; i < transactionArrayList.size(); i++) {
             // Only draw current page of rows. If null, assume it's the first page.
             if(i >= pageView.getMinIdx() && i <= pageView.getMaxIdx()) {
-                drawRow(context, transactionArrayList.get(i));
+                drawRow(transactionArrayList.get(i));
             }
             this.transactionArrayList.add(transactionArrayList.get(i));
             maskedTransactionArrayList.add(transactionArrayList.get(i));
         }
     }
 
-    public void addRowImpl(Context context, Transaction transaction) {
-        drawRow(context, transaction);
+    public void addRowImpl(Transaction transaction) {
+        drawRow(transaction);
         this.transactionArrayList.add(transaction);
         maskedTransactionArrayList.add(transaction);
     }
 
     // Anything that adds rows should call this to finish the process.
     // These are expensive operations that should only be done once all new rows are added to the table.
-    public void finishRows(Context context) {
+    public void finishRows() {
         doSortImpl();
         updateFilters();
-        filterTable(context);
+        filterTable();
     }
 
-    public void drawRow(Context context, Transaction transaction) {
-        this.addView(getRow(context, transaction));
+    public void drawRow(Transaction transaction) {
+        this.addView(getRow(transaction));
     }
 
     class BaseFilterRow extends TableRow {
         public BaseFilterRow(Context context) {
             super(context);
             setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-            this.makeRow(context);
+            this.makeRow();
         }
 
-        public void makeRow(Context context) {
+        public void makeRow() {
+            Context context = getContext();
+
             this.setOrientation(LinearLayout.HORIZONTAL);
             this.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 
@@ -181,9 +187,9 @@ abstract public class Table extends CrashTableLayout {
                                 // We need to update the filter because it is a different handle.
                                 filterArrayList.set(ii, ((FilterDialog)dialog).filter);
 
-                                filterTable(context);
+                                filterTable();
                                 t[ii].setText(filterArrayList.get(ii).getIncludedString());
-                                redrawHeaderRows(context);
+                                redrawHeaderRows();
                             }
                         }
                     });
@@ -206,10 +212,12 @@ abstract public class Table extends CrashTableLayout {
         public BaseSortRow(Context context) {
             super(context);
             setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-            this.makeRow(context);
+            this.makeRow();
         }
 
-        public void makeRow(Context context) {
+        public void makeRow() {
+            Context context = getContext();
+
             AppCompatButton[] b = new AppCompatButton[numColumns];
 
             for(int i = 0; i < numColumns; i++) {
@@ -239,7 +247,7 @@ abstract public class Table extends CrashTableLayout {
                                         b[j].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_sort_24, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
                                         sortState.set(j, 0);
                                     }
-                                    doSort(context);
+                                    doSort();
                                 }
                             }
                         }
@@ -260,12 +268,12 @@ abstract public class Table extends CrashTableLayout {
         public BaseHeaderRow(Context context) {
             super(context);
             setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-            this.makeRow(context);
+            this.makeRow();
         }
 
-        public void makeRow(Context context) {
+        public void makeRow() {
             for(String h : columnHeaders) {
-                TextView t = new TextView(context);
+                TextView t = new TextView(getContext());
                 t.setText(h);
                 t.setBackgroundResource(R.drawable.border);
                 this.addView(t);
@@ -274,7 +282,7 @@ abstract public class Table extends CrashTableLayout {
     }
 
     abstract static class BaseRow extends TableRow {
-        abstract public void makeRow(Context context, Transaction transaction);
+        abstract public void makeRow(Transaction transaction);
 
         public BaseRow(Context context) {
             super(context);
@@ -283,7 +291,7 @@ abstract public class Table extends CrashTableLayout {
         public BaseRow(Context context, Transaction transaction) {
             super(context);
             setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-            this.makeRow(context, transaction);
+            this.makeRow(transaction);
         }
     }
 
@@ -295,7 +303,7 @@ abstract public class Table extends CrashTableLayout {
         }
     }
 
-    public void filterTable(Context context) {
+    public void filterTable() {
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
         for(Transaction t : maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
@@ -307,7 +315,7 @@ abstract public class Table extends CrashTableLayout {
         // Don't draw anything yet because we could be drawing extra things that aren't needed.
         if(pageView != null) {
             pageView.setNumItems(newTransactionArrayList.size());
-            redrawRows(context, newTransactionArrayList);
+            redrawRows(newTransactionArrayList);
         }
     }
 
@@ -330,9 +338,9 @@ abstract public class Table extends CrashTableLayout {
         }
     }
 
-    public void doSort(Context context) {
+    public void doSort() {
         doSortImpl();
-        filterTable(context);
+        filterTable();
     }
 
     public void resetTable() {
@@ -345,22 +353,22 @@ abstract public class Table extends CrashTableLayout {
         pageView.setNumItems(0);
     }
 
-    public void redrawHeaderRows(Context context) {
+    public void redrawHeaderRows() {
         ViewGroup group = this;
         group.removeViews(0, numHeaderRows);
 
-        this.addView(new BaseFilterRow(context), 0);
-        this.addView(new BaseSortRow(context), 1);
-        this.addView(new BaseHeaderRow(context), 2);
+        this.addView(new BaseFilterRow(getContext()), 0);
+        this.addView(new BaseSortRow(getContext()), 1);
+        this.addView(new BaseHeaderRow(getContext()), 2);
     }
 
-    public void redrawRows(Context context, ArrayList<Transaction> newTransactionArrayList) {
+    public void redrawRows(ArrayList<Transaction> newTransactionArrayList) {
         ViewGroup group = this;
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
 
         for(int i = 0; i < newTransactionArrayList.size(); i++) {
             if(i >= pageView.getMinIdx() && i <= pageView.getMaxIdx()) {
-                drawRow(context, newTransactionArrayList.get(i));
+                drawRow(newTransactionArrayList.get(i));
             }
         }
     }
@@ -451,7 +459,7 @@ abstract public class Table extends CrashTableLayout {
             group.addView(new BaseFilterRow(context), 0);
             group.addView(new BaseSortRow(context), 1);
 
-            filterTable(context);
+            filterTable();
         }
         return state;
     }
@@ -489,7 +497,7 @@ abstract public class Table extends CrashTableLayout {
 
         public TablePageView(Context context, AttributeSet attributeSet) {
             super(context, attributeSet);
-            makeLayout(context);
+            makeLayout();
         }
 
         public void setTable(Table inner_table) {
@@ -522,7 +530,9 @@ abstract public class Table extends CrashTableLayout {
             return (currentPage * getNumberTransactionsPerPage()) - 1;
         }
 
-        public void makeLayout(Context context) {
+        public void makeLayout() {
+            Context context = getContext();
+
             choosePageDialogFragment = BaseDialogFragment.newInstance(ChoosePageDialog.class, 1, lastPage);
             choosePageDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                 @Override
@@ -530,7 +540,7 @@ abstract public class Table extends CrashTableLayout {
                     if(((ChoosePageDialog)dialog).isComplete) {
                         currentPage = ((ChoosePageDialog)dialog).user_PAGE;
                         updateLayout();
-                        outer_table.filterTable(context);
+                        outer_table.filterTable();
                     }
                 }
             });
@@ -544,7 +554,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage != 1) {
                         currentPage = 1;
                         updateLayout();
-                        outer_table.filterTable(context);
+                        outer_table.filterTable();
                     }
                 }
             });
@@ -557,7 +567,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage > 1) {
                         currentPage--;
                         updateLayout();
-                        outer_table.filterTable(context);
+                        outer_table.filterTable();
                     }
                 }
             });
@@ -580,7 +590,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage < lastPage) {
                         currentPage++;
                         updateLayout();
-                        outer_table.filterTable(context);
+                        outer_table.filterTable();
                     }
                 }
             });
@@ -593,7 +603,7 @@ abstract public class Table extends CrashTableLayout {
                     if(currentPage != lastPage) {
                         currentPage = lastPage;
                         updateLayout();
-                        outer_table.filterTable(context);
+                        outer_table.filterTable();
                     }
                 }
             });

@@ -23,8 +23,8 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.view.AssetTextView;
 
 public class TransactionTable extends Table {
-    public BaseRow getRow(Context context, Transaction transaction) {
-        return new TransactionTable.TransactionRow(context, transaction);
+    public BaseRow getRow(Transaction transaction) {
+        return new TransactionTable.TransactionRow(getContext(), transaction);
     }
 
     public static boolean shouldAddBackwardsPrice() {
@@ -38,16 +38,17 @@ public class TransactionTable extends Table {
     public TransactionTable(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        this.addColumn(context,"delete", "Delete (Tap Twice)", null, -1);
-        this.addColumn(context,"action", "Action", "discrete", 1);
-        this.addColumn(context,"quantity", "Actioned Asset", "discrete", 1);
-        this.addColumn(context,"other_quantity", "Other Asset",  "discrete", 1);
-        this.addColumn(context,"price", "Forward Price", "discrete", 1);
-        if(shouldAddBackwardsPrice()) { this.addColumn(context,"other_price", "Backward Price", "discrete", 1); }
-        this.addColumn(context,"timestamp", "Timestamp", "date", 0);
-        this.addColumn(context,"info", "Info", "discrete", 1);
+        this.addColumn("delete", "Delete (Tap Twice)", null, -1);
+        this.addColumn("action", "Action", "discrete", 1);
+        this.addColumn("quantity", "Actioned Asset", "discrete", 1);
+        this.addColumn("other_quantity", "Other Asset",  "discrete", 1);
+        this.addColumn("price", "Forward Price", "discrete", 1);
+        if(shouldAddBackwardsPrice()) { this.addColumn("other_price", "Backward Price", "discrete", 1); }
+        this.addColumn("timestamp", "Timestamp", "date", 0);
+        this.addColumn("info", "Info", "discrete", 1);
 
-        redrawHeaderRows(context);
+        doSortImpl();
+        redrawHeaderRows();
     }
 
     class TransactionRow extends BaseRow {
@@ -59,7 +60,9 @@ public class TransactionTable extends Table {
             super(context, transaction);
         }
 
-        public void makeRow(Context context, Transaction transaction) {
+        public void makeRow(Transaction transaction) {
+            Context context = getContext();
+
             final int ii = TransactionTable.this.getChildCount() - numHeaderRows;
 
             BaseDialogFragment confirmDeleteTransactionDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTransactionDialog.class);
@@ -69,7 +72,7 @@ public class TransactionTable extends Table {
                     if(((ConfirmDeleteTransactionDialog)dialog).isComplete) {
                         transactionArrayList.remove(transaction);
                         maskedTransactionArrayList.remove(transaction);
-                        finishRows(context);
+                        finishRows();
 
                         // Potentially perform more actions if a listener exists.
                         checkDeletion(transaction);

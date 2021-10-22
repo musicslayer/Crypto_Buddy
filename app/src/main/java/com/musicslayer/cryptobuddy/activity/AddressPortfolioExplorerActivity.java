@@ -371,7 +371,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         TextView T = findViewById(R.id.address_portfolio_explorer_infoTextView);
         T.setText("Portfolio = " + addressPortfolioObj.name);
 
-        table.addRowsFromAddressDataArray(this, new ArrayList<>(addressDataFilterMap.values()));
+        table.addRowsFromAddressDataArray(new ArrayList<>(addressDataFilterMap.values()));
     }
 
     public void updateFilter() {

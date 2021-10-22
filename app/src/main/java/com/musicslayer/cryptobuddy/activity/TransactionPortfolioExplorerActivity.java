@@ -95,7 +95,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
                     transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
                     TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, transactionPortfolioObj);
 
-                    table.addRow(TransactionPortfolioExplorerActivity.this, ((AddTransactionDialog) dialog).user_TRANSACTION);
+                    table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
                 }
             }
         });
@@ -118,7 +118,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         });
 
         if(isFirstCreate) {
-            table.addRows(this, transactionPortfolioObj.transactionArrayList);
+            table.addRows(transactionPortfolioObj.transactionArrayList);
         }
     }
 

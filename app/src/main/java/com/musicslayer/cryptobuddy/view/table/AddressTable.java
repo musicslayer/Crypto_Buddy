@@ -12,8 +12,8 @@ import com.musicslayer.cryptobuddy.view.AssetTextView;
 import java.util.ArrayList;
 
 public class AddressTable extends Table {
-    public BaseRow getRow(Context context, Transaction transaction) {
-        return new AddressTable.AddressRow(context, transaction);
+    public BaseRow getRow(Transaction transaction) {
+        return new AddressTable.AddressRow(getContext(), transaction);
     }
 
     public AddressTable(Context context) {
@@ -23,27 +23,28 @@ public class AddressTable extends Table {
     public AddressTable(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        this.addColumn(context,"action", "Action","discrete", 1);
-        this.addColumn(context,"quantity", "Asset", "discrete", 1);
-        this.addColumn(context,"timestamp", "Timestamp", "date", 0);
-        this.addColumn(context,"info", "Info", "discrete", 1);
+        this.addColumn("action", "Action","discrete", 1);
+        this.addColumn("quantity", "Asset", "discrete", 1);
+        this.addColumn("timestamp", "Timestamp", "date", 0);
+        this.addColumn("info", "Info", "discrete", 1);
 
-        redrawHeaderRows(context);
+        doSortImpl();
+        redrawHeaderRows();
     }
 
-    public void addRowsFromAddressDataArray(Context context, ArrayList<AddressData> addressDataArrayList) {
+    public void addRowsFromAddressDataArray(ArrayList<AddressData> addressDataArrayList) {
         if(addressDataArrayList == null) { return; }
 
         boolean isAny = false;
         for(AddressData addressData : addressDataArrayList) {
             if(addressData != null && addressData.isTransactionsComplete()) {
                 isAny = true;
-                addRowsImpl(context, addressData.transactionArrayList);
+                addRowsImpl(addressData.transactionArrayList);
             }
         }
 
         if(isAny) {
-            finishRows(context);
+            finishRows();
         }
     }
 
@@ -56,7 +57,9 @@ public class AddressTable extends Table {
             super(context, transaction);
         }
 
-        public void makeRow(Context context, Transaction transaction) {
+        public void makeRow(Transaction transaction) {
+            Context context = getContext();
+
             TextView t0 = new TextView(context);
             t0.setText(transaction.action.toString());
             t0.setBackgroundResource(R.drawable.border);
