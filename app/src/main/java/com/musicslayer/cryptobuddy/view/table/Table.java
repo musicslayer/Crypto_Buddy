@@ -87,14 +87,6 @@ abstract public class Table extends CrashTableLayout {
         this.columnHeaders.add(columnHeader);
         this.filterArrayList.add(Filter.fromType(filterType));
         this.sortState.add(initialSortState);
-
-        // Sort by the most recent column if it has a sorting state for "Descending" or "Ascending".
-        if(initialSortState != 1) {
-            sortingColumn = numColumns - 1;
-            doSort(context);
-        }
-
-        redrawHeaderRows(context);
     }
 
     public void addRows(Context context, ArrayList<Transaction> transactionArrayList) {

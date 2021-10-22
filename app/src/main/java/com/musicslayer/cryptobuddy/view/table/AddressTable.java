@@ -27,6 +27,8 @@ public class AddressTable extends Table {
         this.addColumn(context,"quantity", "Asset", "discrete", 1);
         this.addColumn(context,"timestamp", "Timestamp", "date", 0);
         this.addColumn(context,"info", "Info", "discrete", 1);
+
+        redrawHeaderRows(context);
     }
 
     public void addRowsFromAddressDataArray(Context context, ArrayList<AddressData> addressDataArrayList) {

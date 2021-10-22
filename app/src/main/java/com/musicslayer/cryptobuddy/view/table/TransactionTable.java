@@ -46,6 +46,8 @@ public class TransactionTable extends Table {
         if(shouldAddBackwardsPrice()) { this.addColumn(context,"other_price", "Backward Price", "discrete", 1); }
         this.addColumn(context,"timestamp", "Timestamp", "date", 0);
         this.addColumn(context,"info", "Info", "discrete", 1);
+
+        redrawHeaderRows(context);
     }
 
     class TransactionRow extends BaseRow {
