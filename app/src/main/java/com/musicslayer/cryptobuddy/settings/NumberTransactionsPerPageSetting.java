@@ -23,11 +23,11 @@ public class NumberTransactionsPerPageSetting extends Setting {
 
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
-        optionDisplays.add("Show 10 transactions per page.\n** Showing more transactions per page may be slower on lesser devices. **");
-        optionDisplays.add("Show 25 transactions per page.\n** Showing more transactions per page may be slower on lesser devices. **");
-        optionDisplays.add("Show 50 transactions per page.\n** Showing more transactions per page may be slower on lesser devices. **");
-        optionDisplays.add("Show 100 transactions per page.\n** Showing more transactions per page may be slower on lesser devices. **");
-        optionDisplays.add("Show 200 transactions per page.\n** Showing more transactions per page may be slower on lesser devices. **");
+        optionDisplays.add("Show 10 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");
+        optionDisplays.add("Show 25 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");
+        optionDisplays.add("Show 50 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");
+        optionDisplays.add("Show 100 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");
+        optionDisplays.add("Show 200 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");
         return optionDisplays;
     }
 

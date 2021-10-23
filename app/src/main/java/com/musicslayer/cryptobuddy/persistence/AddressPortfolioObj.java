@@ -22,8 +22,18 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON {
         cryptoAddressArrayList.add(cryptoAddress);
     }
 
+    public void removeData(CryptoAddress cryptoAddress) {
+        cryptoAddressArrayList.remove(cryptoAddress);
+    }
+
     public boolean isSaved(CryptoAddress cryptoAddress) {
-        return cryptoAddressArrayList.contains(cryptoAddress);
+        // An address is considered to be saved in a portfolio if it is present in any form (i.e. coins, coins + tokens, case insensitive match).
+        for(CryptoAddress ca : cryptoAddressArrayList) {
+            if(ca.isSameAs(cryptoAddress)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String serializationVersion() { return "1"; }

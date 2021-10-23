@@ -45,6 +45,14 @@
         app:layout_constraintStart_toEndOf="@+id/download_data_dialog_selectAllButton"
         app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_downloadButton" />
 
+    <TextView
+        android:id="@+id/download_data_dialog_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="(There are no addresses to download data for.)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/download_data_dialog_clearAllButton" />
+
     <LinearLayout
         android:id="@+id/download_data_dialog_checkBoxLayout"
         android:layout_width="match_parent"
@@ -53,6 +61,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_clearAllButton" />
+        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_messageTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

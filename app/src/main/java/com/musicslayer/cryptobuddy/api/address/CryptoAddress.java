@@ -43,6 +43,12 @@ public class CryptoAddress implements Serialization.SerializableToJSON {
             (includeTokens == ((CryptoAddress) other).includeTokens);
     }
 
+    public boolean isSameAs(CryptoAddress cryptoAddress) {
+        // Returns true if this CryptoAddress is effectively the same as the input CryptoAddress.
+        // For example, we look at case insensitive matches, and we don't take into account whether tokens are included or not.
+        return network.equals(cryptoAddress.network) && matchesAddress(cryptoAddress.address);
+    }
+
     @NonNull
     @Override
     public String toString() {

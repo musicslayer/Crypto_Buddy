@@ -43,6 +43,14 @@ public class DownloadDataDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_download_data);
 
+        TextView T_MESSAGE = findViewById(R.id.download_data_dialog_messageTextView);
+        if(cryptoAddressArrayList.isEmpty()) {
+            T_MESSAGE.setVisibility(View.VISIBLE);
+        }
+        else {
+            T_MESSAGE.setVisibility(View.GONE);
+        }
+
         Button B_DOWNLOAD = findViewById(R.id.download_data_dialog_downloadButton);
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override

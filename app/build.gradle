@@ -43,7 +43,6 @@ android {
 
     buildTypes {
         // TEST
-
         debug {
         }
         release {
@@ -52,7 +51,7 @@ android {
         }
 
         // REAL
-        /*
+/*
         debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -66,7 +65,7 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
-         */
+*/
     }
     compileOptions {
         coreLibraryDesugaringEnabled true

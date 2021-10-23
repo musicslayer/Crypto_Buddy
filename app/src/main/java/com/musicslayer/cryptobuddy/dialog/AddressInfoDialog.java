@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class AddressInfoDialog extends BaseDialog {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos);
-                AddressData addressData = getValueFromMap(cryptoAddress);
+                AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
                 T.setText(getInfoString(addressData));
             }
         });
@@ -58,17 +59,6 @@ public class AddressInfoDialog extends BaseDialog {
             bsv.setVisibility(View.GONE);
             T.setText("No addresses found.");
         }
-    }
-
-    public AddressData getValueFromMap(CryptoAddress cryptoAddress) {
-        // We need this because HashMap isn't using the equals method as we expect.
-        ArrayList<CryptoAddress> keys = new ArrayList<>(addressDataMap.keySet());
-        for(CryptoAddress key : keys) {
-            if(key.equals(cryptoAddress)) {
-                return addressDataMap.get(key);
-            }
-        }
-        return null;
     }
 
     public String getInfoString(AddressData addressData) {

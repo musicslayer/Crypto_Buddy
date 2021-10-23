@@ -43,16 +43,16 @@ public class ReportFeedbackDialog extends BaseDialog {
         checkBox_info.setVisibility("None".equals(type) ? View.GONE : View.VISIBLE);
 
         if("Transaction".equals(type)) {
-            checkBox_info.setText("Add transaction information.");
+            checkBox_info.setText("Attach transaction information.");
         }
         else if("TransactionPortfolio".equals(type)) {
-            checkBox_info.setText("Add transaction portfolio information.");
+            checkBox_info.setText("Attach transaction portfolio information.");
         }
         else if("Address".equals(type)) {
-            checkBox_info.setText("Add address information.");
+            checkBox_info.setText("Attach address information.");
         }
         else if("AddressPortfolio".equals(type)) {
-            checkBox_info.setText("Add address portfolio information.");
+            checkBox_info.setText("Attach address portfolio information.");
         }
 
         Button B_EMAIL = findViewById(R.id.report_feedback_dialog_button);

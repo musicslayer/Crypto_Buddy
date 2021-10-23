@@ -42,7 +42,7 @@ public class SettingsActivity extends BaseActivity {
         LinearLayout L = findViewById(R.id.settings_linearLayout);
 
         BorderedSpinnerView bsv = findViewById(R.id.settings_category_spinner);
-        bsv.setOptions(new String[] {"Formatting", "Display Localization", "API", "Appearance", "Other", "Reset"});
+        bsv.setOptions(new String[] {"Formatting", "Display Localization", "API", "Appearance", "Confirmations", "Reset"});
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {

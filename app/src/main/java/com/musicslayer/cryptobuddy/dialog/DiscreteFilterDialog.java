@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -34,6 +35,14 @@ public class DiscreteFilterDialog extends FilterDialog {
 
     public void createLayout() {
         setContentView(R.layout.dialog_discrete_filter);
+
+        TextView T_MESSAGE = findViewById(R.id.discrete_filter_dialog_messageTextView);
+        if(discreteFilter.choices.isEmpty()) {
+            T_MESSAGE.setVisibility(View.VISIBLE);
+        }
+        else {
+            T_MESSAGE.setVisibility(View.GONE);
+        }
 
         Button B_FILTER = findViewById(R.id.discrete_filter_dialog_applyFilterButton);
         B_FILTER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

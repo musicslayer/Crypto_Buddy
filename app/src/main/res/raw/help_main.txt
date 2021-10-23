@@ -11,4 +11,4 @@ Crypto Tools:
 --> Crypto Converter - Convert crypto quantities.
 
 Premium Features (Require In-app Purchase):
---> Token Manager - Download token lists or add your own custom tokens, to help the app can recognize them.
+--> Token Manager - Download token lists or add your own custom tokens, to help the app recognize them.

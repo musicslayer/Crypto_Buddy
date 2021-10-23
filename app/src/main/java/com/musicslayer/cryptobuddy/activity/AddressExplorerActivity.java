@@ -77,12 +77,12 @@ public class AddressExplorerActivity extends BaseActivity {
 
         CryptoAddress cryptoAddress = Serialization.deserialize(getIntent().getStringExtra("CryptoAddress"), CryptoAddress.class);
         cryptoAddressArrayList.add(cryptoAddress);
-        addressDataMap.put(cryptoAddress, AddressData.getNoData(cryptoAddress));
+        putValueInMap(addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
+
+        boolean includeTokens = cryptoAddress.includeTokens;
 
         TextView T_INFO = findViewById(R.id.address_explorer_infoTextView);
         T_INFO.setText("Address = " + cryptoAddressArrayList.get(0).toString());
-
-        boolean includeTokens = cryptoAddress.includeTokens;
 
         TextView T_MESSAGE = findViewById(R.id.address_explorer_messageTextView);
         if(!Purchases.isUnlockTokensPurchased && includeTokens) {
@@ -193,7 +193,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
 
                 addressDataMap.clear();
-                addressDataMap.put(cryptoAddressArrayList.get(0), newAddressData);
+                putValueInMap(addressDataMap, cryptoAddressArrayList.get(0), newAddressData);
 
                 updateLayout();
                 ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
@@ -226,6 +226,31 @@ public class AddressExplorerActivity extends BaseActivity {
     public void updateLayout() {
         table.resetTable();
         table.addRowsFromAddressDataArray(new ArrayList<>(addressDataMap.values()));
+    }
+
+    public <T, U> void putValueInMap(HashMap<T, U> map, T desiredKey, U desiredValue) {
+        // We need this because HashMap isn't using the equals method as we expect.
+        removeValueFromMap(map, desiredKey);
+        map.put(desiredKey, desiredValue);
+    }
+
+    public <T, U> U getValueFromMap(HashMap<T, U> map, T desiredKey) {
+        // We need this because HashMap isn't using the equals method as we expect.
+        for(T key : map.keySet()) {
+            if(key.equals(desiredKey)) {
+                return map.get(key);
+            }
+        }
+        return null;
+    }
+
+    public <T, U> void removeValueFromMap(HashMap<T, U> map, T desiredKey) {
+        // We need this because HashMap isn't using the equals method as we expect.
+        for(T key : map.keySet()) {
+            if(key.equals(desiredKey)) {
+                map.remove(key);
+            }
+        }
     }
 
     @Override

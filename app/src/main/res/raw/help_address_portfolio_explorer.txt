@@ -1,4 +1,5 @@
 View transactions on all crypto addresses in the portfolio, and then get the net values of all assets involved, including a total USD value.
+Any changes you make to the portfolio (i.e. adding or removing addresses) are instantly saved.
 
 Buttons left to right:
 --> First Row
@@ -7,6 +8,7 @@ Buttons left to right:
 
 --> Second Row
 -----> Add new address to portfolio
+-----> Remove address from portfolio
 -----> Address information
 -----> Get net values**
 -----> QR Codes
