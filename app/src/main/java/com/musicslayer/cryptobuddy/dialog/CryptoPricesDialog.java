@@ -83,7 +83,7 @@ public class CryptoPricesDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putString("crypto", Serialization.serialize(crypto));
+        bundle.putParcelable("crypto", crypto);
 
         return bundle;
     }
@@ -91,7 +91,7 @@ public class CryptoPricesDialog extends BaseDialog {
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            crypto = Serialization.deserialize(bundle.getString("crypto"), Crypto.class);
+            crypto = bundle.getParcelable("crypto");
         }
     }
 }

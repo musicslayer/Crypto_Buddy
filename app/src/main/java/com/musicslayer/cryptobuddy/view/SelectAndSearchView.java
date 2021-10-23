@@ -381,7 +381,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         bundle.putParcelable("superState", state);
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
         bundle.putString("lastButton", lastButton);
-        bundle.putString("lastSearchAsset", Serialization.serialize(lastSearchAsset));
+        bundle.putParcelable("lastSearchAsset", lastSearchAsset);
 
         return bundle;
     }
@@ -394,7 +394,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
             lastButton = bundle.getString("lastButton");
-            lastSearchAsset = Serialization.deserialize(bundle.getString("lastSearchAsset"), Asset.class);
+            lastSearchAsset = bundle.getParcelable("lastSearchAsset");
 
             restoreOptions(lastButton, lastSearchAsset);
             this.bsv.setSelection(bundle.getInt("selection"));

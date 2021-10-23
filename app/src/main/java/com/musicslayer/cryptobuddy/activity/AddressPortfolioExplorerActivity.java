@@ -424,7 +424,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         bundle.putSerializable("addressDataFilterMap", addressDataFilterMap);
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
-        bundle.putString("filter", Serialization.serialize(addressFilter));
+        bundle.putParcelable("filter", addressFilter);
     }
 
     @Override
@@ -435,7 +435,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             addressDataFilterMap = (HashMap<CryptoAddress, AddressData>)bundle.getSerializable("addressDataFilterMap");
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
-            addressFilter = Serialization.deserialize(bundle.getString("filter"), DiscreteFilter.class);
+            addressFilter = bundle.getParcelable("filter");
         }
     }
 }

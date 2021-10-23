@@ -1,5 +1,8 @@
 package com.musicslayer.cryptobuddy.transaction;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
@@ -7,7 +10,31 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.Date;
 
-public class Timestamp implements Serialization.SerializableToJSON {
+public class Timestamp implements Serialization.SerializableToJSON, Parcelable {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(date.getTime());
+    }
+
+    public static final Parcelable.Creator<Timestamp> CREATOR = new Parcelable.Creator<Timestamp>() {
+        @Override
+        public Timestamp createFromParcel(Parcel in) {
+            long time = in.readLong();
+            return new Timestamp(new Date(time));
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public Timestamp[] newArray(int size) {
+            return new Timestamp[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public Date date;
 
     public Timestamp(Date date) {

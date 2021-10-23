@@ -221,15 +221,14 @@ public class ConfirmationView extends CrashLinearLayout {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
 
-        bundle.putSerializable("randomCode", randomCode);
-        bundle.putSerializable("lastDigits", lastDigits);
+        bundle.putIntegerArrayList("randomCode", randomCode);
+        bundle.putIntegerArrayList("lastDigits", lastDigits);
         bundle.putInt("numDigits", numDigits);
 
         return bundle;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
@@ -237,8 +236,8 @@ public class ConfirmationView extends CrashLinearLayout {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
 
-            randomCode = (ArrayList<Integer>)bundle.getSerializable("randomCode");
-            lastDigits = (ArrayList<Integer>)bundle.getSerializable("lastDigits");
+            randomCode = bundle.getIntegerArrayList("randomCode");
+            lastDigits = bundle.getIntegerArrayList("lastDigits");
             numDigits = bundle.getInt("numDigits");
 
             this.removeAllViews();

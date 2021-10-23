@@ -418,16 +418,14 @@ abstract public class Table extends CrashTableLayout {
     @Override
     public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {
-        // Save dynamically added rows.
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
         bundle.putParcelable("pageView", pageView.onSaveInstanceState());
 
         bundle.putInt("sortingColumn", sortingColumn);
-        bundle.putSerializable("filters", filterArrayList);
-        bundle.putSerializable("transactions", transactionArrayList);
-        bundle.putSerializable("masked_transactions", maskedTransactionArrayList);
-
+        bundle.putParcelableArrayList("filters", filterArrayList);
+        bundle.putParcelableArrayList("transactions", transactionArrayList);
+        bundle.putParcelableArrayList("masked_transactions", maskedTransactionArrayList);
         bundle.putIntegerArrayList("sortState", sortState);
 
         return bundle;
@@ -437,7 +435,6 @@ abstract public class Table extends CrashTableLayout {
     @SuppressWarnings("unchecked")
     public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
-        // Load dynamically added rows.
         if (state instanceof Bundle) // implicit null check
         {
             Bundle bundle = (Bundle) state;
@@ -445,10 +442,9 @@ abstract public class Table extends CrashTableLayout {
             pageView.onRestoreInstanceState(bundle.getParcelable("pageView"));
 
             sortingColumn = bundle.getInt("sortingColumn");
-            filterArrayList = (ArrayList<Filter>)bundle.getSerializable("filters");
-            transactionArrayList = (ArrayList<Transaction>)bundle.getSerializable("transactions");
-            maskedTransactionArrayList = (ArrayList<Transaction>)bundle.getSerializable("masked_transactions");
-
+            filterArrayList = bundle.getParcelableArrayList("filters");
+            transactionArrayList = bundle.getParcelableArrayList("transactions");
+            maskedTransactionArrayList = bundle.getParcelableArrayList("masked_transactions");
             sortState = bundle.getIntegerArrayList("sortState");
 
             // Remove and add the filter and sort row

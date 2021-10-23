@@ -1,8 +1,11 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -17,7 +20,30 @@ import java.util.HashMap;
 // addr1v9s96gdnn9nmhmyz2duu0ghgnt6wvzdjkavkcv92smj69uc4rsp5h
 // CardanoExplorer.java can get balance but not transactions.
 
-abstract public class Network implements Serialization.SerializableToJSON {
+abstract public class Network implements Serialization.SerializableToJSON, Parcelable {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(getKey());
+    }
+
+    public static final Parcelable.Creator<Network> CREATOR = new Parcelable.Creator<Network>() {
+        @Override
+        public Network createFromParcel(Parcel in) {
+            return Network.getNetworkFromKey(in.readString());
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public Network[] newArray(int size) {
+            return new Network[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     abstract public boolean isMainnet();
     abstract public boolean isCaseSensitive();
     abstract public Crypto getCrypto();

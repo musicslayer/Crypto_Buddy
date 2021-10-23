@@ -1,12 +1,48 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class AddressData implements Serialization.SerializableToJSON {
+public class AddressData implements Serialization.SerializableToJSON, Parcelable {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeParcelable(cryptoAddress, flags);
+        out.writeString(addressAPI_currentBalance.getKey());
+        out.writeString(addressAPI_transactions.getKey());
+        out.writeTypedList(currentBalanceArrayList);
+        out.writeTypedList(transactionArrayList);
+    }
+
+    public static final Parcelable.Creator<AddressData> CREATOR = new Parcelable.Creator<AddressData>() {
+        @Override
+        public AddressData createFromParcel(Parcel in) {
+            CryptoAddress cryptoAddress = in.readParcelable(CryptoAddress.class.getClassLoader());
+            AddressAPI addressAPI_currentBalance_f = AddressAPI.getAddressAPIFromKey(in.readString());
+            AddressAPI addressAPI_transactions_f = AddressAPI.getAddressAPIFromKey(in.readString());
+            ArrayList<AssetQuantity> currentBalanceArrayList_f = in.createTypedArrayList(AssetQuantity.CREATOR);
+            ArrayList<Transaction> transactionArrayList_f = in.createTypedArrayList(Transaction.CREATOR);
+
+            return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public AddressData[] newArray(int size) {
+            return new AddressData[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;

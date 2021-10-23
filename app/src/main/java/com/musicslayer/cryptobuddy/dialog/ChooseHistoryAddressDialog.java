@@ -92,14 +92,14 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putString("currentDeleteHistoryCryptoAddress", Serialization.serialize(currentDeleteHistoryCryptoAddress));
+        bundle.putParcelable("currentDeleteHistoryCryptoAddress", currentDeleteHistoryCryptoAddress);
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            currentDeleteHistoryCryptoAddress = Serialization.deserialize(bundle.getString("currentDeleteHistoryCryptoAddress"), CryptoAddress.class);
+            currentDeleteHistoryCryptoAddress = bundle.getParcelable("currentDeleteHistoryCryptoAddress");
         }
     }
 }

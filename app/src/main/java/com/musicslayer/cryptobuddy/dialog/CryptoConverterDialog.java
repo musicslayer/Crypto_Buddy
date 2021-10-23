@@ -130,16 +130,16 @@ public class CryptoConverterDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putString("cryptoPrimary", Serialization.serialize(cryptoPrimary));
-        bundle.putString("cryptoSecondary", Serialization.serialize(cryptoSecondary));
+        bundle.putParcelable("cryptoPrimary", cryptoPrimary);
+        bundle.putParcelable("cryptoSecondary", cryptoSecondary);
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            cryptoPrimary = Serialization.deserialize(bundle.getString("cryptoPrimary"), Crypto.class);
-            cryptoSecondary = Serialization.deserialize(bundle.getString("cryptoSecondary"), Crypto.class);
+            cryptoPrimary = bundle.getParcelable("cryptoPrimary");
+            cryptoSecondary = bundle.getParcelable("cryptoSecondary");
         }
     }
 }

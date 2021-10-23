@@ -1,5 +1,8 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
@@ -9,7 +12,35 @@ import com.musicslayer.cryptobuddy.settings.NetworksSetting;
 
 import java.util.ArrayList;
 
-public class CryptoAddress implements Serialization.SerializableToJSON {
+public class CryptoAddress implements Serialization.SerializableToJSON, Parcelable {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(address);
+        out.writeParcelable(network, flags);
+        out.writeString(Boolean.toString(includeTokens)); // Boolean requires newer Android version.
+    }
+
+    public static final Parcelable.Creator<CryptoAddress> CREATOR = new Parcelable.Creator<CryptoAddress>() {
+        @Override
+        public CryptoAddress createFromParcel(Parcel in) {
+            String address = in.readString();
+            Network network = in.readParcelable(Network.class.getClassLoader());
+            boolean includeTokens = Boolean.parseBoolean(in.readString());
+            return new CryptoAddress(address, network, includeTokens);
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public CryptoAddress[] newArray(int size) {
+            return new CryptoAddress[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public String address;
     public Network network;
     public boolean includeTokens;

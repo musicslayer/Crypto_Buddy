@@ -1,5 +1,8 @@
 package com.musicslayer.cryptobuddy.asset;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -10,7 +13,33 @@ import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
 import java.util.ArrayList;
 import java.util.Collections;
 
-abstract public class Asset implements Serialization.SerializableToJSON {
+abstract public class Asset implements Serialization.SerializableToJSON, Parcelable {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(getAssetType());
+        out.writeString(getKey());
+    }
+
+    public static final Parcelable.Creator<Asset> CREATOR = new Parcelable.Creator<Asset>() {
+        @Override
+        public Asset createFromParcel(Parcel in) {
+            String assetType = in.readString();
+            String key = in.readString();
+            return  Asset.getAsset(assetType, key);
+        }
+
+        // We just need to copy this and change the type to match our class.
+        @Override
+        public Asset[] newArray(int size) {
+            return new Asset[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
     abstract public String getName(); // Usually same as key, but in some cases (i.e. TRON) it could be different.
     abstract public String getDisplayName();
