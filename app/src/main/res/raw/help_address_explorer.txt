@@ -2,15 +2,12 @@ View transactions on a crypto address, and then get the net values of all assets
 
 Buttons left to right:
 --> First Row
------> Download Data*
+-----> Download Data
 
 --> Second Row
 -----> Address information
------> Get net values**
+-----> Get net values*
 -----> QR Codes
 
-*This will ask which types of data should be downloaded for the address.
-When any download is finished, even if nothing is selected, all existing data is cleared before new data is displayed.
-
-**This is the net sum of all transactions we have detected. This may NOT equal the current balance at the address.
+*This is the net sum of all transactions we have detected. This may NOT equal the current balance at the address.
 For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.

@@ -32,6 +32,7 @@ import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -77,7 +78,7 @@ public class AddressExplorerActivity extends BaseActivity {
 
         CryptoAddress cryptoAddress = Serialization.deserialize(getIntent().getStringExtra("CryptoAddress"), CryptoAddress.class);
         cryptoAddressArrayList.add(cryptoAddress);
-        putValueInMap(addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
+        HashMapUtil.putValueInMap(addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
 
         boolean includeTokens = cryptoAddress.includeTokens;
 
@@ -192,8 +193,10 @@ public class AddressExplorerActivity extends BaseActivity {
                     ToastUtil.showToast(AddressExplorerActivity.this,"incomplete_address_data");
                 }
 
-                addressDataMap.clear();
-                putValueInMap(addressDataMap, cryptoAddressArrayList.get(0), newAddressData);
+                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
+                AddressData oldAddressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
+                AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
+                HashMapUtil.putValueInMap(addressDataMap, cryptoAddress, mergedAddressData);
 
                 updateLayout();
                 ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
@@ -201,7 +204,7 @@ public class AddressExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList, addressDataMap);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -226,31 +229,6 @@ public class AddressExplorerActivity extends BaseActivity {
     public void updateLayout() {
         table.resetTable();
         table.addRowsFromAddressDataArray(new ArrayList<>(addressDataMap.values()));
-    }
-
-    public <T, U> void putValueInMap(HashMap<T, U> map, T desiredKey, U desiredValue) {
-        // We need this because HashMap isn't using the equals method as we expect.
-        removeValueFromMap(map, desiredKey);
-        map.put(desiredKey, desiredValue);
-    }
-
-    public <T, U> U getValueFromMap(HashMap<T, U> map, T desiredKey) {
-        // We need this because HashMap isn't using the equals method as we expect.
-        for(T key : map.keySet()) {
-            if(key.equals(desiredKey)) {
-                return map.get(key);
-            }
-        }
-        return null;
-    }
-
-    public <T, U> void removeValueFromMap(HashMap<T, U> map, T desiredKey) {
-        // We need this because HashMap isn't using the equals method as we expect.
-        for(T key : map.keySet()) {
-            if(key.equals(desiredKey)) {
-                map.remove(key);
-            }
-        }
     }
 
     @Override

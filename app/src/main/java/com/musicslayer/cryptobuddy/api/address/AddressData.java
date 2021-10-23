@@ -146,4 +146,24 @@ public class AddressData implements Serialization.SerializableToJSON {
     public boolean isTransactionsComplete() {
         return !(addressAPI_transactions instanceof UnknownAddressAPI) && transactionArrayList != null;
     }
+
+    public static AddressData merge(AddressData oldAddressData, AddressData newAddressData) {
+        AddressAPI addressAPI_currentBalance_f = oldAddressData.addressAPI_currentBalance;
+        AddressAPI addressAPI_transactions_f = oldAddressData.addressAPI_transactions;
+        ArrayList<AssetQuantity> currentBalanceArrayList_f = oldAddressData.currentBalanceArrayList;
+        ArrayList<Transaction> transactionArrayList_f = oldAddressData.transactionArrayList;
+
+        if(newAddressData.isCurrentBalanceComplete()) {
+            addressAPI_currentBalance_f = newAddressData.addressAPI_currentBalance;
+            currentBalanceArrayList_f = newAddressData.currentBalanceArrayList;
+        }
+
+        if(newAddressData.isTransactionsComplete()) {
+            addressAPI_transactions_f = newAddressData.addressAPI_transactions;
+            transactionArrayList_f = newAddressData.transactionArrayList;
+        }
+
+        // Both AddressData objects should have the same cryptoAddress, but just in case we favor the newer one for consistency.
+        return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+    }
 }

@@ -294,11 +294,12 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
-                addressDataMap.clear();
                 for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
                     CryptoAddress cryptoAddress = addressPortfolioObj.cryptoAddressArrayList.get(i);
-                    AddressData addressData = newAddressDataArrayList.get(i);
-                    HashMapUtil.putValueInMap(addressDataMap, cryptoAddress, addressData);
+                    AddressData newAddressData = newAddressDataArrayList.get(i);
+                    AddressData oldAddressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
+                    AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
+                    HashMapUtil.putValueInMap(addressDataMap, cryptoAddress, mergedAddressData);
                 }
 
                 // Apply filter after downloading data.
@@ -318,7 +319,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, addressPortfolioObj.cryptoAddressArrayList, addressDataMap);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {

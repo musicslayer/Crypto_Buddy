@@ -3,18 +3,15 @@ Any changes you make to the portfolio (i.e. adding or removing addresses) are in
 
 Buttons left to right:
 --> First Row
------> Download Data*
+-----> Download Data
 -----> Address Filter
 
 --> Second Row
 -----> Add new address to portfolio
 -----> Remove address from portfolio
 -----> Address information
------> Get net values**
+-----> Get net values*
 -----> QR Codes
 
-*This will ask which types of data should be downloaded for each address in the portfolio.
-When any download is finished, even if nothing is selected, all existing data is cleared before new data is displayed.
-
-**This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses in the portfolio.
+*This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses in the portfolio.
 For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.

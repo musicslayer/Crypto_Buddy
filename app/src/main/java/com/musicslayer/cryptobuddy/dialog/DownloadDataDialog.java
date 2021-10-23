@@ -5,17 +5,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DownloadDataDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;
+    HashMap<CryptoAddress, AddressData> addressDataMap;
 
     CheckBox[] C_B;
     CheckBox[] C_T;
@@ -25,14 +31,18 @@ public class DownloadDataDialog extends BaseDialog {
     public ArrayList<Boolean> user_BALANCES = new ArrayList<>();
     public ArrayList<Boolean> user_TRANSACTIONS = new ArrayList<>();
 
-    public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
+    public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList, HashMap<CryptoAddress, AddressData> addressDataMap) {
         super(activity);
         this.cryptoAddressArrayList = cryptoAddressArrayList;
+        this.addressDataMap = addressDataMap;
 
-        // By default, everything starts selected no matter what the previous action was.
+        // By default, select checkboxes for data that has not already been downloaded.
         for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-            state_B.add(true);
-            state_T.add(true);
+            CryptoAddress cryptoAddress = cryptoAddressArrayList.get(i);
+            AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
+
+            state_B.add(!addressData.isCurrentBalanceComplete());
+            state_T.add(!addressData.isTransactionsComplete());
         }
     }
 
@@ -42,6 +52,14 @@ public class DownloadDataDialog extends BaseDialog {
 
     public void createLayout() {
         setContentView(R.layout.dialog_download_data);
+
+        ImageButton helpButton = findViewById(R.id.download_data_dialog_helpButton);
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            @Override
+            public void onClickImpl(View view) {
+                HelpUtil.showHelp(activity, R.raw.help_download_data);
+            }
+        });
 
         TextView T_MESSAGE = findViewById(R.id.download_data_dialog_messageTextView);
         if(cryptoAddressArrayList.isEmpty()) {
