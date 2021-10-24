@@ -1,13 +1,9 @@
 View transactions on a crypto address, and then get the net values of all assets involved, including a total USD value.
 
-Buttons left to right:
---> First Row
------> Download Data
-
---> Second Row
------> Address information
------> Get net values*
------> QR Codes
+Symbol buttons left to right:
+--> Address information
+--> Get net values*
+--> QR Codes
 
 *This is the net sum of all transactions we have detected. This may NOT equal the current balance at the address.
 For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.

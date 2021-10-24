@@ -1,6 +1,6 @@
 Manually enter transactions, real or hypothetical, and then get the net values of all assets involved, including a total USD value.
 
-Buttons left to right:
+Symbol buttons left to right:
 --> Add new transaction
 --> Get net values
 --> Reset table
