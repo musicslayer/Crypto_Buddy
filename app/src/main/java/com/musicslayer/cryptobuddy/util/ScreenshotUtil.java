@@ -14,7 +14,7 @@ public class ScreenshotUtil {
         // This only includes what is currently visible on the screen, not offscreen content (for example, the rest of a ScrollView).
         File file;
         try {
-            file = File.createTempFile("CryptoBuddy_Screenshot", ".bmp", activity.getCacheDir());
+            file = File.createTempFile("CryptoBuddy_ScreenshotFile_", ".bmp", activity.getCacheDir());
 
             View view = activity.getWindow().getDecorView().getRootView();
             Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);

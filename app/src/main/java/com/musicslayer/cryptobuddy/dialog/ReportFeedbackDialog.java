@@ -96,7 +96,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                     ToastUtil.showToast(activity,"cannot_attach");
                 }
 
-                MessageUtil.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Bug Report/Feedback", "", fileArrayList);
+                MessageUtil.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Bug Report/Feedback", "Selected information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
             }
         });
     }

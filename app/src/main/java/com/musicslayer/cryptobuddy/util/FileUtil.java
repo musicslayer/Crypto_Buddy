@@ -64,7 +64,7 @@ public class FileUtil {
         // Returns a tempfile with the String written to it.
         File file;
         try {
-            file = File.createTempFile("CryptoBuddy_CrashLog", ".txt", context.getCacheDir());
+            file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", context.getCacheDir());
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
         catch(Exception e) { // Catch everything!
