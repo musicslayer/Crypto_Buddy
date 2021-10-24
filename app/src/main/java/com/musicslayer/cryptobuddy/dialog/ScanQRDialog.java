@@ -42,9 +42,40 @@ public class ScanQRDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_scan_qr);
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(ScanQRDialog.this.activity).setBarcodeFormats(Barcode.QR_CODE).build();
-        CameraSource cameraSource = new CameraSource.Builder(ScanQRDialog.this.activity, barcodeDetector).build();
+        final CameraSource[] cameraSource = new CameraSource[1];
 
+        SurfaceView cameraView = findViewById(R.id.scan_qr_dialog_surfaceView);
+        cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @SuppressLint("MissingPermission") // Camera permission checked by caller.
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                try {
+                    cameraSource[0] = new CameraSource.Builder(ScanQRDialog.this.activity, createBarcodeDetector()).build();
+                    cameraSource[0].start(cameraView.getHolder());
+                }
+                catch(Exception e) {
+                    ThrowableUtil.processThrowable(e);
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                try {
+                    cameraSource[0].release();
+                }
+                catch(Exception e) {
+                    ThrowableUtil.processThrowable(e);
+                }
+            }
+        });
+    }
+
+    public BarcodeDetector createBarcodeDetector() {
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(ScanQRDialog.this.activity).setBarcodeFormats(Barcode.QR_CODE).build();
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
@@ -71,32 +102,6 @@ public class ScanQRDialog extends BaseDialog {
             }
         });
 
-        SurfaceView cameraView = findViewById(R.id.scan_qr_dialog_surfaceView);
-        cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @SuppressLint("MissingPermission") // Camera permission checked by caller.
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                try {
-                    cameraSource.start(cameraView.getHolder());
-                }
-                catch(Exception e) {
-                    ThrowableUtil.processThrowable(e);
-                }
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                try {
-                    cameraSource.release();
-                }
-                catch(Exception e) {
-                    ThrowableUtil.processThrowable(e);
-                }
-            }
-        });
+        return barcodeDetector;
     }
 }

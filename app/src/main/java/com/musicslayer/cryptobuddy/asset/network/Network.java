@@ -5,7 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;

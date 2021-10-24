@@ -106,14 +106,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 cryptoPrimary = (Crypto)ssvPrimary.getChosenAsset();
                 cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
 
-                boolean isValid = E_PRIMARYASSET.test();
-
-                if(cryptoPrimary == cryptoSecondary) {
-                    ToastUtil.showToast(activity,"cryptos_same");
-                    return;
-                }
-
-                if(isValid) {
+                if(E_PRIMARYASSET.test()) {
                     progressDialogFragment.show(CryptoConverterDialog.this.activity, "progress");
                 }
             }

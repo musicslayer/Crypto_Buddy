@@ -15,7 +15,6 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class ChooseHistoryAddressDialog extends BaseDialog {
     CryptoAddress currentDeleteHistoryCryptoAddress;
