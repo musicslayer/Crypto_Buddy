@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class AddressHistoryObj implements Serialization.SerializableToJSON {
@@ -35,5 +36,11 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);
+    }
+
+    // TODO This should be removed soon.
+    public static AddressHistoryObj deserializeFromJSON0(String s) {
+        String[] cryptoAddressArray = s.split("\n");
+        return new AddressHistoryObj(new CryptoAddress(cryptoAddressArray[0], Network.getNetworkFromKey(cryptoAddressArray[1]), Boolean.parseBoolean(cryptoAddressArray[2])));
     }
 }

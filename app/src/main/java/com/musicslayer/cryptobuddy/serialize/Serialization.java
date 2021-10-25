@@ -165,15 +165,17 @@ public class Serialization {
     public static <T extends SerializableToJSON> T deserialize(String s, Class<T> clazzT) {
         if(s == null) { return null; }
 
-        // First try to get the version number. If we cannot, then error.
+        // First try to get the version number. If none is present, then use 0 for "legacy" version (i.e. before this system was set up).
         String version;
         try {
             JSONObjectWithNull o = new JSONObjectWithNull(s);
             version = o.getString(SERIALIZATION_VERSION_MARKER);
         }
         catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
+            //ThrowableUtil.processThrowable(e);
+            //throw new IllegalStateException(e);
+            // TODO Once all 4 existing users are updated (or enough time has elapsed since November 1st, 2021) just remove this.
+            version = "0";
         }
 
         try {
@@ -270,6 +272,7 @@ public class Serialization {
     }
 
     // Methods for types that do not implement the interface and can be serialized into a single string.
+    // These do not have any version information.
     public static String string_serialize(String obj) {
         return obj; // Same output for null and non-null
     }

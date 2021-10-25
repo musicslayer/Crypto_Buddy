@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 abstract public class CrashDialog extends Dialog {
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
 
     public CrashDialog(Activity activity) {
         super(activity);

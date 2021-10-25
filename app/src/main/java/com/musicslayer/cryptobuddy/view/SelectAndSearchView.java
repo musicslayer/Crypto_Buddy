@@ -37,6 +37,7 @@ import java.util.Comparator;
 
 public class SelectAndSearchView extends CrashLinearLayout {
     // Right now, we can't clean this up anywhere good.
+    // Also, this really should be for individual objects.
     public final static SearchStateObj[] searchStateObj = new SearchStateObj[1];
 
     public BorderedSpinnerView bsv;
