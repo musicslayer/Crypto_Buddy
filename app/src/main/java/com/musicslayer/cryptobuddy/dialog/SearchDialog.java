@@ -16,7 +16,9 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.crash.CrashSearchView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.state.SearchStateObj;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,13 +35,17 @@ public class SearchDialog extends BaseDialog {
 
     public Asset user_OPTION;
 
-    public SearchDialog(Activity activity, ArrayList<Asset> assetArrayList, ArrayList<String> options_symbols, ArrayList<String> options_names) {
+    //public SearchDialog(Activity activity, ArrayList<Asset> assetArrayList, ArrayList<String> options_symbols, ArrayList<String> options_names) {
+    public SearchDialog(Activity activity) {
         super(activity);
-        this.assetArrayList = assetArrayList;
+
+        SearchStateObj searchStateObj = SelectAndSearchView.searchStateObj[0];
+
+        this.assetArrayList = searchStateObj.assetArrayList;
 
         // Searches are case insensitive, so store lowercase options as well. Also sort everything for better UX.
-        this.options_symbols_SORTED = options_symbols;
-        this.options_names_SORTED = options_names;
+        this.options_symbols_SORTED = searchStateObj.options_symbols;
+        this.options_names_SORTED = searchStateObj.options_names;
 
         sortAscendingByType(options_symbols_SORTED);
         sortAscendingByType(options_names_SORTED);
