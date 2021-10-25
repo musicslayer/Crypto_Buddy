@@ -7,13 +7,10 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
-import com.musicslayer.cryptobuddy.state.ActivityStateObj;
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 

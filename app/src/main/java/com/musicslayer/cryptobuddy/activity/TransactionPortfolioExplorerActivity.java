@@ -23,7 +23,6 @@ import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.ActivityStateObj;
 import com.musicslayer.cryptobuddy.state.TableStateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;

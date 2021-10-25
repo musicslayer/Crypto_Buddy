@@ -58,6 +58,8 @@ public class RESTUtil {
             connection.setRequestProperty("accept", "application/json");
 
             result = RESTUtil.request(connection);
+
+            connection.disconnect();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -97,6 +99,8 @@ public class RESTUtil {
             stream.close();
 
             result = RESTUtil.request(connection);
+
+            connection.disconnect();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -137,6 +141,8 @@ public class RESTUtil {
             stream.close();
 
             result = RESTUtil.request(connection);
+
+            connection.disconnect();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -153,6 +159,7 @@ public class RESTUtil {
             try {
                 InputStream responseStream = connection.getInputStream();
                 String responseString = RESTUtil.readString(responseStream);
+                responseStream.close();
                 data[0] = responseString;
             }
             catch(IOException e) {

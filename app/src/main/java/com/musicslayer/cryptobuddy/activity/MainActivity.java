@@ -282,7 +282,8 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None", "").show(MainActivity.this, "feedback");
+            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None", "").show(MainActivity.this, "feedback");
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None").show(MainActivity.this, "feedback");
             return true;
         }
         else if (id == 4) {

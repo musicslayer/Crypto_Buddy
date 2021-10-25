@@ -22,6 +22,15 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+        if(DEBUG) {
+            try {
+                Class.forName("dalvik.system.CloseGuard").getMethod("setEnabled", boolean.class).invoke(null, true);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        }
+
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (GooglePlayServicesRepairableException ignored) {

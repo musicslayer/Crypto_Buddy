@@ -485,7 +485,7 @@ abstract public class Table extends CrashTableLayout {
         public FloatingActionButton fab_left;
         public FloatingActionButton fab_right;
         public FloatingActionButton fab_last;
-        public TextView pageTextView;
+        public PageTextView pageTextView;
 
         public TablePageView(Context context) {
             this(context, null);
@@ -569,7 +569,7 @@ abstract public class Table extends CrashTableLayout {
             });
 
             ContextThemeWrapper newContext = new ContextThemeWrapper(context, R.style.TextInverseTheme);
-            pageTextView = new TextView(newContext);
+            pageTextView = new PageTextView(newContext);
             pageTextView.setGravity(Gravity.CENTER);
             pageTextView.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
@@ -616,19 +616,6 @@ abstract public class Table extends CrashTableLayout {
         public void updateLayout() {
             pageTextView.setText(currentPage + "\n/" + lastPage);
             choosePageDialogFragment.updateArguments(ChoosePageDialog.class, 1, lastPage);
-
-            // Artificially make the text width match the floating action button width.
-            final int width = getContext().getResources().getConfiguration().screenWidthDp;
-            final int height = getContext().getResources().getConfiguration().screenHeightDp;
-
-            if(Math.max(width, height) < 470) {
-                pageTextView.setBackgroundResource(R.drawable.circle_small);
-                pageTextView.setWidth(113);
-            }
-            else {
-                pageTextView.setBackgroundResource(R.drawable.circle);
-                pageTextView.setWidth(158);
-            }
 
             // Hide this view if there is only 1 page.
             if(lastPage < 2) {
