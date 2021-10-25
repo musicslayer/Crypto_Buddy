@@ -9,6 +9,8 @@ import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
+import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
@@ -24,6 +26,7 @@ import com.musicslayer.cryptobuddy.view.table.Table;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReportFeedbackDialog extends BaseDialog {
     String type;
@@ -121,11 +124,25 @@ public class ReportFeedbackDialog extends BaseDialog {
             return "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
         }
         else if(activity instanceof AddressExplorerActivity) {
-            return table.getInfo();
+            HashMap<CryptoAddress, AddressData> addressDataMap = ((AddressExplorerActivity)activity).activityStateObj[0].addressDataMap;
+
+            StringBuilder s = new StringBuilder();
+            for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
+                s.append(addressData.getInfoString()).append("\n\n");
+            }
+
+            return "Address Info:\n\n" + s.toString() + table.getInfo();
         }
         else if(activity instanceof AddressPortfolioExplorerActivity) {
+            HashMap<CryptoAddress, AddressData> addressDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressDataMap;
             AddressPortfolioObj addressPortfolioObj = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressPortfolioObj;
-            return "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
+
+            StringBuilder s = new StringBuilder();
+            for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
+                s.append(addressData.getInfoString()).append("\n\n");
+            }
+
+            return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
         }
 
         return "?";

@@ -66,7 +66,7 @@ public class AddressInfoDialog extends BaseDialog {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos);
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
-                T.setText(getInfoString(addressData));
+                T.setText(addressData.getInfoString());
             }
         });
 
@@ -78,36 +78,5 @@ public class AddressInfoDialog extends BaseDialog {
             bsv.setVisibility(View.GONE);
             T.setText("No addresses found.");
         }
-    }
-
-    public String getInfoString(AddressData addressData) {
-        StringBuilder s = new StringBuilder("Address = " + addressData.cryptoAddress.toString());
-
-        if(addressData.addressAPI_transactions == null || addressData.transactionArrayList == null) {
-            s.append("\n(Transaction information cannot be obtained at this time.)");
-        }
-        else {
-            s.append("\nTransaction Data Source = ").append(addressData.addressAPI_transactions.getDisplayName());
-            s.append("\nNumber of Transactions = ").append(addressData.transactionArrayList.size());
-        }
-
-        if(addressData.addressAPI_currentBalance == null || addressData.currentBalanceArrayList == null) {
-            s.append("\n(Current balance information cannot be obtained at this time.)");
-        }
-        else {
-            s.append("\nCurrent Balance Data Source = ").append(addressData.addressAPI_currentBalance.getDisplayName());
-
-            if(addressData.currentBalanceArrayList.isEmpty()) {
-                s.append("\nNo Current Balances");
-            }
-            else {
-                s.append("\nCurrent Balances:");
-                for(AssetQuantity a : addressData.currentBalanceArrayList) {
-                    s.append("\n    ").append(a.toString());
-                }
-            }
-        }
-
-        return s.toString();
     }
 }

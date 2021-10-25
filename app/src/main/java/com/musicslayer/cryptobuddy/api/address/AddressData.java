@@ -202,4 +202,35 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         // Both AddressData objects should have the same cryptoAddress, but just in case we favor the newer one for consistency.
         return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
+
+    public String getInfoString() {
+        StringBuilder s = new StringBuilder("Address = " + cryptoAddress.toString());
+
+        if(addressAPI_transactions == null || transactionArrayList == null) {
+            s.append("\n(Transaction information cannot be obtained at this time.)");
+        }
+        else {
+            s.append("\nTransaction Data Source = ").append(addressAPI_transactions.getDisplayName());
+            s.append("\nNumber of Transactions = ").append(transactionArrayList.size());
+        }
+
+        if(addressAPI_currentBalance == null || currentBalanceArrayList == null) {
+            s.append("\n(Current balance information cannot be obtained at this time.)");
+        }
+        else {
+            s.append("\nCurrent Balance Data Source = ").append(addressAPI_currentBalance.getDisplayName());
+
+            if(currentBalanceArrayList.isEmpty()) {
+                s.append("\nNo Current Balances");
+            }
+            else {
+                s.append("\nCurrent Balances:");
+                for(AssetQuantity a : currentBalanceArrayList) {
+                    s.append("\n    ").append(a.toString());
+                }
+            }
+        }
+
+        return s.toString();
+    }
 }
