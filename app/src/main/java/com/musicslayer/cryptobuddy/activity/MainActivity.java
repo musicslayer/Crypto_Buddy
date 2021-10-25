@@ -29,7 +29,6 @@ import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
@@ -73,10 +72,8 @@ public class MainActivity extends BaseActivity {
         B_TRANSACTION_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                Intent intent = new Intent(MainActivity.this, TransactionExplorerActivity.class);
-                MainActivity.this.startActivity(intent);
-
-                MainActivity.this.finish();
+                startActivity(new Intent(MainActivity.this, TransactionExplorerActivity.class));
+                finish();
             }
         });
 
@@ -97,7 +94,7 @@ public class MainActivity extends BaseActivity {
                     CryptoAddress cryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
                     Intent intent = new Intent(MainActivity.this, AddressExplorerActivity.class);
-                    intent.putExtra("CryptoAddress", Serialization.serialize(cryptoAddress));
+                    intent.putExtra("CryptoAddress", cryptoAddress);
 
                     MainActivity.this.startActivity(intent);
                     MainActivity.this.finish();

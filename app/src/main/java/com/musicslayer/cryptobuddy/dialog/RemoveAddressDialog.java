@@ -13,23 +13,22 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 
 import java.util.ArrayList;
 
 public class RemoveAddressDialog extends BaseDialog {
-    AddressPortfolioObj addressPortfolioObj;
+    ArrayList<CryptoAddress> cryptoAddressArrayList;
 
     CheckBox[] C;
     ArrayList<Boolean> state = new ArrayList<>();
 
     public ArrayList<CryptoAddress> user_cryptoAddressArrayList;
 
-    public RemoveAddressDialog(Activity activity, AddressPortfolioObj addressPortfolioObj) {
+    public RemoveAddressDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
-        this.addressPortfolioObj = addressPortfolioObj;
+        this.cryptoAddressArrayList = cryptoAddressArrayList;
 
-        for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+        for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
             state.add(false);
         }
     }
@@ -42,7 +41,7 @@ public class RemoveAddressDialog extends BaseDialog {
         setContentView(R.layout.dialog_remove_address);
 
         TextView T_MESSAGE = findViewById(R.id.remove_address_dialog_messageTextView);
-        if(addressPortfolioObj.cryptoAddressArrayList.isEmpty()) {
+        if(cryptoAddressArrayList.isEmpty()) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
@@ -55,9 +54,9 @@ public class RemoveAddressDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmRemoveAddressDialog)dialog).isComplete) {
                     user_cryptoAddressArrayList = new ArrayList<>();
-                    for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+                    for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
                         if(C[i].isChecked()) {
-                            user_cryptoAddressArrayList.add(addressPortfolioObj.cryptoAddressArrayList.get(i));
+                            user_cryptoAddressArrayList.add(cryptoAddressArrayList.get(i));
                         }
                     }
 
@@ -78,7 +77,7 @@ public class RemoveAddressDialog extends BaseDialog {
         Button B_SELECTALL = findViewById(R.id.remove_address_dialog_selectAllButton);
         B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+                for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
                     C[i].setChecked(true);
                 }
             }
@@ -87,7 +86,7 @@ public class RemoveAddressDialog extends BaseDialog {
         Button B_CLEARALL = findViewById(R.id.remove_address_dialog_clearAllButton);
         B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+                for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
                     C[i].setChecked(false);
                 }
             }
@@ -99,11 +98,11 @@ public class RemoveAddressDialog extends BaseDialog {
     public void updateLayout() {
         LinearLayout L = findViewById(R.id.remove_address_dialog_checkBoxLayout);
 
-        C = new CheckBox[addressPortfolioObj.cryptoAddressArrayList.size()];
-        for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+        C = new CheckBox[cryptoAddressArrayList.size()];
+        for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
             C[i] = new CheckBox(this.activity);
             C[i].setChecked(state.get(i));
-            C[i].setText(addressPortfolioObj.cryptoAddressArrayList.get(i).toString());
+            C[i].setText(cryptoAddressArrayList.get(i).toString());
 
             LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             LP.setMargins(0,0,0,50);

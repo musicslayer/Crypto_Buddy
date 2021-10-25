@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.table.Table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +33,18 @@ public class TotalDialog extends BaseDialog {
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
 
+/*
     public TotalDialog(Activity activity, ArrayList<Transaction> transactionArrayList) {
         super(activity);
         this.transactionArrayList = transactionArrayList;
+    }
+
+ */
+
+    public TotalDialog(Activity activity) {
+        super(activity);
+        //this.transactionArrayList = transactionArrayList;
+        this.transactionArrayList = Table.tableStateObj[0].table.getFilteredMaskedTransactionArrayList();
     }
 
     public int getBaseViewID() {

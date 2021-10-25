@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -31,10 +33,35 @@ public class DownloadDataDialog extends BaseDialog {
     public ArrayList<Boolean> user_BALANCES = new ArrayList<>();
     public ArrayList<Boolean> user_TRANSACTIONS = new ArrayList<>();
 
+/*
     public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList, HashMap<CryptoAddress, AddressData> addressDataMap) {
         super(activity);
         this.cryptoAddressArrayList = cryptoAddressArrayList;
         this.addressDataMap = addressDataMap;
+
+        // By default, select checkboxes for data that has not already been downloaded.
+        for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+            CryptoAddress cryptoAddress = cryptoAddressArrayList.get(i);
+            AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
+
+            state_B.add(!addressData.isCurrentBalanceComplete());
+            state_T.add(!addressData.isTransactionsComplete());
+        }
+    }
+
+ */
+
+    public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
+        super(activity);
+        this.cryptoAddressArrayList = cryptoAddressArrayList;
+        //this.addressDataMap = addressDataMap;
+
+        if(activity instanceof AddressExplorerActivity) {
+            this.addressDataMap = ((AddressExplorerActivity)activity).activityStateObj[0].addressDataMap;
+        }
+        else if(activity instanceof AddressPortfolioExplorerActivity) {
+            this.addressDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressDataMap;
+        }
 
         // By default, select checkboxes for data that has not already been downloaded.
         for(int i = 0; i < cryptoAddressArrayList.size(); i++) {

@@ -24,6 +24,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.dialog.FilterDialog;
 import com.musicslayer.cryptobuddy.settings.NumberTransactionsPerPageSetting;
+import com.musicslayer.cryptobuddy.state.TableStateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 
 abstract public class Table extends CrashTableLayout {
     abstract public BaseRow getRow(Transaction transaction);
+
+    public final static TableStateObj[] tableStateObj = new TableStateObj[1];
 
     // Number of rows before the user input.
     final int numHeaderRows = 3;
@@ -46,10 +49,6 @@ abstract public class Table extends CrashTableLayout {
 
     // Header of each column
     ArrayList<String> columnHeaders = new ArrayList<>();
-
-    // Transactions represented by each row.
-    public ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-    public ArrayList<Transaction> maskedTransactionArrayList = new ArrayList<>();
 
     // Filters
     ArrayList<Filter> filterArrayList = new ArrayList<>();
@@ -114,15 +113,15 @@ abstract public class Table extends CrashTableLayout {
             if(i >= pageView.getMinIdx() && i <= pageView.getMaxIdx()) {
                 drawRow(transactionArrayList.get(i));
             }
-            this.transactionArrayList.add(transactionArrayList.get(i));
-            maskedTransactionArrayList.add(transactionArrayList.get(i));
+            tableStateObj[0].transactionArrayList.add(transactionArrayList.get(i));
+            tableStateObj[0].maskedTransactionArrayList.add(transactionArrayList.get(i));
         }
     }
 
     public void addRowImpl(Transaction transaction) {
         drawRow(transaction);
-        this.transactionArrayList.add(transaction);
-        maskedTransactionArrayList.add(transaction);
+        tableStateObj[0].transactionArrayList.add(transaction);
+        tableStateObj[0].maskedTransactionArrayList.add(transaction);
     }
 
     // Anything that adds rows should call this to finish the process.
@@ -298,14 +297,14 @@ abstract public class Table extends CrashTableLayout {
     public void updateFilters() {
         for(int i = 0; i < filterArrayList.size(); i++) {
             if(filterArrayList.get(i) != null) {
-                filterArrayList.get(i).updateFilterData(Transaction.getFilterDataForType(transactionArrayList, columnTypes.get(i)));
+                filterArrayList.get(i).updateFilterData(Transaction.getFilterDataForType(tableStateObj[0].transactionArrayList, columnTypes.get(i)));
             }
         }
     }
 
     public void filterTable() {
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
-        for(Transaction t : maskedTransactionArrayList) {
+        for(Transaction t : tableStateObj[0].maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
                 newTransactionArrayList.add(t);
             }
@@ -321,7 +320,7 @@ abstract public class Table extends CrashTableLayout {
 
     public ArrayList<Transaction> getFilteredMaskedTransactionArrayList() {
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
-        for(Transaction t : maskedTransactionArrayList) {
+        for(Transaction t : tableStateObj[0].maskedTransactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
                 newTransactionArrayList.add(t);
             }
@@ -330,11 +329,17 @@ abstract public class Table extends CrashTableLayout {
     }
 
     public void doSortImpl() {
+        // pageView may be null at this point when the Table is first inflated from XML.
+        // Don't draw anything yet because we could be drawing extra things that aren't needed.
+        if(pageView == null) {
+            return;
+        }
+
         if(sortState.get(sortingColumn) == 0) {
-            Transaction.sortDescendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
+            Transaction.sortDescendingByType(tableStateObj[0].maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
         else if(sortState.get(sortingColumn) == 2) {
-            Transaction.sortAscendingByType(maskedTransactionArrayList, columnTypes.get(sortingColumn));
+            Transaction.sortAscendingByType(tableStateObj[0].maskedTransactionArrayList, columnTypes.get(sortingColumn));
         }
     }
 
@@ -347,8 +352,8 @@ abstract public class Table extends CrashTableLayout {
         ViewGroup group = this;
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
 
-        transactionArrayList = new ArrayList<>();
-        maskedTransactionArrayList = new ArrayList<>();
+        tableStateObj[0].transactionArrayList = new ArrayList<>();
+        tableStateObj[0].maskedTransactionArrayList = new ArrayList<>();
         this.updateFilters();
         pageView.setNumItems(0);
     }
@@ -393,11 +398,11 @@ abstract public class Table extends CrashTableLayout {
 
         //transactionArrayList
         s.append("\n\nTransaction Array List:\n");
-        s.append(Serialization.serializeArrayList(transactionArrayList));
+        s.append(Serialization.serializeArrayList(tableStateObj[0].transactionArrayList));
 
         //maskedTransactionArrayList
         s.append("\n\nMasked Transaction Array List:\n");
-        s.append(Serialization.serializeArrayList(maskedTransactionArrayList));
+        s.append(Serialization.serializeArrayList(tableStateObj[0].maskedTransactionArrayList));
 
         //filterArrayList
         s.append("\n\nFilter Array List:\n");
@@ -424,15 +429,12 @@ abstract public class Table extends CrashTableLayout {
 
         bundle.putInt("sortingColumn", sortingColumn);
         bundle.putParcelableArrayList("filters", filterArrayList);
-        bundle.putParcelableArrayList("transactions", transactionArrayList);
-        bundle.putParcelableArrayList("masked_transactions", maskedTransactionArrayList);
         bundle.putIntegerArrayList("sortState", sortState);
 
         return bundle;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Parcelable onRestoreInstanceStateImpl(Parcelable state)
     {
         if (state instanceof Bundle) // implicit null check
@@ -443,8 +445,6 @@ abstract public class Table extends CrashTableLayout {
 
             sortingColumn = bundle.getInt("sortingColumn");
             filterArrayList = bundle.getParcelableArrayList("filters");
-            transactionArrayList = bundle.getParcelableArrayList("transactions");
-            maskedTransactionArrayList = bundle.getParcelableArrayList("masked_transactions");
             sortState = bundle.getIntegerArrayList("sortState");
 
             // Remove and add the filter and sort row

@@ -24,6 +24,8 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.state.ActivityStateObj;
+import com.musicslayer.cryptobuddy.state.TableStateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.Table;
@@ -31,6 +33,9 @@ import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 public class TransactionPortfolioExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
+
+    TransactionTable table;
+    public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
 
     TransactionPortfolioObj transactionPortfolioObj;
 
@@ -51,6 +56,9 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
+                    // Clean State Objects.
+                    table.tableStateObj[0] = null;
+
                     startActivity(new Intent(TransactionPortfolioExplorerActivity.this, TransactionPortfolioViewerActivity.class));
                     finish();
                 }
@@ -59,6 +67,11 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         transactionPortfolioObj = TransactionPortfolio.getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
+
+        if(isFirstCreate) {
+            activityStateObj[0] = new ActivityStateObj();
+            activityStateObj[0].transactionPortfolioObj = transactionPortfolioObj;
+        }
 
         Toolbar toolbar = findViewById(R.id.transaction_portfolio_explorer_toolbar);
         setSupportActionBar(toolbar);
@@ -74,10 +87,14 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        TransactionTable table = findViewById(R.id.transaction_portfolio_explorer_table);
+        table = findViewById(R.id.transaction_portfolio_explorer_table);
         table.pageView = findViewById(R.id.transaction_portfolio_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
+        if(isFirstCreate) {
+            table.tableStateObj[0] = new TableStateObj();
+            table.tableStateObj[0].table = table;
+        }
         table.setOnDeleteTransactionListener(new Table.OnDeleteTransactionListener() {
             @Override
             public void onDeleteTransaction(Table table, Transaction transaction) {
@@ -113,7 +130,8 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionPortfolioExplorerActivity.this, "total");
+                //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionPortfolioExplorerActivity.this, "total");
+                BaseDialogFragment.newInstance(TotalDialog.class).show(TransactionPortfolioExplorerActivity.this, "total");
             }
         });
 
@@ -145,8 +163,9 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             TransactionTable table = findViewById(R.id.transaction_portfolio_explorer_table);
             String type = "TransactionPortfolio";
-            String info = "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionPortfolioExplorerActivity.this, "feedback");
+            //String info = "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
+            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionPortfolioExplorerActivity.this, "feedback");
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionPortfolioExplorerActivity.this, "feedback");
             return true;
         }
 

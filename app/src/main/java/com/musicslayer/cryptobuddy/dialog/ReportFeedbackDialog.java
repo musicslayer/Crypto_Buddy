@@ -5,7 +5,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
@@ -13,6 +20,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.util.ScreenshotUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.table.Table;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,10 +30,11 @@ public class ReportFeedbackDialog extends BaseDialog {
     String info;
 
     // Choose the constructor based on the specific information that may be attached, if any.
-    public ReportFeedbackDialog(Activity activity, String type, String info) {
+    //public ReportFeedbackDialog(Activity activity, String type, String info) {
+    public ReportFeedbackDialog(Activity activity, String type) {
         super(activity);
         this.type = type;
-        this.info = info;
+        //this.info = info;
     }
 
     public int getBaseViewID() {
@@ -84,7 +93,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
                 if(checkBox_info.isChecked()) {
                     try {
-                        fileArrayList.add(FileUtil.writeFile(activity, info));
+                        fileArrayList.add(FileUtil.writeFile(activity, getInfo()));
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);
@@ -99,5 +108,26 @@ public class ReportFeedbackDialog extends BaseDialog {
                 MessageUtil.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Bug Report/Feedback", "Selected information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
             }
         });
+    }
+
+    public String getInfo() {
+        Table table = Table.tableStateObj[0].table;
+
+        if(activity instanceof TransactionExplorerActivity) {
+            return table.getInfo();
+        }
+        else if(activity instanceof TransactionPortfolioExplorerActivity) {
+            TransactionPortfolioObj transactionPortfolioObj = ((TransactionPortfolioExplorerActivity)activity).activityStateObj[0].transactionPortfolioObj;
+            return "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
+        }
+        else if(activity instanceof AddressExplorerActivity) {
+            return table.getInfo();
+        }
+        else if(activity instanceof AddressPortfolioExplorerActivity) {
+            AddressPortfolioObj addressPortfolioObj = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressPortfolioObj;
+            return "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
+        }
+
+        return "?";
     }
 }

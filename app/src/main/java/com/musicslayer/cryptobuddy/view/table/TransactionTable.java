@@ -70,8 +70,8 @@ public class TransactionTable extends Table {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ConfirmDeleteTransactionDialog)dialog).isComplete) {
-                        transactionArrayList.remove(transaction);
-                        maskedTransactionArrayList.remove(transaction);
+                        tableStateObj[0].transactionArrayList.remove(transaction);
+                        tableStateObj[0].maskedTransactionArrayList.remove(transaction);
                         finishRows();
 
                         // Potentially perform more actions if a listener exists.
