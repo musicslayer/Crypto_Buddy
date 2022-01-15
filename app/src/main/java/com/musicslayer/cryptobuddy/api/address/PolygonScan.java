@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -81,14 +82,25 @@ public class PolygonScan extends AddressAPI {
                     currentBalanceArrayList.add(new AssetQuantity(amount, cryptoAddress.getCrypto()));
                 }
                 else {
-                    // Token
-                    String name = tokenData.getString("contract_ticker_symbol");
-                    String display_name = tokenData.getString("contract_name");
-                    int scale = tokenData.getInt("contract_decimals");
-                    String key = tokenData.getString("contract_address");
-                    String id = key.toLowerCase();
+                    if(!shouldIncludeTokens(cryptoAddress)) {
+                        continue;
+                    }
 
-                    Token token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    // Token
+                    // Covalenthq doesn't have all the information for some "dust-like" tokens. Do the best we can.
+                    String id = tokenData.getString("contract_address").toLowerCase();
+                    int scale = tokenData.getInt("contract_decimals");
+
+                    Token token;
+                    try {
+                        String name = tokenData.getString("contract_ticker_symbol");
+                        String display_name = tokenData.getString("contract_name");
+
+                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    }
+                    catch(Exception e) {
+                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getToken(id, "?", "?", scale,null);
+                    }
 
                     BigDecimal value = new BigDecimal(tokenData.getString("balance"));
                     value = value.movePointLeft(scale);
