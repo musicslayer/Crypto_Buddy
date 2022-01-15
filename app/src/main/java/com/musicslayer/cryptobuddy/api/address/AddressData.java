@@ -207,7 +207,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         StringBuilder s = new StringBuilder("Address = " + cryptoAddress.toString());
 
         if(addressAPI_transactions == null || transactionArrayList == null) {
-            s.append("\n(Transaction information cannot be obtained at this time.)");
+            s.append("\n(Transaction information not present.)");
         }
         else {
             s.append("\nTransaction Data Source = ").append(addressAPI_transactions.getDisplayName());
@@ -215,7 +215,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         }
 
         if(addressAPI_currentBalance == null || currentBalanceArrayList == null) {
-            s.append("\n(Current balance information cannot be obtained at this time.)");
+            s.append("\n(Current balance information not present.)");
         }
         else {
             s.append("\nCurrent Balance Data Source = ").append(addressAPI_currentBalance.getDisplayName());

@@ -28,7 +28,7 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON {
     }
 
     public boolean isSaved(CryptoAddress cryptoAddress) {
-        // An address is considered to be saved in a portfolio if it is present in any form (i.e. coins, coins + tokens, case insensitive match).
+        // An address is considered to be saved in a portfolio if it is present in any form (i.e. coins, coins + tokens, case insensitive match if applicable).
         for(CryptoAddress ca : cryptoAddressArrayList) {
             if(ca.isSameAs(cryptoAddress)) {
                 return true;
