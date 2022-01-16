@@ -25,7 +25,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
         public Asset createFromParcel(Parcel in) {
             String assetType = in.readString();
             String key = in.readString();
-            return  Asset.getAsset(assetType, key);
+            return Asset.getAsset(assetType, key);
         }
 
         // We just need to copy this and change the type to match our class.
@@ -47,6 +47,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
 
     @Override
     public boolean equals(Object other) {
+        // TODO Should we just look at getKey? Should all Unknown assets be equal to each other?
         return (other instanceof Asset) && getClass().equals(other.getClass());
     }
 

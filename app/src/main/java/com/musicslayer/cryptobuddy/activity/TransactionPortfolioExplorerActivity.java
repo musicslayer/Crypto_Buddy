@@ -160,10 +160,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            TransactionTable table = findViewById(R.id.transaction_portfolio_explorer_table);
             String type = "TransactionPortfolio";
-            //String info = "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
-            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionPortfolioExplorerActivity.this, "feedback");
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionPortfolioExplorerActivity.this, "feedback");
             return true;
         }

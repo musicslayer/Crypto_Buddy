@@ -79,7 +79,7 @@ public class SettingsActivity extends BaseActivity {
                     L.addView(new DeleteAllAddressHistorySettingsView(SettingsActivity.this));
                     L.addView(new DeleteAllPortfoliosSettingsView(SettingsActivity.this));
 
-                    if(Purchases.isUnlockTokensPurchased) {
+                    if(Purchases.isUnlockTokensPurchased()) {
                         L.addView(new DeleteDownloadedTokensSettingsView(SettingsActivity.this));
                         L.addView(new DeleteFoundTokensSettingsView(SettingsActivity.this));
                         L.addView(new DeleteCustomTokensSettingsView(SettingsActivity.this));

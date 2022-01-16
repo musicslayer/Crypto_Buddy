@@ -25,7 +25,7 @@ import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 import java.util.ArrayList;
 
 public class ChooseAddressDialog extends BaseDialog {
-    public boolean includeTokens = Purchases.isUnlockTokensPurchased;
+    public boolean includeTokens = Purchases.isUnlockTokensPurchased();
 
     public CryptoAddress user_CRYPTOADDRESS;
 
@@ -34,13 +34,13 @@ public class ChooseAddressDialog extends BaseDialog {
     }
 
     public int getBaseViewID() {
-        return R.id.choose_address_dialog;
+        return R.id.choose_exchange_dialog;
     }
 
     public void createLayout() {
         setContentView(R.layout.dialog_choose_address);
 
-        ImageButton helpButton = findViewById(R.id.choose_address_dialog_helpButton);
+        ImageButton helpButton = findViewById(R.id.choose_exchange_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
@@ -48,7 +48,7 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        if(Purchases.isUnlockTokensPurchased) {
+        if(Purchases.isUnlockTokensPurchased()) {
             Button B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
             B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                 public void onClickImpl(View v) {
@@ -177,7 +177,7 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
         TextView T = findViewById(R.id.choose_address_dialog_messageTextView);
 
-        if(Purchases.isUnlockTokensPurchased) {
+        if(Purchases.isUnlockTokensPurchased()) {
             B_TOGGLE.setVisibility(View.VISIBLE);
             T.setVisibility(View.GONE);
 

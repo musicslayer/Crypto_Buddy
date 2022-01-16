@@ -98,7 +98,7 @@ public class AddressExplorerActivity extends BaseActivity {
         T_INFO.setText("Address = " + cryptoAddressArrayList.get(0).toString());
 
         TextView T_MESSAGE = findViewById(R.id.address_explorer_messageTextView);
-        if(!Purchases.isUnlockTokensPurchased && includeTokens) {
+        if(!Purchases.isUnlockTokensPurchased() && includeTokens) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
@@ -222,7 +222,6 @@ public class AddressExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        //BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList, activityStateObj[0].addressDataMap);
         BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
@@ -271,10 +270,7 @@ public class AddressExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            AddressTable table = findViewById(R.id.address_explorer_table);
             String type = "Address";
-            //String info = table.getInfo();
-            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(AddressExplorerActivity.this, "feedback");
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressExplorerActivity.this, "feedback");
             return true;
         }

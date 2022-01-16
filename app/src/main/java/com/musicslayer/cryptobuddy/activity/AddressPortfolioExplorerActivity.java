@@ -118,7 +118,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         T_INFO.setText("Portfolio = " + addressPortfolioObj.name);
 
         TextView T_MESSAGE = findViewById(R.id.address_portfolio_explorer_messageTextView);
-        if(!Purchases.isUnlockTokensPurchased && includeTokens) {
+        if(!Purchases.isUnlockTokensPurchased() && includeTokens) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
@@ -428,10 +428,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            AddressTable table = findViewById(R.id.address_portfolio_explorer_table);
             String type = "AddressPortfolio";
-            //String info = "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
-            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(AddressPortfolioExplorerActivity.this, "feedback");
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
             return true;
         }

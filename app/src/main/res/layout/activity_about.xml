@@ -59,14 +59,38 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/about_privacyHeader"
+                android:id="@+id/about_privacyPolicyHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Privacy Policy:"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/about_privacyText"
+                android:id="@+id/about_privacyPolicyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_disclaimerHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Disclaimer:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_disclaimerText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/about_exchangesHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Supported Exchanges:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/about_exchangesText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

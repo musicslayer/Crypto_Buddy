@@ -14,18 +14,22 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
+import com.musicslayer.cryptobuddy.dialog.ChooseExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
+import com.musicslayer.cryptobuddy.dialog.DisclaimerDialog;
 import com.musicslayer.cryptobuddy.dialog.PrivacyPolicyDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReviewDialog;
 import com.musicslayer.cryptobuddy.dialog.ShareAppDialog;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
+import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -44,13 +48,27 @@ public class MainActivity extends BaseActivity {
     }
 
     public void createLayout () {
-        // Before doing anything, show the privacy policy dialog if the user hasn't already agreed to it.
+        // Before doing anything, show policy dialogs that the user hasn't already agreed to.
         checkPrivacyPolicy();
+        checkDisclaimer();
 
         // Check to see if we should request the user leaves us a review.
         checkReview();
 
         setContentView(R.layout.activity_main);
+
+        InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
+            @Override
+            public void onInAppPurchase() {
+                // Needed if the purchase update happened on another thread.
+                runOnUiThread(new CrashRunnable(MainActivity.this) {
+                    @Override
+                    public void runImpl() {
+                        updateLayout();
+                    }
+                });
+            }
+        });
 
         TextView T = findViewById(R.id.main_messageTextView);
         if(App.isGooglePlayAvailable) {
@@ -149,7 +167,7 @@ public class MainActivity extends BaseActivity {
         B_TokenManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                if(Purchases.isUnlockTokensPurchased) {
+                if(Purchases.isUnlockTokensPurchased()) {
                     startActivity(new Intent(MainActivity.this, TokenManagerActivity.class));
                     finish();
                 }
@@ -158,6 +176,48 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+
+        BaseDialogFragment chooseExchangeDialogFragment = BaseDialogFragment.newInstance(ChooseExchangeDialog.class);
+        chooseExchangeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ChooseExchangeDialog)dialog).isComplete) {
+                    Exchange exchange = ((ChooseExchangeDialog)dialog).user_EXCHANGE;
+
+                    Intent intent = new Intent(MainActivity.this, ExchangeExplorerActivity.class);
+                    intent.putExtra("Exchange", exchange);
+
+                    MainActivity.this.startActivity(intent);
+                    MainActivity.this.finish();
+                }
+            }
+        });
+        chooseExchangeDialogFragment.restoreListeners(this, "exchange");
+
+        Button B_EXCHANGE_EXPLORER = findViewById(R.id.main_exchangeExplorerButton);
+        B_EXCHANGE_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                if(Purchases.isUnlockExchangeIntegrationPurchased()) {
+                    chooseExchangeDialogFragment.show(MainActivity.this, "exchange");
+                }
+                else {
+                    ToastUtil.showToast(MainActivity.this,"unlock_exchange_integration_required");
+                }
+            }
+        });
+
+        Button B_EXCHANGE_PORTFOLIO = findViewById(R.id.main_exchangePortfolioViewerButton);
+        B_EXCHANGE_PORTFOLIO.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                //startActivity(new Intent(MainActivity.this, AddressPortfolioViewerActivity.class));
+                //finish();
+            }
+        });
+
+        // TODO Implement Exchange Portfolio
+        B_EXCHANGE_PORTFOLIO.setVisibility(View.GONE);
 
         Button B_LOCK = findViewById(R.id.main_lockButton);
         if(App.DEBUG) {
@@ -212,10 +272,29 @@ public class MainActivity extends BaseActivity {
         else {
             B_CRASH.setVisibility(View.GONE);
         }
+
+        updateLayout();
+    }
+
+    public void updateLayout() {
+        Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
+        Button B_EXCHANGE_EXPLORER = findViewById(R.id.main_exchangeExplorerButton);
+        Button B_EXCHANGE_PORTFOLIO = findViewById(R.id.main_exchangePortfolioViewerButton);
+
+        if(Purchases.isUnlockPremiumFeaturesPurchased()) {
+            B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_api_24, 0, 0, 0);
+            B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_forward_24, 0, 0, 0);
+            B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
+        }
+        else {
+            B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
+            B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
+            B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
+        }
     }
 
     public void checkPrivacyPolicy() {
-        if(!PrivacyPolicy.settings_privacy_policy) {
+        if(!Policy.settings_privacy_policy) {
             BaseDialogFragment privacyPolicyDialogFragment = BaseDialogFragment.newInstance(PrivacyPolicyDialog.class);
             privacyPolicyDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override
@@ -233,9 +312,29 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    public void checkDisclaimer() {
+        if(!Policy.settings_disclaimer) {
+            BaseDialogFragment disclaimerDialogFragment = BaseDialogFragment.newInstance(DisclaimerDialog.class);
+            disclaimerDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+                @Override
+                public void onDismissImpl(DialogInterface dialog) {
+                    if(((DisclaimerDialog)dialog).isComplete) {
+                        finish();
+                    }
+                }
+            });
+            disclaimerDialogFragment.restoreListeners(this, "disclaimer");
+
+            // TODO Use this technique on the exchange authorization WebViews.
+            if(BaseDialogFragment.isNotShowing(this, "disclaimer")) {
+                disclaimerDialogFragment.show(this, "disclaimer");
+            }
+        }
+    }
+
     public void checkReview() {
-        // Check after 5 Days, and the user must have already agreed to the Privacy Policy
-        if(PrivacyPolicy.settings_privacy_policy && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
+        // Check after 5 Days, and the user must have already agreed to all the policies
+        if(Policy.isAllPolicyAgreedTo() && (new Date().getTime() - Review.settings_review_time > 432000000L)) {
             BaseDialogFragment reviewDialogFragment = BaseDialogFragment.newInstance(ReviewDialog.class);
             reviewDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
                 @Override

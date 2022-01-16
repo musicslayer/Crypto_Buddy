@@ -4,16 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
+import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
@@ -42,15 +44,17 @@ public class InitialActivity extends BaseActivity {
         ToastUtil.loadAllToasts(applicationContext);
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
+        Exchange.initialize(applicationContext);
         Network.initialize(applicationContext);
         AddressAPI.initialize(applicationContext);
         PriceAPI.initialize(applicationContext);
+        ExchangeAPI.initialize(applicationContext);
         Purchases.loadAllPurchases(applicationContext);
-        PrivacyPolicy.loadAllData(applicationContext);
+        Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
 
         TokenManager.initialize(applicationContext);
-        if(!Purchases.isUnlockTokensPurchased) {
+        if(!Purchases.isUnlockTokensPurchased()) {
             // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
             TokenManagerList.resetAllData(applicationContext);
         }

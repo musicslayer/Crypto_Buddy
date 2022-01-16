@@ -44,7 +44,7 @@ abstract public class BaseActivity extends CrashActivity {
 
     public void adjustActivity() {
         // Add the ads if the user did not purchase "Remove Ads".
-        if(!Purchases.isRemoveAdsPurchased && getAdLayoutViewID() != -1) {
+        if(!Purchases.isRemoveAdsPurchased() && getAdLayoutViewID() != -1) {
             Ad.initializeAds(getApplicationContext());
             ViewGroup v = findViewById(getAdLayoutViewID());
 

@@ -27,6 +27,10 @@ public class TransactionTable extends Table {
         return new TransactionTable.TransactionRow(getContext(), transaction);
     }
 
+    public static boolean shouldAddForwardsPrice() {
+        return "Forward".equals(PriceDisplaySetting.value) || "ForwardBackward".equals(PriceDisplaySetting.value);
+    }
+
     public static boolean shouldAddBackwardsPrice() {
         return "ForwardBackward".equals(PriceDisplaySetting.value);
     }
@@ -42,7 +46,7 @@ public class TransactionTable extends Table {
         this.addColumn("action", "Action", "discrete", 1);
         this.addColumn("quantity", "Actioned Asset", "discrete", 1);
         this.addColumn("other_quantity", "Other Asset",  "discrete", 1);
-        this.addColumn("price", "Forward Price", "discrete", 1);
+        if(shouldAddForwardsPrice()) { this.addColumn("price", "Forward Price", "discrete", 1); }
         if(shouldAddBackwardsPrice()) { this.addColumn("other_price", "Backward Price", "discrete", 1); }
         this.addColumn("timestamp", "Timestamp", "date", 0);
         this.addColumn("info", "Info", "discrete", 1);
@@ -143,7 +147,7 @@ public class TransactionTable extends Table {
             this.addView(t0);
             this.addView(t1);
             this.addView(t2);
-            this.addView(t3);
+            if(shouldAddForwardsPrice()){this.addView(t3);}
             if(shouldAddBackwardsPrice()){this.addView(t4);}
             this.addView(t5);
             this.addView(t6);

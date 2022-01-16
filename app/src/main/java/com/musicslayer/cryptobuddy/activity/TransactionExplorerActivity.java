@@ -146,10 +146,7 @@ public class TransactionExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            TransactionTable table = findViewById(R.id.transaction_explorer_table);
             String type = "Transaction";
-            //String info = table.getInfo();
-            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type, info).show(TransactionExplorerActivity.this, "feedback");
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionExplorerActivity.this, "feedback");
             return true;
         }

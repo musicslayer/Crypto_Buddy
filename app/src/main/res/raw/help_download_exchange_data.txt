@@ -1,0 +1,4 @@
+Here you can select which types of data to download for the exchange.
+
+You can select types of data that have already been downloaded to replace them with more up-to-date data.
+Whenever a type of data cannot be successfully downloaded, any existing data will remain.

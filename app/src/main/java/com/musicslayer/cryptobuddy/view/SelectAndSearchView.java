@@ -218,7 +218,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         L_A.addView(B_FIAT);
         L_A.addView(B_COIN);
 
-        if(Purchases.isUnlockTokensPurchased) {
+        if(Purchases.isUnlockTokensPurchased()) {
             L_A.addView(B_TOKEN);
         }
 

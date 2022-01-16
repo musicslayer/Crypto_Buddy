@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Privacy Policy Notice" />
+        app:title="Privacy Policy" />
 
     <TextView
         android:id="@+id/privacy_policy_textView"

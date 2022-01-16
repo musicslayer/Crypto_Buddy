@@ -57,7 +57,7 @@ abstract public class AddressAPI extends API {
 
     public boolean shouldIncludeTokens(CryptoAddress cryptoAddress) {
         // Exclude tokens if the user did not purchase "Unlock Tokens", or if they chose not to analyze them.
-        return Purchases.isUnlockTokensPurchased && cryptoAddress.includeTokens;
+        return Purchases.isUnlockTokensPurchased() && cryptoAddress.includeTokens;
     }
 
     public static int getMaxTransactions() {

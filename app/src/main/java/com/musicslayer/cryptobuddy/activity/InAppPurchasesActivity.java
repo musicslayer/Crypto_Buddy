@@ -55,11 +55,11 @@ public class InAppPurchasesActivity extends BaseActivity {
             }
         });
 
-        Button B_PURCHASE_UNLOCKTOKENS = findViewById(R.id.in_app_purchases_unlockTokensButton);
-        B_PURCHASE_UNLOCKTOKENS.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        Button B_PURCHASE_UNLOCKPREMIUMFEATURES = findViewById(R.id.in_app_purchases_unlockPremiumFeaturesButton);
+        B_PURCHASE_UNLOCKPREMIUMFEATURES.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InAppPurchase.purchaseUnlockTokens(InAppPurchasesActivity.this);
+                InAppPurchase.purchaseUnlockPremiumFeatures(InAppPurchasesActivity.this);
             }
         });
 
@@ -101,9 +101,9 @@ public class InAppPurchasesActivity extends BaseActivity {
 
     public void updateLayout() {
         Button B_PURCHASE_REMOVEDADS = findViewById(R.id.in_app_purchases_removeAdsButton);
-        Button B_PURCHASE_UNLOCKTOKENS = findViewById(R.id.in_app_purchases_unlockTokensButton);
+        Button B_PURCHASE_UNLOCKPREMIUMFEATURES = findViewById(R.id.in_app_purchases_unlockPremiumFeaturesButton);
 
-        if(Purchases.isRemoveAdsPurchased) {
+        if(Purchases.isRemoveAdsPurchased()) {
             B_PURCHASE_REMOVEDADS.setEnabled(false);
             B_PURCHASE_REMOVEDADS.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
         }
@@ -112,20 +112,24 @@ public class InAppPurchasesActivity extends BaseActivity {
             B_PURCHASE_REMOVEDADS.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_star_24, 0, 0, 0);
         }
 
-        if(Purchases.isUnlockTokensPurchased) {
-            B_PURCHASE_UNLOCKTOKENS.setEnabled(false);
-            B_PURCHASE_UNLOCKTOKENS.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
+        if(Purchases.isUnlockPremiumFeaturesPurchased()) {
+            B_PURCHASE_UNLOCKPREMIUMFEATURES.setEnabled(false);
+            B_PURCHASE_UNLOCKPREMIUMFEATURES.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_check_24, 0, 0, 0);
         }
         else {
-            B_PURCHASE_UNLOCKTOKENS.setEnabled(true);
-            B_PURCHASE_UNLOCKTOKENS.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_star_24, 0, 0, 0);
+            B_PURCHASE_UNLOCKPREMIUMFEATURES.setEnabled(true);
+            B_PURCHASE_UNLOCKPREMIUMFEATURES.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_star_24, 0, 0, 0);
         }
 
         TextView T = findViewById(R.id.in_app_purchases_totalSupportAmountTextView);
-        if(Purchases.totalSupportAmount > 0) {
+        if(Purchases.getTotalSupportAmount() > 0) {
             // Convert Cents to a proper decimal and thank the user.
-            BigDecimal bd = new BigDecimal(Purchases.totalSupportAmount).divide(BigDecimal.valueOf(100),2, RoundingMode.UNNECESSARY);
+            BigDecimal bd = new BigDecimal(Purchases.getTotalSupportAmount()).divide(BigDecimal.valueOf(100),2, RoundingMode.UNNECESSARY);
+            T.setVisibility(View.VISIBLE);
             T.setText("Total Amount: $" + bd.toPlainString() + "\nThank you for your support!");
+        }
+        else {
+            T.setVisibility(View.GONE);
         }
     }
 }

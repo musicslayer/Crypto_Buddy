@@ -1,8 +1,11 @@
 package com.musicslayer.cryptobuddy.api;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+
+// TODO Instead of fallback model, user should be able to select an api. Also, once an API is chosen, "Download Data" will download all data from the same api.
 
 abstract public class API implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.
@@ -38,6 +41,9 @@ abstract public class API implements Serialization.SerializableToJSON {
         else if(this instanceof PriceAPI) {
             return "!PRICEAPI!";
         }
+        else if(this instanceof ExchangeAPI) {
+            return "!EXCHANGEAPI!";
+        }
         else {
             return null;
         }
@@ -49,6 +55,9 @@ abstract public class API implements Serialization.SerializableToJSON {
         }
         else if("!PRICEAPI!".equals(apiType)) {
             return PriceAPI.getPriceAPIFromKey(key);
+        }
+        else if("!EXCHANGEAPI!".equals(apiType)) {
+            return ExchangeAPI.getExchangeAPIFromKey(key);
         }
         else {
             return null;

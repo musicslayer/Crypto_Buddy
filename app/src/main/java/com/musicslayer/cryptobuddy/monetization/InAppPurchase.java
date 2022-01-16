@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// For now, it is not possible to buy more than one sku in a single purchase, but later on it will be.
+// Note: This class does not support buying more than one sku in a single purchase.
 
 public class InAppPurchase {
     public static BillingClient billingClient;
@@ -81,9 +81,9 @@ public class InAppPurchase {
         InAppPurchase.purchase(activity, skuList);
     }
 
-    public static void purchaseUnlockTokens(Activity activity) {
+    public static void purchaseUnlockPremiumFeatures(Activity activity) {
         List<String> skuList = new ArrayList<>();
-        skuList.add("unlock_tokens");
+        skuList.add("premium");
         InAppPurchase.purchase(activity, skuList);
     }
 
@@ -119,7 +119,7 @@ public class InAppPurchase {
             @Override
             public void onSkuDetailsResponseImpl(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && skuDetailsList != null && skuDetailsList.size() > 0) {
-                    // In the future, we could offer a bundle of skus to the user to purchase all at once, but for now we know that there is only one sku.
+                    // We do not support a user purchasing more than one thing at once, so we know that there is only one sku.
                     BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList.get(0)).build();
                     billingClient.launchBillingFlow(activity, billingFlowParams);
                 }
@@ -134,10 +134,9 @@ public class InAppPurchase {
         // One-time items are just acknowledged.
         // Consumable items will be both consumed and acknowledged so they can be purchased again.
         if(!purchase.isAcknowledged() && purchase.getSkus().size() > 0) {
-            // We assume that either the skus are all consumable, or they are all one-time.
-            // We just need to check the first one to figure out which category it falls in.
+            // There is only one sku, so just check the first element to figure out which category it falls in.
             String id = purchase.getSkus().get(0);
-            if("remove_ads".equals(id) || "unlock_tokens".equals(id)) {
+            if("remove_ads".equals(id) || "premium".equals(id)) {
                 acknowledge(context, purchase);
             }
             else if("support_developer_1".equals(id) || "support_developer_2".equals(id) || "support_developer_3".equals(id)) {
@@ -220,14 +219,14 @@ public class InAppPurchase {
     public static void lock(Context context) {
         // Just lock one-time items.
         revokePurchase(context, "remove_ads");
-        revokePurchase(context, "unlock_tokens");
+        revokePurchase(context, "premium");
     }
 
     // Internal use only!
     public static void unlock(Context context) {
         // Just unlock one-time items.
         grantPurchase(context, "remove_ads");
-        grantPurchase(context, "unlock_tokens");
+        grantPurchase(context, "premium");
     }
 
     private static void grantPurchase(Context context, String id) {

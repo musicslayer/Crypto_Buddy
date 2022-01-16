@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchange_explorer_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/exchange_explorer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="Exchange Explorer"
+        app:title="@string/app_title" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/exchange_explorer_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/exchange_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/exchange_explorer_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <LinearLayout
+        android:id="@+id/exchange_explorer_adLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_explorer_toolbar">
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/exchange_explorer_infoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_explorer_adLayout" />
+
+    <TextView
+        android:id="@+id/exchange_explorer_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="For security, exchange authorization has expired."
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_explorer_infoTextView" />
+
+    <HorizontalScrollView
+        android:id="@+id/exchange_explorer_horizontalScrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_explorer_messageTextView">
+
+        <LinearLayout
+            android:id="@+id/exchange_explorer_linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/exchange_explorer_downloadDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+                android:text="Download Data" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/exchange_explorer_filterAddressButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_filter_list_24"
+                android:text="Asset Filter" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/exchange_explorer_horizontalScrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_explorer_horizontalScrollView1">
+        tools:layout_editor_absoluteY="75dp">
+
+        <LinearLayout
+            android:id="@+id/exchange_explorer_linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_explorer_infoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_info_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_explorer_totalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_price_check_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_explorer_authorizeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_security_24" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <view
+        android:id="@+id/exchange_explorer_tablePageView"
+        class="com.musicslayer.cryptobuddy.view.table.Table$TablePageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_explorer_horizontalScrollView2"></view>
+
+    <com.musicslayer.cryptobuddy.view.TwoDScrollView
+        android:id="@+id/exchange_portfolio_explorer_twoDScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_explorer_tablePageView">
+
+        <com.musicslayer.cryptobuddy.view.table.TransactionTable
+            android:id="@+id/exchange_explorer_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.musicslayer.cryptobuddy.view.TwoDScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

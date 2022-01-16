@@ -10,14 +10,37 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import java.util.HashMap;
 
 public class Purchases {
-    public final static boolean DEFAULT_isRemoveAdsPurchased = false;
-    public static boolean isRemoveAdsPurchased;
+    private final static boolean DEFAULT_isRemoveAdsPurchased = false;
+    private static boolean isRemoveAdsPurchased;
 
-    public final static boolean DEFAULT_isUnlockTokensPurchased = false;
-    public static boolean isUnlockTokensPurchased;
+    private final static boolean DEFAULT_isUnlockPremiumFeaturesPurchased = false;
+    private static boolean isUnlockPremiumFeaturesPurchased;
 
-    public final static int DEFAULT_totalSupportAmount = 0;
-    public static int totalSupportAmount; // In Cents
+    private final static int DEFAULT_totalSupportAmount = 0;
+    private static int totalSupportAmount; // In Cents
+
+    public static boolean isRemoveAdsPurchased() {
+        return isRemoveAdsPurchased;
+    }
+
+    public static boolean isUnlockPremiumFeaturesPurchased() {
+        return isUnlockPremiumFeaturesPurchased;
+    }
+
+    public static boolean isUnlockTokensPurchased() {
+        // Currently, this is only sold as a premium feature.
+        return isUnlockPremiumFeaturesPurchased;
+    }
+
+    public static boolean isUnlockExchangeIntegrationPurchased() {
+        // Currently, this is only sold as a premium feature.
+        return isUnlockPremiumFeaturesPurchased;
+    }
+
+    public static int getTotalSupportAmount() {
+
+        return totalSupportAmount;
+    }
 
     public static void updatePurchase(Context context, String sku, boolean isPurchased) {
         SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
@@ -28,11 +51,11 @@ public class Purchases {
                 isRemoveAdsPurchased = isPurchased;
                 editor.putBoolean("purchases_remove_ads", isPurchased);
                 break;
-            case "unlock_tokens":
-                boolean hasChanged = isUnlockTokensPurchased != isPurchased;
+            case "premium":
+                boolean hasChanged = isUnlockPremiumFeaturesPurchased != isPurchased;
 
-                isUnlockTokensPurchased = isPurchased;
-                editor.putBoolean("purchases_unlock_tokens", isPurchased);
+                isUnlockPremiumFeaturesPurchased = isPurchased;
+                editor.putBoolean("purchases_unlock_premium_features", isPurchased);
 
                 // If we changed the purchase status, update TokenManagers right now.
                 if(hasChanged) {
@@ -71,21 +94,21 @@ public class Purchases {
     public static void loadAllPurchases(Context context) {
         SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
         isRemoveAdsPurchased = settings.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
-        isUnlockTokensPurchased = settings.getBoolean("purchases_unlock_tokens", DEFAULT_isUnlockTokensPurchased);
+        isUnlockPremiumFeaturesPurchased = settings.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);
         totalSupportAmount = settings.getInt("purchases_total_support_amount", DEFAULT_totalSupportAmount);
     }
 
     public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("isRemoveAdsPurchased", Boolean.toString(isRemoveAdsPurchased));
-        hashMap.put("isUnlockTokensPurchased", Boolean.toString(isUnlockTokensPurchased));
+        hashMap.put("isUnlockPremiumFeaturesPurchased", Boolean.toString(isUnlockPremiumFeaturesPurchased));
         hashMap.put("totalSupportAmount", Integer.toString(totalSupportAmount));
         return hashMap;
     }
 
     public static void resetAllData(Context context) {
         isRemoveAdsPurchased = DEFAULT_isRemoveAdsPurchased;
-        isUnlockTokensPurchased = DEFAULT_isUnlockTokensPurchased;
+        isUnlockPremiumFeaturesPurchased = DEFAULT_isUnlockPremiumFeaturesPurchased;
         totalSupportAmount = DEFAULT_totalSupportAmount;
 
         SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);

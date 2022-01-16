@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.PrivacyPolicy;
+import com.musicslayer.cryptobuddy.persistence.Policy;
 
 public class PrivacyPolicyDialog extends BaseDialog {
     public PrivacyPolicyDialog(Activity activity) {
@@ -31,10 +31,10 @@ public class PrivacyPolicyDialog extends BaseDialog {
         T.setAutoLinkMask(Linkify.WEB_URLS);
         T.setText("To use this app, you must agree to the privacy policy:\n" + "https://sites.google.com/view/crypto-buddy-privacy-policy/home\n\n");
 
-        Button B_AGREE = findViewById(R.id.privacy_policy_agreeButton);
-        B_AGREE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+        Button B_AGREEPRIVACYPOLICY = findViewById(R.id.privacy_policy_agreeButton);
+        B_AGREEPRIVACYPOLICY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                PrivacyPolicy.setAgree(PrivacyPolicyDialog.this.activity);
+                Policy.setAgreePrivacyPolicy(PrivacyPolicyDialog.this.activity);
                 dismiss();
             }
         });

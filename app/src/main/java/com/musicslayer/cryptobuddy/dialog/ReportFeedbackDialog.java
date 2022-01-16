@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 
 import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
@@ -65,6 +66,9 @@ public class ReportFeedbackDialog extends BaseDialog {
         }
         else if("AddressPortfolio".equals(type)) {
             checkBox_info.setText("Attach address portfolio information.");
+        }
+        else if("Exchange".equals(type)) {
+            checkBox_info.setText("Attach exchange information.");
         }
 
         Button B_EMAIL = findViewById(R.id.report_feedback_dialog_button);
@@ -143,6 +147,10 @@ public class ReportFeedbackDialog extends BaseDialog {
             }
 
             return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
+        }
+        else if(activity instanceof ExchangeExplorerActivity) {
+            // TODO Add in exchange info.
+            return "Exchange Info:\n\n" + "Coinbase";
         }
 
         return "?";

@@ -22,6 +22,7 @@ public class ToastUtil {
         toastMap.put("review", Toast.makeText(context, "Could not open Google Play app or website.", getToastDuration()));
         toastMap.put("email", Toast.makeText(context, "Your device does not have an email application.", getToastDuration()));
         toastMap.put("sms", Toast.makeText(context, "Your device does not have a text messaging application.", getToastDuration()));
+        toastMap.put("web_browser", Toast.makeText(context, "Your device does not have a web browser application.", getToastDuration()));
         toastMap.put("copy", Toast.makeText(context, "Wallet address copied to clipboard.", getToastDuration()));
         toastMap.put("paste", Toast.makeText(context, "Wallet address pasted from clipboard.", getToastDuration()));
         toastMap.put("no_paste", Toast.makeText(context, "Cannot paste. Clipboard is empty or does not contain text.", getToastDuration()));
@@ -32,14 +33,17 @@ public class ToastUtil {
         toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", getToastDuration()));
-        toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", getToastDuration()));
-        toastMap.put("no_internet_permission", Toast.makeText(context, "Internet permission is not granted.", getToastDuration()));
         toastMap.put("google_play_missing", Toast.makeText(context, "Google Play services is missing.", getToastDuration()));
         toastMap.put("google_play_updating", Toast.makeText(context, "Google Play services is currently updating.", getToastDuration()));
         toastMap.put("google_play_needs_update", Toast.makeText(context, "Google Play services needs to be updated.", getToastDuration()));
         toastMap.put("google_play_disabled", Toast.makeText(context, "Google Play services is disabled.", getToastDuration()));
         toastMap.put("google_play_invalid", Toast.makeText(context, "Google Play services is invalid.", getToastDuration()));
         toastMap.put("unknown_google_play_error", Toast.makeText(context, "Unknown error accessing Google Play services.", getToastDuration()));
+
+        toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", getToastDuration()));
+        toastMap.put("no_internet_permission", Toast.makeText(context, "Internet permission is not granted.", getToastDuration()));
+
+        toastMap.put("no_exchange_authorization", Toast.makeText(context, "Exchange authorization did not complete successfully. Check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("new_transaction_filtered", Toast.makeText(context, "Added transaction(s) are being filtered.", getToastDuration()));
 
@@ -75,10 +79,11 @@ public class ToastUtil {
         toastMap.put("acknowledge_problem", Toast.makeText(context, "In-app purchase failed to confirm. Try restarting app.", getToastDuration()));
 
         toastMap.put("remove_ads_purchase", Toast.makeText(context, "Thank you for purchasing \"Remove Ads\"!", getToastDuration()));
-        toastMap.put("unlock_tokens_purchase", Toast.makeText(context, "Thank you for purchasing \"Unlock Tokens\"!", getToastDuration()));
+        toastMap.put("premium_purchase", Toast.makeText(context, "Thank you for purchasing \"Unlock Premium Features\"!", getToastDuration()));
         toastMap.put("support_developers_purchase", Toast.makeText(context, "Thank you for your support!", getToastDuration()));
 
         toastMap.put("unlock_tokens_required", Toast.makeText(context, "In-app purchase required to unlock tokens.", getToastDuration()));
+        toastMap.put("unlock_exchange_integration_required", Toast.makeText(context, "In-app purchase required to unlock exchange integration.", getToastDuration()));
 
         toastMap.put("cannot_attach", Toast.makeText(context, "Could not attach all files to the email.", getToastDuration()));
 

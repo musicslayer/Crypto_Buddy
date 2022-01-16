@@ -30,6 +30,7 @@ public class RESTUtil {
 
     public static void checkForInterrupt() {
         // If ProgressDialog was cancelled, throw an error so the thread can stop running.
+        // This implicitly requires all web requests to use ProgressDialog.
         if(!ProgressDialogFragment.allowThreads[0]) {
             throw new CrashBypassException();
         }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/download_exchange_data_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/download_exchange_data_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="Select which types of data to download:"
+        app:title="Download Exchange Data" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/download_exchange_data_dialog_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/download_exchange_data_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/download_exchange_data_dialog_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_exchange_data_dialog_downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_exchange_data_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_exchange_data_dialog_selectAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select All"
+        app:drawableLeftCompat="@drawable/ic_baseline_select_all_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_exchange_data_dialog_downloadButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_exchange_data_dialog_clearAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear All"
+        app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
+        app:layout_constraintStart_toEndOf="@+id/download_exchange_data_dialog_selectAllButton"
+        app:layout_constraintTop_toBottomOf="@+id/download_exchange_data_dialog_downloadButton" />
+
+    <LinearLayout
+        android:id="@+id/download_exchange_data_dialog_checkBoxLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/download_exchange_data_dialog_clearAllButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

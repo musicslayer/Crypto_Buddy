@@ -87,7 +87,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
 
-            if(Purchases.isUnlockTokensPurchased) {
+            if(Purchases.isUnlockTokensPurchased()) {
                 // Use the deserialized dummy object to fill in the tokens in this real one.
                 TokenManager copyTokenManager = TokenManagerList.loadData(context, tokenManager.getSettingsKey());
 
@@ -109,7 +109,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
 
     public static TokenManager getTokenManagerFromKey(String key) {
         TokenManager tokenManager = tokenManagers_map.get(key);
-        if(tokenManager == null || !Purchases.isUnlockTokensPurchased) {
+        if(tokenManager == null || !Purchases.isUnlockTokensPurchased()) {
             tokenManager = UnknownTokenManager.createUnknownTokenManager(key, "?");
         }
 
@@ -118,7 +118,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
 
     public static TokenManager getTokenManagerFromTokenType(String tokenType) {
         TokenManager tokenManager = tokenManagers_token_type_map.get(tokenType);
-        if(tokenManager == null || !Purchases.isUnlockTokensPurchased) {
+        if(tokenManager == null || !Purchases.isUnlockTokensPurchased()) {
             tokenManager = UnknownTokenManager.createUnknownTokenManager("?", tokenType);
         }
 
