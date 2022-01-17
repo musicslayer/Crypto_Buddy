@@ -8,12 +8,16 @@ import android.widget.CheckBox;
 import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.ExchangePortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
@@ -149,8 +153,25 @@ public class ReportFeedbackDialog extends BaseDialog {
             return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
         }
         else if(activity instanceof ExchangeExplorerActivity) {
-            // TODO Add in exchange info.
-            return "Exchange Info:\n\n" + "Coinbase";
+            HashMap<Exchange, ExchangeData> exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+
+            StringBuilder s = new StringBuilder();
+            for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
+                s.append(exchangeData.getInfoString()).append("\n\n");
+            }
+
+            return "Exchange Info:\n\n" + s.toString() + table.getInfo();
+        }
+
+        else if(activity instanceof ExchangePortfolioExplorerActivity) {
+            HashMap<Exchange, ExchangeData> exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+            ExchangePortfolioObj exchangePortfolioObj = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangePortfolioObj;
+
+            StringBuilder s = new StringBuilder();
+            for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
+                s.append(exchangeData.getInfoString()).append("\n\n");
+            }
+            return "Exchange Info:\n\n" + s.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + table.getInfo();
         }
 
         return "?";

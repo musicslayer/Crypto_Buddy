@@ -2,10 +2,10 @@ package com.musicslayer.cryptobuddy.api.exchange;
 
 import android.app.Activity;
 
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.AuthUtil;
 
 import java.util.ArrayList;
 
@@ -33,9 +33,10 @@ public class UnknownExchangeAPI extends ExchangeAPI {
     }
 
     public boolean isSupported(Exchange exchange) { return false; }
-    public void authorize(Activity activity, ExchangeAPI.AuthorizationListener L) {}
-    public ArrayList<AssetQuantity> getCurrentBalance(String token) { return null; }
-    public ArrayList<Transaction> getTransactions(String token) { return null; }
+    public void authorize(Activity activity, AuthUtil.AuthorizationListener L) {}
+    public boolean isAuthorized() { return false; }
+    public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) { return null; }
+    public ArrayList<Transaction> getTransactions(Exchange exchange) { return null; }
 
     public static UnknownExchangeAPI createUnknownExchangeAPI(String key) {
         return new UnknownExchangeAPI(key);

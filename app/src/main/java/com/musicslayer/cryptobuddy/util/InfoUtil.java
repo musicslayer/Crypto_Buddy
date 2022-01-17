@@ -3,17 +3,18 @@ package com.musicslayer.cryptobuddy.util;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.InfoDialog;
 
 import java.util.ArrayList;
 
-// Class to store crypto-specific info we want to show the user.
+// Class to store specific info we want to show the user.
 public class InfoUtil {
-    public static boolean hasInfo(ArrayList<CryptoAddress> cryptoAddressArrayList) {
+    public static boolean hasInfo_CryptoAddress(ArrayList<CryptoAddress> cryptoAddressArrayList) {
         // Return true if there is any info to show for any crypto.
         for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
-            if(InfoUtil.getInfo(cryptoAddress) != null) {
+            if(InfoUtil.getInfo_CryptoAddress(cryptoAddress) != null) {
                 return true;
             }
         }
@@ -21,14 +22,14 @@ public class InfoUtil {
         return false;
     }
 
-    public static void showInfo(Context context, ArrayList<CryptoAddress> cryptoAddressArrayList) {
+    public static void showInfo_CryptoAddress(Context context, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         StringBuilder infoText = new StringBuilder();
         ArrayList<String> seenNames = new ArrayList<>();
 
         for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
             if(seenNames.contains(cryptoAddress.getCrypto().getName())) { continue; }
 
-            String info = InfoUtil.getInfo(cryptoAddress);
+            String info = InfoUtil.getInfo_CryptoAddress(cryptoAddress);
             if(info != null) {
                 infoText.append(info);
             }
@@ -37,10 +38,10 @@ public class InfoUtil {
         }
 
         BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(InfoDialog.class, infoText.toString());
-        infoDialogFragment.show(context, "crypto_info");
+        infoDialogFragment.show(context, "info");
     }
 
-    public static String getInfo(CryptoAddress cryptoAddress) {
+    private static String getInfo_CryptoAddress(CryptoAddress cryptoAddress) {
         String cryptoName = cryptoAddress.getCrypto().getName();
         boolean isMainnet = cryptoAddress.network.isMainnet();
         String cryptoDisplayName = cryptoAddress.getCrypto().getDisplayName();
@@ -77,5 +78,40 @@ public class InfoUtil {
         }
 
         return cryptoDisplayName + " (" + cryptoName + ")" + ": " + info + "\n\n";
+    }
+
+    public static boolean hasInfo_Exchange(ArrayList<Exchange> exchangeArrayList) {
+        // Return true if there is any info to show for any exchange.
+        for(Exchange exchange : exchangeArrayList) {
+            if(InfoUtil.getInfo_Exchange(exchange) != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void showInfo_Exchange(Context context, ArrayList<Exchange> exchangeArrayList) {
+        StringBuilder infoText = new StringBuilder();
+        ArrayList<String> seenNames = new ArrayList<>();
+
+        for(Exchange exchange : exchangeArrayList) {
+            if(seenNames.contains(exchange.getName())) { continue; }
+
+            String info = InfoUtil.getInfo_Exchange(exchange);
+            if(info != null) {
+                infoText.append(info);
+            }
+
+            seenNames.add(exchange.getName());
+        }
+
+        BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(InfoDialog.class, infoText.toString());
+        infoDialogFragment.show(context, "info");
+    }
+
+    private static String getInfo_Exchange(Exchange exchange) {
+        // Currently no exchanges actually have any problems.
+        return null;
     }
 }

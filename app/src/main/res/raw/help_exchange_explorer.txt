@@ -1,10 +1,10 @@
 View transactions on a crypto exchange, and then get the net values of all assets involved, including a total USD value.
 
 Symbol buttons left to right:
---> Address information
+--> Exchange information
 --> Get net values*
 --> Authorize**
 
 *This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances of all assets on the exchange.
 
-**For security, the authorization to obtain data from an exchange may expire. Use this button to reauthorize the app to access your exchange data.
+**Read-only permission must be granted to access your account balances and transaction history. This app does not trade or withdraw your assets, or place orders on your behalf. For security, the authorization to obtain data from an exchange may expire, requiring you to use this button to grant authorization again.

@@ -408,6 +408,51 @@ public class Serialization {
         }
     }
 
+    public static String long_serialize(long l) {
+        return string_serialize(Long.toString(l));
+    }
+
+    public static long long_deserialize(String s) {
+        return Long.parseLong(string_deserialize(s));
+    }
+
+    public static String long_serializeArrayList(ArrayList<Long> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(long l : arrayList) {
+                a.put(Serialization.long_serialize(l));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Long> long_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Long> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.long_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static String date_serialize(Date obj) {
         return obj == null ? null : string_serialize(Long.toString(obj.getTime()));
     }

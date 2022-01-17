@@ -21,7 +21,7 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DownloadDataDialog extends BaseDialog {
+public class DownloadAddressDataDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;
     HashMap<CryptoAddress, AddressData> addressDataMap;
 
@@ -51,7 +51,7 @@ public class DownloadDataDialog extends BaseDialog {
 
  */
 
-    public DownloadDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
+    public DownloadAddressDataDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
         this.cryptoAddressArrayList = cryptoAddressArrayList;
         //this.addressDataMap = addressDataMap;
@@ -74,21 +74,21 @@ public class DownloadDataDialog extends BaseDialog {
     }
 
     public int getBaseViewID() {
-        return R.id.download_data_dialog;
+        return R.id.download_address_data_dialog;
     }
 
     public void createLayout() {
-        setContentView(R.layout.dialog_download_data);
+        setContentView(R.layout.dialog_download_address_data);
 
-        ImageButton helpButton = findViewById(R.id.download_data_dialog_helpButton);
+        ImageButton helpButton = findViewById(R.id.download_address_data_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                HelpUtil.showHelp(activity, R.raw.help_download_data);
+                HelpUtil.showHelp(activity, R.raw.help_download_address_data);
             }
         });
 
-        TextView T_MESSAGE = findViewById(R.id.download_data_dialog_messageTextView);
+        TextView T_MESSAGE = findViewById(R.id.download_address_data_dialog_messageTextView);
         if(cryptoAddressArrayList.isEmpty()) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
@@ -96,7 +96,7 @@ public class DownloadDataDialog extends BaseDialog {
             T_MESSAGE.setVisibility(View.GONE);
         }
 
-        Button B_DOWNLOAD = findViewById(R.id.download_data_dialog_downloadButton);
+        Button B_DOWNLOAD = findViewById(R.id.download_address_data_dialog_downloadButton);
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
@@ -110,7 +110,7 @@ public class DownloadDataDialog extends BaseDialog {
             }
         });
 
-        Button B_SELECTALL = findViewById(R.id.download_data_dialog_selectAllButton);
+        Button B_SELECTALL = findViewById(R.id.download_address_data_dialog_selectAllButton);
         B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
@@ -120,7 +120,7 @@ public class DownloadDataDialog extends BaseDialog {
             }
         });
 
-        Button B_CLEARALL = findViewById(R.id.download_data_dialog_clearAllButton);
+        Button B_CLEARALL = findViewById(R.id.download_address_data_dialog_clearAllButton);
         B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
@@ -134,7 +134,7 @@ public class DownloadDataDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        LinearLayout L = findViewById(R.id.download_data_dialog_checkBoxLayout);
+        LinearLayout L = findViewById(R.id.download_address_data_dialog_checkBoxLayout);
 
         C_B = new CheckBox[cryptoAddressArrayList.size()];
         C_T = new CheckBox[cryptoAddressArrayList.size()];

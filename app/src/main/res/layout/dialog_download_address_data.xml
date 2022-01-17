@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/download_data_dialog"
+    android:id="@+id/download_address_data_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/download_data_dialog_toolbar"
+        android:id="@+id/download_address_data_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -16,63 +16,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitle="Select which types of data to download:"
-        app:title="Download Data" />
+        app:title="Download Address Data" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/download_data_dialog_helpButton"
+        android:id="@+id/download_address_data_dialog_helpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/download_data_dialog_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/download_data_dialog_toolbar"
+        app:layout_constraintBottom_toBottomOf="@+id/download_address_data_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/download_address_data_dialog_toolbar"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/download_data_dialog_downloadButton"
+        android:id="@+id/download_address_data_dialog_downloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Download"
         app:drawableLeftCompat="@drawable/ic_baseline_download_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/download_address_data_dialog_toolbar" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/download_data_dialog_selectAllButton"
+        android:id="@+id/download_address_data_dialog_selectAllButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableLeftCompat="@drawable/ic_baseline_select_all_24"
         android:text="Select All"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_downloadButton" />
+        app:layout_constraintTop_toBottomOf="@+id/download_address_data_dialog_downloadButton" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/download_data_dialog_clearAllButton"
+        android:id="@+id/download_address_data_dialog_clearAllButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
         android:text="Clear All"
-        app:layout_constraintStart_toEndOf="@+id/download_data_dialog_selectAllButton"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_downloadButton" />
+        app:layout_constraintStart_toEndOf="@+id/download_address_data_dialog_selectAllButton"
+        app:layout_constraintTop_toBottomOf="@+id/download_address_data_dialog_downloadButton" />
 
     <TextView
-        android:id="@+id/download_data_dialog_messageTextView"
+        android:id="@+id/download_address_data_dialog_messageTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="(There are no addresses to download data for.)"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/download_data_dialog_clearAllButton" />
+        app:layout_constraintTop_toBottomOf="@id/download_address_data_dialog_clearAllButton" />
 
     <LinearLayout
-        android:id="@+id/download_data_dialog_checkBoxLayout"
+        android:id="@+id/download_address_data_dialog_checkBoxLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/download_data_dialog_messageTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/download_address_data_dialog_messageTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

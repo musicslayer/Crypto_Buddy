@@ -25,7 +25,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.dialog.DownloadDataDialog;
+import com.musicslayer.cryptobuddy.dialog.DownloadAddressDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -108,16 +108,16 @@ public class AddressExplorerActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.address_explorer_toolbar);
         setSupportActionBar(toolbar);
 
-        ImageButton infoButton = findViewById(R.id.address_explorer_cryptoInfoButton);
-        infoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        ImageButton problemInfoButton = findViewById(R.id.address_explorer_problemInfoButton);
+        problemInfoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo(AddressExplorerActivity.this, cryptoAddressArrayList);
+                InfoUtil.showInfo_CryptoAddress(AddressExplorerActivity.this, cryptoAddressArrayList);
             }
         });
 
-        if(!InfoUtil.hasInfo(cryptoAddressArrayList)) {
-            infoButton.setVisibility(View.GONE);
+        if(!InfoUtil.hasInfo_CryptoAddress(cryptoAddressArrayList)) {
+            problemInfoButton.setVisibility(View.GONE);
         }
 
         ImageButton helpButton = findViewById(R.id.address_explorer_helpButton);
@@ -141,7 +141,6 @@ public class AddressExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(AddressInfoDialog.class, cryptoAddressArrayList, activityStateObj[0].addressDataMap).show(AddressExplorerActivity.this, "info");
                 BaseDialogFragment.newInstance(AddressInfoDialog.class, cryptoAddressArrayList).show(AddressExplorerActivity.this, "info");
             }
         });
@@ -222,13 +221,13 @@ public class AddressExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, cryptoAddressArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadAddressDataDialog.class, cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((DownloadDataDialog)dialog).isComplete) {
-                    includeBalances = ((DownloadDataDialog)dialog).user_BALANCES;
-                    includeTransactions = ((DownloadDataDialog)dialog).user_TRANSACTIONS;
+                if(((DownloadAddressDataDialog)dialog).isComplete) {
+                    includeBalances = ((DownloadAddressDataDialog)dialog).user_BALANCES;
+                    includeTransactions = ((DownloadAddressDataDialog)dialog).user_TRANSACTIONS;
                     progressDialogFragment.show(AddressExplorerActivity.this, "progress");
                 }
             }

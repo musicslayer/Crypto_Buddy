@@ -7,7 +7,10 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -74,10 +77,22 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Parc
         return exchange;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
+
     @Override
     public boolean equals(Object other) {
         // TODO Should we just look at getKey? Should all Unknown assets be equal to each other?
         return (other instanceof Exchange) && getClass().equals(other.getClass());
+    }
+
+    public boolean isSameAs(Exchange exchange) {
+        // Returns true if this Exchange is effectively the same as the input Exchange.
+        // For now, just use "equals".
+        return this.equals(exchange);
     }
 
     @Override

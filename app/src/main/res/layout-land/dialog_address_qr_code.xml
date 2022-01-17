@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/address_filter_dialog_toolbar"
+        android:id="@+id/address_qr_dialog_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/address_qr_dialog_halfWayHorizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_filter_dialog_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/address_qr_dialog_toolbar">
 
     </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
 

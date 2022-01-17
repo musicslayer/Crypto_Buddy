@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.settings.MaxNumberTransactionsSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.AuthUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -41,9 +42,10 @@ abstract public class ExchangeAPI extends API {
     }
 
     abstract public boolean isSupported(Exchange exchange);
-    abstract public void authorize(Activity activity, ExchangeAPI.AuthorizationListener L);
-    abstract public ArrayList<AssetQuantity> getCurrentBalance(String token);
-    abstract public ArrayList<Transaction> getTransactions(String token);
+    abstract public void authorize(Activity activity, AuthUtil.AuthorizationListener L);
+    abstract public boolean isAuthorized();
+    abstract public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange);
+    abstract public ArrayList<Transaction> getTransactions(Exchange exchange);
 
     public static ExchangeAPI getExchangeAPIFromKey(String key) {
         ExchangeAPI exchangeAPI = exchange_api_map.get(key);
@@ -61,9 +63,5 @@ abstract public class ExchangeAPI extends API {
 
     public static int getMaxTransactions() {
         return MaxNumberTransactionsSetting.value;
-    }
-
-    abstract public static class AuthorizationListener {
-        abstract public void onAuthorization(String exchange, String token);
     }
 }

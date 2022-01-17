@@ -17,24 +17,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Choose Exchange" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/choose_exchange_dialog_helpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/choose_exchange_dialog_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/choose_exchange_dialog_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_help_24" />
-
     <!-- Enforce a global maximum address length to protect algorithms from having to process large values. -->
 
     <TableLayout
         android:id="@+id/choose_exchange_tableLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_exchange_dialog_toolbar">
 
         <TableRow

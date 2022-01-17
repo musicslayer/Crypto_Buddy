@@ -10,14 +10,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
+import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
+import com.musicslayer.cryptobuddy.activity.ExchangePortfolioExplorerActivity;
+import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DownloadExchangeDataDialog extends BaseDialog {
-    ArrayList<ExchangeAPI> exchangeArrayList;
+    ArrayList<Exchange> exchangeArrayList;
+    HashMap<Exchange, ExchangeData> exchangeDataMap;
 
     CheckBox[] C_B;
     CheckBox[] C_T;
@@ -27,11 +37,25 @@ public class DownloadExchangeDataDialog extends BaseDialog {
     public ArrayList<Boolean> user_BALANCES = new ArrayList<>();
     public ArrayList<Boolean> user_TRANSACTIONS = new ArrayList<>();
 
-    public DownloadExchangeDataDialog(Activity activity, ArrayList<ExchangeAPI> exchangeArrayList) {
+    public DownloadExchangeDataDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
         super(activity);
         this.exchangeArrayList = exchangeArrayList;
 
-        // TODO Add back in state so we know what we downloaded. Also update help...
+        if(activity instanceof ExchangeExplorerActivity) {
+            this.exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+        }
+        else if(activity instanceof ExchangePortfolioExplorerActivity) {
+            this.exchangeDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+        }
+
+        // By default, select checkboxes for data that has not already been downloaded.
+        for(int i = 0; i < exchangeArrayList.size(); i++) {
+            Exchange exchange = exchangeArrayList.get(i);
+            ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
+
+            state_B.add(!exchangeData.isCurrentBalanceComplete());
+            state_T.add(!exchangeData.isTransactionsComplete());
+        }
     }
 
     public int getBaseViewID() {

@@ -42,6 +42,8 @@
         <activity android:name=".activity.AddressPortfolioExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.AddressPortfolioViewerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangeExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.ExchangePortfolioExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.ExchangePortfolioViewerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.InAppPurchasesActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.InitialActivity" android:screenOrientation="locked"
             android:exported="true">

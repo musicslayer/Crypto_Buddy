@@ -2,8 +2,11 @@ package com.musicslayer.cryptobuddy.state;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 
 import java.util.HashMap;
@@ -14,9 +17,11 @@ import java.util.HashMap;
 public class ActivityStateObj {
     public HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     public HashMap<CryptoAddress, AddressData> addressDataFilterMap = new HashMap<>();
+    public HashMap<Exchange, ExchangeData> exchangeDataMap = new HashMap<>();
+    public HashMap<Exchange, ExchangeData> exchangeDataFilterMap = new HashMap<>();
     public AddressPortfolioObj addressPortfolioObj;
     public TransactionPortfolioObj transactionPortfolioObj;
+    public ExchangePortfolioObj exchangePortfolioObj;
 
-    public HashMap<String, ExchangeData> exchangeDataMap = new HashMap<>();
-    public HashMap<String, ExchangeData> exchangeDataFilterMap = new HashMap<>();
+    public ExchangeAPI exchangeAPI;
 }

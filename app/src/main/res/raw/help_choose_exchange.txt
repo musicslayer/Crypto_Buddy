@@ -1,5 +1,0 @@
-Choose an exchange to analyze your existing account.
-Read-only permission must be granted to access your account balances and transaction history.
-This app does not trade or withdraw your assets, or place orders on your behalf.
-
-For security, you must grant permission each time any exchange data is accessed.

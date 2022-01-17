@@ -29,14 +29,6 @@ public class ChooseExchangeDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_choose_exchange);
 
-        ImageButton helpButton = findViewById(R.id.choose_exchange_dialog_helpButton);
-        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            @Override
-            public void onClickImpl(View view) {
-                HelpUtil.showHelp(activity, R.raw.help_choose_exchange);
-            }
-        });
-
         Button B_COINBASE = findViewById(R.id.choose_exchange_dialog_coinbaseButton);
         B_COINBASE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {

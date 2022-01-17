@@ -23,13 +23,14 @@ public class ToastUtil {
         toastMap.put("email", Toast.makeText(context, "Your device does not have an email application.", getToastDuration()));
         toastMap.put("sms", Toast.makeText(context, "Your device does not have a text messaging application.", getToastDuration()));
         toastMap.put("web_browser", Toast.makeText(context, "Your device does not have a web browser application.", getToastDuration()));
-        toastMap.put("copy", Toast.makeText(context, "Wallet address copied to clipboard.", getToastDuration()));
-        toastMap.put("paste", Toast.makeText(context, "Wallet address pasted from clipboard.", getToastDuration()));
+        toastMap.put("copy", Toast.makeText(context, "Text copied to clipboard.", getToastDuration()));
+        toastMap.put("paste", Toast.makeText(context, "Text pasted from clipboard.", getToastDuration()));
         toastMap.put("no_paste", Toast.makeText(context, "Cannot paste. Clipboard is empty or does not contain text.", getToastDuration()));
 
         toastMap.put("empty_address", Toast.makeText(context, "A crypto address cannot be empty.", getToastDuration()));
         toastMap.put("unrecognized_address", Toast.makeText(context, "This address is not recognized as a valid crypto address.", getToastDuration()));
         toastMap.put("incomplete_address_data", Toast.makeText(context, "Could not access all address information. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("incomplete_exchange_data", Toast.makeText(context, "Could not access all exchange information. Ensure exchanges are authorized, check your internet connection, and try again.", getToastDuration()));
         toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", getToastDuration()));
@@ -43,7 +44,8 @@ public class ToastUtil {
         toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", getToastDuration()));
         toastMap.put("no_internet_permission", Toast.makeText(context, "Internet permission is not granted.", getToastDuration()));
 
-        toastMap.put("no_exchange_authorization", Toast.makeText(context, "Exchange authorization did not complete successfully. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("authorization_failed", Toast.makeText(context, "Authorization did not complete successfully. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("authorization_successful", Toast.makeText(context, "Authorization completed successfully.", getToastDuration()));
 
         toastMap.put("new_transaction_filtered", Toast.makeText(context, "Added transaction(s) are being filtered.", getToastDuration()));
 
@@ -51,6 +53,7 @@ public class ToastUtil {
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", getToastDuration()));
 
         toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", getToastDuration()));
+        toastMap.put("exchange_data_downloaded", Toast.makeText(context, "Finished downloading exchange information.", getToastDuration()));
 
         toastMap.put("assets_same", Toast.makeText(context, "Assets must be different.", getToastDuration()));
         toastMap.put("cryptos_same", Toast.makeText(context, "Cryptos must be different.", getToastDuration()));

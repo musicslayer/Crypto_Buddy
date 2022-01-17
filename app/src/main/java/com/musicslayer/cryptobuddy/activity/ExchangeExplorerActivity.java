@@ -2,29 +2,28 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
+import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
-import com.musicslayer.cryptobuddy.dialog.ConfirmResetTableDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
-import com.musicslayer.cryptobuddy.dialog.DownloadDataDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadExchangeDataDialog;
+import com.musicslayer.cryptobuddy.dialog.ExchangeInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -35,9 +34,9 @@ import com.musicslayer.cryptobuddy.state.ActivityStateObj;
 import com.musicslayer.cryptobuddy.state.TableStateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.ExchangeTable;
-import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
 import java.util.ArrayList;
 
@@ -46,6 +45,8 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
     ExchangeTable table;
     public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
+
+    ArrayList<Exchange> exchangeArrayList = new ArrayList<>();
 
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
@@ -82,11 +83,29 @@ public class ExchangeExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        String exchange = getIntent().getStringExtra("Exchange");
-        String token = getIntent().getStringExtra("Token");
+        Exchange exchange = getIntent().getParcelableExtra("Exchange");
+        exchangeArrayList.add(exchange);
+        if(isFirstCreate) {
+            HashMapUtil.putValueInMap(activityStateObj[0].exchangeDataMap, exchange, ExchangeData.getNoData(exchange,null));
+        }
+
+        TextView T_INFO = findViewById(R.id.exchange_explorer_infoTextView);
+        T_INFO.setText("Exchange = " + exchangeArrayList.get(0).toString());
 
         Toolbar toolbar = findViewById(R.id.exchange_explorer_toolbar);
         setSupportActionBar(toolbar);
+
+        ImageButton problemInfoButton = findViewById(R.id.exchange_explorer_problemInfoButton);
+        problemInfoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                InfoUtil.showInfo_Exchange(ExchangeExplorerActivity.this, exchangeArrayList);
+            }
+        });
+
+        if(!InfoUtil.hasInfo_Exchange(exchangeArrayList)) {
+            problemInfoButton.setVisibility(View.GONE);
+        }
 
         ImageButton helpButton = findViewById(R.id.exchange_explorer_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -105,76 +124,109 @@ public class ExchangeExplorerActivity extends BaseActivity {
             table.tableStateObj[0].table = table;
         }
 
-/*
+        FloatingActionButton fab_info = findViewById(R.id.exchange_explorer_infoButton);
+        fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(ExchangeInfoDialog.class, exchangeArrayList).show(ExchangeExplorerActivity.this, "info");
+            }
+        });
+
+        FloatingActionButton fab_total = findViewById(R.id.exchange_explorer_totalButton);
+        fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(TotalDialog.class).show(ExchangeExplorerActivity.this, "total");
+            }
+        });
+
+        BaseDialogFragment authorizeExchangeDialogFragment = BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, exchangeArrayList);
+        authorizeExchangeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((AuthorizeExchangeDialog)dialog).isComplete) {
+                    // Only set this if we successfully authorized. Otherwise keep what we had.
+                    activityStateObj[0].exchangeAPI = ((AuthorizeExchangeDialog)dialog).user_EXCHANGEAPI;
+                }
+            }
+        });
+        authorizeExchangeDialogFragment.restoreListeners(this, "authorize_exchange");
+
+        FloatingActionButton fab_authorize = findViewById(R.id.exchange_explorer_authorizeButton);
+        fab_authorize.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                authorizeExchangeDialogFragment.show(ExchangeExplorerActivity.this, "authorize_exchange");
+            }
+        });
+
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                AddressData newAddressData;
+                ExchangeData newExchangeData;
 
                 if(includeBalances.get(0) && includeTransactions.get(0)) {
-                    newAddressData = AddressData.getAllData(cryptoAddressArrayList.get(0));
+                    newExchangeData = ExchangeData.getAllData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
                 }
                 else if(includeBalances.get(0)) {
-                    newAddressData = AddressData.getCurrentBalanceData(cryptoAddressArrayList.get(0));
+                    newExchangeData = ExchangeData.getCurrentBalanceData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
                 }
                 else if(includeTransactions.get(0)) {
-                    newAddressData = AddressData.getTransactionsData(cryptoAddressArrayList.get(0));
+                    newExchangeData = ExchangeData.getTransactionsData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
                 }
                 else {
-                    newAddressData = AddressData.getNoData(cryptoAddressArrayList.get(0));
+                    newExchangeData = ExchangeData.getNoData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(AddressExplorerActivity.this);
+                TokenManagerList.saveAllData(ExchangeExplorerActivity.this);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
+                ExchangeData newExchangeData = Serialization.deserialize(ProgressDialogFragment.getValue(), ExchangeData.class);
 
                 boolean isComplete;
                 if(includeBalances.get(0) && includeTransactions.get(0)) {
-                    isComplete = newAddressData.isComplete();
+                    isComplete = newExchangeData.isComplete();
                 }
                 else if(includeBalances.get(0)) {
-                    isComplete = newAddressData.isCurrentBalanceComplete();
+                    isComplete = newExchangeData.isCurrentBalanceComplete();
                 }
                 else if(includeTransactions.get(0)) {
-                    isComplete = newAddressData.isTransactionsComplete();
+                    isComplete = newExchangeData.isTransactionsComplete();
                 }
                 else {
                     isComplete = true;
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(AddressExplorerActivity.this,"incomplete_address_data");
+                    ToastUtil.showToast(ExchangeExplorerActivity.this,"incomplete_exchange_data");
                 }
 
-                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
-                AddressData oldAddressData = HashMapUtil.getValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
-                AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
-                HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, mergedAddressData);
+                Exchange exchange = exchangeArrayList.get(0);
+                ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(activityStateObj[0].exchangeDataMap, exchange);
+                ExchangeData mergedExchangeData = ExchangeData.merge(oldExchangeData, newExchangeData);
+                HashMapUtil.putValueInMap(activityStateObj[0].exchangeDataMap, exchange, mergedExchangeData);
 
                 updateLayout();
-                ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
+                ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_downloaded");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
- */
-
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class, exchangeArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((DownloadDataDialog)dialog).isComplete) {
-                    includeBalances = ((DownloadDataDialog)dialog).user_BALANCES;
-                    includeTransactions = ((DownloadDataDialog)dialog).user_TRANSACTIONS;
-                    //progressDialogFragment.show(ExchangeExplorerActivity.this, "progress");
+                if(((DownloadExchangeDataDialog)dialog).isComplete) {
+                    includeBalances = ((DownloadExchangeDataDialog)dialog).user_BALANCES;
+                    includeTransactions = ((DownloadExchangeDataDialog)dialog).user_TRANSACTIONS;
+                    progressDialogFragment.show(ExchangeExplorerActivity.this, "progress");
                 }
             }
         });

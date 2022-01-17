@@ -14,42 +14,42 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
+import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
+import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadAddressDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.RemoveAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
+import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
-import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
-import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
-import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
-import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.ActivityStateObj;
 import com.musicslayer.cryptobuddy.state.TableStateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
 import java.util.ArrayList;
 
-public class AddressPortfolioExplorerActivity extends BaseActivity {
+public class ExchangePortfolioExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     AddressTable table;
@@ -68,7 +68,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        confirmBackDialogFragment.show(AddressPortfolioExplorerActivity.this, "back");
+        confirmBackDialogFragment.show(ExchangePortfolioExplorerActivity.this, "back");
     }
 
     public void createLayout () {
@@ -87,7 +87,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     activityStateObj[0] = null;
                     table.tableStateObj[0] = null;
 
-                    startActivity(new Intent(AddressPortfolioExplorerActivity.this, AddressPortfolioViewerActivity.class));
+                    startActivity(new Intent(ExchangePortfolioExplorerActivity.this, AddressPortfolioViewerActivity.class));
                     finish();
                 }
             }
@@ -132,7 +132,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         infoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo_CryptoAddress(AddressPortfolioExplorerActivity.this, addressPortfolioObj.cryptoAddressArrayList);
+                InfoUtil.showInfo_CryptoAddress(ExchangePortfolioExplorerActivity.this, addressPortfolioObj.cryptoAddressArrayList);
             }
         });
 
@@ -144,7 +144,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                HelpUtil.showHelp(AddressPortfolioExplorerActivity.this, R.raw.help_address_portfolio_explorer);
+                HelpUtil.showHelp(ExchangePortfolioExplorerActivity.this, R.raw.help_address_portfolio_explorer);
             }
         });
 
@@ -166,11 +166,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     CryptoAddress newCryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
                     if(addressPortfolioObj.isSaved(newCryptoAddress)) {
-                        ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
+                        ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"address_in_portfolio");
                     }
                     else {
                         addressPortfolioObj.addData(newCryptoAddress);
-                        AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
+                        AddressPortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, addressPortfolioObj);
 
                         updateFilter();
 
@@ -186,7 +186,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                chooseAddressDialogFragment.show(AddressPortfolioExplorerActivity.this, "add");
+                chooseAddressDialogFragment.show(ExchangePortfolioExplorerActivity.this, "add");
             }
         });
 
@@ -203,7 +203,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(activityStateObj[0].addressDataFilterMap, cryptoAddress);
                     }
 
-                    AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
+                    AddressPortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, addressPortfolioObj);
 
                     updateFilter();
 
@@ -217,7 +217,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_remove.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                removeAddressDialogFragment.show(AddressPortfolioExplorerActivity.this, "remove");
+                removeAddressDialogFragment.show(ExchangePortfolioExplorerActivity.this, "remove");
             }
         });
 
@@ -226,7 +226,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 //BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList, activityStateObj[0].addressDataMap).show(AddressPortfolioExplorerActivity.this, "info");
-                BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(ExchangePortfolioExplorerActivity.this, "info");
             }
         });
 
@@ -235,7 +235,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(AddressPortfolioExplorerActivity.this, "total");
-                BaseDialogFragment.newInstance(TotalDialog.class).show(AddressPortfolioExplorerActivity.this, "total");
+                BaseDialogFragment.newInstance(TotalDialog.class).show(ExchangePortfolioExplorerActivity.this, "total");
             }
         });
 
@@ -243,7 +243,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "qrcode");
+                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(ExchangePortfolioExplorerActivity.this, "qrcode");
             }
         });
 
@@ -277,7 +277,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     newAddressDataArrayList.add(newAddressData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
+                    TokenManagerList.saveAllData(ExchangePortfolioExplorerActivity.this);
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList));
@@ -308,7 +308,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
                     if(!isComplete) {
                         // Only alert once. Others would be redundant.
-                        ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"incomplete_address_data");
+                        ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"incomplete_address_data");
                         break;
                     }
                 }
@@ -333,7 +333,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 }
 
                 updateLayout();
-                ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_data_downloaded");
+                ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"address_data_downloaded");
             }
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
@@ -346,7 +346,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 if(((DownloadAddressDataDialog)dialog).isComplete) {
                     includeBalances = ((DownloadAddressDataDialog)dialog).user_BALANCES;
                     includeTransactions = ((DownloadAddressDataDialog)dialog).user_TRANSACTIONS;
-                    download_progressDialogFragment.show(AddressPortfolioExplorerActivity.this, "progress_download");
+                    download_progressDialogFragment.show(ExchangePortfolioExplorerActivity.this, "progress_download");
                 }
             }
         });
@@ -356,7 +356,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                downloadDialogFragment.show(AddressPortfolioExplorerActivity.this, "download");
+                downloadDialogFragment.show(ExchangePortfolioExplorerActivity.this, "download");
             }
         });
 
@@ -388,7 +388,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 addressFilterDialogFragment.updateArguments(DiscreteFilterDialog.class, addressFilter);
-                addressFilterDialogFragment.show(AddressPortfolioExplorerActivity.this, "address_filter");
+                addressFilterDialogFragment.show(ExchangePortfolioExplorerActivity.this, "address_filter");
             }
         });
     }
@@ -420,16 +420,16 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == 1) {
-            BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(AddressPortfolioExplorerActivity.this, "price");
+            BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(ExchangePortfolioExplorerActivity.this, "price");
             return true;
         }
         else if (id == 2) {
-            BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(AddressPortfolioExplorerActivity.this, "converter");
+            BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(ExchangePortfolioExplorerActivity.this, "converter");
             return true;
         }
         else if (id == 3) {
             String type = "AddressPortfolio";
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangePortfolioExplorerActivity.this, "feedback");
             return true;
         }
 
