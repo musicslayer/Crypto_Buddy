@@ -20,6 +20,9 @@ android {
     def localProperties = new Properties()
     localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
+    def secretProperties = new Properties()
+    secretProperties.load(new FileInputStream(rootProject.file("secret.properties")))
+
     signingConfigs {
         release {
             keyAlias localProperties['alias']
@@ -39,6 +42,19 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        buildConfigField("String", "ad_application_id", secretProperties['ad_application_id'])
+        manifestPlaceholders = [ad_application_id: secretProperties["ad_application_id"].substring(1, secretProperties["ad_application_id"].length() - 1)] // Trim off extra quotes
+
+        buildConfigField("String", "ad_unit_id_test", secretProperties['ad_unit_id_test'])
+        buildConfigField("String", "ad_unit_id_release", secretProperties['ad_unit_id_release'])
+
+        buildConfigField("String", "binance_client_id", secretProperties['binance_client_id'])
+        buildConfigField("String", "binance_client_secret", secretProperties['binance_client_secret'])
+        buildConfigField("String", "binance_us_client_id", secretProperties['binance_us_client_id'])
+        buildConfigField("String", "binance_us_client_secret", secretProperties['binance_us_client_secret'])
+        buildConfigField("String", "coinbase_client_id", secretProperties['coinbase_client_id'])
+        buildConfigField("String", "coinbase_client_secret", secretProperties['coinbase_client_secret'])
     }
 
     buildTypes {

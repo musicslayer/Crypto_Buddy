@@ -35,7 +35,7 @@
         </provider>
 
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
-        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-7875443444219421~2137021985"/>
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="${ad_application_id}"/>
 
         <activity android:name=".activity.AboutActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.AddressExplorerActivity" android:screenOrientation="locked"/>

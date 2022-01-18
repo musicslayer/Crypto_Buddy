@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.util;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.dialog.OAuthDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -146,14 +145,9 @@ public class AuthUtil {
         }
 
         public boolean isTokenValid() {
-            // To avoid unnecessary web requests, we can check the expiration date ourselves first.
+            // To avoid unnecessary web requests, just check the expiration date ourselves.
             final long nowTime = new Date().getTime();
-            if(nowTime > expiryTime) {
-                return false;
-            }
-
-            // TODO actually check expiration by web also?
-            return true;
+            return nowTime < expiryTime;
         }
     }
 

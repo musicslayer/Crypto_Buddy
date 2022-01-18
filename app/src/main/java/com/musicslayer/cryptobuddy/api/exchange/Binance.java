@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.api.exchange;
 import android.app.Activity;
 import android.content.Context;
 
+import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
@@ -30,8 +31,8 @@ public class Binance extends ExchangeAPI {
         String authURLBase = "https://www.coinbase.com/oauth/authorize/";
         String tokenURLBase = "https://api.coinbase.com/oauth/token/";
         String authURL = "https://www.coinbase.com/oauth/authorize?client_id=6f45b6368b73c3cc30433361ecccc7b59d22413c99d822edc7763107cb776a4e&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
-        String client_id = "6f45b6368b73c3cc30433361ecccc7b59d22413c99d822edc7763107cb776a4e";
-        String client_secret = "2047cba7d7a4eba68652ff9ec8bf6a110a5004365eadcccf7773e2f6b004af85";
+        String client_id = BuildConfig.binance_client_id;
+        String client_secret = BuildConfig.binance_client_secret;
         long expiryTime = 7200000L; // 2 hours
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
