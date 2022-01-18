@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,7 +20,7 @@ public class CreatePortfolioDialog extends BaseDialog {
         return R.id.create_portfolio_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_create_portfolio);
 
         final PlainTextEditText E = findViewById(R.id.create_portfolio_dialog_editText);

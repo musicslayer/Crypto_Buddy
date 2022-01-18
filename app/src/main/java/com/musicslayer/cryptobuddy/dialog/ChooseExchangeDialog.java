@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,7 +27,7 @@ public class ChooseExchangeDialog extends BaseDialog {
         return R.id.choose_exchange_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_exchange);
 
         Button B_COINBASE = findViewById(R.id.choose_exchange_dialog_coinbaseButton);

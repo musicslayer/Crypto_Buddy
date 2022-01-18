@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -33,7 +34,7 @@ public class AddCustomTokenDialog extends BaseDialog {
         return R.id.add_custom_token_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_add_custom_token);
 
         ImageButton helpButton = findViewById(R.id.add_custom_token_dialog_helpButton);

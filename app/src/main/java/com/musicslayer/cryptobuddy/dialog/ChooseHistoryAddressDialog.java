@@ -29,7 +29,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
         return R.id.choose_history_address_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_history_address);
 
         updateLayout();

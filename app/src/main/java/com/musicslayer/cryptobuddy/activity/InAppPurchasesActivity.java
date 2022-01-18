@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_in_app_purchases);
 
         InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {

@@ -37,7 +37,7 @@ public class ChooseAddressDialog extends BaseDialog {
         return R.id.choose_exchange_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_address);
 
         ImageButton helpButton = findViewById(R.id.choose_exchange_dialog_helpButton);

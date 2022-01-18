@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -49,7 +50,7 @@ public class ReportFeedbackDialog extends BaseDialog {
         return R.id.report_feedback_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_report_feedback);
 
         // Always visible

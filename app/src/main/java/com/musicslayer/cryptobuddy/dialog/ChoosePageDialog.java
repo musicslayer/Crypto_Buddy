@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -28,7 +29,7 @@ public class ChoosePageDialog extends BaseDialog {
         return R.id.choose_page_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_page);
 
         Toolbar toolbar = findViewById(R.id.choose_page_dialog_toolbar);

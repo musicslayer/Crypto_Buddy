@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -33,7 +34,7 @@ public class SettingsActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_settings);
 
         Toolbar toolbar = findViewById(R.id.settings_toolbar);

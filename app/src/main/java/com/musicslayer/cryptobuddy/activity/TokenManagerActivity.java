@@ -46,7 +46,7 @@ public class TokenManagerActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_token_manager);
 
         ImageButton helpButton = findViewById(R.id.token_manager_helpButton);

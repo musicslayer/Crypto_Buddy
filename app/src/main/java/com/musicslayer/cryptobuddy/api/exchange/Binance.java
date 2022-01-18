@@ -38,7 +38,7 @@ public class Binance extends ExchangeAPI {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
                 Binance.this.oAuthToken = oAuthToken;
-                L.onAuthorization(Binance.this);
+                L.onAuthorization();
             }
         };
 

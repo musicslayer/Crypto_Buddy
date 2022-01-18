@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,10 +63,10 @@ public class ExchangeExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(ExchangeExplorerActivity.this, "back");
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_exchange_explorer);
 
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             activityStateObj[0] = new ActivityStateObj();
         }
 
@@ -87,7 +88,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
         Exchange exchange = getIntent().getParcelableExtra("Exchange");
         exchangeArrayList.add(exchange);
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             HashMapUtil.putValueInMap(activityStateObj[0].exchangeDataMap, exchange, ExchangeData.getNoData(exchange,null));
         }
 
@@ -121,7 +122,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.exchange_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             table.tableStateObj[0] = new TableStateObj();
             table.tableStateObj[0].table = table;
         }

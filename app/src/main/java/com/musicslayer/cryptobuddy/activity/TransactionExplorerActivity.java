@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +40,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(TransactionExplorerActivity.this, "back");
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_transaction_explorer);
 
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
@@ -72,7 +73,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.transaction_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             table.tableStateObj[0] = new TableStateObj();
             table.tableStateObj[0].table = table;
         }

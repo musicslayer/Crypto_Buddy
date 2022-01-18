@@ -37,7 +37,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_transaction_portfolio_viewer);
 
         Toolbar toolbar = findViewById(R.id.transaction_portfolio_viewer_toolbar);

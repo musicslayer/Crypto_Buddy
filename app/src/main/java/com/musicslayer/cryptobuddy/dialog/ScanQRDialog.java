@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -39,7 +40,7 @@ public class ScanQRDialog extends BaseDialog {
         // Do not add Scrollview like superclass does.
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_scan_qr);
 
         final CameraSource[] cameraSource = new CameraSource[1];

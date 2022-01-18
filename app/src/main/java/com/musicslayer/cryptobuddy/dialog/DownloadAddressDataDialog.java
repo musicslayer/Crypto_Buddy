@@ -77,7 +77,7 @@ public class DownloadAddressDataDialog extends BaseDialog {
         return R.id.download_address_data_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_download_address_data);
 
         ImageButton helpButton = findViewById(R.id.download_address_data_dialog_helpButton);

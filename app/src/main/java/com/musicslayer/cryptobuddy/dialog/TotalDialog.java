@@ -51,7 +51,7 @@ public class TotalDialog extends BaseDialog {
         return R.id.total_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_total);
 
         deltaMap = Transaction.resolveAssets(transactionArrayList);

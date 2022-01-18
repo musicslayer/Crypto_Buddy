@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,7 +22,7 @@ public class ConfirmBackDialog extends BaseDialog {
         return R.id.confirm_back_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_confirm_back);
 
         Button B_GOBACK = findViewById(R.id.confirm_back_dialog_backButton);

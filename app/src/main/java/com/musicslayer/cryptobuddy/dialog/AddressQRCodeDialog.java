@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -32,7 +33,7 @@ public class AddressQRCodeDialog extends BaseDialog {
         return R.id.address_qr_code_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_address_qr_code);
 
         ArrayList<String> options = new ArrayList<>();

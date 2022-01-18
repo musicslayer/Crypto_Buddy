@@ -30,7 +30,7 @@ public class CryptoPricesDialog extends BaseDialog {
         return R.id.crypto_prices_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_crypto_prices);
 
         TextView T = findViewById(R.id.crypto_prices_dialog_textView);

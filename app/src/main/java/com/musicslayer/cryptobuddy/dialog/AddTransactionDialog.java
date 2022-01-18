@@ -67,7 +67,7 @@ public class AddTransactionDialog extends BaseDialog {
         return R.id.add_transaction_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_add_transaction);
 
         final Date now = new Date();

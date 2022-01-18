@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -28,7 +29,7 @@ public class OAuthDialog extends BaseDialog {
 
     // TODO Deal with XSS issues?
     @SuppressLint("SetJavaScriptEnabled")
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_oauth);
 
         // We use the frame and conditional initialization to make sure WebView doesn't reload the webpage if the dialog is recreated.
@@ -36,7 +37,7 @@ public class OAuthDialog extends BaseDialog {
         FixedFrameLayout frame = findViewById(R.id.oauth_dialog_fixedFrameLayout);
         WebView webView = (WebView)frame.innerView;
 
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             webView.loadUrl(authURL);
         }
         else {

@@ -82,7 +82,7 @@ public class SearchDialog extends BaseDialog {
         return R.id.search_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_search);
 
         ImageButton helpButton = findViewById(R.id.search_dialog_helpButton);

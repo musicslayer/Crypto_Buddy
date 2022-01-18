@@ -35,7 +35,7 @@ public class CryptoConverterDialog extends BaseDialog {
         return R.id.crypto_converter_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_crypto_converter);
 
         TextView T = findViewById(R.id.crypto_converter_dialog_textView);

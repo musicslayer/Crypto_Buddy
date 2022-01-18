@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class AddressInfoDialog extends BaseDialog {
         return R.id.address_info_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_address_info);
 
         TextView T = findViewById(R.id.address_info_dialog_textView);

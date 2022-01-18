@@ -27,7 +27,7 @@ public class ChooseTimeDialog extends BaseDialog {
         return R.id.choose_time_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_time);
 
         LinearLayout timePickerLinearLayout = findViewById(R.id.choose_time_dialog_timePickerLinearLayout);

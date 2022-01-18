@@ -38,7 +38,7 @@ public class Coinbase extends ExchangeAPI {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
                 Coinbase.this.oAuthToken = oAuthToken;
-                L.onAuthorization(Coinbase.this);
+                L.onAuthorization();
             }
         };
 

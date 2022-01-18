@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,7 +23,7 @@ public class DownloadTokensDialog extends BaseDialog {
         return R.id.download_tokens_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_download_tokens);
 
         Toolbar toolbar = findViewById(R.id.download_tokens_dialog_toolbar);

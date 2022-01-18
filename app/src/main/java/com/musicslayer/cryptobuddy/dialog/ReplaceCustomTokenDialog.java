@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ public class ReplaceCustomTokenDialog extends BaseDialog {
         return R.id.replace_custom_token_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_replace_custom_token);
 
         TextView T = findViewById(R.id.replace_custom_token_dialog_textView);

@@ -14,11 +14,8 @@ import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 
 abstract public class BaseActivity extends CrashActivity {
-    abstract public void createLayout();
+    abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getAdLayoutViewID();
-
-    // True on an activity's first creation, and false if the activity is being recreated.
-    public boolean isFirstCreate;
 
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
@@ -36,9 +33,7 @@ abstract public class BaseActivity extends CrashActivity {
             InAppPurchase.initialize(this);
         }
 
-        isFirstCreate = savedInstanceState == null;
-
-        createLayout();
+        createLayout(savedInstanceState);
         adjustActivity();
     }
 

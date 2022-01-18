@@ -37,7 +37,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_portfolio_viewer);
 
         Toolbar toolbar = findViewById(R.id.address_portfolio_viewer_toolbar);

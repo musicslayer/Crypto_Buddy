@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -22,7 +23,7 @@ public class ChooseDateDialog extends BaseDialog {
         return R.id.choose_date_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_date);
 
         DatePicker datePicker = findViewById(R.id.choose_date_dialog_datePicker);

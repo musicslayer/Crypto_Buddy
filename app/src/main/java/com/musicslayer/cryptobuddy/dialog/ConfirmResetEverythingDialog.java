@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,7 +18,7 @@ public class ConfirmResetEverythingDialog extends BaseDialog {
         return R.id.confirm_reset_everything_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_confirm_reset_everything);
 
         // This has extra digits, and will always show regardless of the setting.

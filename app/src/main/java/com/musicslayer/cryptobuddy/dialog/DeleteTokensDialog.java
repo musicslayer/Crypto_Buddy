@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ public class DeleteTokensDialog extends BaseDialog {
         return R.id.delete_tokens_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_delete_tokens);
 
         Toolbar toolbar = findViewById(R.id.delete_tokens_dialog_toolbar);

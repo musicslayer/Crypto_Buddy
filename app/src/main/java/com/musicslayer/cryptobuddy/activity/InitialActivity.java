@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
@@ -32,7 +33,7 @@ public class InitialActivity extends BaseActivity {
         return -1;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         // Don't actually show anything. Just do initialization code and then launch MainActivity.
         Context applicationContext = getApplicationContext();
 

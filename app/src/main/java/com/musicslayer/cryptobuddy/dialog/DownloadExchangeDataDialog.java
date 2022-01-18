@@ -58,7 +58,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         return R.id.download_exchange_data_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_download_exchange_data);
 
         ImageButton helpButton = findViewById(R.id.download_exchange_data_dialog_helpButton);

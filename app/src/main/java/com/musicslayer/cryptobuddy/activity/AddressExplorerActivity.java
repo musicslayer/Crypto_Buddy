@@ -63,10 +63,10 @@ public class AddressExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(AddressExplorerActivity.this, "back");
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_explorer);
 
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             activityStateObj[0] = new ActivityStateObj();
         }
 
@@ -88,7 +88,7 @@ public class AddressExplorerActivity extends BaseActivity {
 
         CryptoAddress cryptoAddress = getIntent().getParcelableExtra("CryptoAddress");
         cryptoAddressArrayList.add(cryptoAddress);
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
         }
 
@@ -132,7 +132,7 @@ public class AddressExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.address_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             table.tableStateObj[0] = new TableStateObj();
             table.tableStateObj[0].table = table;
         }

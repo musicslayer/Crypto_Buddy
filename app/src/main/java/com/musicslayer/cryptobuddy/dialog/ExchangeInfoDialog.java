@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -37,7 +38,7 @@ public class ExchangeInfoDialog extends BaseDialog {
         return R.id.exchange_info_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_exchange_info);
 
         TextView T = findViewById(R.id.exchange_info_dialog_textView);

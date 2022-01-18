@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ public class AboutActivity extends BaseActivity {
         finish();
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_about);
 
         Toolbar toolbar = findViewById(R.id.about_toolbar);

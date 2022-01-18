@@ -19,11 +19,7 @@ abstract public class BaseDialog extends CrashDialog {
     // Tells whether the user deliberately completed this instance.
     public boolean isComplete = false;
 
-    // TODO Just pass in "savedInstanceState" to "createLayout"?
-    // True on a dialog's first creation, and false if the dialog is being recreated.
-    public boolean isFirstCreate;
-
-    abstract public void createLayout();
+    abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getBaseViewID();
 
     public BaseDialog(Activity activity) {
@@ -36,10 +32,7 @@ abstract public class BaseDialog extends CrashDialog {
     protected void onCreateImpl(Bundle savedInstanceState) {
         // Needed for older versions of Android.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        isFirstCreate = savedInstanceState == null;
-
-        createLayout();
+        createLayout(savedInstanceState);
     }
 
     @Override

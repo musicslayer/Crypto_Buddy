@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +26,7 @@ public class DisclaimerDialog extends BaseDialog {
         return R.id.disclaimer_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_disclaimer);
 
         String disclaimerText = FileUtil.readFile(activity, R.raw.policy_disclaimer);

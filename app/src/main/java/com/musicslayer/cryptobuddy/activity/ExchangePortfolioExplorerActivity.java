@@ -71,10 +71,10 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(ExchangePortfolioExplorerActivity.this, "back");
     }
 
-    public void createLayout () {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_portfolio_explorer);
 
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             activityStateObj[0] = new ActivityStateObj();
         }
 
@@ -96,7 +96,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
         addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
 
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             activityStateObj[0].addressPortfolioObj = addressPortfolioObj;
         }
 
@@ -104,7 +104,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
         boolean includeTokens = false;
         for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
-            if(isFirstCreate) {
+            if(savedInstanceState == null) {
                 HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
                 HashMapUtil.putValueInMap(activityStateObj[0].addressDataFilterMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
             }
@@ -152,7 +152,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.address_portfolio_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(isFirstCreate) {
+        if(savedInstanceState == null) {
             table.tableStateObj[0] = new TableStateObj();
             table.tableStateObj[0].table = table;
         }

@@ -37,7 +37,7 @@ public class RemoveAddressDialog extends BaseDialog {
         return R.id.remove_address_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_remove_address);
 
         TextView T_MESSAGE = findViewById(R.id.remove_address_dialog_messageTextView);

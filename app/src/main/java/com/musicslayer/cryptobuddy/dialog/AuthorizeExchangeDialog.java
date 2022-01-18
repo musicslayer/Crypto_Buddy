@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -41,7 +42,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         return R.id.authorize_exchange_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_authorize_exchange);
 
         ArrayList<String> options = new ArrayList<>();

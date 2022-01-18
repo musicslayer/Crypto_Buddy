@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,7 +30,7 @@ public class ConfirmDeleteTransactionDialog extends BaseDialog {
         }
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_confirm_delete_transaction);
 
         ConfirmationView C = findViewById(R.id.confirm_delete_transaction_dialog_confirmationView);

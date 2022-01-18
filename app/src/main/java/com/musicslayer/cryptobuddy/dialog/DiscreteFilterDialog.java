@@ -33,7 +33,7 @@ public class DiscreteFilterDialog extends FilterDialog {
         return R.id.discrete_filter_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_discrete_filter);
 
         TextView T_MESSAGE = findViewById(R.id.discrete_filter_dialog_messageTextView);

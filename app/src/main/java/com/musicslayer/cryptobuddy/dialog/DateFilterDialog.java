@@ -72,7 +72,7 @@ public class DateFilterDialog extends FilterDialog {
         return R.id.date_filter_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_date_filter);
 
         Button B_FILTER = findViewById(R.id.date_filter_dialog_applyFilterButton);

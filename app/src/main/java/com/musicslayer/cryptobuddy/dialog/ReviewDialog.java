@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -27,7 +28,7 @@ public class ReviewDialog extends BaseDialog {
         return R.id.review_dialog;
     }
 
-    public void createLayout() {
+    public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_review);
 
         Button B_YES = findViewById(R.id.review_dialog_dialog_yesButton);
