@@ -3,12 +3,14 @@ package com.musicslayer.cryptobuddy.util;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.dialog.OAuthDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.state.ViewStateObj;
 
 import org.json.JSONObject;
 
@@ -17,9 +19,18 @@ import java.util.Date;
 // Handles common authentication cases.
 
 public class AuthUtil {
+    public final static ViewStateObj[] viewStateObj = new ViewStateObj[1];
+
+    public static BaseDialogFragment fragment;
+
     public static String code;
 
-    public static void authorizeOAuth(Context context, String authURLBase, String authURL, String tokenURLBase, String client_id, String client_secret, long expiryTimeDuration, AuthUtil.OAuthAuthorizationListener L) {
+    public static void authorizeOAuth(Context context) {
+        viewStateObj[0] = new ViewStateObj();
+        fragment.show(context, "oauth");
+    }
+
+    public static void restoreListeners(Context context, String authURLBase, String authURL, String tokenURLBase, String client_id, String client_secret, long expiryTimeDuration, AuthUtil.OAuthAuthorizationListener L) {
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
@@ -68,19 +79,21 @@ public class AuthUtil {
         progressDialogFragment.restoreListeners(context, "progress");
 
         // Use this dialog to launch a WebView that allows the user to authenticate via OAuth.
-        BaseDialogFragment authorizeExchangeWebViewDialogFragment = BaseDialogFragment.newInstance(OAuthDialog.class, authURLBase, authURL);
-        authorizeExchangeWebViewDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthDialog.class, authURLBase, authURL);
+        oauthDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthDialog)dialog).isComplete) {
+                    viewStateObj[0] = null;
+
                     code = ((OAuthDialog)dialog).user_CODE;
                     progressDialogFragment.show(activity, "progress");
                 }
             }
         });
-        authorizeExchangeWebViewDialogFragment.restoreListeners(context, "web_view");
+        oauthDialogFragment.restoreListeners(context, "oauth");
 
-        authorizeExchangeWebViewDialogFragment.show(context, "web_view");
+        fragment = oauthDialogFragment;
     }
 
     // TODO handle security of client_id and client_secret, and the token.
@@ -139,14 +152,14 @@ public class AuthUtil {
                 return false;
             }
 
-            // TODO actually check expiration by web also.
+            // TODO actually check expiration by web also?
             return true;
         }
     }
 
     // These listeners only fire on successful authorization. This includes cases where no authorization is required.
     abstract public static class AuthorizationListener {
-        abstract public void onAuthorization();
+        abstract public void onAuthorization(ExchangeAPI exchangeAPI);
     }
 
     abstract public static class OAuthAuthorizationListener {

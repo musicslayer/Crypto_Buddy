@@ -47,6 +47,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_info.xml" value="0.28177083333333336" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_qr_code.xml" value="0.28177083333333336" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize.xml" value="0.2972222222222222" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_exchange.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_exchange_web_view.xml" value="0.18611111111111112" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_web_view.xml" value="0.2972222222222222" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_address.xml" value="0.5" />
@@ -82,6 +83,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_exchange_info.xml" value="0.20625" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_info.xml" value="0.18888888888888888" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_oauth.xml" value="0.2722222222222222" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_oauth2.xml" value="0.22395833333333334" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_privacy_policy.xml" value="0.22291666666666668" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_progress.xml" value="0.22291666666666668" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_remove_address.xml" value="0.25" />

@@ -34,6 +34,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_spinner" />
 
+    <TextView
+        android:id="@+id/authorize_exchange_dialog_authorizeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_textView" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/authorize_exchange_dialog_authorizeButton"
         android:layout_width="wrap_content"
@@ -41,6 +49,6 @@
         android:text="Authorize"
         app:drawableLeftCompat="@drawable/ic_baseline_security_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_textView" />
+        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_authorizeTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

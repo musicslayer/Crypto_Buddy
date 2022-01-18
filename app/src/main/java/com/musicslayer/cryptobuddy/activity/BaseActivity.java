@@ -18,7 +18,7 @@ abstract public class BaseActivity extends CrashActivity {
     abstract public int getAdLayoutViewID();
 
     // True on an activity's first creation, and false if the activity is being recreated.
-    boolean isFirstCreate;
+    public boolean isFirstCreate;
 
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {

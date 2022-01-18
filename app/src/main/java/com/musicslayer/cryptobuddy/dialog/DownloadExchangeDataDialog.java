@@ -10,12 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.ExchangePortfolioExplorerActivity;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -45,7 +41,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
             this.exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
         }
         else if(activity instanceof ExchangePortfolioExplorerActivity) {
-            this.exchangeDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+            this.exchangeDataMap = ((ExchangePortfolioExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
         }
 
         // By default, select checkboxes for data that has not already been downloaded.

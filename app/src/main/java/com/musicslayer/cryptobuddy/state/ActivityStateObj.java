@@ -17,11 +17,12 @@ import java.util.HashMap;
 public class ActivityStateObj {
     public HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     public HashMap<CryptoAddress, AddressData> addressDataFilterMap = new HashMap<>();
+
     public HashMap<Exchange, ExchangeData> exchangeDataMap = new HashMap<>();
+    public HashMap<Exchange, ExchangeAPI> exchangeAPIMap = new HashMap<>();
     public HashMap<Exchange, ExchangeData> exchangeDataFilterMap = new HashMap<>();
+
     public AddressPortfolioObj addressPortfolioObj;
     public TransactionPortfolioObj transactionPortfolioObj;
     public ExchangePortfolioObj exchangePortfolioObj;
-
-    public ExchangeAPI exchangeAPI;
 }

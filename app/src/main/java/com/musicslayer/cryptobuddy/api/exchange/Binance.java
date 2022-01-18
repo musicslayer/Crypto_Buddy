@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -21,27 +22,31 @@ public class Binance extends ExchangeAPI {
         return "Binance".equals(exchange.getName());
     }
 
-    public void authorize(Activity activity, AuthUtil.AuthorizationListener L) {
+    public void authorize(Context context) {
+        AuthUtil.authorizeOAuth(context);
+    }
+
+    public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
         String authURLBase = "https://www.coinbase.com/oauth/authorize/";
         String tokenURLBase = "https://api.coinbase.com/oauth/token/";
         String authURL = "https://www.coinbase.com/oauth/authorize?client_id=6f45b6368b73c3cc30433361ecccc7b59d22413c99d822edc7763107cb776a4e&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
         String client_id = "6f45b6368b73c3cc30433361ecccc7b59d22413c99d822edc7763107cb776a4e";
         String client_secret = "2047cba7d7a4eba68652ff9ec8bf6a110a5004365eadcccf7773e2f6b004af85";
-        long expiryTime = 7200L; // 2 hours
+        long expiryTime = 7200000L; // 2 hours
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
                 Binance.this.oAuthToken = oAuthToken;
-                L.onAuthorization();
+                L.onAuthorization(Binance.this);
             }
         };
 
-        AuthUtil.authorizeOAuth(activity, authURLBase, authURL, tokenURLBase, client_id, client_secret, expiryTime, L_OAuth);
+        AuthUtil.restoreListeners(context, authURLBase, authURL, tokenURLBase, client_id, client_secret, expiryTime, L_OAuth);
     }
 
     public boolean isAuthorized() {
-        return oAuthToken.isAuthorized();
+        return oAuthToken != null && oAuthToken.isAuthorized();
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) {

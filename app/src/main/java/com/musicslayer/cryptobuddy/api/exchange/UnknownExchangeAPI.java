@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -33,7 +34,8 @@ public class UnknownExchangeAPI extends ExchangeAPI {
     }
 
     public boolean isSupported(Exchange exchange) { return false; }
-    public void authorize(Activity activity, AuthUtil.AuthorizationListener L) {}
+    public void authorize(Context context) {}
+    public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {}
     public boolean isAuthorized() { return false; }
     public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) { return null; }
     public ArrayList<Transaction> getTransactions(Exchange exchange) { return null; }

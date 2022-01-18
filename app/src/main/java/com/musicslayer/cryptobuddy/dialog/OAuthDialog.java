@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.view.fixed.FixedFrameLayout;
 
 // Dialog that allows user to grant OAuth authorization.
 
@@ -30,7 +31,18 @@ public class OAuthDialog extends BaseDialog {
     public void createLayout() {
         setContentView(R.layout.dialog_oauth);
 
-        WebView webView = findViewById(R.id.oauth_dialog_web_view);
+        // We use the frame and conditional initialization to make sure WebView doesn't reload the webpage if the dialog is recreated.
+        // This also protects against mysterious crashes that had been observed when having the WebView defined in the XML file.
+        FixedFrameLayout frame = findViewById(R.id.oauth_dialog_fixedFrameLayout);
+        WebView webView = (WebView)frame.innerView;
+
+        if(isFirstCreate) {
+            webView.loadUrl(authURL);
+        }
+        else {
+            webView.invalidate();
+        }
+
         webView.getSettings().setJavaScriptEnabled(true); // JavaScript is needed by some websites to complete authorizations.
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -46,7 +58,5 @@ public class OAuthDialog extends BaseDialog {
                 }
             }
         });
-
-        webView.loadUrl(authURL);
     }
 }

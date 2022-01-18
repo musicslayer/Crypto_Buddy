@@ -166,19 +166,21 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
+
                 AddressData newAddressData;
 
                 if(includeBalances.get(0) && includeTransactions.get(0)) {
-                    newAddressData = AddressData.getAllData(cryptoAddressArrayList.get(0));
+                    newAddressData = AddressData.getAllData(cryptoAddress);
                 }
                 else if(includeBalances.get(0)) {
-                    newAddressData = AddressData.getCurrentBalanceData(cryptoAddressArrayList.get(0));
+                    newAddressData = AddressData.getCurrentBalanceData(cryptoAddress);
                 }
                 else if(includeTransactions.get(0)) {
-                    newAddressData = AddressData.getTransactionsData(cryptoAddressArrayList.get(0));
+                    newAddressData = AddressData.getTransactionsData(cryptoAddress);
                 }
                 else {
-                    newAddressData = AddressData.getNoData(cryptoAddressArrayList.get(0));
+                    newAddressData = AddressData.getNoData(cryptoAddress);
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.

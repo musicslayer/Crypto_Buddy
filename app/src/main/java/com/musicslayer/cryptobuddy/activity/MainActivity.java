@@ -129,6 +129,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+
         Button B_ADDRESS_PORTFOLIO = findViewById(R.id.main_addressPortfolioViewerButton);
         B_ADDRESS_PORTFOLIO.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
@@ -306,6 +307,7 @@ public class MainActivity extends BaseActivity {
             });
             privacyPolicyDialogFragment.restoreListeners(this, "privacy_policy");
 
+            // Since the dialog opens automatically on startup, use this to make sure dialog only shows once.
             if(BaseDialogFragment.isNotShowing(this, "privacy_policy")) {
                 privacyPolicyDialogFragment.show(this, "privacy_policy");
             }
@@ -325,7 +327,7 @@ public class MainActivity extends BaseActivity {
             });
             disclaimerDialogFragment.restoreListeners(this, "disclaimer");
 
-            // TODO Use this technique on the exchange authorization WebViews.
+            // Since the dialog opens automatically on startup, use this to make sure dialog only shows once.
             if(BaseDialogFragment.isNotShowing(this, "disclaimer")) {
                 disclaimerDialogFragment.show(this, "disclaimer");
             }

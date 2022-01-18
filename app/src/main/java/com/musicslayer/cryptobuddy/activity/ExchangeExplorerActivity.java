@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -32,6 +33,7 @@ import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.ActivityStateObj;
 import com.musicslayer.cryptobuddy.state.TableStateObj;
+import com.musicslayer.cryptobuddy.state.ViewStateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
@@ -140,23 +142,11 @@ public class ExchangeExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment authorizeExchangeDialogFragment = BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, exchangeArrayList);
-        authorizeExchangeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((AuthorizeExchangeDialog)dialog).isComplete) {
-                    // Only set this if we successfully authorized. Otherwise keep what we had.
-                    activityStateObj[0].exchangeAPI = ((AuthorizeExchangeDialog)dialog).user_EXCHANGEAPI;
-                }
-            }
-        });
-        authorizeExchangeDialogFragment.restoreListeners(this, "authorize_exchange");
-
         FloatingActionButton fab_authorize = findViewById(R.id.exchange_explorer_authorizeButton);
         fab_authorize.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                authorizeExchangeDialogFragment.show(ExchangeExplorerActivity.this, "authorize_exchange");
+                BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, exchangeArrayList).show(ExchangeExplorerActivity.this, "authorize_exchange");
             }
         });
 
@@ -164,19 +154,22 @@ public class ExchangeExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                Exchange exchange = exchangeArrayList.get(0);
+                ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(activityStateObj[0].exchangeAPIMap, exchange);
+
                 ExchangeData newExchangeData;
 
                 if(includeBalances.get(0) && includeTransactions.get(0)) {
-                    newExchangeData = ExchangeData.getAllData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
+                    newExchangeData = ExchangeData.getAllData(exchange, exchangeAPI);
                 }
                 else if(includeBalances.get(0)) {
-                    newExchangeData = ExchangeData.getCurrentBalanceData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
+                    newExchangeData = ExchangeData.getCurrentBalanceData(exchange, exchangeAPI);
                 }
                 else if(includeTransactions.get(0)) {
-                    newExchangeData = ExchangeData.getTransactionsData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
+                    newExchangeData = ExchangeData.getTransactionsData(exchange, exchangeAPI);
                 }
                 else {
-                    newExchangeData = ExchangeData.getNoData(exchangeArrayList.get(0), activityStateObj[0].exchangeAPI);
+                    newExchangeData = ExchangeData.getNoData(exchange, exchangeAPI);
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
