@@ -55,40 +55,6 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
         return transactionPortfolioObj;
     }
 
-    // TODO This should be removed soon.
-    public static TransactionPortfolioObj deserializeFromJSON0(String s) {
-        String[] sArray = s.split("\n");
-
-        String name = sArray[0];
-        TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
-
-        // A crypto may no longer exist, especially if it is a token.
-        for(int i = 1; i < sArray.length; i++) {
-            String[] transactionStringArray = sArray[i].split("\\|");
-
-            Action action = new Action(transactionStringArray[0]);
-
-            Asset asset = getAsset(transactionStringArray[1], transactionStringArray[2]);
-            AssetQuantity actionedAssetQuantity = new AssetQuantity(new AssetAmount(transactionStringArray[3]), asset);
-
-            AssetQuantity otherAssetQuantity;
-            if(transactionStringArray[4].isEmpty() && transactionStringArray[5].isEmpty()) {
-                otherAssetQuantity = null;
-            }
-            else {
-                Asset otherAsset = getAsset(transactionStringArray[4], transactionStringArray[5]);
-                otherAssetQuantity = new AssetQuantity(new AssetAmount(transactionStringArray[6]), otherAsset);
-            }
-
-            Timestamp timestamp = new Timestamp(legacyDeserializeDate(transactionStringArray[7]));
-            String info = transactionStringArray[8];
-
-            transactionPortfolioObj.addData(new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info));
-        }
-
-        return transactionPortfolioObj;
-    }
-
     public static Asset getAsset(String tokenType, String key) {
         if("!FIAT!".equals(tokenType)) {
             return Fiat.getFiatFromKey(key);

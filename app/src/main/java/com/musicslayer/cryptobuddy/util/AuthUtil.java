@@ -159,7 +159,7 @@ public class AuthUtil {
 
     // These listeners only fire on successful authorization. This includes cases where no authorization is required.
     abstract public static class AuthorizationListener {
-        abstract public void onAuthorization(ExchangeAPI exchangeAPI);
+        abstract public void onAuthorization();
     }
 
     abstract public static class OAuthAuthorizationListener {

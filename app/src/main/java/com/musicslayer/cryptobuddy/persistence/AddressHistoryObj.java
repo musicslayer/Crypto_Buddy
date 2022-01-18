@@ -37,10 +37,4 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON {
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);
     }
-
-    // TODO This should be removed soon.
-    public static AddressHistoryObj deserializeFromJSON0(String s) {
-        String[] cryptoAddressArray = s.split("\n");
-        return new AddressHistoryObj(new CryptoAddress(cryptoAddressArray[0], Network.getNetworkFromKey(cryptoAddressArray[1]), Boolean.parseBoolean(cryptoAddressArray[2])));
-    }
 }

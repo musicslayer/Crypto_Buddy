@@ -64,7 +64,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                 if(exchangeAPI != null) {
                     exchangeAPI.restoreListeners(activity, new AuthUtil.AuthorizationListener() {
                         @Override
-                        public void onAuthorization(ExchangeAPI exchangeAPI) {
+                        public void onAuthorization() {
                             TA.setText("Authorized");
                             TA.setTextColor(0xFF00FF00);
                         }
@@ -90,7 +90,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
                         newExchangeAPI.restoreListeners(activity, new AuthUtil.AuthorizationListener() {
                             @Override
-                            public void onAuthorization(ExchangeAPI exchangeAPI) {
+                            public void onAuthorization() {
                                 TA.setText("Authorized");
                                 TA.setTextColor(0xFF00FF00);
                             }
