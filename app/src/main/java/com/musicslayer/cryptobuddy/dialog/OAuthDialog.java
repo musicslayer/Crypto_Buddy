@@ -3,8 +3,10 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.view.fixed.FixedFrameLayout;
@@ -32,6 +34,8 @@ public class OAuthDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_oauth);
 
+        TextView loadingTextView = findViewById(R.id.oauth_dialog_loadingTextView);
+
         // We use the frame and conditional initialization to make sure WebView doesn't reload the webpage if the dialog is recreated.
         // This also protects against mysterious crashes that had been observed when having the WebView defined in the XML file.
         FixedFrameLayout frame = findViewById(R.id.oauth_dialog_fixedFrameLayout);
@@ -48,6 +52,9 @@ public class OAuthDialog extends BaseDialog {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                // When anything finishes loading, get rid of loading text.
+                loadingTextView.setVisibility(View.GONE);
+
                 // When authorization is complete, the url will have the code in it.
                 if(url.startsWith(authURLBase) && url.endsWith("?")) {
                     user_CODE = url;

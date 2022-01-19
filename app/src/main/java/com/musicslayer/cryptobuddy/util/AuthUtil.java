@@ -81,6 +81,7 @@ public class AuthUtil {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthDialog)dialog).isComplete) {
+                    StateObj.view = null;
                     code = ((OAuthDialog)dialog).user_CODE;
                     progressDialogFragment.show(activity, "progress");
                 }

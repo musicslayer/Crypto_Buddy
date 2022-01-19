@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.state;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
@@ -41,6 +42,8 @@ public class StateObj {
 
     public static String tableInfo;
 
+    // Unfortunately, we need this to create a WebView that does not reload on recreation.
+    @SuppressLint("StaticFieldLeak")
     public static View view;
 
     public static void resetState() {
@@ -57,7 +60,6 @@ public class StateObj {
         options_names = new ArrayList<>();
         transactionArrayList = new ArrayList<>();
         maskedTransactionArrayList = new ArrayList<>();
-
         tableInfo = null;
         view = null;
     }
