@@ -27,11 +27,11 @@ public class Coinbase extends ExchangeAPI {
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
-        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
-        String authURL = "https://www.coinbase.com/oauth/authorize?client_id=6f45b6368b73c3cc30433361ecccc7b59d22413c99d822edc7763107cb776a4e&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
         String client_id = BuildConfig.coinbase_client_id;
         String client_secret = BuildConfig.coinbase_client_secret;
+        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
+        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
+        String authURL = "https://www.coinbase.com/oauth/authorize?client_id=" + client_id + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
         long expiryTime = 7200000L; // 2 hours
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {

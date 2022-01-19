@@ -10,6 +10,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.app.App;
 
 public class Ad {
@@ -31,10 +32,10 @@ public class Ad {
         mAdView.setAdSize(AdSize.BANNER);
 
         if(App.DEBUG) {
-            mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111"); // TEST
+            mAdView.setAdUnitId(BuildConfig.ad_unit_id_test); // TEST
         }
         else {
-            mAdView.setAdUnitId("ca-app-pub-7875443444219421/2037783782"); // REAL
+            mAdView.setAdUnitId(BuildConfig.ad_unit_id_real); // REAL
         }
 
         AdRequest adRequest = new AdRequest.Builder().build();
