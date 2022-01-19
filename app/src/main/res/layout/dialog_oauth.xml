@@ -14,15 +14,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.musicslayer.cryptobuddy.view.fixed.FixedWebViewFrameLayout
-        android:id="@+id/oauth_dialog_fixedFrameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <WebView
+        android:id="@+id/oauth_dialog_webView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </com.musicslayer.cryptobuddy.view.fixed.FixedWebViewFrameLayout>
+        app:layout_constraintTop_toBottomOf="@id/oauth_dialog_loadingTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

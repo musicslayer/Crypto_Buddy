@@ -23,7 +23,6 @@ public class AuthUtil {
     public static String code;
 
     public static void authorizeOAuth(Context context) {
-        StateObj.view = null;
         fragment.show(context, "oauth");
     }
 
@@ -81,7 +80,6 @@ public class AuthUtil {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthDialog)dialog).isComplete) {
-                    StateObj.view = null;
                     code = ((OAuthDialog)dialog).user_CODE;
                     progressDialogFragment.show(activity, "progress");
                 }
