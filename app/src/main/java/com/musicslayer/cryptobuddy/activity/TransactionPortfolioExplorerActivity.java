@@ -24,8 +24,7 @@ import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.state.ActivityStateObj;
-import com.musicslayer.cryptobuddy.state.TableStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.Table;
@@ -35,7 +34,6 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     TransactionTable table;
-    public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
 
     TransactionPortfolioObj transactionPortfolioObj;
 
@@ -56,9 +54,6 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    // Clean State Objects.
-                    table.tableStateObj[0] = null;
-
                     startActivity(new Intent(TransactionPortfolioExplorerActivity.this, TransactionPortfolioViewerActivity.class));
                     finish();
                 }
@@ -69,8 +64,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         transactionPortfolioObj = TransactionPortfolio.getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
 
         if(savedInstanceState == null) {
-            activityStateObj[0] = new ActivityStateObj();
-            activityStateObj[0].transactionPortfolioObj = transactionPortfolioObj;
+            StateObj.transactionPortfolioObj = transactionPortfolioObj;
         }
 
         Toolbar toolbar = findViewById(R.id.transaction_portfolio_explorer_toolbar);
@@ -91,10 +85,6 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.transaction_portfolio_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(savedInstanceState == null) {
-            table.tableStateObj[0] = new TableStateObj();
-            table.tableStateObj[0].table = table;
-        }
         table.setOnDeleteTransactionListener(new Table.OnDeleteTransactionListener() {
             @Override
             public void onDeleteTransaction(Table table, Transaction transaction) {
@@ -130,7 +120,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionPortfolioExplorerActivity.this, "total");
+                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(TransactionPortfolioExplorerActivity.this, "total");
             }
         });
@@ -162,6 +152,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         }
         else if (id == 3) {
             String type = "TransactionPortfolio";
+            StateObj.tableInfo = table.getInfo();
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionPortfolioExplorerActivity.this, "feedback");
             return true;
         }

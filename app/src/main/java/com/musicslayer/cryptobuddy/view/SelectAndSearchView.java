@@ -26,7 +26,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
-import com.musicslayer.cryptobuddy.state.SearchStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -36,10 +36,6 @@ import java.util.Comparator;
 // This class is hardcoded to deal with all crypto, and optionally Fiat as well.
 
 public class SelectAndSearchView extends CrashLinearLayout {
-    // Right now, we can't clean this up anywhere good.
-    // Also, this really should be for individual objects.
-    public final static SearchStateObj[] searchStateObj = new SearchStateObj[1];
-
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
     public String lastButton;
@@ -184,10 +180,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
         bsv = new BorderedSpinnerView(context);
 
-        searchStateObj[0] = new SearchStateObj();
-        searchStateObj[0].assetArrayList = getSearchAssets();
-        searchStateObj[0].options_symbols = getSearchOptionsSymbols();
-        searchStateObj[0].options_names = getSearchOptionsNames();
+        StateObj.assetArrayList = getSearchAssets();
+        StateObj.options_symbols = getSearchOptionsSymbols();
+        StateObj.options_names = getSearchOptionsNames();
 
         //searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames());
         searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class);

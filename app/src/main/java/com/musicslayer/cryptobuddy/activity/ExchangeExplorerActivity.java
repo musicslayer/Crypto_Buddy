@@ -32,9 +32,7 @@ import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.state.ActivityStateObj;
-import com.musicslayer.cryptobuddy.state.TableStateObj;
-import com.musicslayer.cryptobuddy.state.ViewStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
@@ -47,7 +45,6 @@ public class ExchangeExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     ExchangeTable table;
-    public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
 
     ArrayList<Exchange> exchangeArrayList = new ArrayList<>();
 
@@ -66,19 +63,11 @@ public class ExchangeExplorerActivity extends BaseActivity {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_exchange_explorer);
 
-        if(savedInstanceState == null) {
-            activityStateObj[0] = new ActivityStateObj();
-        }
-
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
         confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    // Clean State Objects.
-                    activityStateObj[0] = null;
-                    table.tableStateObj[0] = null;
-
                     startActivity(new Intent(ExchangeExplorerActivity.this, MainActivity.class));
                     finish();
                 }
@@ -89,7 +78,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         Exchange exchange = getIntent().getParcelableExtra("Exchange");
         exchangeArrayList.add(exchange);
         if(savedInstanceState == null) {
-            HashMapUtil.putValueInMap(activityStateObj[0].exchangeDataMap, exchange, ExchangeData.getNoData(exchange,null));
+            HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, ExchangeData.getNoData(exchange,null));
         }
 
         TextView T_INFO = findViewById(R.id.exchange_explorer_infoTextView);
@@ -122,10 +111,6 @@ public class ExchangeExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.exchange_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(savedInstanceState == null) {
-            table.tableStateObj[0] = new TableStateObj();
-            table.tableStateObj[0].table = table;
-        }
 
         FloatingActionButton fab_info = findViewById(R.id.exchange_explorer_infoButton);
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -139,6 +124,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
+                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(ExchangeExplorerActivity.this, "total");
             }
         });
@@ -156,7 +142,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 Exchange exchange = exchangeArrayList.get(0);
-                ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(activityStateObj[0].exchangeAPIMap, exchange);
+                ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(StateObj.exchangeAPIMap, exchange);
 
                 ExchangeData newExchangeData;
 
@@ -203,9 +189,9 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 }
 
                 Exchange exchange = exchangeArrayList.get(0);
-                ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(activityStateObj[0].exchangeDataMap, exchange);
+                ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, exchange);
                 ExchangeData mergedExchangeData = ExchangeData.merge(oldExchangeData, newExchangeData);
-                HashMapUtil.putValueInMap(activityStateObj[0].exchangeDataMap, exchange, mergedExchangeData);
+                HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, mergedExchangeData);
 
                 updateLayout();
                 ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_downloaded");
@@ -237,7 +223,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
-        table.addRowsFromExchangeDataArray(new ArrayList<>(activityStateObj[0].exchangeDataMap.values()));
+        table.addRowsFromExchangeDataArray(new ArrayList<>(StateObj.exchangeDataMap.values()));
     }
 
     @Override
@@ -262,6 +248,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         }
         else if (id == 3) {
             String type = "Exchange";
+            StateObj.tableInfo = table.getInfo();
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangeExplorerActivity.this, "feedback");
             return true;
         }

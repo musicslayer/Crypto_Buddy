@@ -22,7 +22,7 @@ import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.state.TableStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.table.TransactionTable;
 
@@ -48,9 +48,6 @@ public class TransactionExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    // Clean State Objects.
-                    table.tableStateObj[0] = null;
-
                     startActivity(new Intent(TransactionExplorerActivity.this, MainActivity.class));
                     finish();
                 }
@@ -73,10 +70,6 @@ public class TransactionExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.transaction_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(savedInstanceState == null) {
-            table.tableStateObj[0] = new TableStateObj();
-            table.tableStateObj[0].table = table;
-        }
 
         BaseDialogFragment addTransactionDialogFragment = BaseDialogFragment.newInstance(AddTransactionDialog.class);
         addTransactionDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -101,7 +94,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(TransactionExplorerActivity.this, "total");
+                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(TransactionExplorerActivity.this, "total");
             }
         });
@@ -148,6 +141,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         }
         else if (id == 3) {
             String type = "Transaction";
+            StateObj.tableInfo = table.getInfo();
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionExplorerActivity.this, "feedback");
             return true;
         }

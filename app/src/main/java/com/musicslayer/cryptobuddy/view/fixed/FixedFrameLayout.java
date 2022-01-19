@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.musicslayer.cryptobuddy.crash.CrashFrameLayout;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
 
 // A FrameLayout that makes sure the enclosed view does not get recreated when the activity/dialog it is in gets recreated.
@@ -20,11 +21,11 @@ abstract public class FixedFrameLayout extends CrashFrameLayout {
     public FixedFrameLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        if(AuthUtil.viewStateObj[0].view == null) {
-            AuthUtil.viewStateObj[0].view = createInnerView(context);
+        if(StateObj.view == null) {
+            StateObj.view = createInnerView(context);
         }
 
-        innerView = AuthUtil.viewStateObj[0].view;
+        innerView = StateObj.view;
 
         this.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override

@@ -8,13 +8,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.ExchangePortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -29,13 +28,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
     public AuthorizeExchangeDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
         super(activity);
         this.exchangeArrayList = exchangeArrayList;
-
-        if(activity instanceof ExchangeExplorerActivity) {
-            this.exchangeAPIMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeAPIMap;
-        }
-        else if(activity instanceof ExchangePortfolioExplorerActivity) {
-            this.exchangeAPIMap = ((ExchangePortfolioExplorerActivity)activity).activityStateObj[0].exchangeAPIMap;
-        }
+        this.exchangeAPIMap = StateObj.exchangeAPIMap;
     }
 
     public int getBaseViewID() {

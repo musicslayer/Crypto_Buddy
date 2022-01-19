@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTransactionDialog;
 import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.view.AssetTextView;
 
@@ -74,8 +75,8 @@ public class TransactionTable extends Table {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ConfirmDeleteTransactionDialog)dialog).isComplete) {
-                        tableStateObj[0].transactionArrayList.remove(transaction);
-                        tableStateObj[0].maskedTransactionArrayList.remove(transaction);
+                        StateObj.transactionArrayList.remove(transaction);
+                        StateObj.maskedTransactionArrayList.remove(transaction);
                         finishRows();
 
                         // Potentially perform more actions if a listener exists.

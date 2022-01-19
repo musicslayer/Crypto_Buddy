@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.state.ViewStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 
 import org.json.JSONObject;
 
@@ -18,14 +18,12 @@ import java.util.Date;
 // Handles common authentication cases.
 
 public class AuthUtil {
-    public final static ViewStateObj[] viewStateObj = new ViewStateObj[1];
-
     public static BaseDialogFragment fragment;
 
     public static String code;
 
     public static void authorizeOAuth(Context context) {
-        viewStateObj[0] = new ViewStateObj();
+        StateObj.view = null;
         fragment.show(context, "oauth");
     }
 
@@ -83,8 +81,6 @@ public class AuthUtil {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthDialog)dialog).isComplete) {
-                    viewStateObj[0] = null;
-
                     code = ((OAuthDialog)dialog).user_CODE;
                     progressDialogFragment.show(activity, "progress");
                 }

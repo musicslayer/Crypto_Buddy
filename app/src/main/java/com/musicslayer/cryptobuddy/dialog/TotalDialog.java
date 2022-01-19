@@ -17,13 +17,13 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.table.Table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,18 +33,9 @@ public class TotalDialog extends BaseDialog {
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
 
-/*
-    public TotalDialog(Activity activity, ArrayList<Transaction> transactionArrayList) {
-        super(activity);
-        this.transactionArrayList = transactionArrayList;
-    }
-
- */
-
     public TotalDialog(Activity activity) {
         super(activity);
-        //this.transactionArrayList = transactionArrayList;
-        this.transactionArrayList = Table.tableStateObj[0].table.getFilteredMaskedTransactionArrayList();
+        this.transactionArrayList = StateObj.filteredMaskedTransactionArrayList;
     }
 
     public int getBaseViewID() {

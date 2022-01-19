@@ -39,8 +39,7 @@ import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.state.ActivityStateObj;
-import com.musicslayer.cryptobuddy.state.TableStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
@@ -53,7 +52,6 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     AddressTable table;
-    public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
 
     AddressPortfolioObj addressPortfolioObj;
 
@@ -73,20 +71,11 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_portfolio_explorer);
-
-        if(savedInstanceState == null) {
-            activityStateObj[0] = new ActivityStateObj();
-        }
-
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
         confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    // Clean State Objects.
-                    activityStateObj[0] = null;
-                    table.tableStateObj[0] = null;
-
                     startActivity(new Intent(ExchangePortfolioExplorerActivity.this, AddressPortfolioViewerActivity.class));
                     finish();
                 }
@@ -97,7 +86,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
 
         if(savedInstanceState == null) {
-            activityStateObj[0].addressPortfolioObj = addressPortfolioObj;
+            StateObj.addressPortfolioObj = addressPortfolioObj;
         }
 
         updateFilter();
@@ -105,8 +94,8 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         boolean includeTokens = false;
         for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
             if(savedInstanceState == null) {
-                HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
-                HashMapUtil.putValueInMap(activityStateObj[0].addressDataFilterMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
+                HashMapUtil.putValueInMap(StateObj.addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
+                HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
             }
 
             if(cryptoAddress.includeTokens) {
@@ -152,10 +141,6 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.address_portfolio_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(savedInstanceState == null) {
-            table.tableStateObj[0] = new TableStateObj();
-            table.tableStateObj[0].table = table;
-        }
 
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
         chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -174,8 +159,8 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
                         updateFilter();
 
-                        HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
-                        HashMapUtil.putValueInMap(activityStateObj[0].addressDataFilterMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
+                        HashMapUtil.putValueInMap(StateObj.addressDataMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
+                        HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
                     }
                 }
             }
@@ -199,8 +184,8 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     ArrayList<CryptoAddress> toRemove = ((RemoveAddressDialog)dialog).user_cryptoAddressArrayList;
                     for(CryptoAddress cryptoAddress : toRemove) {
                         addressPortfolioObj.removeData(cryptoAddress);
-                        HashMapUtil.removeValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
-                        HashMapUtil.removeValueFromMap(activityStateObj[0].addressDataFilterMap, cryptoAddress);
+                        HashMapUtil.removeValueFromMap(StateObj.addressDataMap, cryptoAddress);
+                        HashMapUtil.removeValueFromMap(StateObj.addressDataFilterMap, cryptoAddress);
                     }
 
                     AddressPortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, addressPortfolioObj);
@@ -225,7 +210,6 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList, activityStateObj[0].addressDataMap).show(AddressPortfolioExplorerActivity.this, "info");
                 BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(ExchangePortfolioExplorerActivity.this, "info");
             }
         });
@@ -234,7 +218,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(AddressPortfolioExplorerActivity.this, "total");
+                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(ExchangePortfolioExplorerActivity.this, "total");
             }
         });
@@ -316,19 +300,19 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                 for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
                     CryptoAddress cryptoAddress = addressPortfolioObj.cryptoAddressArrayList.get(i);
                     AddressData newAddressData = newAddressDataArrayList.get(i);
-                    AddressData oldAddressData = HashMapUtil.getValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
+                    AddressData oldAddressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
                     AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
-                    HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, mergedAddressData);
+                    HashMapUtil.putValueInMap(StateObj.addressDataMap, cryptoAddress, mergedAddressData);
                 }
 
                 // Apply filter after downloading data.
                 ArrayList<String> choices = addressFilter.user_choices;
 
-                activityStateObj[0].addressDataFilterMap.clear();
-                for(CryptoAddress cryptoAddress : new ArrayList<>(activityStateObj[0].addressDataMap.keySet())) {
+                StateObj.addressDataFilterMap.clear();
+                for(CryptoAddress cryptoAddress : new ArrayList<>(StateObj.addressDataMap.keySet())) {
                     if(choices.contains(cryptoAddress.toString())) {
-                        AddressData addressData = HashMapUtil.getValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
-                        HashMapUtil.putValueInMap(activityStateObj[0].addressDataFilterMap, cryptoAddress, addressData);
+                        AddressData addressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
+                        HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, cryptoAddress, addressData);
                     }
                 }
 
@@ -369,11 +353,11 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
                     ArrayList<String> choices = addressFilter.user_choices;
 
-                    activityStateObj[0].addressDataFilterMap.clear();
-                    for(CryptoAddress cryptoAddress : new ArrayList<>(activityStateObj[0].addressDataMap.keySet())) {
+                    StateObj.addressDataFilterMap.clear();
+                    for(CryptoAddress cryptoAddress : new ArrayList<>(StateObj.addressDataMap.keySet())) {
                         if(choices.contains(cryptoAddress.toString())) {
-                            AddressData addressData = HashMapUtil.getValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
-                            HashMapUtil.putValueInMap(activityStateObj[0].addressDataFilterMap, cryptoAddress, addressData);
+                            AddressData addressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
+                            HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, cryptoAddress, addressData);
                         }
                     }
 
@@ -395,7 +379,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
-        table.addRowsFromAddressDataArray(new ArrayList<>(activityStateObj[0].addressDataFilterMap.values()));
+        table.addRowsFromAddressDataArray(new ArrayList<>(StateObj.addressDataFilterMap.values()));
     }
 
     public void updateFilter() {
@@ -429,6 +413,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         }
         else if (id == 3) {
             String type = "AddressPortfolio";
+            StateObj.tableInfo = table.getInfo();
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangePortfolioExplorerActivity.this, "feedback");
             return true;
         }

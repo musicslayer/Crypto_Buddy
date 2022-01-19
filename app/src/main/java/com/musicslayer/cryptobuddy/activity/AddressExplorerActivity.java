@@ -32,8 +32,7 @@ import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.state.ActivityStateObj;
-import com.musicslayer.cryptobuddy.state.TableStateObj;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.InfoUtil;
@@ -47,7 +46,6 @@ public class AddressExplorerActivity extends BaseActivity {
     public BaseDialogFragment confirmBackDialogFragment;
 
     AddressTable table;
-    public final static ActivityStateObj[] activityStateObj = new ActivityStateObj[1];
 
     ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 
@@ -66,19 +64,11 @@ public class AddressExplorerActivity extends BaseActivity {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_explorer);
 
-        if(savedInstanceState == null) {
-            activityStateObj[0] = new ActivityStateObj();
-        }
-
         confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
         confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmBackDialog)dialog).isComplete) {
-                    // Clean State Objects.
-                    activityStateObj[0] = null;
-                    table.tableStateObj[0] = null;
-
                     startActivity(new Intent(AddressExplorerActivity.this, MainActivity.class));
                     finish();
                 }
@@ -89,7 +79,7 @@ public class AddressExplorerActivity extends BaseActivity {
         CryptoAddress cryptoAddress = getIntent().getParcelableExtra("CryptoAddress");
         cryptoAddressArrayList.add(cryptoAddress);
         if(savedInstanceState == null) {
-            HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
+            HashMapUtil.putValueInMap(StateObj.addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
         }
 
         boolean includeTokens = cryptoAddress.includeTokens;
@@ -132,10 +122,6 @@ public class AddressExplorerActivity extends BaseActivity {
         table.pageView = findViewById(R.id.address_explorer_tablePageView);
         table.pageView.setTable(table);
         table.pageView.updateLayout();
-        if(savedInstanceState == null) {
-            table.tableStateObj[0] = new TableStateObj();
-            table.tableStateObj[0].table = table;
-        }
 
         FloatingActionButton fab_info = findViewById(R.id.address_explorer_infoButton);
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -149,7 +135,7 @@ public class AddressExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //BaseDialogFragment.newInstance(TotalDialog.class, table.getFilteredMaskedTransactionArrayList()).show(AddressExplorerActivity.this, "total");
+                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(AddressExplorerActivity.this, "total");
             }
         });
@@ -213,9 +199,9 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
 
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
-                AddressData oldAddressData = HashMapUtil.getValueFromMap(activityStateObj[0].addressDataMap, cryptoAddress);
+                AddressData oldAddressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
                 AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
-                HashMapUtil.putValueInMap(activityStateObj[0].addressDataMap, cryptoAddress, mergedAddressData);
+                HashMapUtil.putValueInMap(StateObj.addressDataMap, cryptoAddress, mergedAddressData);
 
                 updateLayout();
                 ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
@@ -247,7 +233,7 @@ public class AddressExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         table.resetTable();
-        table.addRowsFromAddressDataArray(new ArrayList<>(activityStateObj[0].addressDataMap.values()));
+        table.addRowsFromAddressDataArray(new ArrayList<>(StateObj.addressDataMap.values()));
     }
 
     @Override
@@ -272,6 +258,7 @@ public class AddressExplorerActivity extends BaseActivity {
         }
         else if (id == 3) {
             String type = "Address";
+            StateObj.tableInfo = table.getInfo();
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressExplorerActivity.this, "feedback");
             return true;
         }

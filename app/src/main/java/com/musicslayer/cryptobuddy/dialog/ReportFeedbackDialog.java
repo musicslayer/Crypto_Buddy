@@ -21,6 +21,7 @@ import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
@@ -28,7 +29,6 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.util.ScreenshotUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.table.Table;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,14 +36,12 @@ import java.util.HashMap;
 
 public class ReportFeedbackDialog extends BaseDialog {
     String type;
-    String info;
+    String tableInfo; // May be null for Activities without a table.
 
-    // Choose the constructor based on the specific information that may be attached, if any.
-    //public ReportFeedbackDialog(Activity activity, String type, String info) {
     public ReportFeedbackDialog(Activity activity, String type) {
         super(activity);
         this.type = type;
-        //this.info = info;
+        this.tableInfo = StateObj.tableInfo;
     }
 
     public int getBaseViewID() {
@@ -123,56 +121,54 @@ public class ReportFeedbackDialog extends BaseDialog {
     }
 
     public String getInfo() {
-        Table table = Table.tableStateObj[0].table;
-
         if(activity instanceof TransactionExplorerActivity) {
-            return table.getInfo();
+            return tableInfo;
         }
         else if(activity instanceof TransactionPortfolioExplorerActivity) {
-            TransactionPortfolioObj transactionPortfolioObj = ((TransactionPortfolioExplorerActivity)activity).activityStateObj[0].transactionPortfolioObj;
-            return "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + table.getInfo();
+            TransactionPortfolioObj transactionPortfolioObj = StateObj.transactionPortfolioObj;
+            return "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof AddressExplorerActivity) {
-            HashMap<CryptoAddress, AddressData> addressDataMap = ((AddressExplorerActivity)activity).activityStateObj[0].addressDataMap;
+            HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
 
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
                 s.append(addressData.getInfoString()).append("\n\n");
             }
 
-            return "Address Info:\n\n" + s.toString() + table.getInfo();
+            return "Address Info:\n\n" + s.toString() + tableInfo;
         }
         else if(activity instanceof AddressPortfolioExplorerActivity) {
-            HashMap<CryptoAddress, AddressData> addressDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressDataMap;
-            AddressPortfolioObj addressPortfolioObj = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressPortfolioObj;
+            HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
+            AddressPortfolioObj addressPortfolioObj = StateObj.addressPortfolioObj;
 
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
                 s.append(addressData.getInfoString()).append("\n\n");
             }
 
-            return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + table.getInfo();
+            return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof ExchangeExplorerActivity) {
-            HashMap<Exchange, ExchangeData> exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
+            HashMap<Exchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
 
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
                 s.append(exchangeData.getInfoString()).append("\n\n");
             }
 
-            return "Exchange Info:\n\n" + s.toString() + table.getInfo();
+            return "Exchange Info:\n\n" + s.toString() + tableInfo;
         }
 
         else if(activity instanceof ExchangePortfolioExplorerActivity) {
-            HashMap<Exchange, ExchangeData> exchangeDataMap = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangeDataMap;
-            ExchangePortfolioObj exchangePortfolioObj = ((ExchangeExplorerActivity)activity).activityStateObj[0].exchangePortfolioObj;
+            HashMap<Exchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
+            ExchangePortfolioObj exchangePortfolioObj = StateObj.exchangePortfolioObj;
 
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
                 s.append(exchangeData.getInfoString()).append("\n\n");
             }
-            return "Exchange Info:\n\n" + s.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + table.getInfo();
+            return "Exchange Info:\n\n" + s.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + tableInfo;
         }
 
         return "?";

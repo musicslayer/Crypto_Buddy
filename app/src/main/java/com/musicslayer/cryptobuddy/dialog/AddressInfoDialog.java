@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
@@ -22,25 +23,10 @@ public class AddressInfoDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;
     HashMap<CryptoAddress, AddressData> addressDataMap;
 
-/*
-    public AddressInfoDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList, HashMap<CryptoAddress, AddressData> addressDataMap) {
-        super(activity);
-        this.cryptoAddressArrayList = cryptoAddressArrayList;
-        this.addressDataMap = addressDataMap;
-    }
-
- */
-
     public AddressInfoDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
         this.cryptoAddressArrayList = cryptoAddressArrayList;
-
-        if(activity instanceof AddressExplorerActivity) {
-            this.addressDataMap = ((AddressExplorerActivity)activity).activityStateObj[0].addressDataMap;
-        }
-        else if(activity instanceof AddressPortfolioExplorerActivity) {
-            this.addressDataMap = ((AddressPortfolioExplorerActivity)activity).activityStateObj[0].addressDataMap;
-        }
+        this.addressDataMap = StateObj.addressDataMap;
     }
 
     public int getBaseViewID() {

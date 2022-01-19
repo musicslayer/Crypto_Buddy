@@ -11,6 +11,7 @@ import com.musicslayer.cryptobuddy.crash.CrashActivity;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 
 abstract public class BaseActivity extends CrashActivity {
@@ -31,6 +32,11 @@ abstract public class BaseActivity extends CrashActivity {
             // Keep trying in every activity if the first call during initialization was not successful.
             // Do not pass in the application context here.
             InAppPurchase.initialize(this);
+        }
+
+        // Clear state the first time each activity is created.
+        if(savedInstanceState == null) {
+            StateObj.resetState();
         }
 
         createLayout(savedInstanceState);
