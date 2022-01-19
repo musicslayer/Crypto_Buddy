@@ -27,32 +27,6 @@
         app:layout_constraintTop_toBottomOf="@id/choose_exchange_dialog_toolbar">
 
         <TableRow
-            android:id="@+id/choose_exchange_tableRow1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/choose_exchange_dialog_binanceButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Binance"
-                app:drawableLeftCompat="@drawable/ic_baseline_account_balance_24" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/choose_exchange_tableRow2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/choose_exchange_dialog_binanceUSButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Binance US"
-                app:drawableLeftCompat="@drawable/ic_baseline_account_balance_24" />
-        </TableRow>
-
-        <TableRow
             android:id="@+id/choose_exchange_tableRow3"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

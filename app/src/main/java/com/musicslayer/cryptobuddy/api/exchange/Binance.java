@@ -13,6 +13,8 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
 
+// TODO Binance OAuth requires approval, and Binance US OAuth is not available.
+
 public class Binance extends ExchangeAPI {
     public String getName() { return "Binance"; }
     public String getDisplayName() { return "Binance REST API"; }
@@ -30,9 +32,9 @@ public class Binance extends ExchangeAPI {
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
         String client_id = BuildConfig.binance_client_id;
         String client_secret = BuildConfig.binance_client_secret;
-        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
-        String authURL = "https://www.coinbase.com/oauth/authorize?client_id=" + client_id + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
+        String authURLBase = "https://accounts.binance.com/en/oauth/authorize/";
+        String tokenURLBase = "https://accounts.binance.com/oauth/token/";
+        String authURL = "https://accounts.binance.com/en/oauth/authorize?client_id=" + client_id + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=user:address,user:balance,asset:ocbs";
         long expiryTime = 7200000L; // 2 hours
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {

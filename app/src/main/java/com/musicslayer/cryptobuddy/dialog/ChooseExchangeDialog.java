@@ -30,15 +30,7 @@ public class ChooseExchangeDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_exchange);
 
-        Button B_COINBASE = findViewById(R.id.choose_exchange_dialog_coinbaseButton);
-        B_COINBASE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                user_EXCHANGE = new Coinbase();
-                isComplete = true;
-                dismiss();
-            }
-        });
-
+/*
         Button B_BINANCE = findViewById(R.id.choose_exchange_dialog_binanceButton);
         B_BINANCE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
@@ -56,41 +48,16 @@ public class ChooseExchangeDialog extends BaseDialog {
                 dismiss();
             }
         });
-/*
-        ExchangeAPI.AuthorizationListener L = new ExchangeAPI.AuthorizationListener() {
-            @Override
-            public void onAuthorization(String exchange, String token) {
-                user_EXCHANGE = exchange;
-                user_TOKEN = token;
 
-                isComplete = true;
-                dismiss();
-            }
-        };
+ */
 
         Button B_COINBASE = findViewById(R.id.choose_exchange_dialog_coinbaseButton);
         B_COINBASE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                Exchange exchange = new Coinbase();
-                ExchangeAPI exchangeAPI = ExchangeData.getExchangeAPI(exchange);
-                exchangeAPI.authorize(activity, L);
+                user_EXCHANGE = new Coinbase();
+                isComplete = true;
+                dismiss();
             }
         });
-
-        Button B_BINANCE = findViewById(R.id.choose_exchange_dialog_binanceButton);
-        B_BINANCE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                new Binance().authorize(activity, L);
-            }
-        });
-
-        Button B_BINANCEUS = findViewById(R.id.choose_exchange_dialog_binanceUSButton);
-        B_BINANCEUS.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                new BinanceUS().authorize(activity, L);
-            }
-        });
-
- */
     }
 }

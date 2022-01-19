@@ -9,7 +9,6 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.state.StateObj;
 
 import org.json.JSONObject;
 
@@ -90,7 +89,7 @@ public class AuthUtil {
         fragment = oauthDialogFragment;
     }
 
-    // TODO handle security of client_id and client_secret, and the token.
+    // TODO wrap client_id, client_secret, and the token?
     /*
     public static class OAuthInfo {
         public String client_id;
@@ -103,8 +102,8 @@ public class AuthUtil {
 
      */
 
-    // This class wraps the OAuth token so it can be treated securely.
-    // TODO Implement security, encryption, etc.
+
+
     public static class OAuthToken implements Serialization.SerializableToJSON {
         private final String token;
         private final long expiryTime;
