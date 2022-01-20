@@ -506,6 +506,8 @@ abstract public class Table extends CrashTableLayout {
             this.numItems = numItems;
 
             int oldLastPage = this.lastPage;
+
+            // Remember: If numItems = 0 then lastPage will be 0 instead of 1.
             this.lastPage = ((numItems - 1) / getNumberTransactionsPerPage()) + 1;
 
             // If the number of pages decreased, and we are past the new last page, then update our page to be the new last page.

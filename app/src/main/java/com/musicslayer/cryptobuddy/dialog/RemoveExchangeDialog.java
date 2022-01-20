@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -55,13 +56,6 @@ public class RemoveExchangeDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmRemoveExchangeDialog)dialog).isComplete) {
-                    user_exchangeArrayList = new ArrayList<>();
-                    for(int i = 0; i < exchangeArrayList.size(); i++) {
-                        if(C[i].isChecked()) {
-                            user_exchangeArrayList.add(exchangeArrayList.get(i));
-                        }
-                    }
-
                     isComplete = true;
                     dismiss();
                 }
@@ -72,6 +66,18 @@ public class RemoveExchangeDialog extends BaseDialog {
         Button B_DELETE = findViewById(R.id.remove_exchange_dialog_applyFilterButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                user_exchangeArrayList = new ArrayList<>();
+                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                    if(C[i].isChecked()) {
+                        user_exchangeArrayList.add(exchangeArrayList.get(i));
+                    }
+                }
+
+                if(user_exchangeArrayList.isEmpty()) {
+                    ToastUtil.showToast(activity, "nothing_to_remove");
+                    return;
+                }
+
                 confirmRemoveExchangeDialogFragment.show(activity, "delete");
             }
         });

@@ -55,6 +55,9 @@ public class ToastUtil {
 
         toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", getToastDuration()));
         toastMap.put("exchange_data_downloaded", Toast.makeText(context, "Finished downloading exchange information.", getToastDuration()));
+        toastMap.put("nothing_to_download", Toast.makeText(context, "There is nothing to download.", getToastDuration()));
+        toastMap.put("nothing_to_remove", Toast.makeText(context, "There is nothing to remove.", getToastDuration()));
+        toastMap.put("no_assets_found", Toast.makeText(context, "There are no assets.", getToastDuration()));
 
         toastMap.put("assets_same", Toast.makeText(context, "Assets must be different.", getToastDuration()));
         toastMap.put("cryptos_same", Toast.makeText(context, "Cryptos must be different.", getToastDuration()));

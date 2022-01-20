@@ -105,6 +105,11 @@ public class TotalDialog extends BaseDialog {
         Button B_PRICES = findViewById(R.id.total_dialog_priceButton);
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                if(deltaMap.isEmpty()) {
+                    ToastUtil.showToast(activity, "no_assets_found");
+                    return;
+                }
+
                 progressDialogFragment.show(TotalDialog.this.activity, "progress");
             }
         });

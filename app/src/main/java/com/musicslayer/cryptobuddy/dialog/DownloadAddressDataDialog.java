@@ -16,11 +16,10 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-// TODO If there are no items here, show a message...?
 
 public class DownloadAddressDataDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;
@@ -79,6 +78,11 @@ public class DownloadAddressDataDialog extends BaseDialog {
                 for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
                     user_BALANCES.add(C_B[i].isChecked());
                     user_TRANSACTIONS.add(C_T[i].isChecked());
+                }
+
+                if(!user_BALANCES.contains(true) && !user_TRANSACTIONS.contains(true)) {
+                    ToastUtil.showToast(activity, "nothing_to_download");
+                    return;
                 }
 
                 isComplete = true;

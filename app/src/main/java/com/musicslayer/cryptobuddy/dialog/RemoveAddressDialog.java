@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
@@ -53,13 +54,6 @@ public class RemoveAddressDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmRemoveAddressDialog)dialog).isComplete) {
-                    user_cryptoAddressArrayList = new ArrayList<>();
-                    for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-                        if(C[i].isChecked()) {
-                            user_cryptoAddressArrayList.add(cryptoAddressArrayList.get(i));
-                        }
-                    }
-
                     isComplete = true;
                     dismiss();
                 }
@@ -70,6 +64,18 @@ public class RemoveAddressDialog extends BaseDialog {
         Button B_DELETE = findViewById(R.id.remove_address_dialog_applyFilterButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                user_cryptoAddressArrayList = new ArrayList<>();
+                for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+                    if(C[i].isChecked()) {
+                        user_cryptoAddressArrayList.add(cryptoAddressArrayList.get(i));
+                    }
+                }
+
+                if(user_cryptoAddressArrayList.isEmpty()) {
+                    ToastUtil.showToast(activity, "nothing_to_remove");
+                    return;
+                }
+
                 confirmRemoveAddressDialogFragment.show(activity, "delete");
             }
         });
