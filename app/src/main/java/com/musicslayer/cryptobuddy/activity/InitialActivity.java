@@ -16,6 +16,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
+import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
@@ -62,6 +63,7 @@ public class InitialActivity extends BaseActivity {
 
         AddressHistory.loadAllData(applicationContext);
         AddressPortfolio.loadAllData(applicationContext);
+        ExchangePortfolio.loadAllData(applicationContext);
         TransactionPortfolio.loadAllData(applicationContext);
 
         App.isAppInitialized = true;

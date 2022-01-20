@@ -51,6 +51,7 @@ public class ToastUtil {
 
         toastMap.put("portfolio_name_used", Toast.makeText(context, "A portfolio with this name already exists.", getToastDuration()));
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", getToastDuration()));
+        toastMap.put("exchange_in_portfolio", Toast.makeText(context, "This exchange is already in the portfolio.", getToastDuration()));
 
         toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", getToastDuration()));
         toastMap.put("exchange_data_downloaded", Toast.makeText(context, "Finished downloading exchange information.", getToastDuration()));

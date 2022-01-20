@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -21,6 +19,8 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+// TODO If there are no items here, show a message...?
 
 public class DownloadAddressDataDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;

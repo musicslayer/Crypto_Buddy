@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchange_portfolio_explorer_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/exchange_portfolio_explorer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="Exchange Portfolio Explorer"
+        app:title="@string/app_title" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/exchange_portfolio_explorer_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintTop_toTopOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/exchange_portfolio_explorer_problemInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="90dp"
+        android:layout_marginRight="90dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintTop_toTopOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:srcCompat="@drawable/ic_baseline_warning_red_24" />
+
+    <LinearLayout
+        android:id="@+id/exchange_portfolio_explorer_adLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_toolbar" />
+
+    <TextView
+        android:id="@+id/exchange_portfolio_explorer_infoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_adLayout" />
+
+    <TextView
+        android:id="@+id/exchange_portfolio_explorer_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Exchange authorization is required to download data."
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_portfolio_explorer_infoTextView" />
+
+    <HorizontalScrollView
+        android:id="@+id/exchange_portfolio_explorer_horizontalScrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_portfolio_explorer_messageTextView">
+
+        <LinearLayout
+            android:id="@+id/exchange_portfolio_explorer_linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/exchange_portfolio_explorer_downloadDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Download Data"
+                app:drawableLeftCompat="@drawable/ic_baseline_download_24" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/exchange_portfolio_explorer_filterExchangeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exchange Filter"
+                app:drawableLeftCompat="@drawable/ic_baseline_filter_list_24" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/exchange_portfolio_explorer_horizontalScrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exchange_portfolio_explorer_horizontalScrollView1">
+
+        <LinearLayout
+            android:id="@+id/exchange_portfolio_explorer_linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_portfolio_explorer_addButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_add_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_portfolio_explorer_removeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_remove_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_portfolio_explorer_infoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_info_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_portfolio_explorer_totalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_price_check_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/exchange_portfolio_explorer_authorizeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_security_24" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <view
+        android:id="@+id/exchange_portfolio_explorer_tablePageView"
+        class="com.musicslayer.cryptobuddy.view.table.Table$TablePageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_horizontalScrollView2"></view>
+
+    <com.musicslayer.cryptobuddy.view.TwoDScrollView
+        android:id="@+id/exchange_portfolio_explorer_twoDScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_tablePageView">
+
+        <com.musicslayer.cryptobuddy.view.table.ExchangeTable
+            android:id="@+id/exchange_portfolio_explorer_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.musicslayer.cryptobuddy.view.TwoDScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

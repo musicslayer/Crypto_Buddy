@@ -1,10 +1,13 @@
-View balances and transactions on a crypto exchange.
+View balances and transactions on all exchanges in the portfolio.
+Any changes you make to the portfolio (i.e. adding or removing exchanges) are instantly saved.
 
 Symbol buttons left to right:
+--> Add new exchange to portfolio
+--> Remove exchange from portfolio
 --> Exchange information
 --> Get net values*
 --> Authorize**
 
-*This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances of all assets on the exchange.
+*This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances of all assets on all the exchanges in the portfolio.
 
 **Read-only permission must be granted to access your account balances and transaction history on an exchange. This app does not trade or withdraw your assets, or place orders on your behalf. For security, the authorization to obtain data from an exchange may expire, requiring you to use this button to grant authorization again.

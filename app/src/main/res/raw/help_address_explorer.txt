@@ -1,4 +1,4 @@
-View transactions on a crypto address, and then get the net values of all assets involved, including a total USD value.
+View balances and transactions on a crypto address.
 
 Symbol buttons left to right:
 --> Address information

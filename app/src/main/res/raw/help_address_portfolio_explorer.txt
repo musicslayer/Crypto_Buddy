@@ -1,4 +1,4 @@
-View transactions on all crypto addresses in the portfolio, and then get the net values of all assets involved, including a total USD value.
+View balances and transactions on all crypto addresses in the portfolio.
 Any changes you make to the portfolio (i.e. adding or removing addresses) are instantly saved.
 
 Symbol buttons left to right:

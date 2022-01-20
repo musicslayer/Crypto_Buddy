@@ -213,13 +213,15 @@ public class MainActivity extends BaseActivity {
         B_EXCHANGE_PORTFOLIO.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                //startActivity(new Intent(MainActivity.this, AddressPortfolioViewerActivity.class));
-                //finish();
+                if(Purchases.isUnlockExchangeIntegrationPurchased()) {
+                    startActivity(new Intent(MainActivity.this, ExchangePortfolioViewerActivity.class));
+                    finish();
+                }
+                else {
+                    ToastUtil.showToast(MainActivity.this,"unlock_exchange_integration_required");
+                }
             }
         });
-
-        // TODO Implement Exchange Portfolio
-        B_EXCHANGE_PORTFOLIO.setVisibility(View.GONE);
 
         Button B_LOCK = findViewById(R.id.main_lockButton);
         if(App.DEBUG) {

@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/confirm_remove_address_dialog"
+    android:id="@+id/confirm_remove_exchange_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/confirm_remove_address_dialog_toolbar"
+        android:id="@+id/confirm_remove_exchange_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -15,23 +15,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Delete Address From Portfolio?" />
+        app:title="Delete Exchange From Portfolio?" />
 
     <com.musicslayer.cryptobuddy.view.ConfirmationView
-        android:id="@+id/confirm_remove_address_dialog_confirmationView"
+        android:id="@+id/confirm_remove_exchange_dialog_confirmationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_address_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_exchange_dialog_toolbar" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/confirm_remove_address_dialog_cancelButton"
+        android:id="@+id/confirm_remove_exchange_dialog_cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Cancel"
         app:drawableLeftCompat="@drawable/ic_baseline_cancel_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_address_dialog_confirmationView" />
+        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_exchange_dialog_confirmationView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

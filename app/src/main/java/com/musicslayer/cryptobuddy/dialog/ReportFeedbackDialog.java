@@ -73,6 +73,9 @@ public class ReportFeedbackDialog extends BaseDialog {
         else if("Exchange".equals(type)) {
             checkBox_info.setText("Attach exchange information.");
         }
+        else if("ExchangePortfolio".equals(type)) {
+            checkBox_info.setText("Attach exchange portfolio information.");
+        }
 
         Button B_EMAIL = findViewById(R.id.report_feedback_dialog_button);
         B_EMAIL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

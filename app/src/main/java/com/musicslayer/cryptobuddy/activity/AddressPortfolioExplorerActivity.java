@@ -148,7 +148,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
-                    // Save new address to the portfolio and then add them to the table.
+                    // Save new address to the portfolio.
                     CryptoAddress newCryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
                     if(addressPortfolioObj.isSaved(newCryptoAddress)) {
@@ -181,7 +181,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((RemoveAddressDialog)dialog).isComplete) {
-                    // Remove addresses from portfolio and then remove them from the table.
+                    // Remove addresses from portfolio and then remove their data from the table.
                     ArrayList<CryptoAddress> toRemove = ((RemoveAddressDialog)dialog).user_cryptoAddressArrayList;
                     for(CryptoAddress cryptoAddress : toRemove) {
                         addressPortfolioObj.removeData(cryptoAddress);
@@ -323,7 +323,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
 
-        //BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadDataDialog.class, addressPortfolioObj.cryptoAddressArrayList, activityStateObj[0].addressDataMap);
         BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadAddressDataDialog.class, addressPortfolioObj.cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override

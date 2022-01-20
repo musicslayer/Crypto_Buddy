@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/remove_exchange_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/remove_exchange_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Remove Exchange" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/remove_exchange_dialog_applyFilterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        app:drawableLeftCompat="@drawable/ic_baseline_delete_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remove_exchange_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/remove_exchange_dialog_selectAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select All"
+        app:drawableLeftCompat="@drawable/ic_baseline_select_all_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remove_exchange_dialog_applyFilterButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/remove_exchange_dialog_clearAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear All"
+        app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
+        app:layout_constraintStart_toEndOf="@+id/remove_exchange_dialog_selectAllButton"
+        app:layout_constraintTop_toBottomOf="@+id/remove_exchange_dialog_applyFilterButton" />
+
+    <TextView
+        android:id="@+id/remove_exchange_dialog_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="(There are no exchanges to remove from the portfolio.)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/remove_exchange_dialog_clearAllButton" />
+
+    <LinearLayout
+        android:id="@+id/remove_exchange_dialog_checkBoxLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remove_exchange_dialog_messageTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
