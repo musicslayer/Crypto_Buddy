@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
+import com.musicslayer.cryptobuddy.decode.Alphanumeric;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
@@ -27,12 +28,17 @@ public class Coinbase extends ExchangeAPI {
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
+        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
+        String tokenURLBase = "https://www.coinbase.com/oauth/token/";
         String client_id = BuildConfig.coinbase_client_id;
         String client_secret = BuildConfig.coinbase_client_secret;
-        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
-        String authURL = "https://www.coinbase.com/oauth/authorize?client_id=" + client_id + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=wallet:transactions:read,wallet:accounts:read&account=all";
-        long expiryTime = 7200000L; // 2 hours
+        String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
+        String response_type = "code";
+        String grant_type = "authorization_code";
+        String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
+        String state = Alphanumeric.createRandomString(20);
+
+        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes, state);
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
@@ -42,7 +48,7 @@ public class Coinbase extends ExchangeAPI {
             }
         };
 
-        AuthUtil.restoreListeners(context, authURLBase, authURL, tokenURLBase, client_id, client_secret, expiryTime, L_OAuth);
+        AuthUtil.restoreListeners(context, oAuthInfo, L_OAuth);
     }
 
     public boolean isAuthorized() {

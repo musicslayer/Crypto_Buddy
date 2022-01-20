@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 // Handles common authentication cases.
@@ -25,35 +26,40 @@ public class AuthUtil {
         fragment.show(context, "oauth");
     }
 
-    public static void restoreListeners(Context context, String authURLBase, String authURL, String tokenURLBase, String client_id, String client_secret, long expiryTimeDuration, AuthUtil.OAuthAuthorizationListener L) {
+    public static void restoreListeners(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 // Use the code to get access token that we can use to request user info.
-                String token = null;
+                OAuthToken oAuthToken = null;
 
                 String body = "{" +
-                        "\"grant_type\": \"authorization_code\"," +
+                        "\"grant_type\": \"" + oAuthInfo.grant_type + "\"," +
                         "\"code\": \"" + code + "\"," +
-                        "\"client_id\": \"" + client_id + "\"," +
-                        "\"client_secret\": \"" + client_secret + "\"," +
-                        "\"redirect_uri\": \"urn:ietf:wg:oauth:2.0:oob\"" +
+                        "\"client_id\": \"" + oAuthInfo.client_id + "\"," +
+                        "\"client_secret\": \"" + oAuthInfo.client_secret + "\"," +
+                        "\"redirect_uri\": \"" + oAuthInfo.redirect_uri + "\"" +
                         "}";
 
-                String authResponse = RESTUtil.post(tokenURLBase, body);
+                String authResponse = RESTUtil.post(oAuthInfo.tokenURLBase, body);
                 if(authResponse != null) {
                     try {
                         JSONObject authResponseJSON = new JSONObject(authResponse);
-                        token = authResponseJSON.getString("access_token");
+                        String token = authResponseJSON.getString("access_token");
+
+                        // These times are all in seconds.
+                        BigDecimal created_at = new BigDecimal(authResponseJSON.getString("created_at"));
+                        BigDecimal expires_in = new BigDecimal(authResponseJSON.getString("expires_in"));
+                        BigDecimal expires_at = created_at.add(expires_in).multiply(new BigDecimal("1000"));
+
+                        long expiryTime = expires_at.longValue();
+                        oAuthToken = new OAuthToken(token, expiryTime);
                     }
                     catch(Exception ignored) {
                     }
                 }
 
-                // Calculate expiration date now and create the token object.
-                long expiryTime = new Date().getTime() + expiryTimeDuration;
-                OAuthToken oAuthToken = new OAuthToken(token, expiryTime);
                 ProgressDialogFragment.setValue(Serialization.serialize(oAuthToken));
             }
         });
@@ -74,7 +80,7 @@ public class AuthUtil {
         progressDialogFragment.restoreListeners(context, "progress");
 
         // Use this dialog to launch a WebView that allows the user to authenticate via OAuth.
-        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthDialog.class, authURLBase, authURL);
+        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthDialog.class, oAuthInfo);
         oauthDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -89,20 +95,29 @@ public class AuthUtil {
         fragment = oauthDialogFragment;
     }
 
-    // TODO wrap client_id, client_secret, and the token?
-    /*
     public static class OAuthInfo {
+        public String authURLBase;
+        public String tokenURLBase;
         public String client_id;
         public String client_secret;
-        public OAuthInfo(String client_id, String client_secret) {
+        public String redirect_uri;
+        public String response_type;
+        public String grant_type;
+        public String[] scopes;
+        public String state;
+
+        public OAuthInfo(String authURLBase, String tokenURLBase, String client_id, String client_secret, String redirect_uri, String response_type, String grant_type, String[] scopes, String state) {
+            this.authURLBase = authURLBase;
+            this.tokenURLBase = tokenURLBase;
             this.client_id = client_id;
             this.client_secret = client_secret;
+            this.redirect_uri = redirect_uri;
+            this.response_type = response_type;
+            this.grant_type = grant_type;
+            this.scopes = scopes;
+            this.state = state;
         }
     }
-
-     */
-
-
 
     public static class OAuthToken implements Serialization.SerializableToJSON {
         private final String token;
@@ -139,7 +154,6 @@ public class AuthUtil {
         }
 
         public boolean isTokenValid() {
-            // To avoid unnecessary web requests, just check the expiration date ourselves.
             final long nowTime = new Date().getTime();
             return nowTime < expiryTime;
         }

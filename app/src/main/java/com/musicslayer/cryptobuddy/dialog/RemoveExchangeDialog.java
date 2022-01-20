@@ -17,8 +17,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
-// TODO If nothing is selected delete button should display toast?
-
 public class RemoveExchangeDialog extends BaseDialog {
     ArrayList<Exchange> exchangeArrayList;
 
