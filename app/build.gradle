@@ -43,6 +43,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
+        buildConfigField("String", "key_oauth_code", secretProperties['key_oauth_code'])
+        buildConfigField("String", "key_oauth_token", secretProperties['key_oauth_token'])
+
         buildConfigField("String", "ad_application_id", secretProperties['ad_application_id'])
         manifestPlaceholders = [ad_application_id: secretProperties["ad_application_id"].substring(1, secretProperties["ad_application_id"].length() - 1)] // Trim off extra quotes
 

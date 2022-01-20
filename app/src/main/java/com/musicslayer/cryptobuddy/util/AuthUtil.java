@@ -3,11 +3,13 @@ package com.musicslayer.cryptobuddy.util;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.dialog.OAuthDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.encryption.Encryption;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import org.json.JSONObject;
@@ -20,7 +22,7 @@ import java.util.Date;
 public class AuthUtil {
     public static BaseDialogFragment fragment;
 
-    public static String code;
+    public static byte[] code_e; // Only encrypted code should be stored.
 
     public static void authorizeOAuth(Context context) {
         fragment.show(context, "oauth");
@@ -36,7 +38,7 @@ public class AuthUtil {
 
                 String body = "{" +
                         "\"grant_type\": \"" + oAuthInfo.grant_type + "\"," +
-                        "\"code\": \"" + code + "\"," +
+                        "\"code\": \"" + Encryption.decrypt(code_e, BuildConfig.key_oauth_code) + "\"," +
                         "\"client_id\": \"" + oAuthInfo.client_id + "\"," +
                         "\"client_secret\": \"" + oAuthInfo.client_secret + "\"," +
                         "\"redirect_uri\": \"" + oAuthInfo.redirect_uri + "\"" +
@@ -46,7 +48,7 @@ public class AuthUtil {
                 if(authResponse != null) {
                     try {
                         JSONObject authResponseJSON = new JSONObject(authResponse);
-                        String token = authResponseJSON.getString("access_token");
+                        byte[] token_e = Encryption.encrypt(authResponseJSON.getString("access_token"), BuildConfig.key_oauth_token);
 
                         // These times are all in seconds.
                         BigDecimal created_at = new BigDecimal(authResponseJSON.getString("created_at"));
@@ -54,7 +56,7 @@ public class AuthUtil {
                         BigDecimal expires_at = created_at.add(expires_in).multiply(new BigDecimal("1000"));
 
                         long expiryTime = expires_at.longValue();
-                        oAuthToken = new OAuthToken(token, expiryTime);
+                        oAuthToken = new OAuthToken(token_e, expiryTime);
                     }
                     catch(Exception ignored) {
                     }
@@ -68,7 +70,7 @@ public class AuthUtil {
             public void onDismissImpl(DialogInterface dialog) {
                 OAuthToken oAuthToken = Serialization.deserialize(ProgressDialogFragment.getValue(), OAuthToken.class);
 
-                if(oAuthToken.isAuthorized()) {
+                if(oAuthToken != null && oAuthToken.isAuthorized()) {
                     ToastUtil.showToast(activity, "authorization_successful");
                     L.onAuthorization(oAuthToken);
                 }
@@ -85,7 +87,7 @@ public class AuthUtil {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthDialog)dialog).isComplete) {
-                    code = ((OAuthDialog)dialog).user_CODE;
+                    code_e = ((OAuthDialog)dialog).user_CODE_E;
                     progressDialogFragment.show(activity, "progress");
                 }
             }
@@ -120,37 +122,37 @@ public class AuthUtil {
     }
 
     public static class OAuthToken implements Serialization.SerializableToJSON {
-        private final String token;
+        private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
 
         public String serializationVersion() { return "1"; }
 
         public String serializeToJSON() throws org.json.JSONException {
             return new Serialization.JSONObjectWithNull()
-                    .put("token", Serialization.string_serialize(token))
+                    .put("token_e", Serialization.byte_serializeArray(token_e))
                     .put("expiryTime", Serialization.long_serialize(expiryTime))
                     .toStringOrNull();
         }
 
         public static OAuthToken deserializeFromJSON1(String s) throws org.json.JSONException {
             Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-            String token = Serialization.string_deserialize(o.getString("token"));
+            byte[] token_e = Serialization.byte_deserializeArray(o.getString("token_e"));
             long expiryTime = Serialization.long_deserialize(o.getString("expiryTime"));
-            return new OAuthToken(token, expiryTime);
+            return new OAuthToken(token_e, expiryTime);
         }
 
-        private OAuthToken(String token, long expiryTime) {
-            this.token = token;
+        private OAuthToken(byte[] token_e, long expiryTime) {
+            this.token_e = token_e;
             this.expiryTime = expiryTime;
         }
 
         public String getToken() {
-            return token;
+            return Encryption.decrypt(token_e, BuildConfig.key_oauth_token);
         }
 
         public boolean isAuthorized() {
             // Tokens that are null or expired cannot be used to query data.
-            return token != null && isTokenValid();
+            return token_e != null && isTokenValid();
         }
 
         public boolean isTokenValid() {

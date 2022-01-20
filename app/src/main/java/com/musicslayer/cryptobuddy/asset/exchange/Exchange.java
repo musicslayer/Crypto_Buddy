@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.exchange;
 
-// TODO This may not belong in the asset package. Also, should we separate out CEX and DEX?
-// TODO Add Registered Trademark symbols to subclasses...?
+// TODO This may not belong in the asset package.
 
 import android.content.Context;
 import android.os.Parcel;
@@ -10,7 +9,6 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;

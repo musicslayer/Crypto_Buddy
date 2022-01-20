@@ -362,6 +362,50 @@ public class Serialization {
         }
     }
 
+    public static String byte_serialize(byte b) {
+        return string_serialize(Byte.toString(b));
+    }
+
+    public static byte byte_deserialize(String s) {
+        return Byte.parseByte(string_deserialize(s));
+    }
+
+    public static String byte_serializeArray(byte[] array) {
+        if(array == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(byte b : array) {
+                a.put(Serialization.byte_serialize(b));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static byte[] byte_deserializeArray(String s) {
+        if(s == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            byte[] array = new byte[a.length()];
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                array[i] = Serialization.byte_deserialize(o);
+            }
+
+            return array;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static String int_serialize(int i) {
         return string_serialize(Integer.toString(i));
     }

@@ -9,8 +9,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.decode.Alphanumeric;
+import com.musicslayer.cryptobuddy.encryption.Encryption;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
 
 // Dialog that allows user to grant OAuth authorization.
@@ -19,7 +21,7 @@ import com.musicslayer.cryptobuddy.util.AuthUtil;
 // Also when should state be randomly created (does it get reset on recreation)?
 
 public class OAuthDialog extends BaseDialog {
-    public String user_CODE;
+    public byte[] user_CODE_E;
 
     AuthUtil.OAuthInfo oAuthInfo;
 
@@ -49,11 +51,12 @@ public class OAuthDialog extends BaseDialog {
                 // When authorization is complete, the url will have the code in it.
                 // The code will always be between the last "/" and a "?".
                 if(url.startsWith(oAuthInfo.authURLBase) && url.endsWith("?")) {
-                    user_CODE = url;
-                    user_CODE = user_CODE.replace(oAuthInfo.authURLBase, "");
-                    user_CODE = user_CODE.replace("?", "");
+                    url = url.replace(oAuthInfo.authURLBase, "");
+                    url = url.replace("?", "");
 
-                    if(isValidCode(user_CODE)) {
+                    if(isValidCode(url)) {
+                        user_CODE_E = Encryption.encrypt(url, BuildConfig.key_oauth_code);
+
                         isComplete = true;
                         dismiss();
                     }
