@@ -20,6 +20,7 @@ import com.musicslayer.cryptobuddy.util.URLUtil;
 import java.util.HashMap;
 
 // Dialog that allows user to grant OAuth authorization.
+// TODO Use custom tabs instead of WebView.
 
 public class OAuthDialog extends BaseDialog {
     public byte[] user_CODE_E;
@@ -39,7 +40,7 @@ public class OAuthDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_oauth);
 
-        // Generate a random string to validate the OAuth response.
+        // Use these random strings to validate the OAuth response.
         String state = Alphanumeric.createRandomString(40);
 
         WebView webView = findViewById(R.id.oauth_dialog_webView);

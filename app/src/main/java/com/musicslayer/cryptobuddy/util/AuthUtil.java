@@ -2,6 +2,8 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -18,8 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 // Handles common authentication cases.
-// TODO Use PKCE so I don't need to include the client secrets in the app.
-// TODO Store encryption keys in android keystore?
 
 public class AuthUtil {
     public static BaseDialogFragment fragment;
@@ -117,7 +117,7 @@ public class AuthUtil {
         fragment = oauthDialogFragment;
     }
 
-    public static class OAuthInfo {
+    public static class OAuthInfo implements Parcelable {
         public String authURLBase;
         public String tokenURLBase;
         public String client_id;
@@ -126,6 +126,49 @@ public class AuthUtil {
         public String response_type;
         public String grant_type;
         public String[] scopes;
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeString(authURLBase);
+            out.writeString(tokenURLBase);
+            out.writeString(client_id);
+            out.writeString(client_secret);
+            out.writeString(redirect_uri);
+            out.writeString(response_type);
+            out.writeString(grant_type);
+            out.writeInt(scopes.length);
+            out.writeStringArray(scopes);
+        }
+
+        public static final Parcelable.Creator<OAuthInfo> CREATOR = new Parcelable.Creator<OAuthInfo>() {
+            @Override
+            public OAuthInfo createFromParcel(Parcel in) {
+                String authURLBase = in.readString();
+                String tokenURLBase = in.readString();
+                String client_id = in.readString();
+                String client_secret = in.readString();
+                String redirect_uri = in.readString();
+                String response_type = in.readString();
+                String grant_type = in.readString();
+
+                int scopes_length = in.readInt();
+                String[] scopes = new String[scopes_length];
+                in.readStringArray(scopes);
+
+                return new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+            }
+
+            // We just need to copy this and change the type to match our class.
+            @Override
+            public OAuthInfo[] newArray(int size) {
+                return new OAuthInfo[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
 
         public OAuthInfo(String authURLBase, String tokenURLBase, String client_id, String client_secret, String redirect_uri, String response_type, String grant_type, String[] scopes) {
             this.authURLBase = authURLBase;
@@ -139,9 +182,40 @@ public class AuthUtil {
         }
     }
 
-    public static class OAuthToken implements Serialization.SerializableToJSON {
+    public static class OAuthToken implements Serialization.SerializableToJSON, Parcelable {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(token_e.length);
+            out.writeByteArray(token_e);
+            out.writeLong(expiryTime);
+        }
+
+        public static final Parcelable.Creator<OAuthToken> CREATOR = new Parcelable.Creator<OAuthToken>() {
+            @Override
+            public OAuthToken createFromParcel(Parcel in) {
+                int token_e_length = in.readInt();
+                byte[] token_e = new byte[token_e_length];
+                in.readByteArray(token_e);
+
+                long expiryTime = in.readLong();
+
+                return new OAuthToken(token_e, expiryTime);
+            }
+
+            // We just need to copy this and change the type to match our class.
+            @Override
+            public OAuthToken[] newArray(int size) {
+                return new OAuthToken[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
 
         public String serializationVersion() { return "1"; }
 

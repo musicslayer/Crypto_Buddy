@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.asset.exchange.STEX;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 
+// TODO Dynamically generate instead of listing each exchange button.
+
 public class ChooseExchangeDialog extends BaseDialog {
     public Exchange user_EXCHANGE;
 
