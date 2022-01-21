@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.exchange;
 
-// TODO This may not belong in the asset package.
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;

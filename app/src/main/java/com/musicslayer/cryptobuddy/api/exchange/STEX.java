@@ -1,11 +1,9 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.decode.Alphanumeric;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
@@ -14,14 +12,14 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
 
-public class BinanceUS extends ExchangeAPI {
-    public String getName() { return "BinanceUS"; }
-    public String getDisplayName() { return "Binance US REST API"; }
+public class STEX extends ExchangeAPI {
+    public String getName() { return "STEX"; }
+    public String getDisplayName() { return "STEX REST API V3"; }
 
     public AuthUtil.OAuthToken oAuthToken;
 
     public boolean isSupported(Exchange exchange) {
-        return "BinanceUS".equals(exchange.getName());
+        return "STEX".equals(exchange.getName());
     }
 
     public void authorize(Context context) {
@@ -29,21 +27,21 @@ public class BinanceUS extends ExchangeAPI {
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
-        String authURLBase = "https://accounts.binance.com/en/oauth/authorize/";
-        String tokenURLBase = "https://accounts.binance.com/oauth/token/";
-        String client_id = BuildConfig.binance_us_client_id;
-        String client_secret = BuildConfig.binance_us_client_secret;
-        String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
+        String authURLBase = "https://app.stex.com/oauth/authorize/";
+        String tokenURLBase = "https://api3.stex.com/oauth/token/";
+        String client_id = BuildConfig.stex_client_id;
+        String client_secret = BuildConfig.stex_client_secret;
+        String redirect_uri = "https://com.musicslayer.cryptobuddy/callback/";
         String response_type = "code";
         String grant_type = "authorization_code";
-        String[] scopes = new String[] {"user:address", "user:balance", "asset:ocbs"};
+        String[] scopes = new String[] {"reports"};
 
         AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
-                BinanceUS.this.oAuthToken = oAuthToken;
+                STEX.this.oAuthToken = oAuthToken;
                 L.onAuthorization();
             }
         };

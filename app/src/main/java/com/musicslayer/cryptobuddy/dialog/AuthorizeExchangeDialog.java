@@ -45,7 +45,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
         TextView T = findViewById(R.id.authorize_exchange_dialog_textView);
         Button B_AUTHORIZE = findViewById(R.id.authorize_exchange_dialog_authorizeButton);
-        TextView TA = findViewById(R.id.authorize_exchange_dialog_authorizeTextView);
+        //TextView TA = findViewById(R.id.authorize_exchange_dialog_authorizeTextView);
 
         BorderedSpinnerView bsv = findViewById(R.id.authorize_exchange_dialog_spinner);
         bsv.setOptions(options);
@@ -59,21 +59,30 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                     exchangeAPI.restoreListeners(activity, new AuthUtil.AuthorizationListener() {
                         @Override
                         public void onAuthorization() {
-                            TA.setText("Authorized");
-                            TA.setTextColor(0xFF00FF00);
+                            //TA.setText("Authorized");
+                            //TA.setTextColor(0xFF00FF00);
+
+                            T.setText(exchange.toString() + " = Authorized");
+                            T.setTextColor(0xFF00FF00);
                         }
                     });
                 }
 
-                T.setText(exchange.toString());
+                //T.setText(exchange.toString());
 
                 if(exchangeAPI != null && exchangeAPI.isAuthorized()) {
-                    TA.setText("Authorized");
-                    TA.setTextColor(0xFF00FF00);
+                    //TA.setText("Authorized");
+                    //TA.setTextColor(0xFF00FF00);
+
+                    T.setText(exchange.toString() + " = Authorized");
+                    T.setTextColor(0xFF00FF00);
                 }
                 else {
-                    TA.setText("Unauthorized");
-                    TA.setTextColor(0xFFFF0000);
+                    //TA.setText("Unauthorized");
+                    //TA.setTextColor(0xFFFF0000);
+
+                    T.setText(exchange.toString() + " = Unauthorized");
+                    T.setTextColor(0xFFFF0000);
                 }
 
                 B_AUTHORIZE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -85,8 +94,11 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                         newExchangeAPI.restoreListeners(activity, new AuthUtil.AuthorizationListener() {
                             @Override
                             public void onAuthorization() {
-                                TA.setText("Authorized");
-                                TA.setTextColor(0xFF00FF00);
+                                //TA.setText("Authorized");
+                                //TA.setTextColor(0xFF00FF00);
+
+                                T.setText(exchange.toString() + " = Authorized");
+                                T.setTextColor(0xFF00FF00);
                             }
                         });
 
@@ -103,7 +115,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         if(exchangeArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
             B_AUTHORIZE.setVisibility(View.GONE);
-            TA.setVisibility(View.GONE);
+            //TA.setVisibility(View.GONE);
             T.setText("No exchanges found.");
         }
     }

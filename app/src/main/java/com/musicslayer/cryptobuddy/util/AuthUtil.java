@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 // Handles common authentication cases.
+// TODO Use PKCE so I don't need to include the client secrets in the app.
+// TODO Store encryption keys in android keystore?
 
 public class AuthUtil {
     public static BaseDialogFragment fragment;
@@ -50,10 +52,28 @@ public class AuthUtil {
                         JSONObject authResponseJSON = new JSONObject(authResponse);
                         byte[] token_e = Encryption.encrypt(authResponseJSON.getString("access_token"), BuildConfig.key_oauth_token);
 
-                        // These times are all in seconds.
-                        BigDecimal created_at = new BigDecimal(authResponseJSON.getString("created_at"));
-                        BigDecimal expires_in = new BigDecimal(authResponseJSON.getString("expires_in"));
-                        BigDecimal expires_at = created_at.add(expires_in).multiply(new BigDecimal("1000"));
+                        // These times are all in seconds. Note that some APIs do not return them in the response.
+                        BigDecimal created_at;
+                        if(authResponseJSON.has("created_at")) {
+                            // Convert to milliseconds
+                            created_at = new BigDecimal(authResponseJSON.getString("created_at")).multiply(new BigDecimal("1000"));
+                        }
+                        else {
+                            // Just use the current time.
+                            created_at = new BigDecimal(new Date().getTime());
+                        }
+
+                        BigDecimal expires_in;
+                        if(authResponseJSON.has("expires_in")) {
+                            // Convert to milliseconds
+                            expires_in = new BigDecimal(authResponseJSON.getString("expires_in")).multiply(new BigDecimal("1000"));
+                        }
+                        else {
+                            // Just use 1 hour.
+                            expires_in = new BigDecimal(3600000);
+                        }
+
+                        BigDecimal expires_at = created_at.add(expires_in);
 
                         long expiryTime = expires_at.longValue();
                         oAuthToken = new OAuthToken(token_e, expiryTime);
@@ -106,9 +126,8 @@ public class AuthUtil {
         public String response_type;
         public String grant_type;
         public String[] scopes;
-        public String state;
 
-        public OAuthInfo(String authURLBase, String tokenURLBase, String client_id, String client_secret, String redirect_uri, String response_type, String grant_type, String[] scopes, String state) {
+        public OAuthInfo(String authURLBase, String tokenURLBase, String client_id, String client_secret, String redirect_uri, String response_type, String grant_type, String[] scopes) {
             this.authURLBase = authURLBase;
             this.tokenURLBase = tokenURLBase;
             this.client_id = client_id;
@@ -117,7 +136,6 @@ public class AuthUtil {
             this.response_type = response_type;
             this.grant_type = grant_type;
             this.scopes = scopes;
-            this.state = state;
         }
     }
 

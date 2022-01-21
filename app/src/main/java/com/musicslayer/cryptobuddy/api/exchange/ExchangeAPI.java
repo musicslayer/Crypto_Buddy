@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
@@ -55,11 +54,6 @@ abstract public class ExchangeAPI extends API {
         }
 
         return exchangeAPI;
-    }
-
-    public boolean shouldIncludeTokens() {
-        // TODO Does ExchangeAPI need this? Should Exchange only be available if user has purchased tokens?
-        return true;
     }
 
     public static int getMaxTransactions() {

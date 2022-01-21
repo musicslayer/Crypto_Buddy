@@ -58,6 +58,8 @@ android {
         buildConfigField("String", "binance_us_client_secret", secretProperties['binance_us_client_secret'])
         buildConfigField("String", "coinbase_client_id", secretProperties['coinbase_client_id'])
         buildConfigField("String", "coinbase_client_secret", secretProperties['coinbase_client_secret'])
+        buildConfigField("String", "stex_client_id", secretProperties['stex_client_id'])
+        buildConfigField("String", "stex_client_secret", secretProperties['stex_client_secret'])
     }
 
     buildTypes {

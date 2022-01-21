@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.exchange.Binance;
-import com.musicslayer.cryptobuddy.asset.exchange.BinanceUS;
 import com.musicslayer.cryptobuddy.asset.exchange.Coinbase;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
+import com.musicslayer.cryptobuddy.asset.exchange.STEX;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.util.HelpUtil;
 
 public class ChooseExchangeDialog extends BaseDialog {
     public Exchange user_EXCHANGE;
@@ -55,6 +52,15 @@ public class ChooseExchangeDialog extends BaseDialog {
         B_COINBASE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 user_EXCHANGE = new Coinbase();
+                isComplete = true;
+                dismiss();
+            }
+        });
+
+        Button B_STEX = findViewById(R.id.choose_exchange_dialog_stexButton);
+        B_STEX.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                user_EXCHANGE = new STEX();
                 isComplete = true;
                 dismiss();
             }

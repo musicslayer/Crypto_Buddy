@@ -6,7 +6,6 @@ import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 // TODO As an additional option to the fallback model, the user should be able to select an api. Also, once an API is chosen, "Download Data" will download all data from the same api.
-// TODO isSupported should also PING the webserver so we at least know it is available...
 
 abstract public class API implements Serialization.SerializableToJSON {
     // For now, just use the name as the key.

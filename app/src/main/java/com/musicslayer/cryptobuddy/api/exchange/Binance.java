@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.decode.Alphanumeric;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
@@ -39,9 +38,8 @@ public class Binance extends ExchangeAPI {
         String response_type = "code";
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"user:address", "user:balance", "asset:ocbs"};
-        String state = Alphanumeric.createRandomString(20);
 
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes, state);
+        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override

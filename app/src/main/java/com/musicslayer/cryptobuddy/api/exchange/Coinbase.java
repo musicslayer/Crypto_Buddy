@@ -29,16 +29,16 @@ public class Coinbase extends ExchangeAPI {
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
         String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://www.coinbase.com/oauth/token/";
+        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
         String client_id = BuildConfig.coinbase_client_id;
         String client_secret = BuildConfig.coinbase_client_secret;
-        String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
+        //String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
+        String redirect_uri = "https://com.musicslayer.cryptobuddy/callback/";
         String response_type = "code";
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
-        String state = Alphanumeric.createRandomString(20);
 
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes, state);
+        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
 
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
