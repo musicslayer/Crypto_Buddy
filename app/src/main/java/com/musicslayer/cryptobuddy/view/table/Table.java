@@ -23,7 +23,7 @@ import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.dialog.FilterDialog;
-import com.musicslayer.cryptobuddy.settings.NumberTransactionsPerPageSetting;
+import com.musicslayer.cryptobuddy.settings.setting.NumberTransactionsPerPageSetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;

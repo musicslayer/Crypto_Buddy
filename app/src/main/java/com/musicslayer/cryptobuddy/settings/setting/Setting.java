@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.settings;
+package com.musicslayer.cryptobuddy.settings.setting;
 
 import android.content.Context;
 
@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.view.settings.SettingsView;
+import com.musicslayer.cryptobuddy.view.settings.StandardSettingsView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,13 +36,13 @@ abstract public class Setting implements Serialization.SerializableToJSON {
     abstract public <T> ArrayList<T> getOptionValues();
     abstract public void updateValue();
 
-    // Usually this is not the case, but when some settings are changed we must recreate the Activity.
     public void setSetting(int chosenOptionPosition) {
         this.chosenOptionPosition = chosenOptionPosition;
         this.chosenOptionName = getOptionNames().get(chosenOptionPosition);
         updateValue();
     }
 
+    // Usually this is not the case, but when some settings are changed we must recreate the Activity.
     public boolean needsRefresh() { return false; }
 
     // Can be used to modify how we display options with extra data that we don't want to store (like the time zone offset).
@@ -54,15 +56,20 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         return modifiedOptionNames;
     }
 
+    // Can be overridden to return a tailored View for this setting.
+    public SettingsView createSettingView(Context context) {
+        return new StandardSettingsView(context, this);
+    }
+
     public static void initialize(Context context) {
         settings = new ArrayList<>();
         settings_map = new HashMap<>();
         settings_settings_map = new HashMap<>();
         settings_display_names = new ArrayList<>();
 
-        settings_names = FileUtil.readFileIntoLines(context, R.raw.asset_settings);
+        settings_names = FileUtil.readFileIntoLines(context, R.raw.settings_setting);
         for(String settingName : settings_names) {
-            Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings." + settingName);
+            Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
 
             Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
             int idx;

@@ -7,16 +7,16 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
+import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
-public class ConfirmDeleteAllPortfoliosDialog extends BaseDialog {
-    public ConfirmDeleteAllPortfoliosDialog(Activity activity) {
+public class ConfirmDeleteAllExchangePortfoliosDialog extends BaseDialog {
+    public ConfirmDeleteAllExchangePortfoliosDialog(Activity activity) {
         super(activity);
     }
 
     public int getBaseViewID() {
-        return R.id.confirm_delete_all_portfolios_dialog;
+        return R.id.confirm_delete_all_exchange_portfolios_dialog;
     }
 
     @Override
@@ -31,9 +31,9 @@ public class ConfirmDeleteAllPortfoliosDialog extends BaseDialog {
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_confirm_delete_all_portfolios);
+        setContentView(R.layout.dialog_confirm_delete_all_exchange_portfolios);
 
-        ConfirmationView C = findViewById(R.id.confirm_delete_all_portfolios_dialog_confirmationView);
+        ConfirmationView C = findViewById(R.id.confirm_delete_all_exchange_portfolios_dialog_confirmationView);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {
@@ -42,7 +42,7 @@ public class ConfirmDeleteAllPortfoliosDialog extends BaseDialog {
             }
         });
 
-        Button B_CANCEL = findViewById(R.id.confirm_delete_all_portfolios_dialog_cancelButton);
+        Button B_CANCEL = findViewById(R.id.confirm_delete_all_exchange_portfolios_dialog_cancelButton);
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {

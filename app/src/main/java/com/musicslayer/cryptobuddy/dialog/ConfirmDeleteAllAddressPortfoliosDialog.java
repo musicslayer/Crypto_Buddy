@@ -10,13 +10,13 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
-public class ConfirmResetTableDialog extends BaseDialog {
-    public ConfirmResetTableDialog(Activity activity) {
+public class ConfirmDeleteAllAddressPortfoliosDialog extends BaseDialog {
+    public ConfirmDeleteAllAddressPortfoliosDialog(Activity activity) {
         super(activity);
     }
 
     public int getBaseViewID() {
-        return R.id.confirm_reset_table_dialog;
+        return R.id.confirm_delete_all_address_portfolios_dialog;
     }
 
     @Override
@@ -31,9 +31,9 @@ public class ConfirmResetTableDialog extends BaseDialog {
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_confirm_reset_table);
+        setContentView(R.layout.dialog_confirm_delete_all_address_portfolios);
 
-        ConfirmationView C = findViewById(R.id.confirm_reset_table_dialog_confirmationView);
+        ConfirmationView C = findViewById(R.id.confirm_delete_all_address_portfolios_dialog_confirmationView);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {
@@ -42,7 +42,7 @@ public class ConfirmResetTableDialog extends BaseDialog {
             }
         });
 
-        Button B_CANCEL = findViewById(R.id.confirm_reset_table_dialog_cancelButton);
+        Button B_CANCEL = findViewById(R.id.confirm_delete_all_address_portfolios_dialog_cancelButton);
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {

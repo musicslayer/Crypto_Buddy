@@ -5,9 +5,8 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
-import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.view.AssetTextView;
 

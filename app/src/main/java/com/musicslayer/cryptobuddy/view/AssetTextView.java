@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.view;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.crash.CrashTextView;
-import com.musicslayer.cryptobuddy.settings.LossValuesSetting;
+import com.musicslayer.cryptobuddy.settings.setting.LossValuesSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
 public class AssetTextView extends CrashTextView {

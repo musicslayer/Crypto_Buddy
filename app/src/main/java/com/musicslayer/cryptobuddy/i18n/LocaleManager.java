@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.settings.DatetimeLocaleSetting;
-import com.musicslayer.cryptobuddy.settings.LossValuesSetting;
-import com.musicslayer.cryptobuddy.settings.NumericLocaleSetting;
+import com.musicslayer.cryptobuddy.settings.setting.DatetimeLocaleSetting;
+import com.musicslayer.cryptobuddy.settings.setting.LossValuesSetting;
+import com.musicslayer.cryptobuddy.settings.setting.NumericLocaleSetting;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

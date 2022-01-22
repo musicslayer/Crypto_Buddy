@@ -18,7 +18,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTransactionDialog;
-import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.view.AssetTextView;

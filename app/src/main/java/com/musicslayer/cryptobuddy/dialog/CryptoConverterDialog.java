@@ -11,7 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.PriceDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;

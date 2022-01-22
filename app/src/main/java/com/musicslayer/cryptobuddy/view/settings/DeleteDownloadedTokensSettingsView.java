@@ -10,15 +10,19 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
-import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-public class DeleteDownloadedTokensSettingsView extends CrashLinearLayout {
+public class DeleteDownloadedTokensSettingsView extends SettingsView {
     public DeleteDownloadedTokensSettingsView(Context context) {
+        super(context);
+    }
+
+    public DeleteDownloadedTokensSettingsView(Context context, Setting setting) {
         super(context);
 
         this.setOrientation(VERTICAL);

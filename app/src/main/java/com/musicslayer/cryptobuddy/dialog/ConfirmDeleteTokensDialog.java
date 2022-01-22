@@ -9,7 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
+import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteTokensDialog extends BaseDialog {

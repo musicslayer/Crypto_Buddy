@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
 import java.util.ArrayList;
 import java.util.Collections;

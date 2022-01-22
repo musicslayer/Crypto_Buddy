@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.i18n;
 
-import com.musicslayer.cryptobuddy.settings.TimeZoneSetting;
+import com.musicslayer.cryptobuddy.settings.setting.TimeZoneSetting;
 
 import java.time.Instant;
 import java.time.ZoneId;

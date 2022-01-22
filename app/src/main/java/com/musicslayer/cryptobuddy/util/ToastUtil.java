@@ -7,7 +7,7 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
-import com.musicslayer.cryptobuddy.settings.MessageLengthSetting;
+import com.musicslayer.cryptobuddy.settings.setting.MessageLengthSetting;
 
 import java.util.HashMap;
 
@@ -64,7 +64,9 @@ public class ToastUtil {
 
         toastMap.put("reset_settings", Toast.makeText(context, "Settings have been reset to default values.", getToastDuration()));
         toastMap.put("reset_stored_addresses", Toast.makeText(context, "Stored address history has been deleted.", getToastDuration()));
-        toastMap.put("reset_portfolios", Toast.makeText(context, "Portfolios have been deleted.", getToastDuration()));
+        toastMap.put("reset_address_portfolios", Toast.makeText(context, "Address portfolios have been deleted.", getToastDuration()));
+        toastMap.put("reset_exchange_portfolios", Toast.makeText(context, "Exchange portfolios have been deleted.", getToastDuration()));
+        toastMap.put("reset_transaction_portfolios", Toast.makeText(context, "Transaction portfolios have been deleted.", getToastDuration()));
         toastMap.put("reset_downloaded_tokens", Toast.makeText(context, "Downloaded tokens have been deleted.", getToastDuration()));
         toastMap.put("reset_found_tokens", Toast.makeText(context, "Found tokens have been deleted.", getToastDuration()));
         toastMap.put("reset_custom_tokens", Toast.makeText(context, "Custom tokens have been deleted.", getToastDuration()));

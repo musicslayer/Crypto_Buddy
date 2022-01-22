@@ -10,16 +10,20 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
-import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-public class ResetAllSettingsSettingsView extends CrashLinearLayout {
+public class ResetAllSettingsSettingsView extends SettingsView {
     public ResetAllSettingsSettingsView(Context context) {
+        super(context);
+    }
+
+    public ResetAllSettingsSettingsView(Context context, Setting setting) {
         super(context);
 
         this.setOrientation(VERTICAL);

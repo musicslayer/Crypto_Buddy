@@ -25,7 +25,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 

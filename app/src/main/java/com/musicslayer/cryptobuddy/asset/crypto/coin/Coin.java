@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.settings.AssetDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 

@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.util;
 
 import com.musicslayer.cryptobuddy.crash.CrashBypassException;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.settings.TimeoutSetting;
+import com.musicslayer.cryptobuddy.settings.setting.TimeoutSetting;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

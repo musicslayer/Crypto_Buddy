@@ -15,7 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.settings.NetworksSetting;
+import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.PermissionUtil;

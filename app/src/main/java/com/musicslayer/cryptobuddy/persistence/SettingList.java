@@ -8,7 +8,7 @@ import java.util.HashMap;
 import static android.content.Context.MODE_PRIVATE;
 
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 public class SettingList {

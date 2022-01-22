@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.settings;
+package com.musicslayer.cryptobuddy.settings.setting;
 
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 

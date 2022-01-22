@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.util;
 
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
-import com.musicslayer.cryptobuddy.settings.DatetimeFormatSetting;
+import com.musicslayer.cryptobuddy.settings.setting.DatetimeFormatSetting;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

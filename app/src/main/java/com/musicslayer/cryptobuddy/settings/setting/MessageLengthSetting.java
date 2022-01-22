@@ -1,6 +1,10 @@
-package com.musicslayer.cryptobuddy.settings;
+package com.musicslayer.cryptobuddy.settings.setting;
 
+import android.content.Context;
 import android.widget.Toast;
+
+import com.musicslayer.cryptobuddy.view.settings.MessageSettingsView;
+import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 
 import java.util.ArrayList;
 
@@ -33,5 +37,9 @@ public class MessageLengthSetting extends Setting {
         optionValues.add(Toast.LENGTH_SHORT);
         optionValues.add(Toast.LENGTH_LONG);
         return (ArrayList<T>)optionValues;
+    }
+
+    public SettingsView createSettingView(Context context) {
+        return new MessageSettingsView(context, this);
     }
 }

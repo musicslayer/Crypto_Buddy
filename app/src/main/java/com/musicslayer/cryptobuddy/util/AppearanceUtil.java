@@ -4,8 +4,8 @@ import android.app.Activity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.musicslayer.cryptobuddy.settings.DarkModeSetting;
-import com.musicslayer.cryptobuddy.settings.OrientationSetting;
+import com.musicslayer.cryptobuddy.settings.setting.DarkModeSetting;
+import com.musicslayer.cryptobuddy.settings.setting.OrientationSetting;
 
 public class AppearanceUtil {
     // Needs activity, not Context

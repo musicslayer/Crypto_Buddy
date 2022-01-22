@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.settings;
+package com.musicslayer.cryptobuddy.settings.setting;
 
 import androidx.appcompat.app.AppCompatDelegate;
 

@@ -3,6 +3,13 @@ ConfirmationSetting
 DarkModeSetting
 DatetimeFormatSetting
 DatetimeLocaleSetting
+DeleteAllAddressHistorySetting
+DeleteAllAddressPortfoliosSetting
+DeleteAllExchangePortfoliosSetting
+DeleteAllTransactionPortfoliosSetting
+DeleteCustomTokensSetting
+DeleteDownloadedTokensSetting
+DeleteFoundTokensSetting
 LossValuesSetting
 MaxNumberTransactionsSetting
 MessageLengthSetting
@@ -12,5 +19,7 @@ NumberTransactionsPerPageSetting
 NumericLocaleSetting
 OrientationSetting
 PriceDisplaySetting
+ResetAllSettingsSetting
+ResetEverythingSetting
 TimeoutSetting
 TimeZoneSetting

@@ -22,10 +22,13 @@ import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.settings.Setting;
+import com.musicslayer.cryptobuddy.settings.category.SettingCategory;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
+
+// TODO Make ScrollViews keep the scrollbar visible.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -54,6 +57,7 @@ public class InitialActivity extends BaseActivity {
         Purchases.loadAllPurchases(applicationContext);
         Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
+        SettingCategory.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);
         if(!Purchases.isUnlockTokensPurchased()) {

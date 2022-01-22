@@ -5,7 +5,7 @@ import android.content.Context;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.settings.MaxNumberTransactionsSetting;
+import com.musicslayer.cryptobuddy.settings.setting.MaxNumberTransactionsSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.FileUtil;

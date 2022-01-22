@@ -14,7 +14,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.ConfirmationSetting;
+import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 
 import java.util.ArrayList;
 import java.util.Random;

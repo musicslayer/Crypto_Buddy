@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.settings.NumberDecimalPlacesSetting;
+import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
