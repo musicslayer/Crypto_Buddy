@@ -1,11 +1,15 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
@@ -43,8 +47,9 @@ public class AuthorizeExchangeDialog extends BaseDialog {
             options.add(exchange.toString());
         }
 
-        TextView T = findViewById(R.id.authorize_exchange_dialog_textView);
-        Button B_AUTHORIZE = findViewById(R.id.authorize_exchange_dialog_authorizeButton);
+        TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
+        Button B_AUTHORIZE_CUSTOMTAB = findViewById(R.id.authorize_exchange_dialog_authorizeCustomTabButton);
+        Button B_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewButton);
 
         BorderedSpinnerView bsv = findViewById(R.id.authorize_exchange_dialog_spinner);
         bsv.setOptions(options);
@@ -73,7 +78,25 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                     T.setTextColor(0xFFFF0000);
                 }
 
-                B_AUTHORIZE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+                B_AUTHORIZE_CUSTOMTAB.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+                    public void onClickImpl(View v) {
+                        // Look for a supported ExchangeAPI for this exchange and then try to authenticate it.
+                        ExchangeAPI newExchangeAPI = ExchangeData.getExchangeAPI(exchange);
+                        HashMapUtil.putValueInMap(exchangeAPIMap, exchange, newExchangeAPI);
+
+                        newExchangeAPI.restoreListeners(activity, new AuthUtil.AuthorizationListener() {
+                            @Override
+                            public void onAuthorization() {
+                                T.setText(exchange.toString() + " = Authorized");
+                                T.setTextColor(0xFF00FF00);
+                            }
+                        });
+
+                        newExchangeAPI.authorize(activity);
+                    }
+                });
+
+                B_AUTHORIZE_WEBVIEW.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                     public void onClickImpl(View v) {
                         // Look for a supported ExchangeAPI for this exchange and then try to authenticate it.
                         ExchangeAPI newExchangeAPI = ExchangeData.getExchangeAPI(exchange);
@@ -99,8 +122,18 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
         if(exchangeArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
-            B_AUTHORIZE.setVisibility(View.GONE);
+            B_AUTHORIZE_CUSTOMTAB.setVisibility(View.GONE);
+            B_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
             T.setText("No exchanges found.");
         }
+    }
+
+    public static void openCustomTab(Activity activity, String url) {
+        //customTabsIntent.intent.setPackage("com.android.chrome");
+        //customTabsIntent.launchUrl(activity, Uri.parse(url));
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(activity, Uri.parse(url));
     }
 }

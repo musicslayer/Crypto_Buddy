@@ -7,6 +7,7 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.dialog.OAuthCustomTabDialog;
 import com.musicslayer.cryptobuddy.dialog.OAuthDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
@@ -102,12 +103,12 @@ public class AuthUtil {
         progressDialogFragment.restoreListeners(context, "progress");
 
         // Use this dialog to launch a WebView that allows the user to authenticate via OAuth.
-        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthDialog.class, oAuthInfo);
+        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthCustomTabDialog.class, oAuthInfo);
         oauthDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((OAuthDialog)dialog).isComplete) {
-                    code_e = ((OAuthDialog)dialog).user_CODE_E;
+                if(((OAuthCustomTabDialog)dialog).isComplete) {
+                    code_e = ((OAuthCustomTabDialog)dialog).user_CODE_E;
                     progressDialogFragment.show(activity, "progress");
                 }
             }

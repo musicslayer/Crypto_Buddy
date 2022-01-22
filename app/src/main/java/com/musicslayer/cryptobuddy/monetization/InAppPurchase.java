@@ -30,7 +30,7 @@ import java.util.List;
 
 public class InAppPurchase {
     public static BillingClient billingClient;
-    public static InAppPurchase.InAppPurchaseListener inAppPurchaseListener;
+    public static InAppPurchaseListener inAppPurchaseListener;
 
     public static void setInAppPurchaseListener(InAppPurchase.InAppPurchaseListener inAppPurchaseListener) {
         InAppPurchase.inAppPurchaseListener = inAppPurchaseListener;

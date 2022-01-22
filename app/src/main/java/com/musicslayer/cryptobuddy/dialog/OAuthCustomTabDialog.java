@@ -2,15 +2,16 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.TextView;
+
+import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.CallbackActivity;
 import com.musicslayer.cryptobuddy.decode.Alphanumeric;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
@@ -20,42 +21,33 @@ import com.musicslayer.cryptobuddy.util.URLUtil;
 import java.util.HashMap;
 
 // Dialog that allows user to grant OAuth authorization.
-// TODO Use custom tabs instead of WebView.
 
-public class OAuthDialog extends BaseDialog {
+public class OAuthCustomTabDialog extends BaseDialog {
     public byte[] user_CODE_E;
+
+    String state;
 
     AuthUtil.OAuthInfo oAuthInfo;
 
-    public OAuthDialog(Activity activity, AuthUtil.OAuthInfo oAuthInfo) {
+    public OAuthCustomTabDialog(Activity activity, AuthUtil.OAuthInfo oAuthInfo) {
         super(activity);
         this.oAuthInfo = oAuthInfo;
     }
 
     public int getBaseViewID() {
-        return R.id.oauth_dialog;
+        return R.id.oauth_custom_tab_dialog;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_oauth);
+        setContentView(R.layout.dialog_oauth_custom_tab);
 
-        // Use this random string to validate the OAuth response.
-        String state = Alphanumeric.createRandomString(40);
-
-        WebView webView = findViewById(R.id.oauth_dialog_webView);
-        TextView loadingTextView = findViewById(R.id.oauth_dialog_loadingTextView);
-
-        webView.getSettings().setJavaScriptEnabled(true); // JavaScript is needed by some websites to complete authorizations.
-        webView.setWebViewClient(new WebViewClient() {
+        CallbackActivity.setCallbackListener(new CallbackActivity.CallbackListener() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                // When anything finishes loading, get rid of loading text.
-                loadingTextView.setVisibility(View.GONE);
-
-                // When authorization is complete, the url will be the redirect URL and will have the code and state as parameters.
-                if(url.startsWith(oAuthInfo.redirect_uri)) {
-                    HashMap<String, String> parameters = URLUtil.parseURL(url);
+            public void onCallback(Intent intent) {
+                String responseURL = intent.getData().toString();
+                if(responseURL.startsWith("com.musicslayer.cryptobuddy://oauth")) {
+                    HashMap<String, String> parameters = URLUtil.parseURL(responseURL);
                     if(parameters.containsKey("code") && parameters.containsKey("state")) {
                         // Validate we get the same state back for security.
                         String responseState = parameters.get("state");
@@ -77,14 +69,32 @@ public class OAuthDialog extends BaseDialog {
             }
         });
 
-        String authURL = oAuthInfo.authURLBase +
-            "?client_id=" + oAuthInfo.client_id +
-            "&redirect_uri=" + oAuthInfo.redirect_uri +
-            "&response_type=" + oAuthInfo.response_type +
-            "&scope=" + TextUtils.join(",", oAuthInfo.scopes) +
-            "&state=" + state +
-            "&account=all"; // Needed for Coinbase, but ignored by other exchanges.
-        webView.loadUrl(authURL);
+        // Only launch CustomTab once.
+        if(savedInstanceState == null) {
+            // Use this random string to validate the OAuth response.
+            state = Alphanumeric.createRandomString(40);
+
+            String authURL = oAuthInfo.authURLBase +
+                    "?client_id=" + oAuthInfo.client_id +
+                    "&redirect_uri=" + oAuthInfo.redirect_uri +
+                    "&response_type=" + oAuthInfo.response_type +
+                    "&scope=" + TextUtils.join(",", oAuthInfo.scopes) +
+                    "&state=" + state +
+                    "&account=all"; // Needed for Coinbase, but ignored by other exchanges.
+
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+            browserIntent.setData(Uri.parse(authURL));
+            activity.startActivity(browserIntent);
+
+/*
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER, Uri.parse("android-app://" + activity.getPackageName()));
+            customTabsIntent.launchUrl(activity, Uri.parse(authURL));
+
+ */
+        }
     }
 
     private boolean isValidCode(String code) {

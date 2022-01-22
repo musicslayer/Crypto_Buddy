@@ -32,7 +32,7 @@ public class Coinbase extends ExchangeAPI {
         String tokenURLBase = "https://api.coinbase.com/oauth/token/";
         String client_id = BuildConfig.coinbase_client_id;
         String client_secret = BuildConfig.coinbase_client_secret;
-        String redirect_uri = "https://com.musicslayer.cryptobuddy/callback/";
+        String redirect_uri = "https://musicslayer.github.io/";
         String response_type = "code";
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
