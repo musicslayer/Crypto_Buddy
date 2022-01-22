@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -41,14 +40,14 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
     }
 
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
-    abstract public String getName(); // Usually same as key, but in some cases (i.e. TRON) it could be different.
+    abstract public String getName(); // Usually same as key, but in some cases it could be different.
     abstract public String getDisplayName();
     abstract public int getScale(); // Number of decimal places
+    abstract public String getAssetType();
 
     @Override
     public boolean equals(Object other) {
-        // TODO Should we just look at getKey? Should all Unknown assets be equal to each other?
-        return (other instanceof Asset) && getClass().equals(other.getClass());
+        return (other instanceof Asset) && getAssetType().equals(((Asset)other).getAssetType()) && getKey().equals(((Asset)other).getKey());
     }
 
     @Override
@@ -116,18 +115,6 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
         String assetType = Serialization.string_deserialize(o.getString("assetType"));
         String key = Serialization.string_deserialize(o.getString("key"));
         return Asset.getAsset(assetType, key);
-    }
-
-    public String getAssetType() {
-        if(this instanceof Fiat) {
-            return "!FIAT!";
-        }
-        else if(this instanceof Coin) {
-            return "!COIN!";
-        }
-        else {
-            return ((Token)this).getTokenType();
-        }
     }
 
     public static Asset getAsset(String assetType, String key) {

@@ -37,6 +37,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     abstract public boolean isIncluded(String data);
     abstract public String getIncludedString();
     abstract public Class<?> getDialogClass();
+    abstract public String getFilterType();
 
     // Each subclass is serialized and deserialized differently.
     abstract public String serializeToJSON_sub() throws org.json.JSONException;
@@ -74,6 +75,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
         }
     }
 
+    // Used by "Table.java". Types are different than the ones used to serialize.
     public String getType() {
         if(this instanceof DiscreteFilter) {
             return "discrete";

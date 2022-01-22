@@ -30,18 +30,13 @@ public class Token extends Crypto {
         this.display_name = modify(display_name);
     }
 
-    @Override
-    public boolean equals(Object other) {
-        return (other instanceof Token) && getKey().equals(((Token)other).getKey()) && getTokenType().equals(((Token)other).getTokenType());
-    }
-
     public String getKey() { return key; }
     public String getName() { return name; }
     public String getDisplayName() { return display_name; }
     public int getScale() { return scale; }
     public String getID() { return id; }
     public String getBlockchainID() { return blockchain_id; }
-    public String getTokenType() { return token_type; }
+    public String getAssetType() { return token_type; }
     public String getPrefix() { return prefix; }
 
     public String modify(String s) {

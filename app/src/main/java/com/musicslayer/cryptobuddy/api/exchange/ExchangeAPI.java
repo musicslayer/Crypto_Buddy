@@ -60,4 +60,8 @@ abstract public class ExchangeAPI extends API {
     public static int getMaxTransactions() {
         return MaxNumberTransactionsSetting.value;
     }
+
+    public String getAPIType() {
+        return "!EXCHANGEAPI!";
+    }
 }

@@ -52,4 +52,8 @@ abstract public class Fiat extends Asset {
 
         return fiat;
     }
+
+    public String getAssetType() {
+        return "!FIAT!";
+    }
 }

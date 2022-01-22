@@ -13,7 +13,7 @@ public class DateFilter extends Filter {
 
     public String serializeToJSON_sub() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
-            .put("filterType", Serialization.string_serialize("!DATE!"))
+            .put("filterType", Serialization.string_serialize(getFilterType()))
             .put("user_startDate", Serialization.date_serialize(user_startDate))
             .put("user_endDate", Serialization.date_serialize(user_endDate))
             .toStringOrNull();
@@ -80,5 +80,9 @@ public class DateFilter extends Filter {
 
     public Class<?> getDialogClass() {
         return DateFilterDialog.class;
+    }
+
+    public String getFilterType() {
+        return "!DATE!";
     }
 }

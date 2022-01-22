@@ -63,4 +63,8 @@ abstract public class AddressAPI extends API {
     public static int getMaxTransactions() {
         return MaxNumberTransactionsSetting.value;
     }
+
+    public String getAPIType() {
+        return "!ADDRESSAPI!";
+    }
 }

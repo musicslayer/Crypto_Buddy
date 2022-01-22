@@ -54,26 +54,4 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
 
         return transactionPortfolioObj;
     }
-
-    public static Asset getAsset(String tokenType, String key) {
-        if("!FIAT!".equals(tokenType)) {
-            return Fiat.getFiatFromKey(key);
-        }
-        else if("!COIN!".equals(tokenType)) {
-            return Coin.getCoinFromKey(key);
-        }
-        else {
-            return TokenManager.getTokenManagerFromTokenType(tokenType).getToken(key, null, null, 0, null);
-        }
-    }
-
-    public static Date legacyDeserializeDate(String s) {
-        // Input string should parse to be a long value.
-        if(s == null || "null".equals(s)) {
-            return null;
-        }
-        else {
-            return new Date(Long.parseLong(s));
-        }
-    }
 }

@@ -15,6 +15,7 @@ abstract public class API implements Serialization.SerializableToJSON {
 
     abstract public String getName();
     abstract public String getDisplayName();
+    abstract public String getAPIType();
 
     public String serializationVersion() { return "1"; }
 
@@ -32,21 +33,6 @@ abstract public class API implements Serialization.SerializableToJSON {
         String apiType = Serialization.string_deserialize(o.getString("apiType"));
         String key = Serialization.string_deserialize(o.getString("key"));
         return API.getAPI(apiType, key);
-    }
-
-    public String getAPIType() {
-        if(this instanceof AddressAPI) {
-            return "!ADDRESSAPI!";
-        }
-        else if(this instanceof PriceAPI) {
-            return "!PRICEAPI!";
-        }
-        else if(this instanceof ExchangeAPI) {
-            return "!EXCHANGEAPI!";
-        }
-        else {
-            return null;
-        }
     }
 
     public static API getAPI(String apiType, String key) {

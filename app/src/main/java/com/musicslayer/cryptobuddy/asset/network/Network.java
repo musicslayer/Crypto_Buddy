@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -72,7 +73,7 @@ abstract public class Network implements Serialization.SerializableToJSON, Parce
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof Network) && getClass().equals(other.getClass());
+        return (other instanceof Network) && getKey().equals(((Network)other).getKey());
     }
 
     public static ArrayList<Network> networks;

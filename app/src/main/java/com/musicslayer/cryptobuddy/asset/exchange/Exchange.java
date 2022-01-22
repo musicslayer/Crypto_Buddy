@@ -60,8 +60,8 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Parc
         }
     }
 
-    abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
-    abstract public String getName(); // Usually same as key, but in some cases (i.e. TRON) it could be different.
+    abstract public String getKey(); // Matches class name.
+    abstract public String getName(); // Usually same as key, but in some cases it could be different.
     abstract public String getDisplayName();
 
     public static Exchange getExchangeFromKey(String key) {
@@ -81,8 +81,7 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Parc
 
     @Override
     public boolean equals(Object other) {
-        // TODO Should we just look at getKey? Should all Unknown assets be equal to each other?
-        return (other instanceof Exchange) && getClass().equals(other.getClass());
+        return (other instanceof Exchange) && getKey().equals(((Exchange)other).getKey());
     }
 
     public boolean isSameAs(Exchange exchange) {

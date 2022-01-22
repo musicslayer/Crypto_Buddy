@@ -52,4 +52,8 @@ abstract public class Coin extends Crypto {
 
         return coin;
     }
+
+    public String getAssetType() {
+        return "!COIN!";
+    }
 }

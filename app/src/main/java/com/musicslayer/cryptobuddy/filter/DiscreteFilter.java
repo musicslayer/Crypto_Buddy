@@ -12,7 +12,7 @@ public class DiscreteFilter extends Filter {
 
     public String serializeToJSON_sub() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
-            .put("filterType", Serialization.string_serialize("!DISCRETE!"))
+            .put("filterType", Serialization.string_serialize(getFilterType()))
             .put("choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(choices)))
             .put("user_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_choices)))
             .put("user_not_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_not_choices)))
@@ -88,5 +88,9 @@ public class DiscreteFilter extends Filter {
 
     public Class<?> getDialogClass() {
         return DiscreteFilterDialog.class;
+    }
+
+    public String getFilterType() {
+        return "!DISCRETE!";
     }
 }
