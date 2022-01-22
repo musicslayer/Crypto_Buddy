@@ -49,7 +49,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         Button B_AUTHORIZE_BROWSER = findViewById(R.id.authorize_exchange_dialog_authorizeBrowserButton);
         Button B_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewButton);
 
-        // TODO For now, WebView is really buggy on recreation, so don't offer this option.
+        // TODO For now, WebView is really buggy on recreation, so don't offer this option. But in the future, we may wish to offer this.
         // android_util_AssetManager.cpp:1194] Check failed: theme->GetAssetManager() == &(*assetmanager)
         B_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
 

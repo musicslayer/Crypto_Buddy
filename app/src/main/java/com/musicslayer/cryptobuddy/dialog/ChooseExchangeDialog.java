@@ -1,17 +1,18 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.exchange.Coinbase;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.asset.exchange.STEX;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-
-// TODO Dynamically generate instead of listing each exchange button.
 
 public class ChooseExchangeDialog extends BaseDialog {
     public Exchange user_EXCHANGE;
@@ -29,43 +30,26 @@ public class ChooseExchangeDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_exchange);
 
-/*
-        Button B_BINANCE = findViewById(R.id.choose_exchange_dialog_binanceButton);
-        B_BINANCE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                user_EXCHANGE = new Binance();
-                isComplete = true;
-                dismiss();
-            }
-        });
+        TableLayout table = findViewById(R.id.choose_exchange_dialog_tableLayout);
+        table.removeAllViews();
 
-        Button B_BINANCEUS = findViewById(R.id.choose_exchange_dialog_binanceUSButton);
-        B_BINANCEUS.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                user_EXCHANGE = new BinanceUS();
-                isComplete = true;
-                dismiss();
-            }
-        });
+        for(Exchange exchange : Exchange.exchanges) {
+            TableRow TR = new TableRow(activity);
 
- */
+            AppCompatButton B = new AppCompatButton(activity);
+            B.setText(exchange.getDisplayName());
+            B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_account_balance_24, 0, 0, 0);
+            B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+                @Override
+                public void onClickImpl(View view) {
+                    user_EXCHANGE = exchange;
+                    isComplete = true;
+                    dismiss();
+                }
+            });
 
-        Button B_COINBASE = findViewById(R.id.choose_exchange_dialog_coinbaseButton);
-        B_COINBASE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                user_EXCHANGE = new Coinbase();
-                isComplete = true;
-                dismiss();
-            }
-        });
-
-        Button B_STEX = findViewById(R.id.choose_exchange_dialog_stexButton);
-        B_STEX.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                user_EXCHANGE = new STEX();
-                isComplete = true;
-                dismiss();
-            }
-        });
+            TR.addView(B);
+            table.addView(TR);
+        }
     }
 }

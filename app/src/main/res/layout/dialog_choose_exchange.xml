@@ -20,38 +20,10 @@
     <!-- Enforce a global maximum address length to protect algorithms from having to process large values. -->
 
     <TableLayout
-        android:id="@+id/choose_exchange_tableLayout"
+        android:id="@+id/choose_exchange_dialog_tableLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_exchange_dialog_toolbar">
-
-        <TableRow
-            android:id="@+id/choose_exchange_tableRow3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/choose_exchange_dialog_coinbaseButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Coinbase"
-                app:drawableLeftCompat="@drawable/ic_baseline_account_balance_24" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/choose_exchange_tableRow4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/choose_exchange_dialog_stexButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="STEX"
-                app:drawableLeftCompat="@drawable/ic_baseline_account_balance_24" />
-        </TableRow>
-
-    </TableLayout>
+        app:layout_constraintTop_toBottomOf="@id/choose_exchange_dialog_toolbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
