@@ -7,9 +7,9 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
-import com.musicslayer.cryptobuddy.dialog.OAuthCustomTabDialog;
-import com.musicslayer.cryptobuddy.dialog.OAuthDialog;
+import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.OAuthWebViewDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
@@ -23,15 +23,28 @@ import java.util.Date;
 // Handles common authentication cases.
 
 public class AuthUtil {
-    public static BaseDialogFragment fragment;
+    public static BaseDialogFragment fragmentWebView;
+    public static BaseDialogFragment fragmentBrowser;
 
     public static byte[] code_e; // Only encrypted code should be stored.
 
-    public static void authorizeOAuth(Context context) {
-        fragment.show(context, "oauth");
+    public static void authorizeOAuthWebView(Context context) {
+        fragmentWebView.show(context, "oauth_web_view");
     }
 
-    public static void restoreListeners(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
+    public static void authorizeOAuthBrowser(Context context) {
+        fragmentBrowser.show(context, "oauth_browser");
+    }
+
+    public static void restoreListenersWebView(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
+        restoreListeners(context, oAuthInfo, L, true);
+    }
+
+    public static void restoreListenersBrowser(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
+        restoreListeners(context, oAuthInfo, L, false);
+    }
+
+    public static void restoreListeners(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L, boolean needsWebView) {
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
@@ -102,20 +115,39 @@ public class AuthUtil {
         });
         progressDialogFragment.restoreListeners(context, "progress");
 
-        // Use this dialog to launch a WebView that allows the user to authenticate via OAuth.
-        BaseDialogFragment oauthDialogFragment = BaseDialogFragment.newInstance(OAuthCustomTabDialog.class, oAuthInfo);
-        oauthDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((OAuthCustomTabDialog)dialog).isComplete) {
-                    code_e = ((OAuthCustomTabDialog)dialog).user_CODE_E;
-                    progressDialogFragment.show(activity, "progress");
-                }
-            }
-        });
-        oauthDialogFragment.restoreListeners(context, "oauth");
+        // Use this dialog to ask the user to authenticate via OAuth.
+        if(needsWebView) {
+            BaseDialogFragment oauthWebViewDialogFragment = BaseDialogFragment.newInstance(OAuthWebViewDialog.class, oAuthInfo);
 
-        fragment = oauthDialogFragment;
+            oauthWebViewDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+                @Override
+                public void onDismissImpl(DialogInterface dialog) {
+                    if(((OAuthWebViewDialog)dialog).isComplete) {
+                        code_e = ((OAuthWebViewDialog)dialog).user_CODE_E;
+                        progressDialogFragment.show(activity, "progress");
+                    }
+                }
+            });
+            oauthWebViewDialogFragment.restoreListeners(context, "oauth_web_view");
+
+            fragmentWebView = oauthWebViewDialogFragment;
+        }
+        else {
+            BaseDialogFragment oauthBrowserDialogFragment = BaseDialogFragment.newInstance(OAuthBrowserDialog.class, oAuthInfo);
+
+            oauthBrowserDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
+                @Override
+                public void onDismissImpl(DialogInterface dialog) {
+                    if(((OAuthBrowserDialog)dialog).isComplete) {
+                        code_e = ((OAuthBrowserDialog)dialog).user_CODE_E;
+                        progressDialogFragment.show(activity, "progress");
+                    }
+                }
+            });
+            oauthBrowserDialogFragment.restoreListeners(context, "oauth_browser");
+
+            fragmentBrowser = oauthBrowserDialogFragment;
+        }
     }
 
     public static class OAuthInfo implements Parcelable {

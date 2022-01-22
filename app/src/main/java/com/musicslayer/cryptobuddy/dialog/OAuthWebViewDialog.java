@@ -19,32 +19,31 @@ import com.musicslayer.cryptobuddy.util.URLUtil;
 
 import java.util.HashMap;
 
-// Dialog that allows user to grant OAuth authorization.
-// TODO Use custom tabs instead of WebView.
+// Dialog that allows user to grant OAuth authorization in an embedded WebView.
 
-public class OAuthDialog extends BaseDialog {
+public class OAuthWebViewDialog extends BaseDialog {
     public byte[] user_CODE_E;
 
     AuthUtil.OAuthInfo oAuthInfo;
 
-    public OAuthDialog(Activity activity, AuthUtil.OAuthInfo oAuthInfo) {
+    public OAuthWebViewDialog(Activity activity, AuthUtil.OAuthInfo oAuthInfo) {
         super(activity);
         this.oAuthInfo = oAuthInfo;
     }
 
     public int getBaseViewID() {
-        return R.id.oauth_dialog;
+        return R.id.oauth_web_view_dialog;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_oauth);
+        setContentView(R.layout.dialog_oauth_web_view);
 
         // Use this random string to validate the OAuth response.
         String state = Alphanumeric.createRandomString(40);
 
-        WebView webView = findViewById(R.id.oauth_dialog_webView);
-        TextView loadingTextView = findViewById(R.id.oauth_dialog_loadingTextView);
+        WebView webView = findViewById(R.id.oauth_web_view_dialog_webView);
+        TextView loadingTextView = findViewById(R.id.oauth_web_view_dialog_messageTextView);
 
         webView.getSettings().setJavaScriptEnabled(true); // JavaScript is needed by some websites to complete authorizations.
         webView.setWebViewClient(new WebViewClient() {

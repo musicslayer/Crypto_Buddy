@@ -25,13 +25,13 @@ public class LossValuesSetting extends Setting {
 
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
-        optionDisplays.add("Show lost assets using numbers of the chosen locale's negative format.");
-        optionDisplays.add("Show lost assets using negative numbers.");
-        optionDisplays.add("Show lost assets using red positive numbers.");
-        optionDisplays.add("Show lost assets using positive numbers in parentheses.");
-        optionDisplays.add("Show lost assets using red numbers of the chosen locale's negative format.");
-        optionDisplays.add("Show lost assets using red negative numbers.");
-        optionDisplays.add("Show lost assets using red positive numbers in parentheses.");
+        optionDisplays.add("Show asset losses using numbers of the chosen locale's negative format.");
+        optionDisplays.add("Show asset losses using negative numbers.");
+        optionDisplays.add("Show asset losses using red positive numbers.");
+        optionDisplays.add("Show asset losses using positive numbers in parentheses.");
+        optionDisplays.add("Show asset losses using red numbers of the chosen locale's negative format.");
+        optionDisplays.add("Show asset losses using red negative numbers.");
+        optionDisplays.add("Show asset losses using red positive numbers in parentheses.");
         return optionDisplays;
     }
 

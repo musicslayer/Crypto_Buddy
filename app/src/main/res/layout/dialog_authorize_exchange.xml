@@ -46,21 +46,21 @@
         app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_spinner" />
 
     <TextView
-        android:id="@+id/authorize_exchange_dialog_authorizeCustomTabTextView"
+        android:id="@+id/authorize_exchange_dialog_authorizeBrowserTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Authorize in a CustomTab - RECOMMENDED"
+        android:text="Authorize in a Browser App"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_exchangeStatusView" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/authorize_exchange_dialog_authorizeCustomTabButton"
+        android:id="@+id/authorize_exchange_dialog_authorizeBrowserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Authorize"
         app:drawableLeftCompat="@drawable/ic_baseline_security_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_authorizeCustomTabTextView" />
+        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_authorizeBrowserTextView" />
 
     <TextView
         android:id="@+id/authorize_exchange_dialog_authorizeWebViewTextView"
@@ -69,7 +69,7 @@
         android:paddingTop="20dp"
         android:text="Authorize in a WebView - Required for some older devices"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_authorizeCustomTabButton" />
+        app:layout_constraintTop_toBottomOf="@id/authorize_exchange_dialog_authorizeBrowserButton" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/authorize_exchange_dialog_authorizeWebViewButton"

@@ -23,8 +23,12 @@ public class Coinbase extends ExchangeAPI {
         return "Coinbase".equals(exchange.getName());
     }
 
-    public void authorize(Context context) {
-        AuthUtil.authorizeOAuth(context);
+    public void authorizeWebView(Context context) {
+        AuthUtil.authorizeOAuthWebView(context);
+    }
+
+    public void authorizeBrowser(Context context) {
+        AuthUtil.authorizeOAuthBrowser(context);
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
@@ -47,7 +51,8 @@ public class Coinbase extends ExchangeAPI {
             }
         };
 
-        AuthUtil.restoreListeners(context, oAuthInfo, L_OAuth);
+        AuthUtil.restoreListenersWebView(context, oAuthInfo, L_OAuth);
+        AuthUtil.restoreListenersBrowser(context, oAuthInfo, L_OAuth);
     }
 
     public boolean isAuthorized() {

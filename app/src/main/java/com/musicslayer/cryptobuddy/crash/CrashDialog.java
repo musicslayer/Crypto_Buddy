@@ -63,6 +63,25 @@ abstract public class CrashDialog extends Dialog {
         }
     }
 
+    // This is not a real Dialog method - we are just adding this ourselves.
+    final protected void onResume() {
+        try {
+            onResumeImpl();
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+
+            if(canLaunchCrashReporterDialog()) {
+                CrashException crashException = new CrashException(e);
+                crashException.setLocationInfo(activity,null);
+                CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
+            }
+        }
+    }
+
     @Override
     final public void show() {
         try {
@@ -132,6 +151,7 @@ abstract public class CrashDialog extends Dialog {
     // These are optional for subclasses to override.
     public void onBackPressedImpl() { super.onBackPressed(); } // Unlike in Activities, here we allow default behavior.
     protected void onCreateImpl(Bundle savedInstanceState) {}
+    public void onResumeImpl() {}
     public void showImpl() {}
     public Bundle onSaveInstanceStateImpl(Bundle bundle) { return bundle; }
     public void onRestoreInstanceStateImpl(Bundle bundle) {}

@@ -196,7 +196,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, mergedExchangeData);
 
                 updateLayout();
-                ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_downloaded");
+                ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_data_downloaded");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");

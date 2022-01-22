@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.activity;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -29,10 +28,10 @@ abstract public class BaseActivity extends CrashActivity {
                 public void onInAppPurchase() {}
             });
 
-            CallbackActivity.setCallbackListener(new CallbackActivity.CallbackListener() {
-                @Override
-                public void onCallback(Intent intent) {}
-            });
+            if(savedInstanceState == null) {
+                CallbackActivity.wasCallbackFired[0] = false;
+                CallbackActivity.lastIntent[0] = null;
+            }
 
             // Keep trying in every activity if the first call during initialization was not successful.
             // Do not pass in the application context here.

@@ -63,6 +63,14 @@ public class DownloadExchangeDataDialog extends BaseDialog {
             }
         });
 
+        TextView T_MESSAGE = findViewById(R.id.download_exchange_data_dialog_messageTextView);
+        if(exchangeArrayList.isEmpty()) {
+            T_MESSAGE.setVisibility(View.VISIBLE);
+        }
+        else {
+            T_MESSAGE.setVisibility(View.GONE);
+        }
+
         Button B_DOWNLOAD = findViewById(R.id.download_exchange_data_dialog_downloadButton);
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override

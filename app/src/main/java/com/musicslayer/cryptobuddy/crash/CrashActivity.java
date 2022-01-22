@@ -1,15 +1,21 @@
 package com.musicslayer.cryptobuddy.crash;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.musicslayer.cryptobuddy.dialog.BaseDialog;
+import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+
+import java.util.ArrayList;
 
 abstract public class CrashActivity extends AppCompatActivity {
     @Override
@@ -45,6 +51,25 @@ abstract public class CrashActivity extends AppCompatActivity {
             CrashException crashException = new CrashException(e);
             crashException.setLocationInfo(this, null);
             crashException.appendExtraInfoFromArgument(savedInstanceState);
+
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
+        }
+    }
+
+    @Override
+    final public void onResume() {
+        try {
+            super.onResume();
+            onResumeImpl();
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+
+            CrashException crashException = new CrashException(e);
+            crashException.setLocationInfo(this, null);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
         }
@@ -146,4 +171,13 @@ abstract public class CrashActivity extends AppCompatActivity {
     public boolean onOptionsItemSelectedImpl(MenuItem item) { return false; }
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {}
     public void onRestoreInstanceStateImpl(Bundle bundle) {}
+
+    // Call our own "onResume" method on the uppermost visible Dialog.
+    public void onResumeImpl() {
+        ArrayList<Dialog> baseDialogArrayList = BaseDialogFragment.getAllDialogs(this);
+        if(!baseDialogArrayList.isEmpty()) {
+            BaseDialog lastBaseDialog = (BaseDialog) baseDialogArrayList.get(baseDialogArrayList.size() - 1);
+            lastBaseDialog.onResume();
+        }
+    }
 }

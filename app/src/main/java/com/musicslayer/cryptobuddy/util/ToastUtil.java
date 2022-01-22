@@ -44,8 +44,8 @@ public class ToastUtil {
         toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", getToastDuration()));
         toastMap.put("no_internet_permission", Toast.makeText(context, "Internet permission is not granted.", getToastDuration()));
 
-        toastMap.put("authorization_failed", Toast.makeText(context, "Authorization did not complete successfully. Check your internet connection and try again.", getToastDuration()));
         toastMap.put("authorization_successful", Toast.makeText(context, "Authorization completed successfully.", getToastDuration()));
+        toastMap.put("authorization_failed", Toast.makeText(context, "Authorization did not complete successfully. Check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("new_transaction_filtered", Toast.makeText(context, "Added transaction(s) are being filtered.", getToastDuration()));
 
