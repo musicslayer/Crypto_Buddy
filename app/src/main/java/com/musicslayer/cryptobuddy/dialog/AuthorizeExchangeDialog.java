@@ -23,6 +23,9 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// TODO For now, WebView is really buggy on recreation, so don't offer this option. But in the future, we may wish to offer this.
+// android_util_AssetManager.cpp:1194] Check failed: theme->GetAssetManager() == &(*assetmanager)
+
 public class AuthorizeExchangeDialog extends BaseDialog {
     public ArrayList<Exchange> exchangeArrayList;
     public HashMap<Exchange, ExchangeAPI> exchangeAPIMap;
@@ -49,9 +52,10 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         Button B_AUTHORIZE_BROWSER = findViewById(R.id.authorize_exchange_dialog_authorizeBrowserButton);
         Button B_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewButton);
 
-        // TODO For now, WebView is really buggy on recreation, so don't offer this option. But in the future, we may wish to offer this.
-        // android_util_AssetManager.cpp:1194] Check failed: theme->GetAssetManager() == &(*assetmanager)
+        // While WebView is buggy, don't show this option.
+        TextView T_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewTextView);
         B_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
+        T_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
 
         BorderedSpinnerView bsv = findViewById(R.id.authorize_exchange_dialog_spinner);
         bsv.setOptions(options);

@@ -52,12 +52,10 @@ android {
         buildConfigField("String", "ad_unit_id_test", secretProperties['ad_unit_id_test'])
         buildConfigField("String", "ad_unit_id_real", secretProperties['ad_unit_id_real'])
 
-        buildConfigField("String", "binance_client_id", secretProperties['binance_client_id'])
-        buildConfigField("String", "binance_client_secret", secretProperties['binance_client_secret'])
-        buildConfigField("String", "binance_us_client_id", secretProperties['binance_us_client_id'])
-        buildConfigField("String", "binance_us_client_secret", secretProperties['binance_us_client_secret'])
         buildConfigField("String", "coinbase_client_id", secretProperties['coinbase_client_id'])
         buildConfigField("String", "coinbase_client_secret", secretProperties['coinbase_client_secret'])
+        buildConfigField("String", "gemini_client_id", secretProperties['gemini_client_id'])
+        buildConfigField("String", "gemini_client_secret", secretProperties['gemini_client_secret'])
         buildConfigField("String", "stex_client_id", secretProperties['stex_client_id'])
         buildConfigField("String", "stex_client_secret", secretProperties['stex_client_secret'])
     }
