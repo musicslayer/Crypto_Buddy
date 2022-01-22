@@ -91,19 +91,18 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_cryptoPricesButton"
+                android:id="@+id/main_exchangeExplorerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Crypto\nPrices"
-                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
+                android:text="Exchange\nExplorer"
+                app:drawableLeftCompat="@drawable/ic_baseline_forward_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_cryptoConverterButton"
+                android:id="@+id/main_exchangePortfolioViewerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Crypto\nConverter"
-                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
-
+                android:text="Exchange\nPortfolio"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
         </TableRow>
 
     </TableLayout>
@@ -152,18 +151,19 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_exchangeExplorerButton"
+                android:id="@+id/main_cryptoConverterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Exchange\nExplorer"
-                app:drawableLeftCompat="@drawable/ic_baseline_forward_24" />
+                android:text="Crypto\nConverter"
+                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_exchangePortfolioViewerButton"
+                android:id="@+id/main_cryptoPricesButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Exchange\nPortfolio"
-                app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
+                android:text="Crypto\nPrices"
+                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
+
         </TableRow>
 
         <TableRow

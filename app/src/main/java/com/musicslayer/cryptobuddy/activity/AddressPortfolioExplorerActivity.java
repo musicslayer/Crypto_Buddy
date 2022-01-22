@@ -393,8 +393,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenuImpl(Menu menu) {
-        menu.add(0, 1, 100, "Prices");
-        menu.add(0, 2, 200, "Converter");
+        menu.add(0, 1, 100, "Crypto Prices");
+        menu.add(0, 2, 200, "Crypto Converter");
         menu.add(0, 3, 300, "Report Feedback");
         return true;
     }

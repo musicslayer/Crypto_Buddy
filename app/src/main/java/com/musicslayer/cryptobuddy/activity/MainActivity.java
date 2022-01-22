@@ -366,8 +366,8 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenuImpl(Menu menu) {
         menu.add(0, 1, 100, "About");
         menu.add(0, 2, 200, "Settings");
-        menu.add(0, 3, 300, "Report Feedback");
-        menu.add(0, 4, 400, "Share App");
+        menu.add(0, 3, 300, "Share App");
+        menu.add(0, 4, 400, "Report Feedback");
         return true;
     }
 
@@ -386,12 +386,11 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            //BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None", "").show(MainActivity.this, "feedback");
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None").show(MainActivity.this, "feedback");
+            BaseDialogFragment.newInstance(ShareAppDialog.class).show(MainActivity.this, "share");
             return true;
         }
         else if (id == 4) {
-            BaseDialogFragment.newInstance(ShareAppDialog.class).show(MainActivity.this, "share");
+            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "None").show(MainActivity.this, "feedback");
             return true;
         }
 
