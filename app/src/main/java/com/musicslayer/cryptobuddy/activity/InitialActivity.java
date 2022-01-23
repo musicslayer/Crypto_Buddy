@@ -28,8 +28,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
 
-// TODO Make ScrollViews keep the scrollbar visible.
-
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
