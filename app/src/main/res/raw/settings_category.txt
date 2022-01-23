@@ -1,0 +1,6 @@
+AppearanceSettingsCategory
+ConfirmationSettingsCategory
+DisplayLocalizationSettingsCategory
+FormattingSettingsCategory
+NetworkSettingsCategory
+ResetDataSettingsCategory

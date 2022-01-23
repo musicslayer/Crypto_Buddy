@@ -15,10 +15,10 @@ import java.util.HashMap;
 
 abstract public class Setting implements Serialization.SerializableToJSON {
     public static ArrayList<Setting> settings;
-    public static HashMap<String, Setting> settings_map;
-    public static HashMap<String, Setting> settings_settings_map;
-    public static ArrayList<String> settings_names;
-    public static ArrayList<String> settings_display_names;
+    public static HashMap<String, Setting> setting_map;
+    public static HashMap<String, Setting> setting_settings_map;
+    public static ArrayList<String> setting_names;
+    public static ArrayList<String> setting_display_names;
 
     public int chosenOptionPosition;
     public String chosenOptionName;
@@ -63,12 +63,12 @@ abstract public class Setting implements Serialization.SerializableToJSON {
 
     public static void initialize(Context context) {
         settings = new ArrayList<>();
-        settings_map = new HashMap<>();
-        settings_settings_map = new HashMap<>();
-        settings_display_names = new ArrayList<>();
+        setting_map = new HashMap<>();
+        setting_settings_map = new HashMap<>();
+        setting_display_names = new ArrayList<>();
 
-        settings_names = FileUtil.readFileIntoLines(context, R.raw.settings_setting);
-        for(String settingName : settings_names) {
+        setting_names = FileUtil.readFileIntoLines(context, R.raw.settings_setting);
+        for(String settingName : setting_names) {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
 
             Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
@@ -89,14 +89,14 @@ abstract public class Setting implements Serialization.SerializableToJSON {
             setting.setSetting(idx);
 
             settings.add(setting);
-            settings_map.put(settingName, setting);
-            settings_settings_map.put(setting.getSettingsKey(), setting);
-            settings_display_names.add(setting.getDisplayName());
+            setting_map.put(settingName, setting);
+            setting_settings_map.put(setting.getSettingsKey(), setting);
+            setting_display_names.add(setting.getDisplayName());
         }
     }
 
     public static Setting getSettingFromKey(String key) {
-        Setting setting = settings_map.get(key);
+        Setting setting = setting_map.get(key);
         if(setting == null) {
             setting = UnknownSetting.createUnknownSetting(key, "?");
         }

@@ -10,9 +10,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
-import com.musicslayer.cryptobuddy.settings.category.SettingCategory;
+import com.musicslayer.cryptobuddy.settings.category.SettingsCategory;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+
+import java.util.ArrayList;
 
 public class SettingsActivity extends BaseActivity {
     public int getAdLayoutViewID() {
@@ -33,15 +35,17 @@ public class SettingsActivity extends BaseActivity {
 
         LinearLayout L = findViewById(R.id.settings_linearLayout);
 
+        ArrayList<SettingsCategory> settingsCategoryArrayList = SettingsCategory.setting_categories;
+        ArrayList<String> settingsCategoryDisplayNames = SettingsCategory.settings_category_display_names;
+
         BorderedSpinnerView bsv = findViewById(R.id.settings_category_spinner);
-        bsv.setOptions(SettingCategory.settings_category_display_names);
+        bsv.setOptions(settingsCategoryDisplayNames);
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 L.removeAllViews();
 
-                SettingCategory settingCategory = SettingCategory.setting_categories.get(pos);
-                for(Setting setting : settingCategory.settingArrayList) {
+                for(Setting setting : settingsCategoryArrayList.get(pos).getSettings()) {
                     L.addView(setting.createSettingView(SettingsActivity.this));
                 }
             }

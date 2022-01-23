@@ -22,7 +22,7 @@ import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.settings.category.SettingCategory;
+import com.musicslayer.cryptobuddy.settings.category.SettingsCategory;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -57,7 +57,7 @@ public class InitialActivity extends BaseActivity {
         Purchases.loadAllPurchases(applicationContext);
         Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
-        SettingCategory.initialize(applicationContext);
+        SettingsCategory.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);
         if(!Purchases.isUnlockTokensPurchased()) {
