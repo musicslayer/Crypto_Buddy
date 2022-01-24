@@ -58,6 +58,8 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_main);
 
+        multilineTextWorkaround();
+
         InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
             @Override
             public void onInAppPurchase() {
@@ -278,6 +280,16 @@ public class MainActivity extends BaseActivity {
         }
 
         updateLayout();
+    }
+
+    public void multilineTextWorkaround() {
+        // When the app starts, buttons with multiline text that is horizontally centered shift their text quickly.
+        // To work around this, make sure the second line of text is longer.
+        Button B1 = findViewById(R.id.main_transactionExplorerButton);
+        B1.setText("Transaction\n     Explorer     ");
+
+        Button B2 = findViewById(R.id.main_transactionPortfolioViewerButton);
+        B2.setText("Transaction\n     Portfolio     ");
     }
 
     public void updateLayout() {

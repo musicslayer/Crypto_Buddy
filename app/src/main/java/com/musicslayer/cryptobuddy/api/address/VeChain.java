@@ -75,7 +75,7 @@ public class VeChain extends AddressAPI {
                 for(int i = 0; i < tokenArray.length(); i++) {
                     JSONObject tokenData = tokenArray.getJSONObject(i);
 
-                    Token token = TokenManager.getTokenManagerFromKey("VETTokenManager").getToken(tokenData.getString("symbol"), "?", "?", 18, "?");
+                    Token token = TokenManager.getTokenManagerFromKey("VETTokenManager").getToken(cryptoAddress, tokenData.getString("symbol"), null, null, 18, null);
 
                     String tokenHexBalance = tokenData.getString("balance");
                     BigDecimal bT = new BigDecimal(new BigInteger(tokenHexBalance.substring(2), 16).toString());
@@ -197,7 +197,7 @@ public class VeChain extends AddressAPI {
                         continue;
                     }
 
-                    crypto = TokenManager.getTokenManagerFromKey("VETTokenManager").getToken(symbol, "?", "?", 18, "?");
+                    crypto = TokenManager.getTokenManagerFromKey("VETTokenManager").getToken(cryptoAddress, symbol, null, null, 18, null);
                 }
 
                 // Value is in HEX and in WEI and needs to be converted.

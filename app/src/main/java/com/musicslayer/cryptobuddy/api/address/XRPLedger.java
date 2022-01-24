@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.XRP;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
@@ -129,7 +127,7 @@ public class XRPLedger extends AddressAPI {
                             String id = cryptoAddress.address + "_" + name; // This account is the issuer.
                             String key = id;
 
-                            Token token = TokenManager.getTokenManagerFromKey("XRPTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                            Token token = TokenManager.getTokenManagerFromKey("XRPTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                             currentBalanceArrayList.add(new AssetQuantity(value.toPlainString(), token));
                         }
@@ -158,7 +156,7 @@ public class XRPLedger extends AddressAPI {
                         String id = tokenInfo.getString("account") + "_" + name;
                         String key = id;
 
-                        Token token = TokenManager.getTokenManagerFromKey("XRPTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                        Token token = TokenManager.getTokenManagerFromKey("XRPTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                         currentBalanceArrayList.add(new AssetQuantity(tokenBalance.toPlainString(), token));
                     }
@@ -294,7 +292,7 @@ public class XRPLedger extends AddressAPI {
                         String id = tokenData.getString("issuer") + "_" + name;
                         String key = id;
 
-                        crypto = TokenManager.getTokenManagerFromKey("XRPTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                        crypto = TokenManager.getTokenManagerFromKey("XRPTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                         amount = tokenData.getString("value");
 
@@ -309,10 +307,6 @@ public class XRPLedger extends AddressAPI {
 
                     transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
-                }
-                else {
-                    // New type?
-                    Log.e("Crypto Buddy", "New Type = " + type);
                 }
             }
 

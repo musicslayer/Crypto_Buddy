@@ -87,7 +87,7 @@ public class CardanoExplorer extends AddressAPI {
                         scale = asset.getInt("decimals");
                     }
 
-                    crypto = TokenManager.getTokenManagerFromKey("ADATokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("ADATokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
                 }
 
                 BigDecimal b = new BigDecimal(balance.getString("quantity"));
@@ -209,7 +209,7 @@ public class CardanoExplorer extends AddressAPI {
                                 scale = asset.getInt("decimals");
                             }
 
-                            Token token = TokenManager.getTokenManagerFromKey("ADATokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                            Token token = TokenManager.getTokenManagerFromKey("ADATokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                             if(!amountMap.containsKey(token)) {
                                 amountMap.put(token, BigDecimal.ZERO);
@@ -262,7 +262,7 @@ public class CardanoExplorer extends AddressAPI {
                                 scale = asset.getInt("decimals");
                             }
 
-                            Token token = TokenManager.getTokenManagerFromKey("ADATokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                            Token token = TokenManager.getTokenManagerFromKey("ADATokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                             if(!amountMap.containsKey(token)) {
                                 amountMap.put(token, BigDecimal.ZERO);

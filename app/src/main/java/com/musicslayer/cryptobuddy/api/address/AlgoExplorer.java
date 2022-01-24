@@ -75,7 +75,7 @@ public class AlgoExplorer extends AddressAPI {
                     String display_name = tokenJSON.getString("name");
                     int scale = tokenJSON.getInt("decimals");
 
-                    Token token = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                     BigDecimal value = new BigDecimal(asset.getString("amount"));
                     value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
@@ -265,7 +265,7 @@ public class AlgoExplorer extends AddressAPI {
                     String display_name = tokenJSON.getString("name");
                     int scale = tokenJSON.getInt("decimals");
 
-                    crypto = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                     value = new BigDecimal(jsonTransaction.getJSONObject("asset-transfer-transaction").getString("amount"));
                     value = value.movePointLeft(cryptoAddress.getCrypto().getScale());

@@ -22,10 +22,6 @@ public class Gemini extends ExchangeAPI {
         return "Gemini".equals(exchange.getName());
     }
 
-    public void authorizeWebView(Context context) {
-        AuthUtil.authorizeOAuthWebView(context);
-    }
-
     public void authorizeBrowser(Context context) {
         AuthUtil.authorizeOAuthBrowser(context);
     }
@@ -50,7 +46,6 @@ public class Gemini extends ExchangeAPI {
             }
         };
 
-        AuthUtil.restoreListenersWebView(context, oAuthInfo, L_OAuth);
         AuthUtil.restoreListenersBrowser(context, oAuthInfo, L_OAuth);
     }
 

@@ -28,6 +28,11 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
 
+// TODO NFT Viewer
+// TODO Discrepancy Viewer
+// ProgresDialog could show more info.
+// Make Redirect page look better.
+
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {

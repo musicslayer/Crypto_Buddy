@@ -63,10 +63,10 @@ public class Bitquery extends AddressAPI {
                             continue;
                         }
 
-                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                         if(crypto instanceof UnknownToken) {
                             // Try BEP8
-                            crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                            crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                         }
                         if(crypto instanceof UnknownToken) {
                             // new UnknownToken type.
@@ -198,10 +198,10 @@ public class Bitquery extends AddressAPI {
                         continue;
                     }
 
-                    crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                    crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                     if(crypto instanceof UnknownToken) {
                         // Try BEP8
-                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                     }
                     if(crypto instanceof UnknownToken) {
                         // new UnknownToken type.
@@ -259,10 +259,10 @@ public class Bitquery extends AddressAPI {
                         continue;
                     }
 
-                    crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                    crypto = TokenManager.getTokenManagerFromKey("BinanceChainTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                     if(crypto instanceof UnknownToken) {
                         // Try BEP8
-                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoName, "?", "?", 0, "?");
+                        crypto = TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager").getToken(cryptoAddress, cryptoName, null, null, 0, null);
                     }
                     if(crypto instanceof UnknownToken) {
                         // new UnknownToken type.

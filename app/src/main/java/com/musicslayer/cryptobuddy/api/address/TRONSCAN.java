@@ -70,7 +70,7 @@ public class TRONSCAN extends AddressAPI {
 
                     String name = o.getString("token_abbr");
                     String display_name = o.getString("token_name");
-                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else if(type == 20){
                     if(!shouldIncludeTokens(cryptoAddress)) {
@@ -79,7 +79,7 @@ public class TRONSCAN extends AddressAPI {
 
                     String name = o.getString("token_abbr");
                     String display_name = o.getString("token_name");
-                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else {
                     // Other types (NFTs)?
@@ -316,7 +316,7 @@ public class TRONSCAN extends AddressAPI {
                     else if("trc10".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                        crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                         if(shouldIncludeTokens(cryptoAddress)) {
                             transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
@@ -326,7 +326,7 @@ public class TRONSCAN extends AddressAPI {
                     else if("trc20".equals(tokenType)) {
                         String name = tokenInfo.getString("tokenAbbr");
                         String display_name = tokenInfo.getString("tokenName");
-                        crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                        crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                         if(shouldIncludeTokens(cryptoAddress)) {
                             transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
@@ -406,13 +406,13 @@ public class TRONSCAN extends AddressAPI {
                 else if("trc10".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");
                     String display_name = tokenInfo.getString("tokenName");
-                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else if("trc20".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");
                     String display_name = tokenInfo.getString("tokenName");
 
-                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else {
                     // Don't deal with NFTs yet...
@@ -494,13 +494,13 @@ public class TRONSCAN extends AddressAPI {
                 else if("trc10".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");
                     String display_name = tokenInfo.getString("tokenName");
-                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else if("trc20".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");
                     String display_name = tokenInfo.getString("tokenName");
 
-                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                    crypto = TokenManager.getTokenManagerFromKey("TronSmartTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                 }
                 else {
                     // Don't deal with NFTs yet...

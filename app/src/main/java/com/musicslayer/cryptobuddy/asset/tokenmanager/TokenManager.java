@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -51,7 +52,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
     abstract public String getSettingsKey();
 
     // Most times we cannot do these, but subclasses can override these if they can do any of them.
-    public Token lookupToken(String baseURL, String id) { return null; }
+    public Token lookupToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) { return null; }
 
     public boolean canGetJSON() { return false; }
     public String getJSON() { return null; }
@@ -125,43 +126,24 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         return tokenManager;
     }
 
-    // Try to get token, but if we can't then create a new instance.
-    public Token getOrCreateToken(String key, String name, String display_name, int scale, String id) {
+    // Try to get the token from storage, then try to look it up, then try to create it from the input information.
+    // If all of that fails, then return an UnknownToken instance.
+    public Token getToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
         Token token = getTokenWithPrecedence(key);
 
         if(token == null) {
-            token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
-            addFoundToken(token);
+            token = lookupToken(cryptoAddress, key, name, display_name, scale, id);
+
+            if(token == null || !token.isComplete()) {
+                token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+
+                if(!token.isComplete()) {
+                    token = UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+                }
+            }
         }
 
-        return token;
-    }
-
-    public Token getOrLookupToken(String baseURL, String key, String name, String display_name, int scale, String id) {
-        Token token = getTokenWithPrecedence(key);
-
-        if(token == null) {
-            token = lookupToken(baseURL, id);
-        }
-
-        if(token == null) {
-            token = UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
-        }
-        else {
-            addFoundToken(token);
-        }
-
-        return token;
-    }
-
-    // Try to get token, but if we can't then return an UnknownToken instance.
-    public Token getToken(String key, String name, String display_name, int scale, String id) {
-        Token token = getTokenWithPrecedence(key);
-
-        if(token == null) {
-            token = UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
-        }
-
+        addFoundToken(token);
         return token;
     }
 
@@ -187,7 +169,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
     }
 
     public void addDownloadedToken(Token token) {
-        if(token == null) { return; }
+        if(token == null || !token.isComplete()) { return; }
 
         String key = token.getKey();
 
@@ -217,7 +199,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
     }
 
     public void addFoundToken(Token token) {
-        if(token == null) { return; }
+        if(token == null || !token.isComplete()) { return; }
 
         String key = token.getKey();
 
@@ -247,7 +229,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
     }
 
     public void addCustomToken(Token token) {
-        if(token == null) { return; }
+        if(token == null || !token.isComplete()) { return; }
 
         String key = token.getKey();
 

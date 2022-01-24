@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.transaction.Action;
@@ -72,7 +70,7 @@ public class AtomScan extends AddressAPI {
                     // Take the *ibc/ off the name.
                     int slashIdx = name.indexOf("/");
                     name = name.substring(slashIdx + 1);
-                    crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                    crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
                 }
 
                 BigDecimal b = new BigDecimal(balance.getString("amount"));
@@ -229,7 +227,7 @@ public class AtomScan extends AddressAPI {
                                 // Take the *ibc/ off the name.
                                 int slashIdx = name.indexOf("/");
                                 name = name.substring(slashIdx + 1);
-                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
                             }
 
                             BigDecimal value = new BigDecimal(amount.getString("amount"));
@@ -263,7 +261,7 @@ public class AtomScan extends AddressAPI {
                                 // Take the *ibc/ off the name.
                                 int slashIdx = name2.indexOf("/");
                                 name2 = name2.substring(slashIdx + 1);
-                                crypto2 = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(name2, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                crypto2 = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getCrypto().getScale(), null);
                             }
 
                             BigDecimal value2 = new BigDecimal(amount2.getString("amount"));
@@ -392,7 +390,7 @@ public class AtomScan extends AddressAPI {
                                                 // Take the *ibc/ off the name.
                                                 int slashIdx = name.indexOf("/");
                                                 name = name.substring(slashIdx + 1);
-                                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
                                             }
 
                                             BigDecimal value = new BigDecimal(amountS.substring(0, idx));
@@ -450,7 +448,7 @@ public class AtomScan extends AddressAPI {
                                 // acknowledge_packet
 
                                 default:
-                                    Log.e("Crypto Buddy", "New Type = " + type);
+                                    //Log.e("Crypto Buddy", "New Type = " + type);
                             }
                         }
                     }

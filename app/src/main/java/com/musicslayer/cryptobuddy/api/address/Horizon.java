@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.util.Log;
-
 /*
 Full list of possible operations:
     Create Account
@@ -103,7 +101,7 @@ public class Horizon extends AddressAPI {
                         int scale = cryptoAddress.getCrypto().getScale();
                         String id = name + "-" + balanceData.getString("asset_issuer");
 
-                        crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                        crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
                     }
 
                     currentBalanceArrayList.add(new AssetQuantity(currentBalance, crypto));
@@ -358,8 +356,6 @@ public class Horizon extends AddressAPI {
 
                 String type = jsonTransaction.getString("type");
 
-                Log.e("Crypto Buddy Horizon", "Type = " + type);
-
                 switch(type) {
                     case "account_created":
                         // This only applies to this account being created, not this account creating another one.
@@ -393,7 +389,7 @@ public class Horizon extends AddressAPI {
                             int scale = cryptoAddress.getCrypto().getScale();
                             String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
-                            crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                            crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
                         }
 
                         transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
@@ -418,7 +414,7 @@ public class Horizon extends AddressAPI {
                             int scale = cryptoAddress.getCrypto().getScale();
                             String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
-                            crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                            crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
                         }
 
                         transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),"Transaction"));
@@ -472,7 +468,7 @@ public class Horizon extends AddressAPI {
                                 int scale = cryptoAddress.getCrypto().getScale();
                                 String id = name + "-" + jsonTransaction.getString("bought_asset_issuer");
 
-                                bought_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                                bought_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
                                 transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
                                 if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
@@ -496,7 +492,7 @@ public class Horizon extends AddressAPI {
                                 int scale = cryptoAddress.getCrypto().getScale();
                                 String id = name + "-" + jsonTransaction.getString("sold_asset_issuer");
 
-                                sold_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                                sold_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
                                 transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Token Transaction"));
                                 if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
@@ -523,7 +519,7 @@ public class Horizon extends AddressAPI {
                         break;
 
                     default:
-                        Log.e("Crypto Buddy Horizon", "New Type = " + type);
+                        //Log.e("Crypto Buddy Horizon", "New Type = " + type);
                 }
             }
 
@@ -563,7 +559,7 @@ public class Horizon extends AddressAPI {
                 int scale = cryptoAddress.getCrypto().getScale();
                 String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
-                Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
 
                 transactionTokenArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(amount, token), null, new Timestamp(null),"Issued Asset"));
                 if(transactionTokenArrayList.size() == getMaxTransactions()) { return DONE; }

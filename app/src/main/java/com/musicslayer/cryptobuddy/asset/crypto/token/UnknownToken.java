@@ -42,4 +42,9 @@ public class UnknownToken extends Token {
     private UnknownToken(String key, String name, String display_name, int scale, String id, String blockchain_id, String token_type) {
         super(key, name, display_name, scale, id, blockchain_id, token_type);
     }
+
+    public boolean isComplete() {
+        // UnknownTokens are never complete, since by definition they represent a Token where we do not know all the information.
+        return false;
+    }
 }

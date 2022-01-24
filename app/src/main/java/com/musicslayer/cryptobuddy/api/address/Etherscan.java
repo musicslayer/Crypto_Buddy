@@ -78,7 +78,7 @@ public class Etherscan extends AddressAPI {
                         String key = tokenInfo.getString("address");
                         String id = key.toLowerCase();
 
-                        Token token = TokenManager.getTokenManagerFromKey("EthereumTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                        Token token = TokenManager.getTokenManagerFromKey("EthereumTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                         BigDecimal tokenB = new BigDecimal(tokenData.getString("rawBalance"));
                         tokenB = tokenB.movePointLeft(token.getScale());
@@ -352,7 +352,7 @@ public class Etherscan extends AddressAPI {
                     String key = oT.getString("contractAddress");
                     String id = key.toLowerCase();
 
-                    Token token = TokenManager.getTokenManagerFromKey("EthereumTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("EthereumTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                     transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
                     if(transactionTokenArrayList.size() == getMaxTransactions()) { break; }

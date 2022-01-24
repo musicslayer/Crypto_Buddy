@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -96,10 +95,10 @@ public class PolygonScan extends AddressAPI {
                         String name = tokenData.getString("contract_ticker_symbol");
                         String display_name = tokenData.getString("contract_name");
 
-                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getOrCreateToken(id, name, display_name, scale, id);
+                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
                     }
                     catch(Exception e) {
-                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getToken(id, "?", "?", scale,null);
+                        token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getToken(cryptoAddress, id, null, null, scale, null);
                     }
 
                     BigDecimal value = new BigDecimal(tokenData.getString("balance"));
@@ -367,7 +366,7 @@ public class PolygonScan extends AddressAPI {
                     String key = oT.getString("contractAddress");
                     String id = key.toLowerCase();
 
-                    Token token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("PolygonTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                     transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
                     if(transactionTokenArrayList.size() == getMaxTransactions()) { break; }

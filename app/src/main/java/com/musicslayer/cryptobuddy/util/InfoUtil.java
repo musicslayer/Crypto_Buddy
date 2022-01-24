@@ -9,6 +9,8 @@ import com.musicslayer.cryptobuddy.dialog.InfoDialog;
 
 import java.util.ArrayList;
 
+// TODO Add back in Solana Rent?
+
 // Class to store specific info we want to show the user.
 public class InfoUtil {
     public static boolean hasInfo_CryptoAddress(ArrayList<CryptoAddress> cryptoAddressArrayList) {
@@ -69,9 +71,6 @@ public class InfoUtil {
                 break;
             case "VET":
                 info = "VTHO balance includes generated rewards from holding VET, but these rewards do not show up as transactions.";
-                break;
-            case "SOL":
-                info = "Transactions do not include block rewards, such as rent, that occur on the block level outside of any particular transaction.";
                 break;
             default:
                 return null;

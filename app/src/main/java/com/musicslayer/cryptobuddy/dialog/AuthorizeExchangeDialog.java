@@ -23,9 +23,6 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO For now, WebView is really buggy on recreation, so don't offer this option. But in the future, we may wish to offer this.
-// android_util_AssetManager.cpp:1194] Check failed: theme->GetAssetManager() == &(*assetmanager)
-
 public class AuthorizeExchangeDialog extends BaseDialog {
     public ArrayList<Exchange> exchangeArrayList;
     public HashMap<Exchange, ExchangeAPI> exchangeAPIMap;
@@ -50,12 +47,6 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
         TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
         Button B_AUTHORIZE_BROWSER = findViewById(R.id.authorize_exchange_dialog_authorizeBrowserButton);
-        Button B_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewButton);
-
-        // While WebView is buggy, don't show this option.
-        TextView T_AUTHORIZE_WEBVIEW = findViewById(R.id.authorize_exchange_dialog_authorizeWebViewTextView);
-        B_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
-        T_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
 
         BorderedSpinnerView bsv = findViewById(R.id.authorize_exchange_dialog_spinner);
         bsv.setOptions(options);
@@ -77,13 +68,6 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                         authorizeBrowser(activity, exchangeAPI);
                     }
                 });
-
-                B_AUTHORIZE_WEBVIEW.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-                    public void onClickImpl(View v) {
-                        ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(exchangeAPIMap, exchange);
-                        authorizeWebView(activity, exchangeAPI);
-                    }
-                });
             }
         });
 
@@ -94,7 +78,6 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         if(exchangeArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
             B_AUTHORIZE_BROWSER.setVisibility(View.GONE);
-            B_AUTHORIZE_WEBVIEW.setVisibility(View.GONE);
             T.setText("No exchanges found.");
         }
     }
@@ -119,15 +102,6 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                     setAuthorizedDisplay(exchange, true);
                 }
             });
-        }
-    }
-
-    public void authorizeWebView(Context context, ExchangeAPI exchangeAPI) {
-        if(exchangeAPI != null) {
-            exchangeAPI.authorizeWebView(activity);
-        }
-        else {
-            ToastUtil.showToast(context, "authorization_failed");
         }
     }
 

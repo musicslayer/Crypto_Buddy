@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
@@ -16,18 +17,27 @@ public class TomoChainZTokenManager extends TokenManager {
 
     public boolean canGetJSON() { return true; }
 
-    public Token lookupToken(String baseURL, String id) {
+    public Token lookupToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
+        // Don't use most inputs - we should be able to download everything needed to create the Token.
+        String baseURL;
+        if(cryptoAddress.network.isMainnet()) {
+            baseURL = "https://scan.tomochain.com";
+        }
+        else {
+            baseURL = "https://scan.testnet.tomochain.com";
+        }
+
         String tokenString = RESTUtil.get(baseURL + "/api/tokens/" + id);
 
         try {
             JSONObject tokenObj = new JSONObject(tokenString);
 
-            String key = id;
-            String name = tokenObj.getString("symbol");
-            String display_name = tokenObj.getString("name");
-            int scale = tokenObj.getInt("decimals");
+            String key2 = id;
+            String name2 = tokenObj.getString("symbol");
+            String display_name2 = tokenObj.getString("name");
+            int scale2 = tokenObj.getInt("decimals");
 
-            Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+            Token token = new Token(key2, name2, display_name2, scale2, id, getBlockchainID(), getTokenType());
             return token;
         }
         catch(Exception ignored) {

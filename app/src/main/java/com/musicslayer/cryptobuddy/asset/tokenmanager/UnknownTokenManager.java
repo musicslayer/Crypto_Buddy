@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 
@@ -40,16 +41,9 @@ public class UnknownTokenManager extends TokenManager {
         this.custom_token_display_names = new ArrayList<>();
     }
 
-    // Always return unknown tokens.
-    public Token getOrCreateToken(String key, String name, String display_name, int scale, String id) {
-        return UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
-    }
-
-    public Token getOrLookupToken(String baseURL, String key, String name, String display_name, int scale, String id) {
-        return UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
-    }
-
-    public Token getToken(String key, String name, String display_name, int scale, String id) {
+    @Override
+    // Always return unknown tokens, regardless of if the information is complete.
+    public Token getToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
         return UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
     }
 }

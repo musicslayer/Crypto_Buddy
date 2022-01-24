@@ -79,7 +79,7 @@ public class Callisto extends AddressAPI {
                     String key = tokenData.getString("contractAddress");
                     String id = key.toLowerCase();
 
-                    Token token = TokenManager.getTokenManagerFromKey("CallistoTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("CallistoTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                     BigDecimal value = new BigDecimal(tokenData.getString("balance")); //
                     value = value.movePointLeft(token.getScale());
@@ -298,7 +298,7 @@ public class Callisto extends AddressAPI {
                     String key = oT.getString("contractAddress");
                     String id = key.toLowerCase();
 
-                    Token token = TokenManager.getTokenManagerFromKey("CallistoTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("CallistoTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                     transactionTokenArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
                     if(transactionTokenArrayList.size() == getMaxTransactions()) { break; }

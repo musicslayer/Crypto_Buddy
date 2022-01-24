@@ -125,7 +125,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
             return Coin.getCoinFromKey(key);
         }
         else {
-            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(key, null, null, 0, null);
+            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.KAVA;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -74,7 +72,7 @@ public class KavaLightClient extends AddressAPI {
                         continue;
                     }
 
-                    crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(denom, "?", "?", 0, "?");
+                    crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, denom, null, null, 0, null);
                 }
 
                 currentBalanceArrayList.add(new AssetQuantity(currentBalance, crypto));
@@ -225,7 +223,7 @@ public class KavaLightClient extends AddressAPI {
                                     break;
                                 }
 
-                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
                             }
 
                             BigDecimal value2 = new BigDecimal(amount.getString("amount"));
@@ -256,7 +254,7 @@ public class KavaLightClient extends AddressAPI {
                                     break;
                                 }
 
-                                crypto2 = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name2, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                crypto2 = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getCrypto().getScale(), null);
                             }
 
                             BigDecimal value3 = new BigDecimal(amount2.getString("amount"));
@@ -382,7 +380,7 @@ public class KavaLightClient extends AddressAPI {
                                                     continue;
                                                 }
 
-                                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(name, "?", "?", cryptoAddress.getCrypto().getScale(), "?");
+                                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
                                             }
 
                                             BigDecimal value = new BigDecimal(amountS.substring(0, idx));
@@ -440,7 +438,7 @@ public class KavaLightClient extends AddressAPI {
                                 // acknowledge_packet
 
                                 default:
-                                    Log.e("Crypto Buddy", "New Type = " + type);
+                                    //Log.e("Crypto Buddy", "New Type = " + type);
                             }
                         }
                     }

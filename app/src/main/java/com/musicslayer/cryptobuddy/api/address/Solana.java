@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.SOL;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.SOL_Devnet;
@@ -16,12 +17,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-// TODO Currently, we cannot search for all rent payments.
-// Bitquery has API, but it is broken - https://community.bitquery.io/t/solana-block-rewards-has-confusing-account-selector/558
+// Bitquery has API, but it is broken
+// https://community.bitquery.io/t/solana-block-rewards-has-confusing-account-selector/558
+// https://support.bitquery.io/hc/en-us/requests/452
 
 // Address: AqR6BBUFG3NhC4bSAU31zhHNZ1JdSzPwM43PKSSG878N
 // Address: zPHwJvSkp6XcqjuWZcbUrDKcMHaUcwcFCLbToRHMEXv
@@ -34,8 +37,11 @@ Rent-exempt minimum: 0.00089088 SOL
  */
 
 public class Solana extends AddressAPI {
+    final String APIKEYNAME = "X-API-KEY";
+    final String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";
+
     public String getName() { return "Solana"; }
-    public String getDisplayName() { return "Solana JSON RPC API"; }
+    public String getDisplayName() { return "Solana JSON RPC & Bitquery HTTP APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
         return "SOL".equals(cryptoAddress.getCrypto().getName());
@@ -59,14 +65,14 @@ public class Solana extends AddressAPI {
         }
 
         String body =
-            "{" +
-            "  \"jsonrpc\": \"2.0\"," +
-            "  \"id\": 1," +
-            "  \"method\": \"getBalance\"," +
-            "  \"params\": [" +
-            "    \"" + cryptoAddress.address + "\"" +
-            "  ]" +
-            "}";
+                "{" +
+                        "  \"jsonrpc\": \"2.0\"," +
+                        "  \"id\": 1," +
+                        "  \"method\": \"getBalance\"," +
+                        "  \"params\": [" +
+                        "    \"" + cryptoAddress.address + "\"" +
+                        "  ]" +
+                        "}";
 
         String addressDataJSON = RESTUtil.post(baseURL, body);
         if(addressDataJSON == null) {
@@ -90,16 +96,16 @@ public class Solana extends AddressAPI {
 
         if(shouldIncludeTokens(cryptoAddress)) {
             String tokenBody =
-                "{" +
-                "  \"jsonrpc\": \"2.0\"," +
-                "  \"id\": 1," +
-                "  \"method\": \"getTokenAccountsByOwner\"," +
-                "  \"params\": [" +
-                "    \"" + cryptoAddress.address + "\"," +
-                "    {\"programId\": \"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA\"}," +
-                "    {\"encoding\": \"jsonParsed\"}" +
-                "  ]" +
-                "}";
+                    "{" +
+                            "  \"jsonrpc\": \"2.0\"," +
+                            "  \"id\": 1," +
+                            "  \"method\": \"getTokenAccountsByOwner\"," +
+                            "  \"params\": [" +
+                            "    \"" + cryptoAddress.address + "\"," +
+                            "    {\"programId\": \"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA\"}," +
+                            "    {\"encoding\": \"jsonParsed\"}" +
+                            "  ]" +
+                            "}";
 
             String addressTokenDataJSON = RESTUtil.post(baseURL, tokenBody);
             if(addressTokenDataJSON == null) {
@@ -122,7 +128,7 @@ public class Solana extends AddressAPI {
                     int scale = tokenAmount.getInt("decimals");
                     String id = info.getString("mint");
                     String key = id;
-                    Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getOrCreateToken(key, null, null, scale, id);
+                    Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getToken(cryptoAddress, key, null, null, scale, id);
 
                     BigDecimal b = new BigDecimal(tokenAmount.getString("amount"));
                     b = b.movePointLeft(token.getScale());
@@ -157,16 +163,16 @@ public class Solana extends AddressAPI {
 
         // Create an ArrayList with all the accounts owned by this one (i.e. token accounts).
         String ownerBody =
-            "{" +
-            "  \"jsonrpc\": \"2.0\"," +
-            "  \"id\": 1," +
-            "  \"method\": \"getTokenAccountsByOwner\"," +
-            "  \"params\": [" +
-            "    \"" + cryptoAddress.address + "\"," +
-            "    {\"programId\": \"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA\"}," +
-            "    {\"encoding\": \"jsonParsed\"}" +
-            "  ]" +
-            "}";
+                "{" +
+                        "  \"jsonrpc\": \"2.0\"," +
+                        "  \"id\": 1," +
+                        "  \"method\": \"getTokenAccountsByOwner\"," +
+                        "  \"params\": [" +
+                        "    \"" + cryptoAddress.address + "\"," +
+                        "    {\"programId\": \"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA\"}," +
+                        "    {\"encoding\": \"jsonParsed\"}" +
+                        "  ]" +
+                        "}";
 
         String ownerDataJSON = RESTUtil.post(baseURL, ownerBody);
         if(ownerDataJSON == null) {
@@ -180,22 +186,26 @@ public class Solana extends AddressAPI {
             // Put this address in ownerList but not tokenMap.
             ownerList.add(cryptoAddress.address);
 
-            JSONObject jsonOwner = new JSONObject(ownerDataJSON);
-            JSONArray jsonOwnerArray = jsonOwner.getJSONObject("result").getJSONArray("value");
-            for(int i = 0; i < jsonOwnerArray.length(); i++) {
-                JSONObject ownerData = jsonOwnerArray.getJSONObject(i);
-                String type = ownerData.getJSONObject("account").getJSONObject("data").getJSONObject("parsed").getString("type");
+            // Fill up "ownerList" and "tokenMap" if tokens are included.
+            // Otherwise, this information will not be needed.
+            if(shouldIncludeTokens(cryptoAddress)) {
+                JSONObject jsonOwner = new JSONObject(ownerDataJSON);
+                JSONArray jsonOwnerArray = jsonOwner.getJSONObject("result").getJSONArray("value");
+                for(int i = 0; i < jsonOwnerArray.length(); i++) {
+                    JSONObject ownerData = jsonOwnerArray.getJSONObject(i);
+                    String type = ownerData.getJSONObject("account").getJSONObject("data").getJSONObject("parsed").getString("type");
 
-                if("account".equals(type)) {
-                    String pubkey = ownerData.getString("pubkey");
-                    String mint = ownerData.getJSONObject("account").getJSONObject("data").getJSONObject("parsed").getJSONObject("info").getString("mint");
+                    if("account".equals(type)) {
+                        String pubkey = ownerData.getString("pubkey");
+                        String mint = ownerData.getJSONObject("account").getJSONObject("data").getJSONObject("parsed").getJSONObject("info").getString("mint");
 
-                    String id = mint;
-                    String key = id;
-                    Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getOrCreateToken(key, null, null, 0, id);
+                        String id = mint;
+                        String key = id;
+                        Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getToken(cryptoAddress, key, null, null, 0, id);
 
-                    ownerList.add(pubkey);
-                    tokenMap.put(pubkey, token);
+                        ownerList.add(pubkey);
+                        tokenMap.put(pubkey, token);
+                    }
                 }
             }
         }
@@ -204,9 +214,11 @@ public class Solana extends AddressAPI {
             return null;
         }
 
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+        ArrayList<Transaction> transactionNormalArrayList = new ArrayList<>(); // SOL and Tokens.
+        ArrayList<Transaction> transactionRewardsArrayList = new ArrayList<>(); // Rewards (and Rent) from BitQuery
         ArrayList<String> signatureList = new ArrayList<>();
 
+        // Process all "normal" transactions on the address.
         for(String address : ownerList) {
             String lastID = "";
             for(;;) {
@@ -219,17 +231,17 @@ public class Solana extends AddressAPI {
                 }
 
                 String body =
-                    "{" +
-                    "  \"jsonrpc\": \"2.0\"," +
-                    "  \"id\": 1," +
-                    "  \"method\": \"getSignaturesForAddress\"," +
-                    "  \"params\": [" +
-                    "    \"" + address + "\"," +
-                    "    {\"limit\": 1000, \"before\": " + lastID_s + "}" +
-                    "  ]" +
-                    "}";
+                        "{" +
+                                "  \"jsonrpc\": \"2.0\"," +
+                                "  \"id\": 1," +
+                                "  \"method\": \"getSignaturesForAddress\"," +
+                                "  \"params\": [" +
+                                "    \"" + address + "\"," +
+                                "    {\"limit\": 1000, \"before\": " + lastID_s + "}" +
+                                "  ]" +
+                                "}";
 
-                lastID = process(baseURL, body, cryptoAddress, ownerList, tokenMap, signatureList, transactionArrayList);
+                lastID = processNormal(baseURL, body, cryptoAddress, ownerList, tokenMap, signatureList, transactionNormalArrayList);
 
                 if(ERROR.equals(lastID)) {
                     return null;
@@ -240,10 +252,105 @@ public class Solana extends AddressAPI {
             }
         }
 
+        // Search BitQuery for all the block-level rewards/rent.
+        String body = "{\"query\" : \"" +
+                "query{" +
+                "  solana(network: solana) {" +
+                "    blockRewards {" +
+                "      account(account: {is: \\\"" + cryptoAddress.address + "\\\"})" +
+                "      amount" +
+                "      rewardType" +
+                "      time {" +
+                "        unixtime" +
+                "      }" +
+                "    }" +
+                "  }" +
+                "}" +
+                "\"\n}";
+
+        String addressDataJSON = RESTUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+
+        if(addressDataJSON == null) {
+            return null;
+        }
+
+        try {
+            // Block rewards/rent (all in SOL)
+            JSONObject json = new JSONObject(addressDataJSON);
+            JSONArray jsonArray = json.getJSONObject("data").getJSONObject("solana").getJSONArray("blockRewards");
+
+            for(int j = 0; j < jsonArray.length(); j++) {
+                JSONObject o = jsonArray.getJSONObject(j);
+
+                // Results should be filtered to only be for our address, but check just to make sure.
+                if(!cryptoAddress.address.equals(o.getString("account"))) {
+                    continue;
+                }
+
+                BigDecimal balance_diff_d;
+                balance_diff_d = new BigDecimal(o.getString("amount"));
+
+                String action;
+                if(balance_diff_d.compareTo(BigDecimal.ZERO) > 0) {
+                    action = "Receive";
+                }
+                else if(balance_diff_d.compareTo(BigDecimal.ZERO) < 0) {
+                    action = "Send";
+                    balance_diff_d = balance_diff_d.negate();
+                }
+                else {
+                    // Don't bother with a zero reward.
+                    continue;
+                }
+                String balance_diff_s = balance_diff_d.toPlainString();
+
+                String unixtime = o.getJSONObject("time").getString("unixtime");
+                BigInteger block_time = new BigInteger(unixtime);
+                double block_time_d = block_time.doubleValue() * 1000;
+                Date block_time_date = new Date((long)block_time_d);
+
+                Crypto crypto = cryptoAddress.getCrypto();
+                String info = o.getString("rewardType") + " (Block Level)";
+
+                transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), info));
+                if(transactionRewardsArrayList.size() == getMaxTransactions()) { return transactionRewardsArrayList; }
+            }
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return null;
+        }
+
+        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
+
+        // Roughly split max transactions between each type (rounding is OK).
+        int splitNum = 2;
+        int splitMax = getMaxTransactions()/splitNum;
+
+        transactionArrayList.addAll(transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())));
+        transactionArrayList.addAll(transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())));
+
+        transactionNormalArrayList.subList(0, Math.min(splitMax, transactionNormalArrayList.size())).clear();
+        transactionRewardsArrayList.subList(0, Math.min(splitMax, transactionRewardsArrayList.size())).clear();
+
+        while(transactionNormalArrayList.size() + transactionRewardsArrayList.size() > 0) {
+            if(transactionNormalArrayList.size() > 0) {
+                transactionArrayList.add(transactionNormalArrayList.get(0));
+                transactionNormalArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+
+            if(transactionRewardsArrayList.size() > 0) {
+                transactionArrayList.add(transactionRewardsArrayList.get(0));
+                transactionRewardsArrayList.remove(0);
+            }
+            if(transactionArrayList.size() == getMaxTransactions()) { break; }
+        }
+
         return transactionArrayList;
     }
 
-    private String process(String url, String body, CryptoAddress cryptoAddress, ArrayList<String> ownerList, HashMap<String, Token> tokenMap, ArrayList<String> signatureList, ArrayList<Transaction> transactionArrayList) {
+    private String processNormal(String url, String body, CryptoAddress cryptoAddress, ArrayList<String> ownerList, HashMap<String, Token> tokenMap, ArrayList<String> signatureList, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = RESTUtil.post(url, body);
         if(addressDataJSON == null) {
             return ERROR;
@@ -284,15 +391,15 @@ public class Solana extends AddressAPI {
 
                 // Get the individual transaction info.
                 String transactionBody =
-                    "{" +
-                    "  \"jsonrpc\": \"2.0\"," +
-                    "  \"id\": 1," +
-                    "  \"method\": \"getTransaction\"," +
-                    "  \"params\": [" +
-                    "    \"" + o.getString("signature") + "\"," +
-                    "    \"jsonParsed\"" +
-                    "  ]" +
-                    "}";
+                        "{" +
+                                "  \"jsonrpc\": \"2.0\"," +
+                                "  \"id\": 1," +
+                                "  \"method\": \"getTransaction\"," +
+                                "  \"params\": [" +
+                                "    \"" + o.getString("signature") + "\"," +
+                                "    \"jsonParsed\"" +
+                                "  ]" +
+                                "}";
 
                 String transactionJSON = RESTUtil.post(baseURL, transactionBody);
                 JSONObject transactionObj = new JSONObject(transactionJSON);
@@ -314,8 +421,8 @@ public class Solana extends AddressAPI {
                     continue;
                 }
 
-                // This map only needs to store values within a single transaction.
-                // Start by filling the map in with all the pre-balances.
+                // This map only needs to store SOL values within a single transaction.
+                // Start by filling the map in with all the SOL pre-balances.
                 HashMap<String, BigDecimal> map = new HashMap<>();
 
                 // These should be the same length.
@@ -368,6 +475,9 @@ public class Solana extends AddressAPI {
                     JSONArray instructions = inner.getJSONArray("instructions");
                     for(int jj = 0; jj < instructions.length(); jj++) {
                         JSONObject instruction = instructions.getJSONObject(jj);
+
+                        if(!instruction.has("parsed")) { continue; }
+
                         JSONObject parsed = instruction.getJSONObject("parsed");
 
                         String type = parsed.getString("type");
@@ -378,8 +488,8 @@ public class Solana extends AddressAPI {
                             String from = info.getString("source");
                             String to = info.getString("destination");
 
-                            boolean isFrom = ownerList.contains(info.getString("source"));
-                            boolean isTo = ownerList.contains(info.getString("destination"));
+                            boolean isFrom = ownerList.contains(from);
+                            boolean isTo = ownerList.contains(to);
 
                             if(!info.has("lamports")) {
                                 // Tokens will have "amount" instead of lamports.
@@ -391,17 +501,10 @@ public class Solana extends AddressAPI {
                                 if (isTo) {
                                     action = "Receive";
                                     token = tokenMap.get(to);
-                                    subtract(map, from, b2);
                                 } else if (isFrom) {
                                     action = "Send";
                                     token = tokenMap.get(from);
-                                    add(map, to, b2);
                                 } else {
-                                    // Our address is not directly involved.
-                                    // Keep track of this in the hashmap in case one of those accounts is closed by our account later.
-                                    // If we do use this later, it will only be for SOL.
-                                    subtract(map, from, b2);
-                                    add(map, to, b2);
                                     continue;
                                 }
 
@@ -413,14 +516,14 @@ public class Solana extends AddressAPI {
                                 if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                             else {
-                                BigDecimal b = new BigDecimal(info.getString("lamports"));
-                                b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
-                                String amount = b.toPlainString();
-
                                 // If I send something to myself, just reject it!
                                 if (cryptoAddress.network.matchesAddress(from, to)) {
                                     continue;
                                 }
+
+                                BigDecimal b = new BigDecimal(info.getString("lamports"));
+                                b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                                String amount = b.toPlainString();
 
                                 String action;
                                 if (cryptoAddress.matchesAddress(to)) {
@@ -448,10 +551,6 @@ public class Solana extends AddressAPI {
                             boolean isFrom = ownerList.contains(info.getString("source"));
                             boolean isTo = ownerList.contains(info.getString("destination"));
 
-                            BigDecimal b = new BigDecimal(tokenAmount.getString("amount"));
-                            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
-                            String amount = b.toPlainString();
-
                             // If I send something to myself, just reject it!
                             if(isFrom && isTo) {
                                 continue;
@@ -469,7 +568,11 @@ public class Solana extends AddressAPI {
                             int scale = tokenAmount.getInt("decimals");
                             String id = info.getString("mint");
                             String key = id;
-                            Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getOrCreateToken(key, null, null, scale, id);
+                            Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getToken(cryptoAddress, key, null, null, scale, id);
+
+                            BigDecimal b = new BigDecimal(tokenAmount.getString("amount"));
+                            b = b.movePointLeft(token.getScale());
+                            String amount = b.toPlainString();
 
                             transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, token), null, new Timestamp(block_time_date), "Transaction"));
                             if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -480,14 +583,14 @@ public class Solana extends AddressAPI {
                             String from = info.getString("source");
                             String to = info.getString("newAccount");
 
-                            BigDecimal b = new BigDecimal(info.getString("lamports"));
-                            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
-                            String amount = b.toPlainString();
-
                             // If I send something to myself, just reject it!
                             if (cryptoAddress.network.matchesAddress(from, to)) {
                                 continue;
                             }
+
+                            BigDecimal b = new BigDecimal(info.getString("lamports"));
+                            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                            String amount = b.toPlainString();
 
                             String action;
                             if (cryptoAddress.matchesAddress(to)) {
@@ -626,10 +729,6 @@ public class Solana extends AddressAPI {
                         boolean isFrom = ownerList.contains(info.getString("source"));
                         boolean isTo = ownerList.contains(info.getString("destination"));
 
-                        BigDecimal b = new BigDecimal(tokenAmount.getString("amount"));
-                        b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
-                        String amount = b.toPlainString();
-
                         // If I send something to myself, just reject it!
                         if(isFrom && isTo) {
                             continue;
@@ -647,7 +746,11 @@ public class Solana extends AddressAPI {
                         int scale = tokenAmount.getInt("decimals");
                         String id = info.getString("mint");
                         String key = id;
-                        Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getOrCreateToken(key, null, null, scale, id);
+                        Token token = TokenManager.getTokenManagerFromKey("SPLTokenManager").getToken(cryptoAddress, key, null, null, scale, id);
+
+                        BigDecimal b = new BigDecimal(tokenAmount.getString("amount"));
+                        b = b.movePointLeft(token.getScale());
+                        String amount = b.toPlainString();
 
                         transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, token), null, new Timestamp(block_time_date), "Transaction"));
                         if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }

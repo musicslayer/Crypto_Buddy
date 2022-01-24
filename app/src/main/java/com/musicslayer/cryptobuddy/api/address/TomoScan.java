@@ -119,7 +119,7 @@ public class TomoScan extends AddressAPI {
                 //String id = tokenObj.getString("id"); // What is this???
                 String id = key;
 
-                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                 String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
                 currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
@@ -163,7 +163,7 @@ public class TomoScan extends AddressAPI {
                 //String id = tokenObj.getString("id"); // What is this???
                 String id = key;
 
-                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrCreateToken(key, name, display_name, scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getToken(cryptoAddress, key, name, display_name, scale, id);
 
                 String currentTokenBalance = new BigDecimal(tokenData.getString("quantity")).movePointLeft(scale).toPlainString();
                 currentBalanceArrayList.add(new AssetQuantity(currentTokenBalance, token));
@@ -649,14 +649,7 @@ public class TomoScan extends AddressAPI {
                 //String id = tokenObj.getString("id"); // What is this???
                 String id = key;
 
-                String baseURL;
-                if(cryptoAddress.network.isMainnet()) {
-                    baseURL = "https://scan.tomochain.com";
-                }
-                else {
-                    baseURL = "https://scan.testnet.tomochain.com";
-                }
-                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainTokenManager").getToken(cryptoAddress, key, name, null, scale, id);
 
                 transactionTokensTRC20ArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
                 if(transactionTokensTRC20ArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -741,14 +734,7 @@ public class TomoScan extends AddressAPI {
                 //String id = tokenObj.getString("id"); // What is this???
                 String id = key;
 
-                String baseURL;
-                if(cryptoAddress.network.isMainnet()) {
-                    baseURL = "https://scan.tomochain.com";
-                }
-                else {
-                    baseURL = "https://scan.testnet.tomochain.com";
-                }
-                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getOrLookupToken(baseURL, key, name, "?", scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("TomoChainZTokenManager").getToken(cryptoAddress, key, name, null, scale, id);
 
                 transactionTokensTRC21ArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, token), null, new Timestamp(block_time_date), "Token Transaction"));
                 if(transactionTokensTRC21ArrayList.size() == getMaxTransactions()) { return DONE; }

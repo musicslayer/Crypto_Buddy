@@ -89,11 +89,11 @@ public class WavesNodes extends AddressAPI {
                         String id = issueTransaction.getString("id");
                         String key = id;
 
-                        token = tokenManager.getOrCreateToken(key, name, display_name, scale, id);
+                        token = tokenManager.getToken(cryptoAddress, key, name, display_name, scale, id);
                     }
                     catch(Exception ignored) {
                         String id = tokenInfo.getString("assetId");
-                        token = tokenManager.getOrLookupToken(baseURL,id, "?", "?", 0, id);
+                        token = tokenManager.getToken(cryptoAddress, id, null, null, 0, id);
                     }
 
                     BigDecimal bb = new BigDecimal(tokenInfo.getString("balance"));
@@ -150,20 +150,6 @@ public class WavesNodes extends AddressAPI {
             return ERROR;
         }
 
-        String baseURL;
-        if(cryptoAddress.network.isMainnet()) {
-            baseURL = "https://nodes.wavesnodes.com";
-        }
-        else if(cryptoAddress.network instanceof WAVES_Testnet) {
-            baseURL = "https://nodes-testnet.wavesnodes.com";
-        }
-        else if(cryptoAddress.network instanceof WAVES_Stagenet) {
-            baseURL = "https://nodes-stagenet.wavesnodes.com";
-        }
-        else {
-            return ERROR;
-        }
-
         try {
             String lastID = DONE;
 
@@ -190,7 +176,7 @@ public class WavesNodes extends AddressAPI {
                     fee_crypto = cryptoAddress.getCrypto();
                 }
                 else {
-                    fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, feeAssetId, "?", "?", 0, feeAssetId);
+                    fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, feeAssetId, null, null, 0, feeAssetId);
                 }
 
                 BigDecimal fee;
@@ -228,7 +214,7 @@ public class WavesNodes extends AddressAPI {
                             crypto = cryptoAddress.getCrypto();
                         }
                         else {
-                            crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, assetId, "?", "?", 0, assetId);
+                            crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
                         }
 
                         String amount = p.getString("amount");
@@ -252,7 +238,7 @@ public class WavesNodes extends AddressAPI {
                         crypto = cryptoAddress.getCrypto();
                     }
                     else {
-                        crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, assetId, "?", "?", 0, assetId);
+                        crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
                     }
 
                     // Transfers.
@@ -301,7 +287,7 @@ public class WavesNodes extends AddressAPI {
                             crypto = cryptoAddress.getCrypto();
                         }
                         else {
-                            crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, assetId, "?", "?", 0, assetId);
+                            crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
                         }
 
                         String amount = r.getString("quantity");
@@ -336,7 +322,7 @@ public class WavesNodes extends AddressAPI {
                         amount_crypto = cryptoAddress.getCrypto();
                     }
                     else {
-                        amount_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, amount_assetId, "?", "?", 0, amount_assetId);
+                        amount_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, amount_assetId, null, null, 0, amount_assetId);
                     }
 
                     String price_assetId = assetPair.getString("priceAsset");
@@ -345,7 +331,7 @@ public class WavesNodes extends AddressAPI {
                         price_crypto = cryptoAddress.getCrypto();
                     }
                     else {
-                        price_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, price_assetId, "?", "?", 0, price_assetId);
+                        price_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, price_assetId, null, null, 0, price_assetId);
                     }
 
                     String amount_action;
@@ -395,7 +381,7 @@ public class WavesNodes extends AddressAPI {
                         matcher_fee_crypto = cryptoAddress.getCrypto();
                     }
                     else {
-                        matcher_fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getOrLookupToken(baseURL, matcher_fee_assetId, "?", "?", 0, matcher_fee_assetId);
+                        matcher_fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, matcher_fee_assetId, null, null, 0, matcher_fee_assetId);
                     }
 
                     matcher_fee = matcher_fee.movePointLeft(matcher_fee_crypto.getScale());

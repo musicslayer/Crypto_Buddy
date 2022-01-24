@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.util.Log;
-
 import com.musicslayer.cryptobuddy.asset.crypto.coin.XTZ;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.XTZ_Testnet_Florencenet;
@@ -135,7 +133,7 @@ public class TzStats extends AddressAPI {
                 int scale = tokenData.getInt("decimals");
                 String id = tokenData.getString("contract");
 
-                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
 
                 BigDecimal b = new BigDecimal(tokenData.getString("balance"));
                 b = b.movePointLeft(token.getScale());
@@ -275,16 +273,6 @@ public class TzStats extends AddressAPI {
 
                 boolean isSuccess = "1".equals(jsonTransaction.getString(0));
 
-                BigDecimal reward = new BigDecimal(jsonTransaction.getString(1));
-                if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Reward");
-                }
-
-                BigDecimal deposit = new BigDecimal(jsonTransaction.getString(2));
-                if(deposit.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Deposit");
-                }
-
                 Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
                 BigDecimal value = new BigDecimal(jsonTransaction.getString(3));
 
@@ -318,15 +306,6 @@ public class TzStats extends AddressAPI {
                 JSONArray jsonTransaction = jsonSendData.getJSONArray(i);
 
                 boolean isSuccess = "1".equals(jsonTransaction.getString(0));
-
-                BigDecimal reward = new BigDecimal(jsonTransaction.getString(1));
-                if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Reward");
-                }
-                BigDecimal deposit = new BigDecimal(jsonTransaction.getString(2));
-                if(deposit.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Deposit");
-                }
 
                 Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
                 BigDecimal value = new BigDecimal(jsonTransaction.getString(3));
@@ -386,7 +365,7 @@ public class TzStats extends AddressAPI {
                         invoice (implicit, no hash, protocol upgrade event op_n = -2)
                         migration (implicit, no hash, protocol upgrade event op_n = -2)
                     */
-                    Log.e("Crypto Buddy R", "Type = " + type);
+                    //Log.e("Crypto Buddy R", "Type = " + type);
                     continue;
                 }
 
@@ -433,15 +412,6 @@ public class TzStats extends AddressAPI {
 
                 // Fee and Burned are always taken into account, whether or not we succeed.
                 //boolean isSuccess = "1".equals(jsonTransaction.getString(0));
-
-                BigDecimal reward = new BigDecimal(jsonTransaction.getString(1));
-                if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Reward");
-                }
-                BigDecimal deposit = new BigDecimal(jsonTransaction.getString(2));
-                if(deposit.compareTo(BigDecimal.ZERO) > 0) {
-                    Log.e("Crypto Buddy R", "Deposit");
-                }
 
                 Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
 
@@ -505,7 +475,7 @@ public class TzStats extends AddressAPI {
                 int scale = tokenInfo.getInt("decimals");
                 String id = tokenInfo.getString("contract");
 
-                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getOrCreateToken(name, name, display_name, scale, id);
+                Token token = TokenManager.getTokenManagerFromKey("XTZTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
 
                 String action;
 

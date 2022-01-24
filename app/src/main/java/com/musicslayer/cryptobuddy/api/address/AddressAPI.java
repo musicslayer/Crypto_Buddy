@@ -14,8 +14,7 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO NFT View -> We have to support more token types.
-// TODO Create collection of bridges to get access to those transactions (for example: MATIC Proof of Stake Bridge).
+// TODO Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 
 abstract public class AddressAPI extends API {
     final public static String DONE = "!DONE!";
