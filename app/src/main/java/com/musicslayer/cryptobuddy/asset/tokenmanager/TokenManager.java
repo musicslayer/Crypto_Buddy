@@ -394,39 +394,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
-        ArrayList<Token> Xdownloaded_tokens = new ArrayList<>();
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-        Xdownloaded_tokens.addAll(downloaded_tokens);
-
-        ArrayList<Token> Xfound_tokens = new ArrayList<>();
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-        Xdownloaded_tokens.addAll(found_tokens);
-
-        ArrayList<Token> Xcustom_tokens = new ArrayList<>();
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-        Xdownloaded_tokens.addAll(custom_tokens);
-
         return new Serialization.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("token_type", Serialization.string_serialize(getTokenType()))
-            .put("downloaded_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(Xdownloaded_tokens)))
-            .put("found_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(Xfound_tokens)))
-            .put("custom_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(Xcustom_tokens)))
+            .put("downloaded_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(downloaded_tokens)))
+            .put("found_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(found_tokens)))
+            .put("custom_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(custom_tokens)))
             .toStringOrNull();
     }
 

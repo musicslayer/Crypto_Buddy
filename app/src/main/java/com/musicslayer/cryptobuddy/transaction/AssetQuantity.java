@@ -29,7 +29,6 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             return new AssetQuantity(assetAmount, asset);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public AssetQuantity[] newArray(int size) {
             return new AssetQuantity[size];

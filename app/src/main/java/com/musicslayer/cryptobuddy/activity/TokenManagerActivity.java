@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class TokenManagerActivity extends BaseActivity {
-    TableLayout tableLayout;
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
 
     public int getAdLayoutViewID() {
@@ -43,10 +42,6 @@ public class TokenManagerActivity extends BaseActivity {
 
     @Override
     public void onBackPressedImpl() {
-        // Reduce heap.
-        tableLayout.removeAllViews();
-        tokenManagerViewArrayList = null;
-
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -62,12 +57,12 @@ public class TokenManagerActivity extends BaseActivity {
             }
         });
 
-        tableLayout = findViewById(R.id.token_manager_tableLayout);
+        TableLayout tableLayout = findViewById(R.id.token_manager_tableLayout);
 
         ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
         Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
 
-        tokenManagerViewArrayList = new ArrayList<>();
+        ArrayList<TokenManagerView> tokenManagerViewArrayList = new ArrayList<>();
         for(String tokenType : tokenTypes) {
             TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
             TokenManagerView tokenManagerView = new TokenManagerView(TokenManagerActivity.this, tokenManager);

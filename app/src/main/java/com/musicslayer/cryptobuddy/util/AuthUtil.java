@@ -22,13 +22,9 @@ import java.util.Date;
 // Handles common authentication cases.
 
 public class AuthUtil {
-    // TODO Get rid of this -> it causes leaks.
-    //public static BaseDialogFragment fragmentBrowser;
-
     public static byte[] code_e; // Only encrypted code should be stored.
 
     public static void authorizeOAuthBrowser(Context context, OAuthInfo oAuthInfo) {
-        //fragmentBrowser.show(context, "oauth_browser");
         BaseDialogFragment.newInstance(OAuthBrowserDialog.class, oAuthInfo).show(context, "oauth_browser");
     }
 
@@ -116,8 +112,6 @@ public class AuthUtil {
             }
         });
         oauthBrowserDialogFragment.restoreListeners(context, "oauth_browser");
-
-        //fragmentBrowser = oauthBrowserDialogFragment;
     }
 
     public static class OAuthInfo implements Parcelable {
@@ -161,7 +155,6 @@ public class AuthUtil {
                 return new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
             }
 
-            // We just need to copy this and change the type to match our class.
             @Override
             public OAuthInfo[] newArray(int size) {
                 return new OAuthInfo[size];
@@ -208,7 +201,6 @@ public class AuthUtil {
                 return new OAuthToken(token_e, expiryTime);
             }
 
-            // We just need to copy this and change the type to match our class.
             @Override
             public OAuthToken[] newArray(int size) {
                 return new OAuthToken[size];

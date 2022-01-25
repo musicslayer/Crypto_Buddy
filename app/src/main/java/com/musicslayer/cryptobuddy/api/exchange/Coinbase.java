@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.decode.Alphanumeric;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
@@ -23,7 +22,7 @@ public class Coinbase extends ExchangeAPI {
         return "Coinbase".equals(exchange.getName());
     }
 
-    public void authorizeBrowser(Context context) {
+    private AuthUtil.OAuthInfo getOAuthInfo() {
         String authURLBase = "https://www.coinbase.com/oauth/authorize/";
         String tokenURLBase = "https://api.coinbase.com/oauth/token/";
         String client_id = BuildConfig.coinbase_client_id;
@@ -33,23 +32,14 @@ public class Coinbase extends ExchangeAPI {
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
 
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+        return new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+    }
 
-        AuthUtil.authorizeOAuthBrowser(context, oAuthInfo);
+    public void authorize(Context context) {
+        AuthUtil.authorizeOAuthBrowser(context, getOAuthInfo());
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
-        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
-        String client_id = BuildConfig.coinbase_client_id;
-        String client_secret = BuildConfig.coinbase_client_secret;
-        String redirect_uri = "https://musicslayer.github.io/";
-        String response_type = "code";
-        String grant_type = "authorization_code";
-        String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
-
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
-
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
@@ -58,7 +48,7 @@ public class Coinbase extends ExchangeAPI {
             }
         };
 
-        AuthUtil.restoreListenersBrowser(context, oAuthInfo, L_OAuth);
+        AuthUtil.restoreListenersBrowser(context, getOAuthInfo(), L_OAuth);
     }
 
     public boolean isAuthorized() {

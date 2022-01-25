@@ -32,7 +32,6 @@ abstract public class Network implements Serialization.SerializableToJSON, Parce
             return Network.getNetworkFromKey(in.readString());
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Network[] newArray(int size) {
             return new Network[size];

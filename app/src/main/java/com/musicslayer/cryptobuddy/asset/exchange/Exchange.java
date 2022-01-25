@@ -28,7 +28,6 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Parc
             return Exchange.getExchangeFromKey(key);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Exchange[] newArray(int size) {
             return new Exchange[size];

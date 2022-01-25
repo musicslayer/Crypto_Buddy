@@ -21,7 +21,6 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
             return Filter.fromType(type);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Filter[] newArray(int size) {
             return new Filter[size];

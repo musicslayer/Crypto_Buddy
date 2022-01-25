@@ -23,7 +23,6 @@ public class Timestamp implements Serialization.SerializableToJSON, Parcelable {
             return new Timestamp(new Date(time));
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Timestamp[] newArray(int size) {
             return new Timestamp[size];

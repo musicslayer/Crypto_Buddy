@@ -27,7 +27,6 @@ abstract public class Asset implements Serialization.SerializableToJSON, Parcela
             return Asset.getAsset(assetType, key);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Asset[] newArray(int size) {
             return new Asset[size];

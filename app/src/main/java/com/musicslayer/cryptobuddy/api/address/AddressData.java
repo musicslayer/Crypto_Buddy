@@ -31,7 +31,6 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public AddressData[] newArray(int size) {
             return new AddressData[size];

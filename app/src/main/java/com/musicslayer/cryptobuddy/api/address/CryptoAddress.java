@@ -29,7 +29,6 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Parcelab
             return new CryptoAddress(address, network, includeTokens);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public CryptoAddress[] newArray(int size) {
             return new CryptoAddress[size];

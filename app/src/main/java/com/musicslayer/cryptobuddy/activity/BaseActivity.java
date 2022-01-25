@@ -28,8 +28,8 @@ abstract public class BaseActivity extends CrashActivity {
                 public void onInAppPurchase() {}
             });
 
-            InAppPurchase.setInnerPurchasesUpdatedListener(this);
-            InAppPurchase.setInnerUpdateAllPurchasesListener(this);
+            InAppPurchase.setWrapperPurchasesUpdatedListener(this);
+            InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
 
             if(savedInstanceState == null) {
                 CallbackActivity.wasCallbackFired[0] = false;

@@ -33,7 +33,6 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
             return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Transaction[] newArray(int size) {
             return new Transaction[size];

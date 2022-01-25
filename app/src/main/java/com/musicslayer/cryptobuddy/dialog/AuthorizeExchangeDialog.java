@@ -107,7 +107,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
     public void authorizeBrowser(Context context, ExchangeAPI exchangeAPI) {
         if(exchangeAPI != null) {
-            exchangeAPI.authorizeBrowser(activity);
+            exchangeAPI.authorize(activity);
         }
         else {
             ToastUtil.showToast(context, "authorization_failed");

@@ -24,7 +24,6 @@ public class AssetAmount implements Serialization.SerializableToJSON, Parcelable
             return new AssetAmount(new BigDecimal(in.readString()));
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public AssetAmount[] newArray(int size) {
             return new AssetAmount[size];

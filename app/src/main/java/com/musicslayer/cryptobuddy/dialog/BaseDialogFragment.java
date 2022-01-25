@@ -83,7 +83,7 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public void restoreListeners(Context context, String tag) {
-        BaseDialogFragment gdf = (BaseDialogFragment)getFragmentManager(context).findFragmentByTag(tag);
+        BaseDialogFragment gdf = (BaseDialogFragment)getDialogByTag(context, tag);
         if (gdf != null) {
             gdf.setOnShowListener(SL);
             gdf.setOnDismissListener(DL);
@@ -99,11 +99,15 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public static boolean isNotShowing(Context context, String tag) {
-        return getFragmentManager(context).findFragmentByTag(tag) == null;
+        return getDialogByTag(context, tag) == null;
     }
 
     public static FragmentManager getFragmentManager(Context context) {
         return ((AppCompatActivity)ContextUtil.getActivity(context)).getSupportFragmentManager();
+    }
+
+    public static Fragment getDialogByTag(Context context, String tag) {
+        return getFragmentManager(context).findFragmentByTag(tag);
     }
 
     public static ArrayList<Dialog> getAllDialogs(Context context) {

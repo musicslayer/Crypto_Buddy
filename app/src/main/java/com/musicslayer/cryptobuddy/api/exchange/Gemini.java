@@ -22,7 +22,7 @@ public class Gemini extends ExchangeAPI {
         return "Gemini".equals(exchange.getName());
     }
 
-    public void authorizeBrowser(Context context) {
+    private AuthUtil.OAuthInfo getOAuthInfo() {
         String authURLBase = "https://exchange.gemini.com/auth";
         String tokenURLBase = "https://exchange.gemini.com/auth/token";
         String client_id = BuildConfig.gemini_client_id;
@@ -32,23 +32,14 @@ public class Gemini extends ExchangeAPI {
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"account:read", "addresses:read", "balances:read", "history:read"};
 
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+        return new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+    }
 
-        AuthUtil.authorizeOAuthBrowser(context, oAuthInfo);
+    public void authorize(Context context) {
+        AuthUtil.authorizeOAuthBrowser(context, getOAuthInfo());
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
-        String authURLBase = "https://exchange.gemini.com/auth";
-        String tokenURLBase = "https://exchange.gemini.com/auth/token";
-        String client_id = BuildConfig.gemini_client_id;
-        String client_secret = BuildConfig.gemini_client_secret;
-        String redirect_uri = "https://musicslayer.github.io/";
-        String response_type = "code";
-        String grant_type = "authorization_code";
-        String[] scopes = new String[] {"account:read", "addresses:read", "balances:read", "history:read"};
-
-        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
-
         AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
             @Override
             public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
@@ -57,7 +48,7 @@ public class Gemini extends ExchangeAPI {
             }
         };
 
-        AuthUtil.restoreListenersBrowser(context, oAuthInfo, L_OAuth);
+        AuthUtil.restoreListenersBrowser(context, getOAuthInfo(), L_OAuth);
     }
 
     public boolean isAuthorized() {

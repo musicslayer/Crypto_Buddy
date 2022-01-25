@@ -22,7 +22,6 @@ public class Action implements Serialization.SerializableToJSON, Parcelable {
             return new Action(actionString);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Action[] newArray(int size) {
             return new Action[size];

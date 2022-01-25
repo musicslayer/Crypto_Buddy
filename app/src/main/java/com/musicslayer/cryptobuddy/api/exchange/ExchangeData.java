@@ -32,7 +32,6 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public ExchangeData[] newArray(int size) {
             return new ExchangeData[size];
