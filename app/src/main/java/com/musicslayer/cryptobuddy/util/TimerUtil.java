@@ -27,6 +27,7 @@ public class TimerUtil  {
     public static void stopTimer() {
         if(timer != null) {
             timer.cancel();
+            timer = null;
         }
     }
 

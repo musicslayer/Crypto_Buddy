@@ -152,7 +152,7 @@ public class AddressExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                ProgressDialogFragment.updateProgressTitle("Started...");
+                ProgressDialogFragment.updateProgressTitle("Downloading Address Data...");
 
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
 

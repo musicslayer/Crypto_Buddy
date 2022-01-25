@@ -4,12 +4,16 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.ThreadUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.HashMap;
+
+// TODO, when we find new tokens, do we have to save everything!?
 
 public class TokenManagerList {
     // Just pick something that would never actually be saved.
@@ -20,6 +24,8 @@ public class TokenManagerList {
     public static HashMap<String, String> token_manager_raw = new HashMap<>();
 
     public static void saveAllData(Context context) {
+        //ThreadUtil.threadDump();
+
         SharedPreferences settings = context.getSharedPreferences("token_manager_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 

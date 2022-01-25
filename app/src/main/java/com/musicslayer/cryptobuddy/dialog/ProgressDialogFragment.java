@@ -3,13 +3,17 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.settings.setting.ProgressDisplaySetting;
 import com.musicslayer.cryptobuddy.util.PollingUtil;
 import com.musicslayer.cryptobuddy.util.TimerUtil;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+// TODO Cancel confirmation/button?
 
 public class ProgressDialogFragment extends BaseDialogFragment {
     public static final long MAX_TIME = 3600000L; // 60 minutes
@@ -45,6 +49,22 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     public static void updateProgressDisplay(String s) {
         ProgressDialogFragment.progress_display[0] = s;
+    }
+
+    public static void reportProgress(int current, int total, String postString) {
+        String progressSetting = ProgressDisplaySetting.value;
+
+        if("combo".equals(progressSetting)) {
+            BigDecimal d = new BigDecimal(current).multiply(new BigDecimal(100)).divide(new BigDecimal(total), 0, RoundingMode.HALF_UP);
+            updateProgressDisplay(current + " / " + total + " (" + d.toPlainString() + "%) " + postString);
+        }
+        else if("percentage".equals(progressSetting)) {
+            BigDecimal d = new BigDecimal(current).multiply(new BigDecimal(100)).divide(new BigDecimal(total), 0, RoundingMode.HALF_UP);
+            updateProgressDisplay(d.toPlainString() + "% " + postString);
+        }
+        else if("total".equals(progressSetting)) {
+            updateProgressDisplay(current + " / " + total + " " + postString);
+        }
     }
 
     @Override

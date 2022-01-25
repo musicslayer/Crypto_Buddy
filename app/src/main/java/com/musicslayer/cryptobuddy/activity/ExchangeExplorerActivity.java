@@ -143,6 +143,8 @@ public class ExchangeExplorerActivity extends BaseActivity {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Downloading Exchange Data...");
+
                 Exchange exchange = exchangeArrayList.get(0);
                 ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(StateObj.exchangeAPIMap, exchange);
 

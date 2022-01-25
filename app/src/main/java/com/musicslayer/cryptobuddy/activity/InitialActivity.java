@@ -14,6 +14,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
+import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
@@ -27,6 +28,8 @@ import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
+
+// TODO Use @Override everywhere!
 
 // TODO NFT Viewer
 // TODO Discrepancy Viewer
@@ -61,6 +64,7 @@ public class InitialActivity extends BaseActivity {
         Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
         SettingsCategory.initialize(applicationContext);
+        InAppPurchase.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);
         if(!Purchases.isUnlockTokensPurchased()) {

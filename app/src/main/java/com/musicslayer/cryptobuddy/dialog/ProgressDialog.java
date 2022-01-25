@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
@@ -24,20 +25,22 @@ public class ProgressDialog extends BaseDialog {
         return R.id.progress_dialog;
     }
 
+    public void adjustDialog() {
+        // Do nothing here. ProgressDialog will be exactly large enough to wrap all its content.
+    }
+
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_progress);
-
-        // TODO We want the background, but it needs to wrap the objects.
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
         updateLayout();
     }
 
     public void updateLayout() {
         TextView T = findViewById(R.id.progress_dialog_progressTitle);
         T.setText(ProgressDialogFragment.progress_title[0]);
+        T.setVisibility(ProgressDialogFragment.progress_title[0].isEmpty() ? View.GONE : View.VISIBLE);
 
         TextView D = findViewById(R.id.progress_dialog_progressDisplay);
         D.setText(ProgressDialogFragment.progress_display[0]);
+        D.setVisibility(ProgressDialogFragment.progress_display[0].isEmpty() ? View.GONE : View.VISIBLE);
     }
 }

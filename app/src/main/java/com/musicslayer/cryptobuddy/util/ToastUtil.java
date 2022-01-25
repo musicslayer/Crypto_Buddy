@@ -82,7 +82,7 @@ public class ToastUtil {
 
         toastMap.put("restoring_purchases", Toast.makeText(context, "Restoring purchases. Please wait a few seconds.", getToastDuration()));
 
-        toastMap.put("billing_connection_retry", Toast.makeText(context, "Reconnecting to Google Play Billing Service. Try again in a few seconds.", getToastDuration()));
+        toastMap.put("billing_connection_not_finished", Toast.makeText(context, "Connecting to Google Play Billing Service. Try again in a few seconds.", getToastDuration()));
         toastMap.put("billing_problem", Toast.makeText(context, "Cannot connect to Google Play Billing Service.", getToastDuration()));
         toastMap.put("query_problem", Toast.makeText(context, "Cannot query purchases. Try again in a few seconds.", getToastDuration()));
         toastMap.put("acknowledge_problem", Toast.makeText(context, "In-app purchase failed to confirm. Try restarting app.", getToastDuration()));

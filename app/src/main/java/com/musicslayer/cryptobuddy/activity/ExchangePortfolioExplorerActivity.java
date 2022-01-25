@@ -223,10 +223,14 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         download_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Downloading Exchange Data...");
+
                 ArrayList<Exchange> exchangeArrayList = exchangePortfolioObj.exchangeArrayList;
 
                 ArrayList<ExchangeData> newExchangeDataArrayList = new ArrayList<>();
                 for(int i = 0; i < exchangeArrayList.size(); i++) {
+                    ProgressDialogFragment.reportProgress(i, exchangeArrayList.size(), "Exchanges Finished");
+
                     Exchange exchange = exchangeArrayList.get(i);
                     ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(StateObj.exchangeAPIMap, exchange);
 

@@ -28,14 +28,13 @@ abstract public class BaseActivity extends CrashActivity {
                 public void onInAppPurchase() {}
             });
 
+            InAppPurchase.setInnerPurchasesUpdatedListener(this);
+            InAppPurchase.setInnerUpdateAllPurchasesListener(this);
+
             if(savedInstanceState == null) {
                 CallbackActivity.wasCallbackFired[0] = false;
                 CallbackActivity.lastIntent[0] = null;
             }
-
-            // Keep trying in every activity if the first call during initialization was not successful.
-            // Do not pass in the application context here.
-            InAppPurchase.initialize(this);
         }
 
         // Clear state the first time each activity is created.

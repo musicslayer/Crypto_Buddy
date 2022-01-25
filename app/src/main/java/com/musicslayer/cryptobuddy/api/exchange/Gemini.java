@@ -23,7 +23,18 @@ public class Gemini extends ExchangeAPI {
     }
 
     public void authorizeBrowser(Context context) {
-        AuthUtil.authorizeOAuthBrowser(context);
+        String authURLBase = "https://exchange.gemini.com/auth";
+        String tokenURLBase = "https://exchange.gemini.com/auth/token";
+        String client_id = BuildConfig.gemini_client_id;
+        String client_secret = BuildConfig.gemini_client_secret;
+        String redirect_uri = "https://musicslayer.github.io/";
+        String response_type = "code";
+        String grant_type = "authorization_code";
+        String[] scopes = new String[] {"account:read", "addresses:read", "balances:read", "history:read"};
+
+        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+
+        AuthUtil.authorizeOAuthBrowser(context, oAuthInfo);
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {

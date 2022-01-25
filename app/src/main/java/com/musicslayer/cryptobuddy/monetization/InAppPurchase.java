@@ -26,35 +26,60 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// Note: This class does not support buying more than one sku in a single purchase.
+// Note: This class does not support buying more than one item in a single purchase, even if it's multiple copies of the same thing.
 
 public class InAppPurchase {
     public static BillingClient billingClient;
-    public static InAppPurchaseListener inAppPurchaseListener;
+
+    public static InAppPurchaseListener inAppPurchaseListener; // Used to handle activity UI updates.
+    public static InnerPurchasesUpdatedListener innerPurchasesUpdatedListener; // Used to pass in "context" without a memory leak.
+    public static InnerUpdateAllPurchasesListener innerUpdateAllPurchasesListener; // Used to pass in "context" without a memory leak.
 
     public static void setInAppPurchaseListener(InAppPurchase.InAppPurchaseListener inAppPurchaseListener) {
         InAppPurchase.inAppPurchaseListener = inAppPurchaseListener;
     }
 
+    public static void setInnerPurchasesUpdatedListener(Context context) {
+        InAppPurchase.innerPurchasesUpdatedListener = new InAppPurchase.InnerPurchasesUpdatedListener() {
+            @Override
+            public void onInAppPurchase(@NonNull BillingResult billingResult, List<Purchase> purchases) {
+                if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                    for(Purchase purchase : purchases) {
+                        if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                            for(String id : purchase.getSkus()) {
+                                grantPurchase(context, id);
+                            }
+
+                            InAppPurchase.acknowledgeOrConsume(context, purchase);
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    public static void setInnerUpdateAllPurchasesListener(Context context) {
+        InAppPurchase.innerUpdateAllPurchasesListener = new InAppPurchase.InnerUpdateAllPurchasesListener() {
+            @Override
+            public void onInAppPurchase() {
+                InAppPurchase.updateAllPurchases(context);
+            }
+        };
+    }
+
     public static void initialize(Context context) {
+        // The application context should be passed in here to avoid a memory leak.
         if(billingClient == null || !billingClient.isReady()) {
             PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
                 @Override
                 public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
-                    if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                        for(Purchase purchase : purchases) {
-                            if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                                for(String id : purchase.getSkus()) {
-                                    grantPurchase(context, id);
-                                }
-
-                                InAppPurchase.acknowledgeOrConsume(context, purchase);
-                            }
-                        }
+                    if(innerPurchasesUpdatedListener != null) {
+                        innerPurchasesUpdatedListener.onInAppPurchase(billingResult, purchases);
                     }
                 }
             };
 
+            // Use application context here to avoid a memory leak.
             billingClient = BillingClient.newBuilder(context)
                 .setListener(purchasesUpdatedListener)
                 .enablePendingPurchases()
@@ -63,8 +88,8 @@ public class InAppPurchase {
             billingClient.startConnection(new BillingClientStateListener() {
                 @Override
                 public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                    if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                        InAppPurchase.updateAllPurchases(context);
+                    if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && innerUpdateAllPurchasesListener != null) {
+                        innerUpdateAllPurchasesListener.onInAppPurchase();
                     }
                 }
 
@@ -107,8 +132,7 @@ public class InAppPurchase {
 
     public static void purchase(Activity activity, List<String> skuList) {
         if(!billingClient.isReady()) {
-            ToastUtil.showToast(activity,"billing_connection_retry");
-            InAppPurchase.initialize(activity);
+            ToastUtil.showToast(activity,"billing_connection_not_finished");
             return;
         }
 
@@ -185,8 +209,7 @@ public class InAppPurchase {
     // Internal use only!
     public static void refund(Context context) {
         if(!billingClient.isReady()) {
-            ToastUtil.showToast(context,"billing_connection_retry");
-            InAppPurchase.initialize(context);
+            ToastUtil.showToast(context,"billing_connection_not_finished");
             return;
         }
 
@@ -247,7 +270,7 @@ public class InAppPurchase {
 
     public static void updateAllPurchases(Context context) {
         if(!billingClient.isReady()) {
-            InAppPurchase.initialize(context);
+            ToastUtil.showToast(context,"billing_connection_not_finished");
             return;
         }
 
@@ -296,6 +319,14 @@ public class InAppPurchase {
     }
 
     abstract public static class InAppPurchaseListener {
+        abstract public void onInAppPurchase();
+    }
+
+    abstract public static class InnerPurchasesUpdatedListener {
+        abstract public void onInAppPurchase(@NonNull BillingResult billingResult, List<Purchase> purchases);
+    }
+
+    abstract public static class InnerUpdateAllPurchasesListener {
         abstract public void onInAppPurchase();
     }
 }

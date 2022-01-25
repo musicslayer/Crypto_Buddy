@@ -236,10 +236,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         download_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Downloading Address Data...");
+
                 ArrayList<CryptoAddress> cryptoAddressArrayList = addressPortfolioObj.cryptoAddressArrayList;
 
                 ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
                 for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
+                    ProgressDialogFragment.reportProgress(i, cryptoAddressArrayList.size(), "Addresses Finished");
+
                     CryptoAddress cryptoAddress = cryptoAddressArrayList.get(i);
 
                     if(ProgressDialogFragment.isCancelled()) { return; }

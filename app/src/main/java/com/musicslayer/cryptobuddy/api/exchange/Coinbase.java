@@ -24,7 +24,18 @@ public class Coinbase extends ExchangeAPI {
     }
 
     public void authorizeBrowser(Context context) {
-        AuthUtil.authorizeOAuthBrowser(context);
+        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
+        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
+        String client_id = BuildConfig.coinbase_client_id;
+        String client_secret = BuildConfig.coinbase_client_secret;
+        String redirect_uri = "https://musicslayer.github.io/";
+        String response_type = "code";
+        String grant_type = "authorization_code";
+        String[] scopes = new String[] {"wallet:transactions:read", "wallet:accounts:read"};
+
+        AuthUtil.OAuthInfo oAuthInfo = new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
+
+        AuthUtil.authorizeOAuthBrowser(context, oAuthInfo);
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {

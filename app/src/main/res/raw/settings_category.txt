@@ -3,4 +3,5 @@ ConfirmationSettingsCategory
 DisplayLocalizationSettingsCategory
 FormattingSettingsCategory
 NetworkSettingsCategory
+ProgressSettingsCategory
 ResetDataSettingsCategory
