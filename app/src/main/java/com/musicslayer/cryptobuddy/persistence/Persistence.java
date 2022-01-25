@@ -16,7 +16,8 @@ public class Persistence {
         persistentClassMap = new HashMap<>();
         persistentClassMap.put("AddressHistory", AddressHistory.class);
         persistentClassMap.put("AddressPortfolio", AddressPortfolio.class);
-        persistentClassMap.put("PrivacyPolicy", Policy.class);
+        persistentClassMap.put("ExchangePortfolio", ExchangePortfolio.class);
+        persistentClassMap.put("Policy", Policy.class);
         persistentClassMap.put("Purchases", Purchases.class);
         persistentClassMap.put("Review", Review.class);
         persistentClassMap.put("SettingList", SettingList.class);
