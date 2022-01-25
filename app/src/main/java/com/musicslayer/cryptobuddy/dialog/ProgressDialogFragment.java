@@ -3,12 +3,18 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.util.PollingUtil;
+import com.musicslayer.cryptobuddy.util.TimerUtil;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
+    public static final long MAX_TIME = 3600000L; // 60 minutes
+    public static final long UPDATE_TIME = 1000L; // 1 second
+
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
     public final static String CANCELLED = "!CANCELLED!";
@@ -16,6 +22,9 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     public final static String[] stored_status = new String[1];
     public final static String[] stored_value = new String[1];
+
+    public final static String[] progress_title = new String[1];
+    public final static String[] progress_display = new String[1];
 
     // Global switch that determines if threads created here should proceed on.
     public final static boolean[] allowThreads = new boolean[1];
@@ -30,11 +39,24 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         return fragment;
     }
 
+    public static void updateProgressTitle(String s) {
+        ProgressDialogFragment.progress_title[0] = s;
+    }
+
+    public static void updateProgressDisplay(String s) {
+        ProgressDialogFragment.progress_display[0] = s;
+    }
+
     @Override
     public void show(Context context, String tag) {
         // Clear the stored state before every new ProgressDialog showing.
         ProgressDialogFragment.clearAll();
         allowThreads[0] = true;
+
+        // Set initial title and display.
+        ProgressDialogFragment.progress_title[0] = "";
+        ProgressDialogFragment.progress_display[0] = "";
+
         super.show(context, tag);
     }
 
@@ -42,6 +64,20 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     public void onShow(@NonNull DialogInterface dialog) {
         // Uses both onShow and onDismiss listeners here.
         ProgressDialog currentProgressDialog = (ProgressDialog)dialog;
+
+        // Create timer to periodically update the layout.
+        // This will cancel any prior timer, and make sure callbacks fire on the current dialog.
+        // Note that it's OK to keep starting new timers since the actual information will be in progress_title/progress_display.
+        // This timer only tells the text to keep checking for new info.
+        TimerUtil.startTimer(MAX_TIME, UPDATE_TIME, new TimerUtil.TimerUtilListener() {
+            @Override
+            public void onTickCallback(long millisUntilFinished) {
+                currentProgressDialog.updateLayout();
+            }
+
+            @Override
+            public void onFinishCallback() {}
+        });
 
         new Thread(() -> {
             if(SL != null && !currentProgressDialog.isCancelled) {
@@ -79,6 +115,9 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     @Override
     public void doDismiss(@NonNull DialogInterface dialog) {
+        // Stop the progress update timer.
+        TimerUtil.stopTimer();
+
         // Unlike in the superclass, here we do not want to use the onDismiss listener.
         // Instead, any dialog that gets dismissed needs to be cancelled.
         ((ProgressDialog)dialog).isCancelled = true;
