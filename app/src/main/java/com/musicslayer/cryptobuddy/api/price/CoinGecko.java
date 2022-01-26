@@ -4,6 +4,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
@@ -92,6 +93,7 @@ public class CoinGecko extends PriceAPI {
                 }
             }
 
+            ProgressDialogFragment.updateProgressSubtitle("Processing Tokens...");
             String priceDataTokenJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
             if(priceDataTokenJSON != null) {
                 try {
@@ -126,6 +128,7 @@ public class CoinGecko extends PriceAPI {
             }
         }
 
+        ProgressDialogFragment.updateProgressSubtitle("Processing Coins...");
         String priceDataCoinJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {

@@ -34,7 +34,7 @@ public class UnknownExchangeAPI extends ExchangeAPI {
     }
 
     public boolean isSupported(Exchange exchange) { return false; }
-    public void authorize(Context context) {}
+    public void authorize(Context context, AuthUtil.AuthorizationListener L) {}
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {}
     public boolean isAuthorized() { return false; }
     public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) { return null; }

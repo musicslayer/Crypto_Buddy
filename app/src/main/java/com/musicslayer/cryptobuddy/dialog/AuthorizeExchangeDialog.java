@@ -65,7 +65,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
                 B_AUTHORIZE_BROWSER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                     public void onClickImpl(View v) {
                         ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(exchangeAPIMap, exchange);
-                        authorizeBrowser(activity, exchangeAPI);
+                        authorizeBrowser(activity, exchange, exchangeAPI);
                     }
                 });
             }
@@ -105,9 +105,14 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         }
     }
 
-    public void authorizeBrowser(Context context, ExchangeAPI exchangeAPI) {
+    public void authorizeBrowser(Context context, Exchange exchange, ExchangeAPI exchangeAPI) {
         if(exchangeAPI != null) {
-            exchangeAPI.authorize(activity);
+            exchangeAPI.authorize(activity, new AuthUtil.AuthorizationListener() {
+                @Override
+                public void onAuthorization() {
+                    setAuthorizedDisplay(exchange, true);
+                }
+            });
         }
         else {
             ToastUtil.showToast(context, "authorization_failed");

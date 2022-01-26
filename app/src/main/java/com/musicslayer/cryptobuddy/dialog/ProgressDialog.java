@@ -35,12 +35,31 @@ public class ProgressDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        TextView T = findViewById(R.id.progress_dialog_progressTitle);
-        T.setText(ProgressDialogFragment.progress_title[0]);
-        T.setVisibility(ProgressDialogFragment.progress_title[0].isEmpty() ? View.GONE : View.VISIBLE);
+        TextView T_TITLE = findViewById(R.id.progress_dialog_progressTitle);
+        if(ProgressDialogFragment.progress_title[0] == null) {
+            T_TITLE.setVisibility(View.GONE);
+        }
+        else {
+            T_TITLE.setText(ProgressDialogFragment.progress_title[0]);
+            T_TITLE.setVisibility(View.VISIBLE);
+        }
 
-        TextView D = findViewById(R.id.progress_dialog_progressDisplay);
-        D.setText(ProgressDialogFragment.progress_display[0]);
-        D.setVisibility(ProgressDialogFragment.progress_display[0].isEmpty() ? View.GONE : View.VISIBLE);
+        TextView T_SUBTITLE = findViewById(R.id.progress_dialog_progressSubtitle);
+        if(ProgressDialogFragment.progress_subtitle[0] == null) {
+            T_SUBTITLE.setVisibility(View.GONE);
+        }
+        else {
+            T_SUBTITLE.setText(ProgressDialogFragment.progress_subtitle[0]);
+            T_SUBTITLE.setVisibility(View.VISIBLE);
+        }
+
+        TextView T_DISPLAY = findViewById(R.id.progress_dialog_progressDisplay);
+        if(ProgressDialogFragment.progress_display[0] == null) {
+            T_DISPLAY.setVisibility(View.GONE);
+        }
+        else {
+            T_DISPLAY.setText(ProgressDialogFragment.progress_display[0]);
+            T_DISPLAY.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -25,11 +25,20 @@
         app:layout_constraintTop_toBottomOf="@+id/progress_dialog_progressBar" />
 
     <TextView
+        android:id="@+id/progress_dialog_progressSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Progress Subtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_dialog_progressTitle" />
+
+    <TextView
         android:id="@+id/progress_dialog_progressDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Progress Display"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progress_dialog_progressTitle" />
+        app:layout_constraintTop_toBottomOf="@id/progress_dialog_progressSubtitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

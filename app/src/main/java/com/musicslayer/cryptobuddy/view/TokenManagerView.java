@@ -199,7 +199,7 @@ public class TokenManagerView extends CrashTableRow {
             T.setText(tokenManager.getTokenType() + ":\n(" + tokenManager.downloaded_tokens.size() + ", " + tokenManager.found_tokens.size() + ", " + tokenManager.custom_tokens.size() + ")");
         }
         else {
-            T.setText(tokenManager.getTokenType() + ":\n(" + tokenManager.found_tokens.size() + ", " + tokenManager.custom_tokens.size() + ")");
+            T.setText(tokenManager.getTokenType() + ":\n(-, " + tokenManager.found_tokens.size() + ", " + tokenManager.custom_tokens.size() + ")");
             B_DOWNLOAD.setVisibility(INVISIBLE);
         }
     }

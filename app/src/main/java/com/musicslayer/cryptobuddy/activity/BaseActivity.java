@@ -28,6 +28,7 @@ abstract public class BaseActivity extends CrashActivity {
                 public void onInAppPurchase() {}
             });
 
+            // We must call these each time so that the listeners always have the current Activity.
             InAppPurchase.setWrapperPurchasesUpdatedListener(this);
             InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
 

@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
 
@@ -20,6 +21,8 @@ public class ADATokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
+        ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
+
         String baseURL = "https://raw.githubusercontent.com/cardano-foundation/cardano-token-registry/master/mappings/";
 
         // Get all file info.
@@ -31,6 +34,8 @@ public class ADATokenManager extends TokenManager {
 
             JSONArray fileArrayJSON = new JSONArray(fileArray);
             for(int i = 0; i < fileArrayJSON.length(); i++) {
+                ProgressDialogFragment.reportProgress(i, fileArrayJSON.length(), getTokenType() + " Tokens Processed");
+
                 JSONObject file = fileArrayJSON.getJSONObject(i);
                 String filename = file.getString("name");
                 String tokenInfo = RESTUtil.get(baseURL + filename);

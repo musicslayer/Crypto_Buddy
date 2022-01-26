@@ -12,9 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-// TODO Serializing a large array of tokens can take a lot of heap memory and cause StackOverflowError.
-
-// Note: Serialization has to be perfect, or we throw errors. There are no "default" values here.
+// Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 public class Serialization {
     // Keep this short because it will appear on every piece of stored data.

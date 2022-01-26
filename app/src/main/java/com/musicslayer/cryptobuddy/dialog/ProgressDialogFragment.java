@@ -17,7 +17,7 @@ import java.math.RoundingMode;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
     public static final long MAX_TIME = 3600000L; // 60 minutes
-    public static final long UPDATE_TIME = 1000L; // 1 second
+    public static final long UPDATE_TIME = 100L; // 0.1 second
 
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
@@ -28,6 +28,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     public final static String[] stored_value = new String[1];
 
     public final static String[] progress_title = new String[1];
+    public final static String[] progress_subtitle = new String[1];
     public final static String[] progress_display = new String[1];
 
     // Global switch that determines if threads created here should proceed on.
@@ -45,6 +46,13 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
     public static void updateProgressTitle(String s) {
         ProgressDialogFragment.progress_title[0] = s;
+        ProgressDialogFragment.progress_subtitle[0] = null;
+        ProgressDialogFragment.progress_display[0] = null;
+    }
+
+    public static void updateProgressSubtitle(String s) {
+        ProgressDialogFragment.progress_subtitle[0] = s;
+        ProgressDialogFragment.progress_display[0] = null;
     }
 
     public static void updateProgressDisplay(String s) {
@@ -52,18 +60,18 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     }
 
     public static void reportProgress(int current, int total, String postString) {
-        String progressSetting = ProgressDisplaySetting.value;
+        String totalString = total == -1 ? "?" : Integer.toString(total);
+        String percentageString = total == -1 ? "?" : new BigDecimal(current).multiply(new BigDecimal(100)).divide(new BigDecimal(total), 0, RoundingMode.HALF_UP).toPlainString();
 
+        String progressSetting = ProgressDisplaySetting.value;
         if("combo".equals(progressSetting)) {
-            BigDecimal d = new BigDecimal(current).multiply(new BigDecimal(100)).divide(new BigDecimal(total), 0, RoundingMode.HALF_UP);
-            updateProgressDisplay(current + " / " + total + " (" + d.toPlainString() + "%) " + postString);
+            updateProgressDisplay(current + " / " + totalString + " (" + percentageString + "%) " + postString);
         }
         else if("percentage".equals(progressSetting)) {
-            BigDecimal d = new BigDecimal(current).multiply(new BigDecimal(100)).divide(new BigDecimal(total), 0, RoundingMode.HALF_UP);
-            updateProgressDisplay(d.toPlainString() + "% " + postString);
+            updateProgressDisplay(percentageString + "% " + postString);
         }
         else if("total".equals(progressSetting)) {
-            updateProgressDisplay(current + " / " + total + " " + postString);
+            updateProgressDisplay(current + " / " + totalString + " " + postString);
         }
     }
 
@@ -74,8 +82,9 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         allowThreads[0] = true;
 
         // Set initial title and display.
-        ProgressDialogFragment.progress_title[0] = "";
-        ProgressDialogFragment.progress_display[0] = "";
+        ProgressDialogFragment.progress_title[0] = null;
+        ProgressDialogFragment.progress_subtitle[0] = null;
+        ProgressDialogFragment.progress_display[0] = null;
 
         super.show(context, tag);
     }
@@ -92,7 +101,9 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         TimerUtil.startTimer(MAX_TIME, UPDATE_TIME, new TimerUtil.TimerUtilListener() {
             @Override
             public void onTickCallback(long millisUntilFinished) {
-                currentProgressDialog.updateLayout();
+                currentProgressDialog.activity.runOnUiThread(() -> {
+                    currentProgressDialog.updateLayout();
+                });
             }
 
             @Override

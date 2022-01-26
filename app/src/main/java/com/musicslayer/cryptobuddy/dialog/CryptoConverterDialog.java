@@ -54,6 +54,8 @@ public class CryptoConverterDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Performing Conversion...");
+
                 PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
                 if(ProgressDialogFragment.isCancelled()) { return; }
                 PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary);

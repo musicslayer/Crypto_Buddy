@@ -24,15 +24,17 @@ import java.util.Date;
 public class AuthUtil {
     public static byte[] code_e; // Only encrypted code should be stored.
 
-    public static void authorizeOAuthBrowser(Context context, OAuthInfo oAuthInfo) {
-        BaseDialogFragment.newInstance(OAuthBrowserDialog.class, oAuthInfo).show(context, "oauth_browser");
+    public static void authorizeOAuthBrowser(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
+        restoreListenersBrowser(context, oAuthInfo, L).show(context, "oauth_browser");
     }
 
-    public static void restoreListenersBrowser(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
+    public static BaseDialogFragment restoreListenersBrowser(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Confirming Authorization...");
+
                 // Use the code to get access token that we can use to request user info.
                 OAuthToken oAuthToken = null;
 
@@ -112,6 +114,8 @@ public class AuthUtil {
             }
         });
         oauthBrowserDialogFragment.restoreListeners(context, "oauth_browser");
+
+        return oauthBrowserDialogFragment;
     }
 
     public static class OAuthInfo implements Parcelable {

@@ -51,6 +51,8 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Calculating Total...");
+
                 HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
 
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());

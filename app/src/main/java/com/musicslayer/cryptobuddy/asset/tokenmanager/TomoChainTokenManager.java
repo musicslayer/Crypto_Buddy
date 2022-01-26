@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
 
@@ -46,6 +47,21 @@ public class TomoChainTokenManager extends TokenManager {
     }
 
     public String getJSON() {
+        ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
+
+        int progress_current = 0;
+        int progress_total;
+
+        // Use this to get the total number of tokens.
+        String totalData = RESTUtil.get("https://scan.tomochain.com/api/tokens?type=trc20&limit=1&page=0");
+        try {
+            JSONObject json = new JSONObject(totalData);
+            progress_total = json.getInt("total");
+        }
+        catch(Exception ignored) {
+            return null;
+        }
+
         int numPages = 0;
         StringBuilder jsonPages = new StringBuilder();
         boolean done = false;
@@ -59,7 +75,11 @@ public class TomoChainTokenManager extends TokenManager {
 
             try {
                 JSONObject json = new JSONObject(pageData);
-                done = json.getJSONArray("items").length() == 0;
+                int numItems = json.getJSONArray("items").length();
+
+                progress_current += numItems;
+                done = progress_current == progress_total;
+                ProgressDialogFragment.reportProgress(progress_current, progress_total, getTokenType() + " Tokens Processed");
             }
             catch(Exception ignored) {
                 return null;

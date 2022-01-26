@@ -33,8 +33,9 @@ import java.util.Date;
 
 // TODO NFT Viewer
 // TODO Discrepancy Viewer
-// TODO ProgresDialog could show more info.
 // TODO Make Redirect page look better.
+
+// TODO TokenManager, let people view tokens.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -64,6 +65,9 @@ public class InitialActivity extends BaseActivity {
         Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);
         SettingsCategory.initialize(applicationContext);
+
+        InAppPurchase.setWrapperPurchasesUpdatedListener(this);
+        InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
         InAppPurchase.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);

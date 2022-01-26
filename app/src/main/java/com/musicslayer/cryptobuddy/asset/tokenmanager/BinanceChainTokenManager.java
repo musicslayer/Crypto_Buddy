@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.RESTUtil;
 
@@ -20,6 +21,7 @@ public class BinanceChainTokenManager extends TokenManager {
     public boolean canGetJSON() { return true; }
 
     public String getJSON() {
+        ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
         return RESTUtil.get("https://dex.binance.org/api/v1/tokens?limit=1000");
     }
 

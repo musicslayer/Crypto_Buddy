@@ -41,7 +41,7 @@ abstract public class ExchangeAPI extends API {
     }
 
     abstract public boolean isSupported(Exchange exchange);
-    abstract public void authorize(Context context);
+    abstract public void authorize(Context context, AuthUtil.AuthorizationListener L);
     abstract public void restoreListeners(Context context, AuthUtil.AuthorizationListener L);
     abstract public boolean isAuthorized();
     abstract public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange);

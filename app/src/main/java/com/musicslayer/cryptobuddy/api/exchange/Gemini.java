@@ -35,8 +35,16 @@ public class Gemini extends ExchangeAPI {
         return new AuthUtil.OAuthInfo(authURLBase, tokenURLBase, client_id, client_secret, redirect_uri, response_type, grant_type, scopes);
     }
 
-    public void authorize(Context context) {
-        AuthUtil.authorizeOAuthBrowser(context, getOAuthInfo());
+    public void authorize(Context context, AuthUtil.AuthorizationListener L) {
+        AuthUtil.OAuthAuthorizationListener L_OAuth = new AuthUtil.OAuthAuthorizationListener() {
+            @Override
+            public void onAuthorization(AuthUtil.OAuthToken oAuthToken) {
+                Gemini.this.oAuthToken = oAuthToken;
+                L.onAuthorization();
+            }
+        };
+
+        AuthUtil.authorizeOAuthBrowser(context, getOAuthInfo(), L_OAuth);
     }
 
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {
