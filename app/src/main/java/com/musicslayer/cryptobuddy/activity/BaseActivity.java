@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.activity;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -14,7 +13,6 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
-import com.musicslayer.cryptobuddy.util.ContextUtil;
 
 abstract public class BaseActivity extends CrashActivity {
     abstract public void createLayout(Bundle savedInstanceState);

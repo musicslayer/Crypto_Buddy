@@ -62,7 +62,7 @@ public class TokenManagerActivity extends BaseActivity {
         ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
         Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
 
-        ArrayList<TokenManagerView> tokenManagerViewArrayList = new ArrayList<>();
+        tokenManagerViewArrayList = new ArrayList<>();
         for(String tokenType : tokenTypes) {
             TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
             TokenManagerView tokenManagerView = new TokenManagerView(TokenManagerActivity.this, tokenManager);
