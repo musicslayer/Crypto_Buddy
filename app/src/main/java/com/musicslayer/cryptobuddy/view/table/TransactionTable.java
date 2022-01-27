@@ -94,14 +94,14 @@ public class TransactionTable extends Table {
                 @Override
                 public void onClickImpl(View view) {
                     if(DrawableCompat.getColorFilter(B_II.getBackground()) != null) {
-                        // Reset button status, in case user backs out of deletion.
+                        // Second click -> Confirm deletion. Also reset button status in case user backs out of deletion.
                         B_II.setBackgroundResource(R.drawable.border_round);
                         B_II.getBackground().clearColorFilter();
 
                         confirmDeleteTransactionDialogFragment.show(context, "delete" + ii);
                     }
                     else {
-                        // Set button status, and reset all other button statuses.
+                        // First click -> Set button status, and reset all other button statuses.
                         for(int i = numHeaderRows; i < TransactionTable.this.getChildCount(); i++) {
                             ViewGroup childRow = (ViewGroup)TransactionTable.this.getChildAt(i);
 

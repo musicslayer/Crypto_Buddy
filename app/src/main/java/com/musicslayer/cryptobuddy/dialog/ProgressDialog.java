@@ -3,9 +3,15 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.core.graphics.BlendModeColorFilterCompat;
+import androidx.core.graphics.BlendModeCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 
 // This is only meant to be used with ProgressDialogFragment.
 public class ProgressDialog extends BaseDialog {
@@ -17,8 +23,7 @@ public class ProgressDialog extends BaseDialog {
 
     @Override
     public void onBackPressedImpl() {
-        ProgressDialogFragment.setCancelled();
-        dismiss();
+        // User cannot hit back to dismiss. They must either wait, or use the cancel button.
     }
 
     public int getBaseViewID() {
@@ -31,6 +36,25 @@ public class ProgressDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_progress);
+
+        Button B_CANCEL = findViewById(R.id.progress_dialog_cancelButton);
+        B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                if(DrawableCompat.getColorFilter(B_CANCEL.getBackground()) != null) {
+                    // Second click -> Cancel dialog.
+                    // Do not use any confirmation, since we are only backing out and not deleting anything.
+                    ProgressDialogFragment.setCancelled();
+                    dismiss();
+                }
+                else {
+                    // First click -> Change color filter.
+                    B_CANCEL.setBackgroundResource(R.drawable.border_round_red);
+                    B_CANCEL.getBackground().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(0xFFFF0000, BlendModeCompat.SRC_ATOP));
+                }
+            }
+        });
+
         updateLayout();
     }
 

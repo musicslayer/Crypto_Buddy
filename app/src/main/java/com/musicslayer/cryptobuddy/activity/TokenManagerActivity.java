@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+// TODO Why do we need so many BaseDialogFragments? Can Views share them?
+
 public class TokenManagerActivity extends BaseActivity {
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
 

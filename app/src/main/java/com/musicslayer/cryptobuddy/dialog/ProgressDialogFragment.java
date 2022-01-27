@@ -13,8 +13,6 @@ import com.musicslayer.cryptobuddy.util.TimerUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-// TODO Cancel confirmation/button?
-
 public class ProgressDialogFragment extends BaseDialogFragment {
     public static final long MAX_TIME = 3600000L; // 60 minutes
     public static final long UPDATE_TIME = 1000L; // 1 second

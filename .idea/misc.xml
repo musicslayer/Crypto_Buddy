@@ -61,6 +61,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_page.xml" value="0.36512820512820515" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_time.xml" value="0.2203125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_back.xml" value="0.24791666666666667" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_back_progress.xml" value="0.22962962962962963" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_address_history.xml" value="0.20185185185185187" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_all_address_history.xml" value="0.2328125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_all_address_portfolios.xml" value="0.25925925925925924" />
@@ -70,6 +71,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_all_transaction_portfolios.xml" value="0.25925925925925924" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_tokens.xml" value="0.25" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_delete_transaction.xml" value="0.2234375" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_progress_back.xml" value="0.21354166666666666" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_remove_address.xml" value="0.2630208333333333" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_remove_exchange.xml" value="0.24717948717948718" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_confirm_reset_everything.xml" value="0.16770833333333332" />
