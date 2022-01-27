@@ -3,15 +3,18 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.StreamUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ZipUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 // Token Registry:
 // https://github.com/cardano-foundation/cardano-token-registry/
@@ -29,20 +32,54 @@ public class ADATokenManager extends TokenManager {
         ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
 
         try {
-            File file = FileUtil.downloadFile("https://api.github.com/repos/cardano-foundation/cardano-token-registry/zipball");
-            HashMap<String, String> zipMap = ZipUtil.unzip(file, "mappings");
+            // Do this just to get the total number of tokens we expect.
+            String fileArray = WebUtil.get("https://api.github.com/repos/cardano-foundation/cardano-token-registry/contents/mappings");
+            JSONArray fileArrayJSON = new JSONArray(fileArray);
 
-            // Each file contains the info for one token.
-            ArrayList<String> tokenInfoArray = new ArrayList<>(zipMap.values());
+            final int[] progress_current = new int[1];
+            int progress_total = fileArrayJSON.length();
+
+            File file = FileUtil.downloadFile("https://api.github.com/repos/cardano-foundation/cardano-token-registry/zipball");
 
             StringBuilder json = new StringBuilder("[");
-            for(int i = 0; i < tokenInfoArray.size(); i++) {
-                json.append(tokenInfoArray.get(i));
 
-                if(i < tokenInfoArray.size() - 1) {
-                    json.append(",");
+            ZipUtil.unzip(file, new ZipUtil.UnzipListener() {
+                @Override
+                public void onUnzip(ZipEntry zipEntry, ZipInputStream zin) throws IOException {
+                    // If we have already cancelled, throw exception to stop unzip process.
+                    if(ProgressDialogFragment.isCancelled()) {
+                        throw new IOException();
+                    }
+
+                    // All the tokens are in the mappings folder.
+                    if(!zipEntry.isDirectory() && zipEntry.getName().contains("/mappings/")) {
+                        progress_current[0]++;
+                        ProgressDialogFragment.reportProgress(progress_current[0], progress_total, getTokenType() + " Tokens Processed");
+
+                        String fileContents = StreamUtil.readIntoString(zin);
+
+                        // The logo takes up too much memory so we remove it here.
+                        JSONObject tokenJSON;
+                        try {
+                            tokenJSON = new JSONObject(fileContents);
+                            tokenJSON.remove("logo");
+                        }
+                        catch(Exception e) {
+                            throw new IOException(e);
+                        }
+
+                        json.append(tokenJSON.toString());
+                        json.append(",");
+                    }
                 }
-            }
+            });
+
+            // We are done with the zip file and it is rather large, so just delete it now.
+            // Don't check the return value - if we do not succeed then the file will be deleted next time the app starts anyway.
+            file.delete();
+
+            // Get rid of last "," to avoid potential for a last "null" element being seen.
+            json.deleteCharAt(json.length() - 1);
             json.append("]");
             return json.toString();
         }

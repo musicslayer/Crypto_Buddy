@@ -79,6 +79,7 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddCustomTokenDialog)dialog).isComplete) {
+                    // TODO We actually do know.
                     // We don't know which view was changed, so just update all of them.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                         tokenManagerView.updateLayout();
@@ -172,6 +173,7 @@ public class TokenManagerActivity extends BaseActivity {
                 ArrayList<String> tokenJSONArrayList = new ArrayList<>();
 
                 for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
+                    if(ProgressDialogFragment.isCancelled()) { return; }
                     tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
                 }
 
