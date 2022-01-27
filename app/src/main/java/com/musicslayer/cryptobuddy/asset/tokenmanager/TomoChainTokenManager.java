@@ -4,7 +4,7 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ public class TomoChainTokenManager extends TokenManager {
             baseURL = "https://scan.testnet.tomochain.com";
         }
 
-        String tokenString = RESTUtil.get(baseURL + "/api/tokens/" + id);
+        String tokenString = WebUtil.get(baseURL + "/api/tokens/" + id);
 
         try {
             JSONObject tokenObj = new JSONObject(tokenString);
@@ -53,7 +53,7 @@ public class TomoChainTokenManager extends TokenManager {
         int progress_total;
 
         // Use this to get the total number of tokens.
-        String totalData = RESTUtil.get("https://scan.tomochain.com/api/tokens?type=trc20&limit=1&page=0");
+        String totalData = WebUtil.get("https://scan.tomochain.com/api/tokens?type=trc20&limit=1&page=0");
         try {
             JSONObject json = new JSONObject(totalData);
             progress_total = json.getInt("total");
@@ -68,7 +68,7 @@ public class TomoChainTokenManager extends TokenManager {
 
         while(!done) {
             numPages++;
-            String pageData = RESTUtil.get("https://scan.tomochain.com/api/tokens?type=trc20&limit=50&page=" + numPages);
+            String pageData = WebUtil.get("https://scan.tomochain.com/api/tokens?type=trc20&limit=50&page=" + numPages);
             if(pageData == null) { return null; }
 
             jsonPages.append("\"page").append(numPages).append("\":").append(pageData);

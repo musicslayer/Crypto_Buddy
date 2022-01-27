@@ -21,7 +21,7 @@ abstract public class CrashPurchasesResponseListener implements PurchasesRespons
     public Activity activity;
 
     public CrashPurchasesResponseListener(Context context) {
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,7 +24,7 @@ public class VETTokenManager extends TokenManager {
 
     public String getJSON() {
         ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
-        return RESTUtil.get("https://vechain.github.io/token-registry/main.json");
+        return WebUtil.get("https://vechain.github.io/token-registry/main.json");
     }
 
     public boolean parse(String tokenJSON) {

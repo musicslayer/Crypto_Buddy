@@ -51,7 +51,7 @@ public class StandardSettingsView extends SettingsView {
                 SettingList.saveSetting(context, setting);
 
                 if(oldSetting != pos && setting.needsRefresh()) {
-                    ContextUtil.getActivity(context).recreate();
+                    ContextUtil.getActivityFromContext(context).recreate();
                 }
             }
         });

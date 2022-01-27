@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class AlgoExplorer extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/v2/accounts/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/v2/accounts/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -68,7 +68,7 @@ public class AlgoExplorer extends AddressAPI {
                     JSONObject asset = assets.getJSONObject(i);
                     String id = asset.getString("asset-id");
 
-                    String tokenData = RESTUtil.get(baseURL + "/v2/assets/" + id);
+                    String tokenData = WebUtil.get(baseURL + "/v2/assets/" + id);
                     JSONObject tokenJSON = new JSONObject(tokenData).getJSONObject("params");
 
                     String name = tokenJSON.getString("unit-name");
@@ -129,7 +129,7 @@ public class AlgoExplorer extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -258,7 +258,7 @@ public class AlgoExplorer extends AddressAPI {
 
                     // TOKEN
                     String id = jsonTransaction.getJSONObject("asset-transfer-transaction").getString("asset-id");
-                    String tokenData = RESTUtil.get(baseURL + "/v2/assets/" + id);
+                    String tokenData = WebUtil.get(baseURL + "/v2/assets/" + id);
                     JSONObject tokenJSON = new JSONObject(tokenData).getJSONObject("params");
 
                     String name = tokenJSON.getString("unit-name");

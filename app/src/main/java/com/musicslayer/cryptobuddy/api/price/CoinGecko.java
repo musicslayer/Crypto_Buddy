@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONObject;
 
@@ -94,7 +94,7 @@ public class CoinGecko extends PriceAPI {
             }
 
             ProgressDialogFragment.updateProgressSubtitle("Processing Tokens...");
-            String priceDataTokenJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
             if(priceDataTokenJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataTokenJSON);
@@ -129,7 +129,7 @@ public class CoinGecko extends PriceAPI {
         }
 
         ProgressDialogFragment.updateProgressSubtitle("Processing Coins...");
-        String priceDataCoinJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);
@@ -161,10 +161,10 @@ public class CoinGecko extends PriceAPI {
 
         String priceDataJSON = null;
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {
@@ -226,7 +226,7 @@ public class CoinGecko extends PriceAPI {
                 }
             }
 
-            String priceDataTokenJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
             if(priceDataTokenJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataTokenJSON);
@@ -260,7 +260,7 @@ public class CoinGecko extends PriceAPI {
             }
         }
 
-        String priceDataCoinJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);
@@ -293,10 +293,10 @@ public class CoinGecko extends PriceAPI {
         String priceDataJSON = null;
 
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = RESTUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {

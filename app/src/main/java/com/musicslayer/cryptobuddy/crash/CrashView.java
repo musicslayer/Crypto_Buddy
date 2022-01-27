@@ -20,7 +20,7 @@ abstract public class CrashView extends View {
         public Activity activity;
 
         public CrashOnClickListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override

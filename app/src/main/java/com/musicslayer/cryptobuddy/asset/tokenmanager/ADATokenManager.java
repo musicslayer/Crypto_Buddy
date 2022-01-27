@@ -2,11 +2,16 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.ZipUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 // Token Registry:
 // https://github.com/cardano-foundation/cardano-token-registry/
@@ -23,30 +28,18 @@ public class ADATokenManager extends TokenManager {
     public String getJSON() {
         ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
 
-        String baseURL = "https://raw.githubusercontent.com/cardano-foundation/cardano-token-registry/master/mappings/";
-
-        // Get all file info.
-        String fileArray = RESTUtil.get("https://api.github.com/repos/cardano-foundation/cardano-token-registry/contents/mappings");
-
-        // For each file, get the token info.
         try {
+            File file = FileUtil.downloadFile("https://api.github.com/repos/cardano-foundation/cardano-token-registry/zipball");
+            HashMap<String, String> zipMap = ZipUtil.unzip(file, "mappings");
+
+            // Each file contains the info for one token.
+            ArrayList<String> tokenInfoArray = new ArrayList<>(zipMap.values());
+
             StringBuilder json = new StringBuilder("[");
+            for(int i = 0; i < tokenInfoArray.size(); i++) {
+                json.append(tokenInfoArray.get(i));
 
-            JSONArray fileArrayJSON = new JSONArray(fileArray);
-            for(int i = 0; i < fileArrayJSON.length(); i++) {
-                ProgressDialogFragment.reportProgress(i, fileArrayJSON.length(), getTokenType() + " Tokens Processed");
-
-                JSONObject file = fileArrayJSON.getJSONObject(i);
-                String filename = file.getString("name");
-                String tokenInfo = RESTUtil.get(baseURL + filename);
-
-                if(tokenInfo == null) {
-                    return null;
-                }
-
-                json.append(tokenInfo);
-
-                if(i < fileArrayJSON.length() - 1) {
+                if(i < tokenInfoArray.size() - 1) {
                     json.append(",");
                 }
             }

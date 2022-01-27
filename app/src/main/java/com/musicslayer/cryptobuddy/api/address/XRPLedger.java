@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,7 +54,7 @@ public class XRPLedger extends AddressAPI {
                 "}" +
                 "]" +
                 "}";
-        String addressDataJSON = RESTUtil.post(baseURL, body);
+        String addressDataJSON = WebUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -94,7 +94,7 @@ public class XRPLedger extends AddressAPI {
                     "}" +
                     "]" +
                     "}";
-            String addressDataTokensLJSON = RESTUtil.post(baseURL, bodyTokensL);
+            String addressDataTokensLJSON = WebUtil.post(baseURL, bodyTokensL);
 
             String bodyTokens = "{" +
                     "\"method\": \"account_lines\"," +
@@ -104,7 +104,7 @@ public class XRPLedger extends AddressAPI {
                     "}" +
                     "]" +
                     "}";
-            String addressDataTokensJSON = RESTUtil.post(baseURL, bodyTokens);
+            String addressDataTokensJSON = WebUtil.post(baseURL, bodyTokens);
 
             if(addressDataTokensLJSON == null || addressDataTokensJSON == null) {
                 return null;
@@ -214,7 +214,7 @@ public class XRPLedger extends AddressAPI {
     }
 
     public String processTransfers(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.post(url, body);
+        String addressDataJSON = WebUtil.post(url, body);
         if(addressDataJSON == null) {
             return ERROR;
         }

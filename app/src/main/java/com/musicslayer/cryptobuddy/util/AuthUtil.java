@@ -46,7 +46,7 @@ public class AuthUtil {
                         "\"redirect_uri\": \"" + oAuthInfo.redirect_uri + "\"" +
                         "}";
 
-                String authResponse = RESTUtil.post(oAuthInfo.tokenURLBase, body);
+                String authResponse = WebUtil.post(oAuthInfo.tokenURLBase, body);
                 if(authResponse != null) {
                     try {
                         JSONObject authResponseJSON = new JSONObject(authResponse);

@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,7 +23,7 @@ public class BinanceChainMiniTokenManager extends TokenManager {
 
     public String getJSON() {
         ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
-        return RESTUtil.get("https://dex.binance.org/api/v1/mini/tokens?limit=1000");
+        return WebUtil.get("https://dex.binance.org/api/v1/mini/tokens?limit=1000");
     }
 
     public boolean parse(String tokenJSON) {

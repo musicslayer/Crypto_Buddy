@@ -6,7 +6,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class Blockstream extends AddressAPI {
             urlPart = "/testnet/";
         }
 
-        String addressDataJSON = RESTUtil.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get("https://blockstream.info" + urlPart + "api/address/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -95,7 +95,7 @@ public class Blockstream extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }

@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class Gemini extends ExchangeAPI {
     }
 
     public String processBalance(String url, String token, ArrayList<AssetQuantity> currentBalanceArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }

@@ -22,7 +22,7 @@ abstract public class CrashSearchView extends SearchView {
         public Activity activity;
 
         public CrashOnQueryTextListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override

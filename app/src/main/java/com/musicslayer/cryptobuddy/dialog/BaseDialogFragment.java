@@ -103,7 +103,7 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public static FragmentManager getFragmentManager(Context context) {
-        return ((AppCompatActivity)ContextUtil.getActivity(context)).getSupportFragmentManager();
+        return ((AppCompatActivity)ContextUtil.getActivityFromContext(context)).getSupportFragmentManager();
     }
 
     public static Fragment getDialogByTag(Context context, String tag) {

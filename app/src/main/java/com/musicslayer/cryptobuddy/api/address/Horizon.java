@@ -8,7 +8,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,7 +68,7 @@ public class Horizon extends AddressAPI {
             baseURL = "https://horizon-testnet.stellar.org";
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/accounts/" + cryptoAddress.address);
         if(addressDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(addressDataJSON);
@@ -134,9 +134,9 @@ public class Horizon extends AddressAPI {
             baseURL = "https://horizon-testnet.stellar.org";
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/transactions?limit=200&order=desc&include_failed=true");
-        String addressDataOperationsJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/operations?limit=200&order=desc&include_failed=true");
-        String addressDataEffectsJSON = RESTUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/effects?limit=200&order=desc&include_failed=true");
+        String addressDataJSON = WebUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/transactions?limit=200&order=desc&include_failed=true");
+        String addressDataOperationsJSON = WebUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/operations?limit=200&order=desc&include_failed=true");
+        String addressDataEffectsJSON = WebUtil.get(baseURL + "/accounts/" + cryptoAddress.address + "/effects?limit=200&order=desc&include_failed=true");
         if(addressDataJSON == null && addressDataOperationsJSON == null && addressDataEffectsJSON == null) {
             // If all of these are null, it's possible that there are 0 transactions.
             // If this is true, there are probably no tokens.
@@ -242,7 +242,7 @@ public class Horizon extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -291,7 +291,7 @@ public class Horizon extends AddressAPI {
     }
 
     private String processOperations(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID) {
-        String addressDataOperationsJSON = RESTUtil.get(url);
+        String addressDataOperationsJSON = WebUtil.get(url);
         if(addressDataOperationsJSON == null) {
             return ERROR;
         }
@@ -326,7 +326,7 @@ public class Horizon extends AddressAPI {
     }
 
     private String processEffects(String url, CryptoAddress cryptoAddress, ArrayList<BigInteger> skipID, ArrayList<Transaction> transactionEffectsArrayList) {
-        String addressDataEffectsJSON = RESTUtil.get(url);
+        String addressDataEffectsJSON = WebUtil.get(url);
         if(addressDataEffectsJSON == null) {
             return ERROR;
         }
@@ -534,7 +534,7 @@ public class Horizon extends AddressAPI {
     private String processTokens(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataIssueJSON = RESTUtil.get(url);
+        String addressDataIssueJSON = WebUtil.get(url);
         if(addressDataIssueJSON == ERROR) {
             return null;
         }

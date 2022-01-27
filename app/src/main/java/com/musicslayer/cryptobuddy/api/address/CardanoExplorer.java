@@ -8,7 +8,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class CardanoExplorer extends AddressAPI {
                 "\"query\": \"query searchForPaymentAddress($address: String!) {\\n  transactions_aggregate(where: {_or: [{inputs: {address: {_eq: $address}}}, {outputs: {address: {_eq: $address}}}]}) {\\n    aggregate {\\n      count\\n    }\\n  }\\n  paymentAddresses(addresses: [$address]) {\\n    summary {\\n      assetBalances {\\n        asset {\\n          assetName\\n          decimals\\n          description\\n          fingerprint\\n          name\\n          policyId\\n          ticker\\n        }\\n        quantity\\n      }\\n    }\\n  }\\n}\\n\"," +
                 "\"variables\": \"{\\\"address\\\": \\\"" + cryptoAddress.address + "\\\"}\"" +
                 "}";
-        String addressDataJSON = RESTUtil.post(baseURL, body);
+        String addressDataJSON = WebUtil.post(baseURL, body);
 
         if(addressDataJSON == null) {
             return null;
@@ -144,7 +144,7 @@ public class CardanoExplorer extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String process(String url, String body, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.post(url, body);
+        String addressDataJSON = WebUtil.post(url, body);
         if(addressDataJSON == null) {
             return ERROR;
         }

@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,7 +59,7 @@ public class BscScan extends AddressAPI {
     }
 
     public String processBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -133,10 +133,10 @@ public class BscScan extends AddressAPI {
         }
 
         // Normal Transactions - These are all BNBs
-        String addressDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+        String addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
         // Internal Transactions - These are all BNBs
-        String addressDataInternalJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+        String addressDataInternalJSON = WebUtil.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
         if(addressDataJSON == null || addressDataInternalJSON == null) {
             return null;
@@ -261,7 +261,7 @@ public class BscScan extends AddressAPI {
 
         if(shouldIncludeTokens(cryptoAddress)) {
             // BEP-20 Transactions - Various Tokens
-            String addressDataTokenJSON = RESTUtil.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+            String addressDataTokenJSON = WebUtil.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
             if(addressDataTokenJSON == null) {
                 return null;

@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
+import com.musicslayer.cryptobuddy.app.App;
+
 public class CachedFileProvider extends ContentProvider {
     private UriMatcher uriMatcher;
 
@@ -31,7 +33,7 @@ public class CachedFileProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case 1:
                 // File is valid and has correct authority.
-                String fileLocation = getContext().getCacheDir() + File.separator + uri.getLastPathSegment();
+                String fileLocation = new File(App.cacheDir) + File.separator + uri.getLastPathSegment();
                 return ParcelFileDescriptor.open(new File(fileLocation), getMode(mode));
 
             case 2:

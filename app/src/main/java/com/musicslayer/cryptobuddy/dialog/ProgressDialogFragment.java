@@ -17,7 +17,7 @@ import java.math.RoundingMode;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
     public static final long MAX_TIME = 3600000L; // 60 minutes
-    public static final long UPDATE_TIME = 100L; // 0.1 second
+    public static final long UPDATE_TIME = 1000L; // 1 second
 
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";

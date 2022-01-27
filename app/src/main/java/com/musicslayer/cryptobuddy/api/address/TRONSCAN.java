@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class TRONSCAN extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/api/account/wallet?address=" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/api/account/wallet?address=" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -195,7 +195,7 @@ public class TRONSCAN extends AddressAPI {
     }
 
     public String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
-        String addressDataTransactionsJSON = RESTUtil.get(url);
+        String addressDataTransactionsJSON = WebUtil.get(url);
         if(addressDataTransactionsJSON == null) {
             return ERROR;
         }
@@ -233,7 +233,7 @@ public class TRONSCAN extends AddressAPI {
                 if(cost.length() == 0) {
                     // Sometimes the fee information is not here, so we need to fetch it.
                     String hash = o.getString("hash");
-                    String addressDataAlternateJSON = RESTUtil.get(baseURL + "/api/transaction-info?hash=" + hash);
+                    String addressDataAlternateJSON = WebUtil.get(baseURL + "/api/transaction-info?hash=" + hash);
                     if(addressDataAlternateJSON != null) {
                         JSONObject o2 = new JSONObject(addressDataAlternateJSON);
                         cost = o2.getJSONObject("cost");
@@ -351,7 +351,7 @@ public class TRONSCAN extends AddressAPI {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTRC20FromJSON = RESTUtil.get(url);
+        String addressDataTRC20FromJSON = WebUtil.get(url);
         if(addressDataTRC20FromJSON == null) {
             return ERROR;
         }
@@ -439,7 +439,7 @@ public class TRONSCAN extends AddressAPI {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTRC20ToJSON = RESTUtil.get(url);
+        String addressDataTRC20ToJSON = WebUtil.get(url);
         if(addressDataTRC20ToJSON == null) {
             return ERROR;
         }

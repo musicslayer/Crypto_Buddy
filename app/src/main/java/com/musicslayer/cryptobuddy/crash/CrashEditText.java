@@ -22,7 +22,7 @@ abstract public class CrashEditText extends AppCompatEditText {
 
     public CrashEditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override
@@ -54,7 +54,7 @@ abstract public class CrashEditText extends AppCompatEditText {
             CrashException crashException = new CrashException(exception);
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
             return;
         }
 
@@ -71,7 +71,7 @@ abstract public class CrashEditText extends AppCompatEditText {
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
         }
     }
 

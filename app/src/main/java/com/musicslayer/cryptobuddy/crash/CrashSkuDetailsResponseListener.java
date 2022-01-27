@@ -21,7 +21,7 @@ abstract public class CrashSkuDetailsResponseListener implements SkuDetailsRespo
     public Activity activity;
 
     public CrashSkuDetailsResponseListener(Context context) {
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override

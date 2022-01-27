@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import org.json.JSONArray;
@@ -74,7 +74,7 @@ public class Solana extends AddressAPI {
                         "  ]" +
                         "}";
 
-        String addressDataJSON = RESTUtil.post(baseURL, body);
+        String addressDataJSON = WebUtil.post(baseURL, body);
         if(addressDataJSON == null) {
             return null;
         }
@@ -107,7 +107,7 @@ public class Solana extends AddressAPI {
                             "  ]" +
                             "}";
 
-            String addressTokenDataJSON = RESTUtil.post(baseURL, tokenBody);
+            String addressTokenDataJSON = WebUtil.post(baseURL, tokenBody);
             if(addressTokenDataJSON == null) {
                 return null;
             }
@@ -174,7 +174,7 @@ public class Solana extends AddressAPI {
                         "  ]" +
                         "}";
 
-        String ownerDataJSON = RESTUtil.post(baseURL, ownerBody);
+        String ownerDataJSON = WebUtil.post(baseURL, ownerBody);
         if(ownerDataJSON == null) {
             return null;
         }
@@ -268,7 +268,7 @@ public class Solana extends AddressAPI {
                 "}" +
                 "\"\n}";
 
-        String addressDataJSON = RESTUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+        String addressDataJSON = WebUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
 
         if(addressDataJSON == null) {
             return null;
@@ -351,7 +351,7 @@ public class Solana extends AddressAPI {
     }
 
     private String processNormal(String url, String body, CryptoAddress cryptoAddress, ArrayList<String> ownerList, HashMap<String, Token> tokenMap, ArrayList<String> signatureList, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.post(url, body);
+        String addressDataJSON = WebUtil.post(url, body);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -401,7 +401,7 @@ public class Solana extends AddressAPI {
                                 "  ]" +
                                 "}";
 
-                String transactionJSON = RESTUtil.post(baseURL, transactionBody);
+                String transactionJSON = WebUtil.post(baseURL, transactionBody);
                 JSONObject transactionObj = new JSONObject(transactionJSON);
 
                 // Search for fee. The first account in the list is the fee payer.

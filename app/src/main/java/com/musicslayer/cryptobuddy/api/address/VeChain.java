@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,7 +45,7 @@ public class VeChain extends AddressAPI {
             baseURL = "https://explore-testnet.vechain.org";
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase());
+        String addressDataJSON = WebUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address.toLowerCase());
         if(addressDataJSON == null) {
             return null;
         }
@@ -122,7 +122,7 @@ public class VeChain extends AddressAPI {
 
     public String processTransfers(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
         // Transfers (VET, VTHO, and Tokens)
-        String addressDataJSONTransfers = RESTUtil.get(url);
+        String addressDataJSONTransfers = WebUtil.get(url);
         if(addressDataJSONTransfers == null) {
             return ERROR;
         }
@@ -161,7 +161,7 @@ public class VeChain extends AddressAPI {
 
                     // Get fee (in VeThor)
                     String txID = o.getString("txID");
-                    String transactionJSON = RESTUtil.get(baseURL + "/api/transactions/" + txID);
+                    String transactionJSON = WebUtil.get(baseURL + "/api/transactions/" + txID);
                     JSONObject transactionData = new JSONObject(transactionJSON);
 
                     BigDecimal fee = new BigDecimal(new BigInteger(transactionData.getJSONObject("receipt").getString("paid").substring(2), 16).toString());

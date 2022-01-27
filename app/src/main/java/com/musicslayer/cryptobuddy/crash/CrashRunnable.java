@@ -14,7 +14,7 @@ abstract public class CrashRunnable implements Runnable {
     public Activity activity;
 
     public CrashRunnable(Context context) {
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override

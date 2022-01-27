@@ -21,7 +21,7 @@ abstract public class CrashTableRow extends TableRow {
 
     public CrashTableRow(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override
@@ -53,7 +53,7 @@ abstract public class CrashTableRow extends TableRow {
             CrashException crashException = new CrashException(exception);
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
             return;
         }
 
@@ -70,7 +70,7 @@ abstract public class CrashTableRow extends TableRow {
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
         }
     }
 

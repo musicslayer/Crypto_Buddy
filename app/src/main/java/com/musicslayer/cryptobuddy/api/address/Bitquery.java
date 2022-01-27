@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class Bitquery extends AddressAPI {
         }
 
         // Bitquery doesn't give us this for binance, so use other API.
-        String addressDataJSON = RESTUtil.get(baseURL + "/api/v1/account/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/api/v1/account/" + cryptoAddress.address);
         if(addressDataJSON != null) {
             try {
                 JSONObject json = new JSONObject(addressDataJSON);
@@ -159,8 +159,8 @@ public class Bitquery extends AddressAPI {
         String APIKEYNAME = "X-API-KEY";
         String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";
 
-        String addressDataJSONReceive = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = WebUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = WebUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;
@@ -328,7 +328,7 @@ public class Bitquery extends AddressAPI {
     }
 
     private String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
-        String addressDataRewardJSON = RESTUtil.get(url);
+        String addressDataRewardJSON = WebUtil.get(url);
         if(addressDataRewardJSON == null) {
             return ERROR;
         }

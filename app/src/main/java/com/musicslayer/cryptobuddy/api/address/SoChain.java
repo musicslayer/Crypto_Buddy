@@ -5,7 +5,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +35,7 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        String addressDataJSON = RESTUtil.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -125,7 +125,7 @@ public class SoChain extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String processReceived(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
-        String addressDataJSONReceived = RESTUtil.get(url);
+        String addressDataJSONReceived = WebUtil.get(url);
         if(addressDataJSONReceived == null) {
             return ERROR;
         }
@@ -177,7 +177,7 @@ public class SoChain extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String processSpent(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
-        String addressDataJSONSpent = RESTUtil.get(url);
+        String addressDataJSONSpent = WebUtil.get(url);
         if(addressDataJSONSpent == null) {
             return ERROR;
         }

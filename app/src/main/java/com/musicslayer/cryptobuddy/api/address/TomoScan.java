@@ -8,7 +8,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class TomoScan extends AddressAPI {
             baseURL = "https://scan.testnet.tomochain.com";
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/api/accounts/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -92,7 +92,7 @@ public class TomoScan extends AddressAPI {
     public String processTokensTRC20Balance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressTRC20DataJSON = RESTUtil.get(url);
+        String addressTRC20DataJSON = WebUtil.get(url);
         if(addressTRC20DataJSON == null) {
             return ERROR;
         }
@@ -136,7 +136,7 @@ public class TomoScan extends AddressAPI {
     public String processTokensTRC21Balance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressTRC21DataJSON = RESTUtil.get(url);
+        String addressTRC21DataJSON = WebUtil.get(url);
         if(addressTRC21DataJSON == null) {
             return ERROR;
         }
@@ -335,7 +335,7 @@ public class TomoScan extends AddressAPI {
 
     public String processNormal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionNormalArrayList) {
         // Normal Transactions - These are all TOMO
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -417,7 +417,7 @@ public class TomoScan extends AddressAPI {
 
     public String processInternal(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionInternalArrayList) {
         // Internal Transactions - These are all TOMO. Fees are already counted elsewhere.
-        String addressDataInternalJSON = RESTUtil.get(url);
+        String addressDataInternalJSON = WebUtil.get(url);
         if(addressDataInternalJSON == null) {
             return ERROR;
         }
@@ -483,7 +483,7 @@ public class TomoScan extends AddressAPI {
 
     public String processRewards(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionRewardsArrayList) {
         // Rewards - These are all TOMO
-        String addressDataRewardJSON = RESTUtil.get(url);
+        String addressDataRewardJSON = WebUtil.get(url);
         if(addressDataRewardJSON == null) {
             return ERROR;
         }
@@ -528,7 +528,7 @@ public class TomoScan extends AddressAPI {
         // Votes - Only for mainnet
         if(!cryptoAddress.network.isMainnet()) { return DONE; }
 
-        String addressDataVotesJSON = RESTUtil.get(url);
+        String addressDataVotesJSON = WebUtil.get(url);
         if(addressDataVotesJSON == null) {
             return ERROR;
         }
@@ -587,7 +587,7 @@ public class TomoScan extends AddressAPI {
         // TRC-20 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTokenJSON20 = RESTUtil.get(url);
+        String addressDataTokenJSON20 = WebUtil.get(url);
         if(addressDataTokenJSON20 == null) {
             return ERROR;
         }
@@ -672,7 +672,7 @@ public class TomoScan extends AddressAPI {
         // TRC-21 Tokens
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTokenJSON21 = RESTUtil.get(url);
+        String addressDataTokenJSON21 = WebUtil.get(url);
         if(addressDataTokenJSON21 == null) {
             return ERROR;
         }

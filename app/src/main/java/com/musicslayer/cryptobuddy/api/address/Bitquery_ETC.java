@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class Bitquery_ETC extends AddressAPI {
             "}" +
             "\"\n}";
 
-        String addressDataJSON = RESTUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+        String addressDataJSON = WebUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
         if(addressDataJSON == null) {
             return null;
         }
@@ -115,8 +115,8 @@ public class Bitquery_ETC extends AddressAPI {
                 "}" +
                 "\"\n}";
 
-        String addressDataJSONReceive = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = RESTUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = WebUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = WebUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;

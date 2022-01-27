@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,7 +68,7 @@ public class TzStats extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/explorer/account/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/explorer/account/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             // Account may not be active, so say 0 Tezos.
             // We really need a better way to check this case.
@@ -106,7 +106,7 @@ public class TzStats extends AddressAPI {
     public String processTokensBalance(String url, CryptoAddress cryptoAddress, ArrayList<AssetQuantity> currentBalanceArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTokenJSON = RESTUtil.get(url);
+        String addressDataTokenJSON = WebUtil.get(url);
         if(addressDataTokenJSON == null) {
             return ERROR;
         }
@@ -258,7 +258,7 @@ public class TzStats extends AddressAPI {
     }
 
     public String processReceive(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionReceiveArrayList) {
-        String addressDataReceiveJSON = RESTUtil.get(url);
+        String addressDataReceiveJSON = WebUtil.get(url);
         if(addressDataReceiveJSON == null) {
             return ERROR;
         }
@@ -292,7 +292,7 @@ public class TzStats extends AddressAPI {
     }
 
     public String processSend(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionSendArrayList) {
-        String addressDataSendJSON = RESTUtil.get(url);
+        String addressDataSendJSON = WebUtil.get(url);
         if(addressDataSendJSON == null) {
             return ERROR;
         }
@@ -397,7 +397,7 @@ public class TzStats extends AddressAPI {
     }
 
     public String processCreate(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionCreateArrayList) {
-        String addressDataCreateJSON = RESTUtil.get(url);
+        String addressDataCreateJSON = WebUtil.get(url);
         if(addressDataCreateJSON == null) {
             return ERROR;
         }
@@ -442,7 +442,7 @@ public class TzStats extends AddressAPI {
     public String processTokens(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionTokenArrayList) {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
-        String addressDataTokenJSON = RESTUtil.get(url);
+        String addressDataTokenJSON = WebUtil.get(url);
         if(addressDataTokenJSON == null) {
             return ERROR;
         }

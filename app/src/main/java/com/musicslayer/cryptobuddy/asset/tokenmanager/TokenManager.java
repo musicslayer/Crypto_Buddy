@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import org.json.JSONArray;
@@ -363,7 +363,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
 
     public String getFixedJSON() {
         ProgressDialogFragment.updateProgressTitle("Downloading " + getTokenType() + " Tokens...");
-        return RESTUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
+        return WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());
     }
 
     public boolean parseFixed(String tokenJSON) {

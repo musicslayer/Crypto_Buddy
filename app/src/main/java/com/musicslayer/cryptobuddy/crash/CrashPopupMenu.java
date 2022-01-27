@@ -22,7 +22,7 @@ abstract public class CrashPopupMenu extends PopupMenu {
         public Activity activity;
 
         public CrashOnMenuItemClickListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override

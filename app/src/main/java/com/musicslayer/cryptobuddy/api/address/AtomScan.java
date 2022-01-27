@@ -6,7 +6,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import org.json.JSONArray;
@@ -42,7 +42,7 @@ public class AtomScan extends AddressAPI {
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
-        String addressDataJSON = RESTUtil.get("https://node.atomscan.com/cosmos/bank/v1beta1/balances/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get("https://node.atomscan.com/cosmos/bank/v1beta1/balances/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -115,7 +115,7 @@ public class AtomScan extends AddressAPI {
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
     private String process(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }

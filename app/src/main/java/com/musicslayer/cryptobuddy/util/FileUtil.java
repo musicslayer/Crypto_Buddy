@@ -2,6 +2,8 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
 
+import com.musicslayer.cryptobuddy.app.App;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
@@ -26,10 +28,11 @@ public class FileUtil {
                 stringBuilder.append(string).append("\n");
             }
 
-            file.close();
+            StreamUtil.safeClose(file);
         }
         catch(IOException e) {
             ThrowableUtil.processThrowable(e);
+            StreamUtil.safeClose(file);
             throw new IllegalStateException(e);
         }
 
@@ -50,10 +53,11 @@ public class FileUtil {
                 stringArrayList.add(string);
             }
 
-            file.close();
+            StreamUtil.safeClose(file);
         }
         catch(IOException e) {
             ThrowableUtil.processThrowable(e);
+            StreamUtil.safeClose(file);
             throw new IllegalStateException(e);
         }
 
@@ -64,7 +68,7 @@ public class FileUtil {
         // Returns a tempfile with the String written to it.
         File file;
         try {
-            file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", context.getCacheDir());
+            file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", new File(App.cacheDir));
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
         catch(Exception e) { // Catch everything!
@@ -74,7 +78,25 @@ public class FileUtil {
             file = null;
         }
 
-        file.deleteOnExit();
+        return file;
+    }
+
+    public static File downloadFile(String urlString) {
+        // Downloads the file at the url to a tempfile and then returns it.
+        File file;
+        try {
+            file = File.createTempFile("CryptoBuddy_ZipFile_", ".zip", new File(App.cacheDir));
+            boolean result = WebUtil.download(urlString, file);
+
+            // If anything went wrong, we don't want the file.
+            if(!result) {
+                file = null;
+            }
+        }
+        catch(Exception ignored) {
+            file = null;
+        }
+
         return file;
     }
 }

@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +47,7 @@ public class WavesNodes extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/addresses/balance/" + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get(baseURL + "/addresses/balance/" + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -65,7 +65,7 @@ public class WavesNodes extends AddressAPI {
         }
 
         if(shouldIncludeTokens(cryptoAddress)) {
-            String addressDataTokenJSON = RESTUtil.get(baseURL + "/assets/balance/" + cryptoAddress.address);
+            String addressDataTokenJSON = WebUtil.get(baseURL + "/assets/balance/" + cryptoAddress.address);
             if(addressDataTokenJSON == null) {
                 return null;
             }
@@ -145,7 +145,7 @@ public class WavesNodes extends AddressAPI {
     }
 
     public String processTransfers(String url, CryptoAddress cryptoAddress, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = RESTUtil.get(url);
+        String addressDataJSON = WebUtil.get(url);
         if(addressDataJSON == null) {
             return ERROR;
         }

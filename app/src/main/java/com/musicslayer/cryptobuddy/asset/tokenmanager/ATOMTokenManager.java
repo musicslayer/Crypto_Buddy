@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +19,7 @@ public class ATOMTokenManager extends TokenManager {
 
     public String getJSON() {
         ProgressDialogFragment.updateProgressSubtitle("Downloading " + getTokenType() + " Tokens...");
-        return RESTUtil.get("https://api-utility.cosmostation.io/v1/ibc/tokens/cosmoshub-4");
+        return WebUtil.get("https://api-utility.cosmostation.io/v1/ibc/tokens/cosmoshub-4");
     }
 
     public boolean parse(String tokenJSON) {

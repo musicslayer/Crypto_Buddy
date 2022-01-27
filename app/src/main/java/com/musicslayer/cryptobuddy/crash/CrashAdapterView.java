@@ -23,7 +23,7 @@ abstract public class CrashAdapterView<T extends Adapter> extends AdapterView<T>
         public Activity activity;
 
         public CrashOnItemSelectedListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override

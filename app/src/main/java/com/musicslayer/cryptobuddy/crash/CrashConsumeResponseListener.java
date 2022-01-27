@@ -18,7 +18,7 @@ abstract public class CrashConsumeResponseListener implements ConsumeResponseLis
     public Activity activity;
 
     public CrashConsumeResponseListener(Context context) {
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override

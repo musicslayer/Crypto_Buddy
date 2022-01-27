@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,7 +51,7 @@ public class Etherscan extends AddressAPI {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
         String baseURL = "https://api.ethplorer.io";
-        String addressDataJSON = RESTUtil.get(baseURL + "/getAddressInfo/" + cryptoAddress.address + "?apiKey=" + APIKEY_ethplorer);
+        String addressDataJSON = WebUtil.get(baseURL + "/getAddressInfo/" + cryptoAddress.address + "?apiKey=" + APIKEY_ethplorer);
         if(addressDataJSON == null) {
             return null;
         }
@@ -119,7 +119,7 @@ public class Etherscan extends AddressAPI {
             return null;
         }
 
-        String addressDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=balance&address=" + cryptoAddress.address + "&apikey=" + APIKEY_etherscan);
+        String addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=balance&address=" + cryptoAddress.address + "&apikey=" + APIKEY_etherscan);
         if(addressDataJSON == null) {
             return null;
         }
@@ -163,10 +163,10 @@ public class Etherscan extends AddressAPI {
         }
 
         // Normal Transactions - These are all ETH
-        String addressDataJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
+        String addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=txlist&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
 
         // Internal Transactions - These are all ETH
-        String addressDataInternalJSON = RESTUtil.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
+        String addressDataInternalJSON = WebUtil.get(baseURL + "/api?module=account&action=txlistinternal&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
 
         if(addressDataJSON == null || addressDataInternalJSON == null) {
             return null;
@@ -292,7 +292,7 @@ public class Etherscan extends AddressAPI {
 
         if(shouldIncludeTokens(cryptoAddress)) {
             // ERC-20 Transactions - Various Tokens
-            String addressDataTokenJSON = RESTUtil.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
+            String addressDataTokenJSON = WebUtil.get(baseURL + "/api?module=account&action=tokentx&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY_etherscan);
 
             if(addressDataTokenJSON == null) {
                 return null;

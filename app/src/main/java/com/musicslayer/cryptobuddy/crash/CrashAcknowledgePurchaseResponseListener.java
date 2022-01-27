@@ -18,7 +18,7 @@ abstract public class CrashAcknowledgePurchaseResponseListener implements Acknow
     public Activity activity;
 
     public CrashAcknowledgePurchaseResponseListener(Context context) {
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override

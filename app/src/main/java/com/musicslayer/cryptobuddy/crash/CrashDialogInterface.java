@@ -16,7 +16,7 @@ public interface CrashDialogInterface extends DialogInterface {
         public Activity activity;
 
         public CrashOnShowListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override
@@ -45,7 +45,7 @@ public interface CrashDialogInterface extends DialogInterface {
         public Activity activity;
 
         public CrashOnDismissListener(Context context) {
-            this.activity = ContextUtil.getActivity(context);
+            this.activity = ContextUtil.getActivityFromContext(context);
         }
 
         @Override

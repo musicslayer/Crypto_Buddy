@@ -22,7 +22,7 @@ abstract public class CrashTextView extends AppCompatTextView {
 
     public CrashTextView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.activity = ContextUtil.getActivity(context);
+        this.activity = ContextUtil.getActivityFromContext(context);
     }
 
     @Override
@@ -54,7 +54,7 @@ abstract public class CrashTextView extends AppCompatTextView {
             CrashException crashException = new CrashException(exception);
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
             return;
         }
 
@@ -71,7 +71,7 @@ abstract public class CrashTextView extends AppCompatTextView {
             crashException.setLocationInfo(activity, null);
             crashException.appendExtraInfoFromArgument(state);
 
-            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivity(getContext()), "crash");
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, ContextUtil.getActivityFromContext(getContext()), "crash");
         }
     }
 

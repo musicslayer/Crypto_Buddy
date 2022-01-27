@@ -4,7 +4,7 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Stagenet;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Testnet;
-import com.musicslayer.cryptobuddy.util.RESTUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,7 +32,7 @@ public class WavesTokenManager extends TokenManager {
             return null;
         }
 
-        String tokenString = RESTUtil.get(baseURL + "/assets/details?id=" + id);
+        String tokenString = WebUtil.get(baseURL + "/assets/details?id=" + id);
 
         try {
             JSONArray tokenInfoArray = new JSONArray(tokenString);
