@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.crash.CrashBypassException;
 import com.musicslayer.cryptobuddy.settings.setting.ProgressDisplaySetting;
 import com.musicslayer.cryptobuddy.util.PollingUtil;
 import com.musicslayer.cryptobuddy.util.TimerUtil;
@@ -40,6 +41,14 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         ProgressDialogFragment fragment = new ProgressDialogFragment();
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    public static void checkForInterrupt() {
+        // If ProgressDialog was cancelled, throw an error so the thread can stop running.
+        // Right now, this implicitly requires the caller to use ProgressDialog.
+        if(!allowThreads[0]) {
+            throw new CrashBypassException();
+        }
     }
 
     public static void updateProgressTitle(String s) {
@@ -153,7 +162,6 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 
         // When the operation is finished, or if we deliberately stopped the operation while it was still running,
         // we must signal to the threads we need them to stop so they don't keep using up resources.
-        // Currently, most long-running operations involve REST web requests, so the only place that checks this is inside RESTUtil.
         if(ProgressDialogFragment.isCancelled() || ProgressDialogFragment.isDone()) {
             allowThreads[0] = false;
         }

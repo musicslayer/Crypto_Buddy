@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.musicslayer.cryptobuddy.crash.CrashBypassException;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.settings.setting.TimeoutSetting;
 
@@ -36,19 +35,11 @@ public class WebUtil {
         lastTime = System.currentTimeMillis();
     }
 
-    public static void checkForInterrupt() {
-        // If ProgressDialog was cancelled, throw an error so the thread can stop running.
-        // This implicitly requires all web requests to use ProgressDialog.
-        if(!ProgressDialogFragment.allowThreads[0]) {
-            throw new CrashBypassException();
-        }
-    }
-
     public static String get(String urlString) {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
-            checkForInterrupt();
+            ProgressDialogFragment.checkForInterrupt();
             rateLimit();
             result = get_impl(urlString);
             if(result != null) { break; }
@@ -84,7 +75,7 @@ public class WebUtil {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
-            checkForInterrupt();
+            ProgressDialogFragment.checkForInterrupt();
             rateLimit();
             result = post_impl(urlString, body);
             if(result != null) { break; }
@@ -129,7 +120,7 @@ public class WebUtil {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
-            checkForInterrupt();
+            ProgressDialogFragment.checkForInterrupt();
             rateLimit();
             result = postWithKey_impl(urlString, body, keyName, key);
             if(result != null) { break; }
@@ -176,7 +167,7 @@ public class WebUtil {
         boolean result = false;
 
         for(int r = 0; r < numRetries; r++) {
-            checkForInterrupt();
+            ProgressDialogFragment.checkForInterrupt();
             rateLimit();
             result = download_impl(urlString, file);
             if(result) { break; }

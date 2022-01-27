@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-// TODO Why do we need so many BaseDialogFragments? Can Views share them?
+// TODO TokenManager, let people view tokens.
 
 public class TokenManagerActivity extends BaseActivity {
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
@@ -81,8 +81,7 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddCustomTokenDialog)dialog).isComplete) {
-                    // TODO We actually do know.
-                    // We don't know which view was changed, so just update all of them.
+                    // It's easier to just update all of them.
                     for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                         tokenManagerView.updateLayout();
                     }

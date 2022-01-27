@@ -5,7 +5,8 @@ import android.util.Log;
 public class ThrowableUtil {
     public static void processThrowable(Throwable e) {
         try {
-            Log.e("Crypto Buddy ERROR", getThrowableText(e));
+            String threadText = ThreadUtil.getCurrentThreadInfo();
+            Log.e("Crypto Buddy ERROR", threadText + "\n" + getThrowableText(e));
         }
         catch(Exception ignored) {
         }

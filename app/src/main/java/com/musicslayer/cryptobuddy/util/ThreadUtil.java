@@ -5,11 +5,15 @@ import android.util.Log;
 import java.util.Map;
 
 public class ThreadUtil {
+    public static String getCurrentThreadInfo() {
+        return Thread.currentThread().toString();
+    }
+
     public static String threadDump() {
         // Shows all threads' stack traces.
         StringBuilder s = new StringBuilder();
 
-        Map<Thread, StackTraceElement[]> threadMap = java.lang.Thread.getAllStackTraces();
+        Map<Thread, StackTraceElement[]> threadMap = Thread.getAllStackTraces();
         for(Thread thread : threadMap.keySet()){
             s.append("=================================").append("\n");
             s.append(thread.toString()).append("\n");

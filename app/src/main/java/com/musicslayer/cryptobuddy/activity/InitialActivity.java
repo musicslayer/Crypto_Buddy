@@ -29,13 +29,9 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
 
-// TODO Use @Override everywhere!
-
 // TODO NFT Viewer
 // TODO Discrepancy Viewer
 // TODO Make Redirect page look better.
-
-// TODO TokenManager, let people view tokens.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

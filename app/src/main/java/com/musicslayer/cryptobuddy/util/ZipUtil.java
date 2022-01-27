@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class ZipUtil {
 
             ZipEntry zipEntry;
             while((zipEntry = zin.getNextEntry()) != null){
+                ProgressDialogFragment.checkForInterrupt();
+
                 L.onUnzip(zipEntry, zin);
                 zin.closeEntry();
             }
