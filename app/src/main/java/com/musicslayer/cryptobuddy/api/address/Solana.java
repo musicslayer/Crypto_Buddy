@@ -493,9 +493,6 @@ public class Solana extends AddressAPI {
 
                             if(!info.has("lamports")) {
                                 // Tokens will have "amount" instead of lamports.
-                                BigDecimal b2 = new BigDecimal(info.getString("amount"));
-                                b2 = b2.movePointLeft(cryptoAddress.getCrypto().getScale());
-
                                 Token token;
                                 String action;
                                 if (isTo) {

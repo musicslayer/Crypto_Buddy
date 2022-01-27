@@ -39,6 +39,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.Date;
 
 public class MainActivity extends BaseActivity {
+    @Override
     public int getAdLayoutViewID() {
         return R.id.main_adLayout;
     }
@@ -48,6 +49,7 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         // Before doing anything, show policy dialogs that the user hasn't already agreed to.
         checkPrivacyPolicy();

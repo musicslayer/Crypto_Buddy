@@ -38,6 +38,7 @@ import java.util.Comparator;
 public class TokenManagerActivity extends BaseActivity {
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.token_manager_adLayout;
     }
@@ -48,6 +49,7 @@ public class TokenManagerActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_token_manager);
 

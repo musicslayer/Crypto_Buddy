@@ -52,6 +52,7 @@ public class AddressExplorerActivity extends BaseActivity {
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.address_explorer_adLayout;
     }
@@ -61,6 +62,7 @@ public class AddressExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(AddressExplorerActivity.this, "back");
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_explorer);
 

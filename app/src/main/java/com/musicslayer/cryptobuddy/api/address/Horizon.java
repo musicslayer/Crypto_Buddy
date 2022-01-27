@@ -535,8 +535,8 @@ public class Horizon extends AddressAPI {
         if(!shouldIncludeTokens(cryptoAddress)) { return DONE; }
 
         String addressDataIssueJSON = WebUtil.get(url);
-        if(addressDataIssueJSON == ERROR) {
-            return null;
+        if(addressDataIssueJSON == null) {
+            return ERROR;
         }
 
         try {

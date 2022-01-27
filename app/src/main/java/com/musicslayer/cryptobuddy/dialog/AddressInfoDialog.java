@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;

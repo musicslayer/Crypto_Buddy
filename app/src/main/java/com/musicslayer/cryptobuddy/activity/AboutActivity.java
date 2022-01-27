@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AboutActivity extends BaseActivity {
+    @Override
     public int getAdLayoutViewID() {
         return -1;
     }
@@ -34,6 +35,7 @@ public class AboutActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_about);
 

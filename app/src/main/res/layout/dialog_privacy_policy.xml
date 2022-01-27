@@ -41,6 +41,7 @@
         android:id="@+id/privacy_policy_exitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         app:drawableLeftCompat="@drawable/ic_baseline_cancel_24"
         android:text="Exit"

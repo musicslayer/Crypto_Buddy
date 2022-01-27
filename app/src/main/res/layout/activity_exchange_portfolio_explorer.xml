@@ -145,20 +145,20 @@
                 android:id="@+id/exchange_portfolio_explorer_authorizeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:clickable="true"
                 app:srcCompat="@drawable/ic_baseline_security_24" />
 
         </LinearLayout>
     </HorizontalScrollView>
 
-    <view
+    <view class="com.musicslayer.cryptobuddy.view.table.Table$TablePageView"
         android:id="@+id/exchange_portfolio_explorer_tablePageView"
-        class="com.musicslayer.cryptobuddy.view.table.Table$TablePageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_horizontalScrollView2"></view>
+        app:layout_constraintTop_toBottomOf="@+id/exchange_portfolio_explorer_horizontalScrollView2">
+    </view>
 
     <com.musicslayer.cryptobuddy.view.TwoDScrollView
         android:id="@+id/exchange_portfolio_explorer_twoDScrollView"

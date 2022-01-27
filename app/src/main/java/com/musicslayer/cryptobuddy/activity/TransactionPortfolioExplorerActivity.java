@@ -37,6 +37,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
 
     TransactionPortfolioObj transactionPortfolioObj;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.transaction_portfolio_explorer_adLayout;
     }
@@ -46,6 +47,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(TransactionPortfolioExplorerActivity.this, "back");
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_transaction_portfolio_explorer);
 

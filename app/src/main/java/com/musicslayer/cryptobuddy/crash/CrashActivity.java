@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.crash;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 

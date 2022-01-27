@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.persistence;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class AddressHistoryObj implements Serialization.SerializableToJSON {

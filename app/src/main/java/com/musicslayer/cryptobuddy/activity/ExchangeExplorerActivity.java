@@ -2,9 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +51,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.exchange_explorer_adLayout;
     }
@@ -62,6 +61,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(ExchangeExplorerActivity.this, "back");
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_exchange_explorer);
 

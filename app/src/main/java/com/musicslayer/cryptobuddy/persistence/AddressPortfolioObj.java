@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;

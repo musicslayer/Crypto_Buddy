@@ -60,6 +60,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.exchange_portfolio_explorer_adLayout;
     }
@@ -69,6 +70,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(ExchangePortfolioExplorerActivity.this, "back");
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_exchange_portfolio_explorer);
 

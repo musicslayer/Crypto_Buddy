@@ -2,18 +2,13 @@ package com.musicslayer.cryptobuddy.util;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-
-import org.json.JSONObject;
 
 public class PermissionUtil {
     public static boolean isGooglePlayServicesAvailable(Activity activity) {

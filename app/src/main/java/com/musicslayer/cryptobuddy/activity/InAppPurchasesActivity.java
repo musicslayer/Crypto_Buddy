@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class InAppPurchasesActivity extends BaseActivity {
+    @Override
     public int getAdLayoutViewID() {
         return -1;
     }
@@ -29,6 +30,7 @@ public class InAppPurchasesActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_in_app_purchases);
 

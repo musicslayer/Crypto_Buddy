@@ -27,6 +27,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 public class ExchangePortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.exchange_portfolio_viewer_adLayout;
     }
@@ -37,6 +38,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_exchange_portfolio_viewer);
 

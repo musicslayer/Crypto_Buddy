@@ -18,7 +18,6 @@ import com.musicslayer.cryptobuddy.crash.CrashSearchView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 import java.util.ArrayList;
 import java.util.Collections;

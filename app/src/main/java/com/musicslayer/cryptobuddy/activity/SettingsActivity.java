@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import java.util.ArrayList;
 
 public class SettingsActivity extends BaseActivity {
+    @Override
     public int getAdLayoutViewID() {
         return -1;
     }
@@ -27,6 +28,7 @@ public class SettingsActivity extends BaseActivity {
         finish();
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_settings);
 

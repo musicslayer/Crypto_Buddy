@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;

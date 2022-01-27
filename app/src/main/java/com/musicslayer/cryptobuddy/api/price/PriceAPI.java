@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
-import com.musicslayer.cryptobuddy.api.address.AddressAPI;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.FileUtil;

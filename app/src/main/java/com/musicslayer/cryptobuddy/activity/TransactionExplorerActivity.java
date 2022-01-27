@@ -31,6 +31,7 @@ public class TransactionExplorerActivity extends BaseActivity {
 
     TransactionTable table;
 
+    @Override
     public int getAdLayoutViewID() {
         return R.id.transaction_explorer_adLayout;
     }
@@ -40,6 +41,7 @@ public class TransactionExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.show(TransactionExplorerActivity.this, "back");
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_transaction_explorer);
 

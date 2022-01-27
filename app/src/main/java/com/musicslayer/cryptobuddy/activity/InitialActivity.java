@@ -40,10 +40,12 @@ import java.util.Date;
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
+    @Override
     public int getAdLayoutViewID() {
         return -1;
     }
 
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         // Don't actually show anything. Just do initialization code and then launch MainActivity.
         Context applicationContext = getApplicationContext();
