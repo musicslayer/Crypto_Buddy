@@ -33,15 +33,24 @@
         android:id="@+id/address_discrepancy_dialog_messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="For each asset, let T be the net sum of all transactions, and B be the current balance. Each entry below is T - B."
+        android:text="For each asset, let T be the net sum of all transactions, and B be the current balance. Each entry below is T - B.\n"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_toolbar" />
+
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/address_discrepancy_dialog_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_discrepancy_dialog_messageTextView">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
 
     <TextView
         android:id="@+id/address_discrepancy_dialog_assetTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_messageTextView" />
+        app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_spinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

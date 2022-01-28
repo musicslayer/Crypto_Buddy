@@ -36,6 +36,7 @@ import java.util.Date;
 // TODO Actually implement Coinbase/Gemini API.
 
 // TODO Negative assets are only red in a table...?
+// TODO Spinners should really show the whole address, not cut it off with "..."!
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
