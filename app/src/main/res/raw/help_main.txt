@@ -1,14 +1,16 @@
 Explorers - Quickly view or calculate values without storing any data.
 --> Transaction Explorer - Manually enter transactions to get net values of assets.
 --> Address Explorer - View all transactions that have taken place on an address.
+--> Exchange Explorer* - View all transactions that have taken place on an exchange account.
 
 Portfolios - Store collections of data.
---> Transaction Portfolio - Store transactions.
---> Address Portfolio - Store addresses, which may be across any supported crypto.
+--> Transaction Portfolio - Store a collection of transactions.
+--> Address Portfolio - Store a collection of addresses.
+--> Exchange Portfolio* - Store a collection of exchange accounts.
 
 Crypto Tools:
---> Crypto Prices - View up-to-date USD prices for various crypto.
+--> Token Manager* - Download token lists, or add your own custom tokens, to help the app recognize them.
+--> Crypto Prices - View up-to-date prices for various crypto.
 --> Crypto Converter - Convert crypto quantities.
 
-Premium Features (Require In-app Purchase):
---> Token Manager - Download token lists or add your own custom tokens, to help the app recognize them.
+*Premium Feature (Requires In-app Purchase)

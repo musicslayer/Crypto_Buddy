@@ -21,8 +21,10 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
+import com.musicslayer.cryptobuddy.dialog.AddressDiscrepancyDialog;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadAddressDataDialog;
+import com.musicslayer.cryptobuddy.dialog.AddressProblemDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.RemoveAddressDialog;
@@ -41,7 +43,6 @@ import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
@@ -59,6 +60,9 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
+
+    public boolean hasDiscrepancy = false;
+    public boolean hasProblem = false;
 
     @Override
     public int getAdLayoutViewID() {
@@ -120,16 +124,28 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.address_portfolio_explorer_toolbar);
         setSupportActionBar(toolbar);
 
-        ImageButton infoButton = findViewById(R.id.address_portfolio_explorer_problemInfoButton);
-        infoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        ImageButton discrepancyButton = findViewById(R.id.address_portfolio_explorer_discrepancyButton);
+        discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo_CryptoAddress(AddressPortfolioExplorerActivity.this, addressPortfolioObj.cryptoAddressArrayList);
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(AddressDiscrepancyDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+                discrepancyDialogFragment.show(AddressPortfolioExplorerActivity.this, "discrepancy");
             }
         });
 
-        if(!InfoUtil.hasInfo_CryptoAddress(addressPortfolioObj.cryptoAddressArrayList)) {
-            infoButton.setVisibility(View.GONE);
+        ImageButton problemButton = findViewById(R.id.address_portfolio_explorer_problemButton);
+        problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(AddressProblemDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+                infoDialogFragment.show(AddressPortfolioExplorerActivity.this, "problem");
+            }
+        });
+
+        if(savedInstanceState == null) {
+            hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
+            hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
+            updateInfoButtons();
         }
 
         ImageButton helpButton = findViewById(R.id.address_portfolio_explorer_helpButton);
@@ -164,6 +180,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
                         HashMapUtil.putValueInMap(StateObj.addressDataMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
                         HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, newCryptoAddress, AddressData.getNoData(newCryptoAddress));
+
+                        hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
+                        hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
+                        updateInfoButtons();
                     }
                 }
             }
@@ -193,8 +213,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
                     AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
 
-                    updateFilter();
+                    hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
+                    hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
 
+                    updateInfoButtons();
+                    updateFilter();
                     updateLayout();
                 }
             }
@@ -323,7 +346,12 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
+                hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
+                hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
+
                 updateLayout();
+                updateInfoButtons();
+
                 ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_data_downloaded");
             }
         });
@@ -388,6 +416,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         table.addRowsFromAddressDataArray(new ArrayList<>(StateObj.addressDataFilterMap.values()));
     }
 
+    public void updateInfoButtons() {
+        ImageButton discrepancyButton = findViewById(R.id.address_portfolio_explorer_discrepancyButton);
+        discrepancyButton.setVisibility(hasDiscrepancy ? View.VISIBLE : View.GONE);
+
+        ImageButton problemInfoButton = findViewById(R.id.address_portfolio_explorer_problemButton);
+        problemInfoButton.setVisibility(hasProblem ? View.VISIBLE : View.GONE);
+    }
+
     public void updateFilter() {
         ArrayList<String> data = new ArrayList<>();
         for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
@@ -432,6 +468,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putParcelable("filter", addressFilter);
+        bundle.putBoolean("hasDiscrepancy", hasDiscrepancy);
+        bundle.putBoolean("hasProblem", hasProblem);
     }
 
     @Override
@@ -441,6 +479,10 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
             addressFilter = bundle.getParcelable("filter");
+            hasDiscrepancy = bundle.getBoolean("hasDiscrepancy");
+            hasProblem = bundle.getBoolean("hasProblem");
+
+            updateInfoButtons();
         }
     }
 }

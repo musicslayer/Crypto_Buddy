@@ -28,7 +28,9 @@ import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadExchangeDataDialog;
+import com.musicslayer.cryptobuddy.dialog.ExchangeDiscrepancyDialog;
 import com.musicslayer.cryptobuddy.dialog.ExchangeInfoDialog;
+import com.musicslayer.cryptobuddy.dialog.ExchangeProblemDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.RemoveExchangeDialog;
@@ -42,7 +44,6 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.ExchangeTable;
 
@@ -59,6 +60,9 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
+
+    public boolean hasDiscrepancy = false;
+    public boolean hasProblem = false;
 
     @Override
     public int getAdLayoutViewID() {
@@ -107,16 +111,28 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.exchange_portfolio_explorer_toolbar);
         setSupportActionBar(toolbar);
 
-        ImageButton infoButton = findViewById(R.id.exchange_portfolio_explorer_problemInfoButton);
-        infoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        ImageButton discrepancyButton = findViewById(R.id.exchange_portfolio_explorer_discrepancyButton);
+        discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo_Exchange(ExchangePortfolioExplorerActivity.this, exchangePortfolioObj.exchangeArrayList);
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, exchangePortfolioObj.exchangeArrayList);
+                discrepancyDialogFragment.show(ExchangePortfolioExplorerActivity.this, "discrepancy");
             }
         });
 
-        if(!InfoUtil.hasInfo_Exchange(exchangePortfolioObj.exchangeArrayList)) {
-            infoButton.setVisibility(View.GONE);
+        ImageButton problemButton = findViewById(R.id.exchange_portfolio_explorer_problemButton);
+        problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, exchangePortfolioObj.exchangeArrayList);
+                infoDialogFragment.show(ExchangePortfolioExplorerActivity.this, "problem");
+            }
+        });
+
+        if(savedInstanceState == null) {
+            hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+            hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
+            updateInfoButtons();
         }
 
         ImageButton helpButton = findViewById(R.id.exchange_portfolio_explorer_helpButton);
@@ -151,6 +167,10 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
                         HashMapUtil.putValueInMap(StateObj.exchangeDataMap, newExchange, ExchangeData.getNoData(newExchange, null));
                         HashMapUtil.putValueInMap(StateObj.exchangeDataFilterMap, newExchange, ExchangeData.getNoData(newExchange, null));
+
+                        hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+                        hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
+                        updateInfoButtons();
                     }
                 }
             }
@@ -180,8 +200,11 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
                     ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, exchangePortfolioObj);
 
-                    updateFilter();
+                    hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+                    hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
 
+                    updateInfoButtons();
+                    updateFilter();
                     updateLayout();
                 }
             }
@@ -311,7 +334,12 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
+                hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+                hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
+
                 updateLayout();
+                updateInfoButtons();
+
                 ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"exchange_data_downloaded");
             }
         });
@@ -376,6 +404,14 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         table.addRowsFromExchangeDataArray(new ArrayList<>(StateObj.exchangeDataFilterMap.values()));
     }
 
+    public void updateInfoButtons() {
+        ImageButton discrepancyButton = findViewById(R.id.exchange_portfolio_explorer_discrepancyButton);
+        discrepancyButton.setVisibility(hasDiscrepancy ? View.VISIBLE : View.GONE);
+
+        ImageButton problemInfoButton = findViewById(R.id.exchange_portfolio_explorer_problemButton);
+        problemInfoButton.setVisibility(hasProblem ? View.VISIBLE : View.GONE);
+    }
+
     public void updateFilter() {
         ArrayList<String> data = new ArrayList<>();
         for(Exchange exchange : exchangePortfolioObj.exchangeArrayList) {
@@ -420,6 +456,8 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putParcelable("filter", exchangeFilter);
+        bundle.putBoolean("hasDiscrepancy", hasDiscrepancy);
+        bundle.putBoolean("hasProblem", hasProblem);
     }
 
     @Override
@@ -429,6 +467,10 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
             exchangeFilter = bundle.getParcelable("filter");
+            hasDiscrepancy = bundle.getBoolean("hasDiscrepancy");
+            hasProblem = bundle.getBoolean("hasProblem");
+
+            updateInfoButtons();
         }
     }
 }

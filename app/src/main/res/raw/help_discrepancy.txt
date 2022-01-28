@@ -1,0 +1,20 @@
+For a single address or exchange, it is expected that the net sum of all transactions of an asset will equal the current balance of that asset.
+Sometimes, however, there may exist a discrepancy between these two amounts.
+
+There are legitimate reasons why such a discrepancy may exist, such as:
+--> Tokenomics, such as reflections and taxes.
+--> Automatic VeThor (VTHO) generation from holding VeChain (VET).
+--> Other smart contract operations may have altered the balance without any corresponding transaction being recorded.
+--> There were too many transactions, and we cut off some that had affected the balance.
+
+Sometimes, however, a discrepancy is caused by a real problem, such as:
+--> We have incomplete information about an unknown token's expected decimal places, and thus are performing incorrect math on it.
+--> The blockchain, or an API used to query the blockchain, is returning incorrect data.
+--> A software bug exists in this app.
+
+If you feel a discrepancy is not expected, feel free to use the "Report Feedback" menu option to alert the developer.
+
+
+Notes:
+    If an asset has a stated amount of zero in one place, and that same asset does not appear in the other place, that is considered a match and not a discrepancy.
+    Discrepancies are only shown if both balance and transaction data are downloaded for that address or exchange.

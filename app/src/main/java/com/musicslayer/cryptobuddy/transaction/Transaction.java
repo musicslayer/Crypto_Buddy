@@ -264,18 +264,18 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
         for(Transaction t : transactionArrayList) {
             if(t.isActionedAssetLoss()) {
-                t.subtract(deltaMap, t.actionedAssetQuantity);
+                subtract(deltaMap, t.actionedAssetQuantity);
             }
             else {
-                t.add(deltaMap, t.actionedAssetQuantity);
+                add(deltaMap, t.actionedAssetQuantity);
             }
 
             if(t.otherAssetQuantity != null) {
                 if(t.isOtherAssetLoss()) {
-                    t.subtract(deltaMap, t.otherAssetQuantity);
+                    subtract(deltaMap, t.otherAssetQuantity);
                 }
                 else {
-                    t.add(deltaMap, t.otherAssetQuantity);
+                    add(deltaMap, t.otherAssetQuantity);
                 }
             }
         }
@@ -283,7 +283,7 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
         return deltaMap;
     }
 
-    public void add(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
+    public static void add(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
         AssetAmount oldValue = map.get(assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 
@@ -291,7 +291,7 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
         map.put(assetQuantity.asset, newValue);
     }
 
-    public void subtract(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
+    public static void subtract(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
         AssetAmount oldValue = map.get(assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 

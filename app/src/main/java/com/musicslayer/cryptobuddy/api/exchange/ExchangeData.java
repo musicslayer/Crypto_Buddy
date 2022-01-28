@@ -3,12 +3,16 @@ package com.musicslayer.cryptobuddy.api.exchange;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ExchangeData implements Serialization.SerializableToJSON, Parcelable {
     @Override
@@ -234,5 +238,91 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         }
 
         return s.toString();
+    }
+
+    public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
+        if(transactionArrayList == null || currentBalanceArrayList == null) {
+            return new HashMap<>();
+        }
+
+        // Get the net transactions map.
+        HashMap<Asset, AssetAmount> transactionsMap = Transaction.resolveAssets(transactionArrayList);
+
+        // Get the current balances map.
+        ArrayList<AssetQuantity> balancesMap = currentBalanceArrayList;
+
+        // Create the discrepancy map. Add anything in "transactionsMap", and subtract anything in "balancesMap".
+        // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
+        HashMap<Asset, AssetAmount> delta = new HashMap<>();
+
+        for(Asset asset : transactionsMap.keySet()) {
+            AssetAmount assetAmount = transactionsMap.get(asset);
+            add(delta, asset, assetAmount);
+        }
+
+        for(AssetQuantity assetQuantity : balancesMap) {
+            subtract(delta, assetQuantity.asset, assetQuantity.assetAmount);
+        }
+
+        return delta;
+    }
+
+    public boolean hasDiscrepancy() {
+        // Return true if there is at least one discrepancy.
+        HashMap<Asset, AssetAmount> delta = getDiscrepancyMap();
+        for(Asset asset : delta.keySet()) {
+            AssetAmount assetAmount = delta.get(asset);
+            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasDiscrepancy(ArrayList<ExchangeData> exchangeDataArrayList) {
+        for(ExchangeData exchangeData : exchangeDataArrayList) {
+            if(exchangeData.hasDiscrepancy()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void add(HashMap<Asset, AssetAmount> map, Asset asset, AssetAmount assetAmount) {
+        AssetAmount oldValue = map.get(asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.add(assetAmount);
+        map.put(asset, newValue);
+    }
+
+    private static void subtract(HashMap<Asset, AssetAmount> map, Asset asset, AssetAmount assetAmount) {
+        AssetAmount oldValue = map.get(asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.subtract(assetAmount);
+        map.put(asset, newValue);
+    }
+
+    public String getProblem() {
+        // Currently no exchanges have any problems.
+        return null;
+    }
+
+    public boolean hasProblem() {
+        return getProblem() != null;
+    }
+
+    public static boolean hasProblem(ArrayList<ExchangeData> exchangeDataArrayList) {
+        // Return true if there is any info to show for any crypto.
+        for(ExchangeData exchangeData : exchangeDataArrayList) {
+            if(exchangeData.hasProblem()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

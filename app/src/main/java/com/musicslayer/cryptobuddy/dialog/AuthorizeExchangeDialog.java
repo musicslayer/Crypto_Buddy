@@ -86,7 +86,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
         if(isAuthorized) {
             T.setText(exchange.toString() + " = Authorized");
-            T.setTextColor(0xFF00FF00);
+            T.setTextColor(0xFF000000);
         }
         else {
             T.setText(exchange.toString() + " = Unauthorized");

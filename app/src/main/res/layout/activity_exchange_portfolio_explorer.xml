@@ -32,7 +32,7 @@
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/exchange_portfolio_explorer_problemInfoButton"
+        android:id="@+id/exchange_portfolio_explorer_problemButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="90dp"
@@ -42,6 +42,18 @@
         app:layout_constraintEnd_toEndOf="@+id/exchange_portfolio_explorer_toolbar"
         app:layout_constraintTop_toTopOf="@+id/exchange_portfolio_explorer_toolbar"
         app:srcCompat="@drawable/ic_baseline_warning_red_24" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/exchange_portfolio_explorer_discrepancyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="130dp"
+        android:layout_marginRight="130dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/exchange_portfolio_explorer_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_balance_red_24" />
 
     <LinearLayout
         android:id="@+id/exchange_portfolio_explorer_adLayout"

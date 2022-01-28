@@ -36,6 +36,9 @@ public class AssetTextView extends CrashTextView {
             if(isLoss && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
                 this.setTextColor(0xFFFF0000);
             }
+            else {
+                this.setTextColor(0xFF000000);
+            }
         }
 
         this.setText(text);

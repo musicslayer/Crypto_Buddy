@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
@@ -25,7 +26,9 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadExchangeDataDialog;
+import com.musicslayer.cryptobuddy.dialog.ExchangeDiscrepancyDialog;
 import com.musicslayer.cryptobuddy.dialog.ExchangeInfoDialog;
+import com.musicslayer.cryptobuddy.dialog.ExchangeProblemDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -35,7 +38,6 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.util.InfoUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.ExchangeTable;
 
@@ -50,6 +52,9 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
+
+    public boolean hasDiscrepancy = false;
+    public boolean hasProblem = false;
 
     @Override
     public int getAdLayoutViewID() {
@@ -89,16 +94,28 @@ public class ExchangeExplorerActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.exchange_explorer_toolbar);
         setSupportActionBar(toolbar);
 
-        ImageButton problemInfoButton = findViewById(R.id.exchange_explorer_problemInfoButton);
-        problemInfoButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        ImageButton discrepancyButton = findViewById(R.id.exchange_explorer_discrepancyButton);
+        discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                InfoUtil.showInfo_Exchange(ExchangeExplorerActivity.this, exchangeArrayList);
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, exchangeArrayList);
+                discrepancyDialogFragment.show(ExchangeExplorerActivity.this, "discrepancy");
             }
         });
 
-        if(!InfoUtil.hasInfo_Exchange(exchangeArrayList)) {
-            problemInfoButton.setVisibility(View.GONE);
+        ImageButton problemButton = findViewById(R.id.exchange_explorer_problemButton);
+        problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment problemDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, exchangeArrayList);
+                problemDialogFragment.show(ExchangeExplorerActivity.this, "problem");
+            }
+        });
+
+        if(savedInstanceState == null) {
+            hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+            hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
+            updateInfoButtons();
         }
 
         ImageButton helpButton = findViewById(R.id.exchange_explorer_helpButton);
@@ -197,7 +214,12 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 ExchangeData mergedExchangeData = ExchangeData.merge(oldExchangeData, newExchangeData);
                 HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, mergedExchangeData);
 
+                hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
+                hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
+
                 updateLayout();
+                updateInfoButtons();
+
                 ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_data_downloaded");
             }
         });
@@ -230,6 +252,14 @@ public class ExchangeExplorerActivity extends BaseActivity {
         table.addRowsFromExchangeDataArray(new ArrayList<>(StateObj.exchangeDataMap.values()));
     }
 
+    public void updateInfoButtons() {
+        ImageButton discrepancyButton = findViewById(R.id.exchange_explorer_discrepancyButton);
+        discrepancyButton.setVisibility(hasDiscrepancy ? View.VISIBLE : View.GONE);
+
+        ImageButton problemInfoButton = findViewById(R.id.exchange_explorer_problemButton);
+        problemInfoButton.setVisibility(hasProblem ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public boolean onCreateOptionsMenuImpl(Menu menu) {
         menu.add(0, 1, 100, "Crypto Prices");
@@ -258,5 +288,26 @@ public class ExchangeExplorerActivity extends BaseActivity {
         }
 
         return false;
+    }
+
+    @Override
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        bundle.putSerializable("includeBalances", includeBalances);
+        bundle.putSerializable("includeTransactions", includeTransactions);
+        bundle.putBoolean("hasDiscrepancy", hasDiscrepancy);
+        bundle.putBoolean("hasProblem", hasProblem);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        if(bundle != null) {
+            includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
+            includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
+            hasDiscrepancy = bundle.getBoolean("hasDiscrepancy");
+            hasProblem = bundle.getBoolean("hasProblem");
+
+            updateInfoButtons();
+        }
     }
 }

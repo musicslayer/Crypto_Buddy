@@ -3,11 +3,15 @@ package com.musicslayer.cryptobuddy.api.address;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AddressData implements Serialization.SerializableToJSON, Parcelable {
     @Override
@@ -231,5 +235,123 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         }
 
         return s.toString();
+    }
+
+    public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
+        if(transactionArrayList == null || currentBalanceArrayList == null) {
+            return new HashMap<>();
+        }
+
+        // Get the net transactions map.
+        HashMap<Asset, AssetAmount> transactionsMap = Transaction.resolveAssets(transactionArrayList);
+
+        // Get the current balances map.
+        ArrayList<AssetQuantity> balancesMap = currentBalanceArrayList;
+
+        // Create the discrepancy map. Add anything in "transactionsMap", and subtract anything in "balancesMap".
+        // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
+        HashMap<Asset, AssetAmount> delta = new HashMap<>();
+
+        for(Asset asset : transactionsMap.keySet()) {
+            AssetAmount assetAmount = transactionsMap.get(asset);
+            add(delta, asset, assetAmount);
+        }
+
+        for(AssetQuantity assetQuantity : balancesMap) {
+            subtract(delta, assetQuantity.asset, assetQuantity.assetAmount);
+        }
+
+        return delta;
+    }
+
+    public boolean hasDiscrepancy() {
+        // Return true if there is at least one discrepancy.
+        HashMap<Asset, AssetAmount> delta = getDiscrepancyMap();
+        for(Asset asset : delta.keySet()) {
+            AssetAmount assetAmount = delta.get(asset);
+            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasDiscrepancy(ArrayList<AddressData> addressDataArrayList) {
+        for(AddressData addressData : addressDataArrayList) {
+            if(addressData.hasDiscrepancy()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void add(HashMap<Asset, AssetAmount> map, Asset asset, AssetAmount assetAmount) {
+        AssetAmount oldValue = map.get(asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.add(assetAmount);
+        map.put(asset, newValue);
+    }
+
+    private static void subtract(HashMap<Asset, AssetAmount> map, Asset asset, AssetAmount assetAmount) {
+        AssetAmount oldValue = map.get(asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.subtract(assetAmount);
+        map.put(asset, newValue);
+    }
+
+    public String getProblem() {
+        // TODO Add back in Solana Rent?
+        String cryptoName = cryptoAddress.getCrypto().getName();
+        boolean isMainnet = cryptoAddress.network.isMainnet();
+        String cryptoDisplayName = cryptoAddress.getCrypto().getDisplayName();
+
+        String info;
+        switch(cryptoName) {
+            case "ATOM":
+                info = "Some liquidity pool token swap operations will not show up as transactions.";
+                break;
+            case "BNBc":
+                if(isMainnet) {
+                    return null;
+                }
+                else {
+                    info = "Transactions for testnet addresses are not available.";
+                }
+                break;
+            case "ETH":
+                if(isMainnet) {
+                    return null;
+                }
+                else {
+                    info = "Token balances for testnet addresses are not available.";
+                }
+                break;
+            case "VET":
+                info = "VeThor (VTHO) balance includes generated rewards from holding VeChain (VET), but these rewards do not show up as transactions.";
+                break;
+            default:
+                return null;
+        }
+
+        return cryptoDisplayName + " (" + cryptoName + ")" + ": " + info;
+    }
+
+    public boolean hasProblem() {
+        return getProblem() != null;
+    }
+
+    public static boolean hasProblem(ArrayList<AddressData> addressDataArrayList) {
+        // Return true if there is any info to show for any crypto.
+        for(AddressData addressData : addressDataArrayList) {
+            if(addressData.hasProblem()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
