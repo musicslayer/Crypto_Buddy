@@ -21,12 +21,15 @@ import java.util.Date;
 // Balance = 1028.73669102
 // Delta T = 2723.13489677
 
+// Now good. What about sochain?
+
 public class Blockstream extends AddressAPI {
     public String getName() { return "Blockstream"; }
     public String getDisplayName() { return "Blockstream Esplora HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BTC".equals(cryptoAddress.getCrypto().getName());
+        //return "BTC".equals(cryptoAddress.getCrypto().getName());
+        return false;
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -49,15 +52,12 @@ public class Blockstream extends AddressAPI {
             JSONObject json0 = new JSONObject(addressDataJSON);
             JSONObject json10 = json0.getJSONObject("chain_stats");
 
-            BigInteger currentBalance_intA = new BigInteger(json10.getString("funded_txo_sum"));
-            BigInteger currentBalance_intB = new BigInteger(json10.getString("spent_txo_sum"));
-            BigInteger currentBalance_int = currentBalance_intA.subtract(currentBalance_intB);
+            BigDecimal currentBalanceA = new BigDecimal(json10.getString("funded_txo_sum"));
+            BigDecimal currentBalanceB = new BigDecimal(json10.getString("spent_txo_sum"));
+            BigDecimal currentBalance = currentBalanceA.subtract(currentBalanceB);
+            currentBalance = currentBalance.movePointLeft(cryptoAddress.getCrypto().getScale());
 
-            double currentBalance_d = currentBalance_int.doubleValue();
-            currentBalance_d = currentBalance_d * Math.pow(10, -8);
-            String currentBalance = Double.toString(currentBalance_d);
-
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, new BTC()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance.toPlainString(), new BTC()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -125,8 +125,8 @@ public class Blockstream extends AddressAPI {
 
                 if(jsonConfirmed) {
                     BigInteger block_time = new BigInteger(jsonStatus.getString("block_time"));
-                    double block_time_d = block_time.doubleValue() * 1000;
-                    block_time_date = new Date((long)block_time_d);
+                    block_time = block_time.multiply(new BigInteger("1000"));
+                    block_time_date = new Date(block_time.longValue());
                 }
 
                 BigDecimal balance_diff = BigDecimal.ZERO;

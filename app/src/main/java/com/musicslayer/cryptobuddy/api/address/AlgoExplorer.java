@@ -164,8 +164,8 @@ public class AlgoExplorer extends AddressAPI {
                 JSONObject jsonTransaction = jsonData.getJSONObject(i);
 
                 BigInteger block_time = new BigInteger(jsonTransaction.getString("round-time"));
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 String from = jsonTransaction.getString("sender");
 

@@ -242,8 +242,8 @@ public class XRPLedger extends AddressAPI {
 
                 BigInteger block_time = new BigInteger(tx.getString("date"));
                 //The Ripple Epoch is 946684800 seconds after the Unix Epoch
-                double block_time_d = (block_time.doubleValue() + 946684800) * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.add(new BigInteger("946684800")).multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 String type = tx.getString("TransactionType");
 

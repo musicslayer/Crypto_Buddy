@@ -157,8 +157,8 @@ public class SoChain extends AddressAPI {
                 BigInteger confirmations = new BigInteger(o.getString("confirmations"));
                 if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
                     BigInteger block_time = new BigInteger(o.getString("time"));
-                    double block_time_d = block_time.doubleValue() * 1000;
-                    block_time_date = new Date((long)block_time_d);
+                    block_time = block_time.multiply(new BigInteger("1000"));
+                    block_time_date = new Date(block_time.longValue());
                 }
 
                 txnToDate.put(txn, block_time_date);
@@ -208,9 +208,9 @@ public class SoChain extends AddressAPI {
                 Date block_time_date = null;
                 int confirmations = o.getInt("confirmations");
                 if(confirmations > 0) {
-                    int block_time = o.getInt("time");
-                    double block_time_d = (double)block_time * 1000;
-                    block_time_date = new Date((long)block_time_d);
+                    BigInteger block_time = new BigInteger(o.getString("time"));
+                    block_time = block_time.multiply(new BigInteger("1000"));
+                    block_time_date = new Date(block_time.longValue());
                 }
 
                 txnToDate.put(txn, block_time_date);

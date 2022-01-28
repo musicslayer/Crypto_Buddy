@@ -306,8 +306,8 @@ public class Solana extends AddressAPI {
 
                 String unixtime = o.getJSONObject("time").getString("unixtime");
                 BigInteger block_time = new BigInteger(unixtime);
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 Crypto crypto = cryptoAddress.getCrypto();
                 String info = o.getString("rewardType") + " (Block Level)";

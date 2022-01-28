@@ -149,8 +149,8 @@ public class VeChain extends AddressAPI {
 
                 JSONObject meta = o.getJSONObject("meta");
                 BigInteger block_time = new BigInteger(meta.getString("blockTimestamp"));
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 String from = o.getString("sender");
                 String to = o.getString("recipient");

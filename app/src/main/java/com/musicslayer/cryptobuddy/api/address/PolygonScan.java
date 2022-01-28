@@ -164,8 +164,8 @@ public class PolygonScan extends AddressAPI {
                 BigInteger confirmations = new BigInteger(o.getString("confirmations"));
                 if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
                     BigInteger block_time = new BigInteger(o.getString("timeStamp"));
-                    double block_time_d = block_time.doubleValue() * 1000;
-                    block_time_date = new Date((long)block_time_d);
+                    block_time = block_time.multiply(new BigInteger("1000"));
+                    block_time_date = new Date(block_time.longValue());
                 }
 
                 String from = o.getString("from");
@@ -226,8 +226,8 @@ public class PolygonScan extends AddressAPI {
 
                 // Internal transfers do not use confirmations.
                 BigInteger block_time = new BigInteger(oI.getString("timeStamp"));
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 String from = oI.getString("from");
                 String to = oI.getString("to");
@@ -285,8 +285,8 @@ public class PolygonScan extends AddressAPI {
                     BigInteger confirmations = new BigInteger(oP.getString("confirmations"));
                     if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
                         BigInteger block_time = new BigInteger(oP.getString("timeStamp"));
-                        double block_time_d = block_time.doubleValue() * 1000;
-                        block_time_date = new Date((long)block_time_d);
+                        block_time = block_time.multiply(new BigInteger("1000"));
+                        block_time_date = new Date(block_time.longValue());
                     }
 
                     BigDecimal b = new BigDecimal(oP.getString("value"));
@@ -356,8 +356,8 @@ public class PolygonScan extends AddressAPI {
                     BigInteger confirmations = new BigInteger(oT.getString("confirmations"));
                     if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
                         BigInteger block_time = new BigInteger(oT.getString("timeStamp"));
-                        double block_time_d = block_time.doubleValue() * 1000;
-                        block_time_date = new Date((long)block_time_d);
+                        block_time = block_time.multiply(new BigInteger("1000"));
+                        block_time_date = new Date(block_time.longValue());
                     }
 
                     String name = oT.getString("tokenSymbol");

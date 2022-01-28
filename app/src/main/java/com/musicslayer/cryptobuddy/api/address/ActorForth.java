@@ -144,8 +144,8 @@ public class ActorForth extends AddressAPI {
                 }
 
                 BigInteger block_time = new BigInteger(jsonTransaction.getString("blocktime"));
-                double block_time_d = block_time.doubleValue() * 1000;
-                Date block_time_date = new Date((long)block_time_d);
+                block_time = block_time.multiply(new BigInteger("1000"));
+                Date block_time_date = new Date(block_time.longValue());
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
