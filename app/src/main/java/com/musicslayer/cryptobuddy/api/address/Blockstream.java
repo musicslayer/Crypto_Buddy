@@ -11,6 +11,7 @@ import com.musicslayer.cryptobuddy.util.WebUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -128,7 +129,7 @@ public class Blockstream extends AddressAPI {
                     block_time_date = new Date((long)block_time_d);
                 }
 
-                BigInteger balance_diff = BigInteger.valueOf(0);
+                BigDecimal balance_diff = BigDecimal.ZERO;
                 boolean voutFound = false;
                 boolean vinFound = false;
 
@@ -142,10 +143,8 @@ public class Blockstream extends AddressAPI {
                     }
 
                     voutFound = true;
-                    BigInteger N = new BigInteger(o.getString("value"));
+                    BigDecimal N = new BigDecimal(o.getString("value"));
                     balance_diff = balance_diff.add(N);
-
-                    break;
                 }
 
                 JSONArray json3 = json.getJSONArray("vin");
@@ -164,25 +163,21 @@ public class Blockstream extends AddressAPI {
                     }
 
                     vinFound = true;
-                    BigInteger N = new BigInteger(o2.getString("value"));
+                    BigDecimal N = new BigDecimal(o2.getString("value"));
                     balance_diff = balance_diff.subtract(N);
-
-                    break;
                 }
 
                 if(!voutFound && !vinFound) { continue; }
 
                 String action = "Receive";
-                if(balance_diff.compareTo(BigInteger.valueOf(0)) < 0) {
+                if(balance_diff.compareTo(BigDecimal.ZERO) < 0) {
                     balance_diff = balance_diff.negate();
                     action = "Send";
                 }
 
-                double balance_diff_d = balance_diff.doubleValue();
-                balance_diff_d = balance_diff_d * Math.pow(10, -8);
-                String balance_diff_s = Double.toString(balance_diff_d);
+                balance_diff = balance_diff.movePointLeft(cryptoAddress.getCrypto().getScale());
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

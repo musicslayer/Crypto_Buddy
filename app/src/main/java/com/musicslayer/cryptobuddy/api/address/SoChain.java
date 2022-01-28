@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.util.WebUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,7 +67,7 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        HashMap <String, Double> txnToValue = new HashMap<>();
+        HashMap <String, BigDecimal> txnToValue = new HashMap<>();
         HashMap <String, Date> txnToDate = new HashMap<>();
 
         // Process all received. There is an implicit limit of 100.
@@ -103,20 +104,18 @@ public class SoChain extends AddressAPI {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
         for(String key : txnToValue.keySet()) {
-            Double sumValue_D = txnToValue.get(key);
+            BigDecimal sumValue_D = txnToValue.get(key);
             if(sumValue_D == null) { continue; }
 
-            double sumValue = sumValue_D;
-
             String action = "Receive";
-            if(sumValue < 0) {
-                sumValue = -sumValue;
+            if(sumValue_D.compareTo(BigDecimal.ZERO) < 0) {
+                sumValue_D = sumValue_D.negate();
                 action = "Send";
             }
 
             Date date = txnToDate.get(key);
 
-            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(Double.toString(sumValue), cryptoAddress.getCrypto()), null, new Timestamp(date), "Transaction"));
+            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(sumValue_D.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(date), "Transaction"));
             if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
         }
 
@@ -124,7 +123,7 @@ public class SoChain extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processReceived(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+    private String processReceived(String url, CryptoAddress cryptoAddress, HashMap <String, BigDecimal> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONReceived = WebUtil.get(url);
         if(addressDataJSONReceived == null) {
             return ERROR;
@@ -146,12 +145,12 @@ public class SoChain extends AddressAPI {
                 lastID = txn;
 
                 String balance_diff_s = o.getString("value");
-                double balance_diff_d = Double.parseDouble(balance_diff_s);
-                double currentValue = 0;
+                BigDecimal balance_diff_d = new BigDecimal(balance_diff_s);
+                BigDecimal currentValue = BigDecimal.ZERO;
                 if(txnToValue.containsKey(txn)) {
                     currentValue = txnToValue.get(txn);
                 }
-                currentValue += balance_diff_d;
+                currentValue = currentValue.add(balance_diff_d);
                 txnToValue.put(txn, currentValue);
 
                 Date block_time_date = null;
@@ -176,7 +175,7 @@ public class SoChain extends AddressAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processSpent(String url, CryptoAddress cryptoAddress, HashMap <String, Double> txnToValue, HashMap <String, Date> txnToDate) {
+    private String processSpent(String url, CryptoAddress cryptoAddress, HashMap <String, BigDecimal> txnToValue, HashMap <String, Date> txnToDate) {
         String addressDataJSONSpent = WebUtil.get(url);
         if(addressDataJSONSpent == null) {
             return ERROR;
@@ -198,12 +197,12 @@ public class SoChain extends AddressAPI {
                 lastID = txn;
 
                 String balance_diff_s = o.getString("value");
-                double balance_diff_d = Double.parseDouble(balance_diff_s);
-                double currentValue = 0;
+                BigDecimal balance_diff_d = new BigDecimal(balance_diff_s);
+                BigDecimal currentValue = BigDecimal.ZERO;
                 if(txnToValue.containsKey(txn)) {
                     currentValue = txnToValue.get(txn);
                 }
-                currentValue -= balance_diff_d;
+                currentValue = currentValue.subtract(balance_diff_d);
                 txnToValue.put(txn, currentValue);
 
                 Date block_time_date = null;
