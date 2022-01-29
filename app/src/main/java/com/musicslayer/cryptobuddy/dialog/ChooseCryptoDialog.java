@@ -14,7 +14,7 @@ import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-// TODO Rename this ChooseNetworkDialog
+// TODO Rename this ChooseNetworkDialog!
 
 public class ChooseCryptoDialog extends BaseDialog {
     public ArrayList<CryptoAddress> cryptoAddressArrayList;
