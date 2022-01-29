@@ -141,30 +141,9 @@ public class SoChain extends AddressAPI {
             JSONObject jsonAddress1_2 = jsonAddress1.getJSONObject("data");
             JSONArray jsonAddress1_3 = jsonAddress1_2.getJSONArray("txs");
 
-            // We want to process all txids, but stop at the last unique one.
-            // This is because the last txid may have multiple entries but have some cut off here.
-            // This only works as long as there are < 100 entries, since that is the apparent max length of the "txs" array.
-            ArrayList<String> txidArrayList = new ArrayList<>();
             for(int j = 0; j < jsonAddress1_3.length(); j++) {
                 JSONObject o = jsonAddress1_3.getJSONObject(j);
                 String txn = o.getString("txid");
-                if(!txidArrayList.contains(txn)) {
-                    txidArrayList.add(txn);
-                }
-            }
-
-            // Remove last element if there are more than 1. This will have to be dealt with next call.
-            if(txidArrayList.size() > 1) {
-                txidArrayList.remove(txidArrayList.size() - 1);
-            }
-
-            for(int j = 0; j < jsonAddress1_3.length(); j++) {
-                JSONObject o = jsonAddress1_3.getJSONObject(j);
-                String txn = o.getString("txid");
-
-                if(!txidArrayList.contains(txn)) {
-                    break;
-                }
 
                 // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
                 lastID = txn;
@@ -213,31 +192,10 @@ public class SoChain extends AddressAPI {
             JSONObject jsonAddress2_2 = jsonAddress2.getJSONObject("data");
             JSONArray jsonAddress2_3 = jsonAddress2_2.getJSONArray("txs");
 
-            // We want to process all txids, but stop at the last unique one.
-            // This is because the last txid may have multiple entries but have some cut off here.
-            // This only works as long as there are < 100 entries, since that is the apparent max length of the "txs" array.
-            ArrayList<String> txidArrayList = new ArrayList<>();
-            for(int j = 0; j < jsonAddress2_3.length(); j++) {
-                JSONObject o = jsonAddress2_3.getJSONObject(j);
-                String txn = o.getString("txid");
-                if(!txidArrayList.contains(txn)) {
-                    txidArrayList.add(txn);
-                }
-            }
-
-            // Remove last element if there are more than 1. This will have to be dealt with next call.
-            if(txidArrayList.size() > 1) {
-                txidArrayList.remove(txidArrayList.size() - 1);
-            }
-
             for(int j = 0; j < jsonAddress2_3.length(); j++)
             {
                 JSONObject o = jsonAddress2_3.getJSONObject(j);
                 String txn = o.getString("txid");
-
-                if(!txidArrayList.contains(txn)) {
-                    break;
-                }
 
                 // Store the ID of the last thing we processed. The next call will use this and start at the element after this one.
                 lastID = txn;
