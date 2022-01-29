@@ -52,12 +52,14 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         });
 
         ArrayList<String> options = new ArrayList<>();
+        ArrayList<Exchange> exchangeReducedArrayList = new ArrayList<>();
 
         for(Exchange exchange : exchangeArrayList) {
             // Only add option if that exchange has a discrepancy.
             ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
             if(exchangeData.hasDiscrepancy()) {
                 options.add(exchange.toString());
+                exchangeReducedArrayList.add(exchange);
             }
         }
 
@@ -66,7 +68,7 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                Exchange exchange = exchangeArrayList.get(pos);
+                Exchange exchange = exchangeReducedArrayList.get(pos);
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
 
                 // For each non-zero entry, display the discrepancy.

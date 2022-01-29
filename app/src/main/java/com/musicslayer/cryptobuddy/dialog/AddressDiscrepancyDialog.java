@@ -52,12 +52,14 @@ public class AddressDiscrepancyDialog extends BaseDialog {
         });
 
         ArrayList<String> options = new ArrayList<>();
+        ArrayList<CryptoAddress> cryptoAddressReducedArrayList = new ArrayList<>();
 
         for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
             // Only add option if that address has a discrepancy.
             AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
             if(addressData.hasDiscrepancy()) {
                 options.add(cryptoAddress.toString());
+                cryptoAddressReducedArrayList.add(cryptoAddress);
             }
         }
 
@@ -66,7 +68,7 @@ public class AddressDiscrepancyDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos); // TODO Doesn't line up since we removed elements from options...
+                CryptoAddress cryptoAddress = cryptoAddressReducedArrayList.get(pos);
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
                 // For each non-zero entry, display the discrepancy.
