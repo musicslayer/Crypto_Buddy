@@ -226,6 +226,23 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return s.toString();
     }
 
+    public String getFullInfoString() {
+        // Get regular info and also the complete set of transactions.
+        StringBuilder s = new StringBuilder(getInfoString());
+
+        if(exchangeAPI_transactions != null && transactionArrayList != null) {
+            if(transactionArrayList.isEmpty()) {
+                s.append("\nNo Transactions");
+            }
+            else {
+                s.append("\nTransactions:\n");
+                s.append(Serialization.serializeArrayList(transactionArrayList));
+            }
+        }
+
+        return s.toString();
+    }
+
     public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
         if(transactionArrayList == null || currentBalanceArrayList == null) {
             return new HashMap<>();

@@ -31,7 +31,6 @@ public class StateObj {
     public static ArrayList<String> options_names = new ArrayList<>();
 
     public static ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-    public static ArrayList<Transaction> maskedTransactionArrayList = new ArrayList<>();
     public static ArrayList<Transaction> filteredMaskedTransactionArrayList = new ArrayList<>();
 
     public static String tableInfo;
@@ -48,7 +47,6 @@ public class StateObj {
         options_symbols = new ArrayList<>();
         options_names = new ArrayList<>();
         transactionArrayList = new ArrayList<>();
-        maskedTransactionArrayList = new ArrayList<>();
         tableInfo = null;
     }
 }

@@ -237,6 +237,23 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         return s.toString();
     }
 
+    public String getFullInfoString() {
+        // Get regular info and also the complete set of transactions.
+        StringBuilder s = new StringBuilder(getInfoString());
+
+        if(addressAPI_transactions != null && transactionArrayList != null) {
+            if(transactionArrayList.isEmpty()) {
+                s.append("\nNo Transactions");
+            }
+            else {
+                s.append("\nTransactions:\n");
+                s.append(Serialization.serializeArrayList(transactionArrayList));
+            }
+        }
+
+        return s.toString();
+    }
+
     public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
         if(transactionArrayList == null || currentBalanceArrayList == null) {
             return new HashMap<>();

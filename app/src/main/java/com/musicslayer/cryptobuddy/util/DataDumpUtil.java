@@ -8,6 +8,7 @@ import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
@@ -16,8 +17,12 @@ import java.util.Properties;
 public class DataDumpUtil {
     // Pass in null if we do not have access to the activity object.
     public static String getAllData(Activity a) {
+        long timestamp = new Date().getTime();
+
         StringBuilder s = new StringBuilder();
-        s.append("Data Dump:");
+        s.append("Timestamp: ").append(timestamp);
+
+        s.append("\n\nData Dump:");
 
         // Add all user device data.
         s.append("\n\nDevice Data:");

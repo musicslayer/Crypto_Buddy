@@ -33,6 +33,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ReportFeedbackDialog extends BaseDialog {
@@ -127,12 +128,14 @@ public class ReportFeedbackDialog extends BaseDialog {
     }
 
     public String getInfo() {
+        long timestamp = new Date().getTime();
+
         if(activity instanceof TransactionExplorerActivity) {
-            return "TransactionExplorerActivity:\n\n" + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nTransactionExplorerActivity:\n\n" + tableInfo;
         }
         else if(activity instanceof TransactionPortfolioExplorerActivity) {
             TransactionPortfolioObj transactionPortfolioObj = StateObj.transactionPortfolioObj;
-            return "TransactionPortfolioExplorerActivity\n\n" + "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nTransactionPortfolioExplorerActivity\n\n" + "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof AddressExplorerActivity) {
             HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
@@ -140,10 +143,10 @@ public class ReportFeedbackDialog extends BaseDialog {
             // Full info for the address.
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
-                s.append(addressData.getInfoString()).append("\n\n");
+                s.append(addressData.getFullInfoString()).append("\n\n");
             }
 
-            return "AddressExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nAddressExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + tableInfo;
         }
         else if(activity instanceof AddressPortfolioExplorerActivity) {
             HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
@@ -153,7 +156,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             // Full info for all addresses.
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
-                s.append(addressData.getInfoString()).append("\n\n");
+                s.append(addressData.getFullInfoString()).append("\n\n");
             }
 
             // Get the names of the addresses in the filter map.
@@ -162,7 +165,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                 sf.append(addressData.cryptoAddress).append("\n\n");
             }
 
-            return "AddressPortfolioExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + "Address Filter:\n\n" + sf.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nAddressPortfolioExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + "Address Filter:\n\n" + sf.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof ExchangeExplorerActivity) {
             HashMap<CryptoExchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
@@ -170,7 +173,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             // Full info for the exchange.
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
-                s.append(exchangeData.getInfoString()).append("\n\n");
+                s.append(exchangeData.getFullInfoString()).append("\n\n");
             }
 
             // Authorization info of every exchange, whether or not any data was downloaded with it.
@@ -180,7 +183,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                 sa.append(cryptoExchange.getInfo()).append("\n\n");
             }
 
-            return "ExchangeExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nExchangeExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + tableInfo;
         }
 
         else if(activity instanceof ExchangePortfolioExplorerActivity) {
@@ -191,7 +194,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             // Full info for all exchanges.
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
-                s.append(exchangeData.getInfoString()).append("\n\n");
+                s.append(exchangeData.getFullInfoString()).append("\n\n");
             }
 
             // Authorization info of every exchange, whether or not any data was downloaded with it.
@@ -207,7 +210,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                 sf.append(exchangeData.cryptoExchange).append("\n\n");
             }
 
-            return "ExchangePortfolioExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + "Exchange Filter:\n\n" + sf.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + tableInfo;
+            return "Timestamp: " + timestamp + "\n\nExchangePortfolioExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + "Exchange Filter:\n\n" + sf.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + tableInfo;
         }
 
         return "?";

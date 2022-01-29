@@ -112,14 +112,12 @@ abstract public class Table extends CrashTableLayout {
                 drawRow(transactionArrayList.get(i));
             }
             StateObj.transactionArrayList.add(transactionArrayList.get(i));
-            StateObj.maskedTransactionArrayList.add(transactionArrayList.get(i));
         }
     }
 
     public void addRowImpl(Transaction transaction) {
         drawRow(transaction);
         StateObj.transactionArrayList.add(transaction);
-        StateObj.maskedTransactionArrayList.add(transaction);
     }
 
     // Anything that adds rows should call this to finish the process.
@@ -302,7 +300,7 @@ abstract public class Table extends CrashTableLayout {
 
     public void filterTable() {
         ArrayList<Transaction> newTransactionArrayList = new ArrayList<>();
-        for(Transaction t : StateObj.maskedTransactionArrayList) {
+        for(Transaction t : StateObj.transactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
                 newTransactionArrayList.add(t);
             }
@@ -318,7 +316,7 @@ abstract public class Table extends CrashTableLayout {
 
     public ArrayList<Transaction> getFilteredMaskedTransactionArrayList() {
         ArrayList<Transaction> filteredMaskedTransactionArrayList = new ArrayList<>();
-        for(Transaction t : StateObj.maskedTransactionArrayList) {
+        for(Transaction t : StateObj.transactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
                 filteredMaskedTransactionArrayList.add(t);
             }
@@ -334,10 +332,10 @@ abstract public class Table extends CrashTableLayout {
         }
 
         if(sortState.get(sortingColumn) == 0) {
-            Transaction.sortDescendingByType(StateObj.maskedTransactionArrayList, columnTypes.get(sortingColumn));
+            Transaction.sortDescendingByType(StateObj.transactionArrayList, columnTypes.get(sortingColumn));
         }
         else if(sortState.get(sortingColumn) == 2) {
-            Transaction.sortAscendingByType(StateObj.maskedTransactionArrayList, columnTypes.get(sortingColumn));
+            Transaction.sortAscendingByType(StateObj.transactionArrayList, columnTypes.get(sortingColumn));
         }
     }
 
@@ -351,7 +349,6 @@ abstract public class Table extends CrashTableLayout {
         group.removeViews(numHeaderRows, group.getChildCount() - numHeaderRows);
 
         StateObj.transactionArrayList = new ArrayList<>();
-        StateObj.maskedTransactionArrayList = new ArrayList<>();
         this.updateFilters();
         pageView.setNumItems(0);
     }
@@ -395,12 +392,8 @@ abstract public class Table extends CrashTableLayout {
         }
 
         //transactionArrayList
-        s.append("\n\nTransaction Array List:\n");
-        s.append(Serialization.serializeArrayList(StateObj.transactionArrayList));
-
-        //maskedTransactionArrayList
-        s.append("\n\nMasked Transaction Array List:\n");
-        s.append(Serialization.serializeArrayList(StateObj.maskedTransactionArrayList));
+        s.append("\n\nFiltered Transaction Array List:\n");
+        s.append(Serialization.serializeArrayList(getFilteredMaskedTransactionArrayList()));
 
         //filterArrayList
         s.append("\n\nFilter Array List:\n");
