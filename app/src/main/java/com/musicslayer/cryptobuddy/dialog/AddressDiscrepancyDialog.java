@@ -66,7 +66,7 @@ public class AddressDiscrepancyDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos);
+                CryptoAddress cryptoAddress = cryptoAddressArrayList.get(pos); // TODO Doesn't line up since we removed elements from options...
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
                 // For each non-zero entry, display the discrepancy.

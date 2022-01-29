@@ -16,20 +16,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
-// Discrepancy
-// mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt
-// Balance = 1028.73669102
-// Delta T = 2723.13489677
-
-// Now good. What about sochain?
-
 public class Blockstream extends AddressAPI {
     public String getName() { return "Blockstream"; }
     public String getDisplayName() { return "Blockstream Esplora HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        //return "BTC".equals(cryptoAddress.getCrypto().getName());
-        return false;
+        return "BTC".equals(cryptoAddress.getCrypto().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

@@ -2,8 +2,9 @@ For a single address or exchange, it is expected that the net sum of all transac
 Sometimes, however, there may exist a discrepancy between these two amounts.
 
 There are legitimate reasons why such a discrepancy may exist, such as:
---> Tokenomics, such as reflections and taxes.
---> Automatic VeThor (VTHO) generation from holding VeChain (VET).
+--> We do not include any mining rewards in the transactions.
+--> The effects of tokenomics, such as reflections and taxes, do not show up as transactions.
+--> Automatic VeThor (VTHO) generation from holding VeChain (VET) does not show up as transactions.
 --> Other smart contract operations may have altered the balance without any corresponding transaction being recorded.
 --> There were too many transactions, and we cut off some that had affected the balance.
 

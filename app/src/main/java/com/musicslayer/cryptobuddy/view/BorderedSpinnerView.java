@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.musicslayer.cryptobuddy.R;
@@ -35,20 +35,20 @@ public class BorderedSpinnerView extends CrashLinearLayout {
     }
 
     public void setOptions(String option) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, new String[] {option});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), R.layout.wrapped_text_dropdown_item, R.id.wrapped_text_dropdown_item_textView, new String[] {option});
+        adapter.setDropDownViewResource(R.layout.wrapped_text_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
     public void setOptions(String[] options) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), R.layout.wrapped_text_dropdown_item, R.id.wrapped_text_dropdown_item_textView, options);
+        adapter.setDropDownViewResource(R.layout.wrapped_text_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
     public void setOptions(ArrayList<String> options) {
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, options.toArray(new String[0]));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getContext(), R.layout.wrapped_text_dropdown_item, R.id.wrapped_text_dropdown_item_textView, options.toArray(new String[0]));
+        adapter.setDropDownViewResource(R.layout.wrapped_text_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
@@ -69,9 +69,9 @@ public class BorderedSpinnerView extends CrashLinearLayout {
     }
 
     public void setMargins(int left, int top, int right, int bottom) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)this.getLayoutParams();
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)this.getLayoutParams();
         if(params == null) {
-            params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            params = new ViewGroup.MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         }
         params.setMargins(left, top, right, bottom);
         this.setLayoutParams(params);

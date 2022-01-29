@@ -30,13 +30,13 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.Date;
 
 // TODO NFT Viewer
+// TODO Reflections Calculator
 // TODO Make Redirect page look better.
 // TODO Allow user to choose "Unknown/Other Asset" if they want something I don't support?
 // TODO Use TradeView API
 // TODO Actually implement Coinbase/Gemini API.
 
 // TODO Negative assets are only red in a table...?
-// TODO Spinners should really show the whole address, not cut it off with "..."!
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
