@@ -2,10 +2,9 @@ package com.musicslayer.cryptobuddy.state;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
@@ -20,9 +19,8 @@ public class StateObj {
     public static HashMap<CryptoAddress, AddressData> addressDataMap = new HashMap<>();
     public static HashMap<CryptoAddress, AddressData> addressDataFilterMap = new HashMap<>();
 
-    public static HashMap<Exchange, ExchangeData> exchangeDataMap = new HashMap<>();
-    public static HashMap<Exchange, ExchangeAPI> exchangeAPIMap = new HashMap<>();
-    public static HashMap<Exchange, ExchangeData> exchangeDataFilterMap = new HashMap<>();
+    public static HashMap<CryptoExchange, ExchangeData> exchangeDataMap = new HashMap<>();
+    public static HashMap<CryptoExchange, ExchangeData> exchangeDataFilterMap = new HashMap<>();
 
     public static AddressPortfolioObj addressPortfolioObj;
     public static TransactionPortfolioObj transactionPortfolioObj;
@@ -42,7 +40,6 @@ public class StateObj {
         addressDataMap = new HashMap<>();
         addressDataFilterMap = new HashMap<>();
         exchangeDataMap = new HashMap<>();
-        exchangeAPIMap = new HashMap<>();
         exchangeDataFilterMap = new HashMap<>();
         addressPortfolioObj = null;
         transactionPortfolioObj = null;

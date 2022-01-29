@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 public class ExchangeData implements Serialization.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeParcelable(exchange, flags);
+        out.writeParcelable(cryptoExchange, flags);
         out.writeString(exchangeAPI_currentBalance.getKey());
         out.writeString(exchangeAPI_transactions.getKey());
         out.writeTypedList(currentBalanceArrayList);
@@ -27,13 +26,13 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
     public static final Creator<ExchangeData> CREATOR = new Creator<ExchangeData>() {
         @Override
         public ExchangeData createFromParcel(Parcel in) {
-            Exchange exchange = in.readParcelable(Exchange.class.getClassLoader());
+            CryptoExchange cryptoExchange = in.readParcelable(CryptoExchange.class.getClassLoader());
             ExchangeAPI exchangeAPI_currentBalance_f = ExchangeAPI.getExchangeAPIFromKey(in.readString());
             ExchangeAPI exchangeAPI_transactions_f = ExchangeAPI.getExchangeAPIFromKey(in.readString());
             ArrayList<AssetQuantity> currentBalanceArrayList_f = in.createTypedArrayList(AssetQuantity.CREATOR);
             ArrayList<Transaction> transactionArrayList_f = in.createTypedArrayList(Transaction.CREATOR);
 
-            return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+            return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
         }
 
         @Override
@@ -47,7 +46,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return 0;
     }
 
-    final public Exchange exchange;
+    final public CryptoExchange cryptoExchange;
     final public ExchangeAPI exchangeAPI_currentBalance;
     final public ExchangeAPI exchangeAPI_transactions;
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
@@ -57,7 +56,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
-            .put("exchange", new Serialization.JSONObjectWithNull(Serialization.serialize(exchange)))
+            .put("cryptoExchange", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoExchange)))
             .put("exchangeAPI_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI_currentBalance)))
             .put("exchangeAPI_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI_transactions)))
             .put("currentBalanceArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
@@ -67,40 +66,23 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
 
     public static ExchangeData deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        Exchange exchange = Serialization.deserialize(o.getJSONObjectString("exchange"), Exchange.class);
+        CryptoExchange cryptoExchange = Serialization.deserialize(o.getJSONObjectString("cryptoExchange"), CryptoExchange.class);
         ExchangeAPI exchangeAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_currentBalance"), ExchangeAPI.class);
         ExchangeAPI exchangeAPI_transactions = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_transactions"), ExchangeAPI.class);
         ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("currentBalanceArrayList"), AssetQuantity.class);
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
-        return new ExchangeData(exchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList);
     }
 
-    public ExchangeData(Exchange exchange, ExchangeAPI exchangeAPI_currentBalance, ExchangeAPI exchangeAPI_transactions, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList) {
-        this.exchange = exchange;
+    public ExchangeData(CryptoExchange CryptoExchange, ExchangeAPI exchangeAPI_currentBalance, ExchangeAPI exchangeAPI_transactions, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList) {
+        this.cryptoExchange = CryptoExchange;
         this.exchangeAPI_currentBalance = exchangeAPI_currentBalance;
         this.exchangeAPI_transactions = exchangeAPI_transactions;
         this.currentBalanceArrayList = currentBalanceArrayList;
         this.transactionArrayList = transactionArrayList;
     }
 
-    public static ExchangeAPI getExchangeAPI(Exchange exchange) {
-        // Figures out which API can provide an authentication token to later query data from.
-        // Unlike other APIs, once an ExchangeAPI is chosen, data must come from that same api later, since other APIs will not use the same token.
-        ExchangeAPI exchangeAPI_f = UnknownExchangeAPI.createUnknownExchangeAPI(null);
-
-        for(ExchangeAPI exchangeAPI : ExchangeAPI.exchange_apis) {
-            if(!exchangeAPI.isSupported(exchange)) {
-                continue;
-            }
-
-            exchangeAPI_f = exchangeAPI;
-            break;
-        }
-
-        return exchangeAPI_f;
-    }
-
-    public static ExchangeData getAllData(Exchange exchange, ExchangeAPI exchangeAPI) {
+    public static ExchangeData getAllData(CryptoExchange cryptoExchange) {
         // For exchanges, there will only be one API that can get the information.
         // But if it fails, we will still use the Unknown object.
         ExchangeAPI exchangeAPI_currentBalance_f = UnknownExchangeAPI.createUnknownExchangeAPI(null);
@@ -109,8 +91,9 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         ArrayList<Transaction> transactionArrayList_f = null;
 
         // Get current balance information.
+        ExchangeAPI exchangeAPI = cryptoExchange.exchangeAPI;
         if(exchangeAPI != null && exchangeAPI.isAuthorized()) {
-            currentBalanceArrayList_f = exchangeAPI.getCurrentBalance(exchange);
+            currentBalanceArrayList_f = exchangeAPI.getCurrentBalance(cryptoExchange);
             if(currentBalanceArrayList_f != null) {
                 // Sort currentBalanceArrayList_f so that Coins come before Tokens.
                 AssetQuantity.sortAscendingByType(currentBalanceArrayList_f);
@@ -118,16 +101,16 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             }
 
             // Get transaction information.
-            transactionArrayList_f = exchangeAPI.getTransactions(exchange);
+            transactionArrayList_f = exchangeAPI.getTransactions(cryptoExchange);
             if(transactionArrayList_f != null) {
                 exchangeAPI_transactions_f = exchangeAPI;
             }
         }
 
-        return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public static ExchangeData getCurrentBalanceData(Exchange exchange, ExchangeAPI exchangeAPI) {
+    public static ExchangeData getCurrentBalanceData(CryptoExchange cryptoExchange) {
         // For exchanges, there will only be one API that can get the information.
         // But if it fails, we will still use the Unknown object.
         ExchangeAPI exchangeAPI_currentBalance_f = UnknownExchangeAPI.createUnknownExchangeAPI(null);
@@ -136,8 +119,9 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         ArrayList<Transaction> transactionArrayList_f = null;
 
         // Get current balance information.
+        ExchangeAPI exchangeAPI = cryptoExchange.exchangeAPI;
         if(exchangeAPI != null && exchangeAPI.isAuthorized()) {
-            currentBalanceArrayList_f = exchangeAPI.getCurrentBalance(exchange);
+            currentBalanceArrayList_f = exchangeAPI.getCurrentBalance(cryptoExchange);
             if(currentBalanceArrayList_f != null) {
                 // Sort currentBalanceArrayList_f so that Coins come before Tokens.
                 AssetQuantity.sortAscendingByType(currentBalanceArrayList_f);
@@ -145,10 +129,10 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             }
         }
 
-        return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public static ExchangeData getTransactionsData(Exchange exchange, ExchangeAPI exchangeAPI) {
+    public static ExchangeData getTransactionsData(CryptoExchange cryptoExchange) {
         // For exchanges, there will only be one API that can get the information.
         // But if it fails, we will still use the Unknown object.
         ExchangeAPI exchangeAPI_currentBalance_f = UnknownExchangeAPI.createUnknownExchangeAPI(null);
@@ -156,17 +140,19 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
         ArrayList<Transaction> transactionArrayList_f = null;
 
+        // Get transaction information.
+        ExchangeAPI exchangeAPI = cryptoExchange.exchangeAPI;
         if(exchangeAPI != null && exchangeAPI.isAuthorized()) {
-            transactionArrayList_f = exchangeAPI.getTransactions(exchange);
+            transactionArrayList_f = exchangeAPI.getTransactions(cryptoExchange);
             if(transactionArrayList_f != null) {
                 exchangeAPI_transactions_f = exchangeAPI;
             }
         }
 
-        return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public static ExchangeData getNoData(Exchange exchange, ExchangeAPI exchangeAPI) {
+    public static ExchangeData getNoData(CryptoExchange cryptoExchange) {
         // For exchanges, there will only be one API that can get the information.
         // But if it fails, we will still use the Unknown object.
         ExchangeAPI exchangeAPI_currentBalance_f = UnknownExchangeAPI.createUnknownExchangeAPI(null);
@@ -174,7 +160,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
         ArrayList<Transaction> transactionArrayList_f = null;
 
-        return new ExchangeData(exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
     public boolean isComplete() {
@@ -206,11 +192,11 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         }
 
         // Both ExchangeData objects should have the same exchange, but just in case we favor the newer one for consistency.
-        return new ExchangeData(newExchangeData.exchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
     public String getInfoString() {
-        StringBuilder s = new StringBuilder("Exchange = " + exchange.toString());
+        StringBuilder s = new StringBuilder("Exchange = " + cryptoExchange.exchange.toString());
 
         if(exchangeAPI_transactions == null || transactionArrayList == null) {
             s.append("\n(Transaction information not present.)");

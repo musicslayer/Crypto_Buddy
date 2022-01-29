@@ -250,6 +250,15 @@ public class AuthUtil {
             final long nowTime = new Date().getTime();
             return nowTime < expiryTime;
         }
+
+        public String getSafeInfo() {
+            // Return info that does not include anything that could be insecure.
+            return "Token Length = " + (getToken() == null ? "[Null]" : getToken().length()) + "\n" +
+                    "Encrypted Token Length = " + (token_e == null ? "[Null]" : token_e.length) + "\n" +
+                    "Expiry Time = " + expiryTime + "\n" +
+                    "Is Authorized = " + isAuthorized() + "\n" +
+                    "Is Token Valid = " + isTokenValid() + "\n";
+        }
     }
 
     // These listeners only fire on successful authorization. This includes cases where no authorization is required.

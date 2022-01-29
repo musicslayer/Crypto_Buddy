@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DownloadExchangeDataDialog extends BaseDialog {
-    ArrayList<Exchange> exchangeArrayList;
-    HashMap<Exchange, ExchangeData> exchangeDataMap;
+    ArrayList<CryptoExchange> cryptoExchangeArrayList;
+    HashMap<CryptoExchange, ExchangeData> exchangeDataMap;
 
     CheckBox[] C_B;
     CheckBox[] C_T;
@@ -33,15 +33,15 @@ public class DownloadExchangeDataDialog extends BaseDialog {
     public ArrayList<Boolean> user_BALANCES = new ArrayList<>();
     public ArrayList<Boolean> user_TRANSACTIONS = new ArrayList<>();
 
-    public DownloadExchangeDataDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
+    public DownloadExchangeDataDialog(Activity activity, ArrayList<CryptoExchange> cryptoExchangeArrayList) {
         super(activity);
-        this.exchangeArrayList = exchangeArrayList;
+        this.cryptoExchangeArrayList = cryptoExchangeArrayList;
         this.exchangeDataMap = StateObj.exchangeDataMap;
 
         // By default, select checkboxes for data that has not already been downloaded.
-        for(int i = 0; i < exchangeArrayList.size(); i++) {
-            Exchange exchange = exchangeArrayList.get(i);
-            ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
+        for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
+            CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(i);
+            ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
 
             state_B.add(!exchangeData.isCurrentBalanceComplete());
             state_T.add(!exchangeData.isTransactionsComplete());
@@ -64,7 +64,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         });
 
         TextView T_MESSAGE = findViewById(R.id.download_exchange_data_dialog_messageTextView);
-        if(exchangeArrayList.isEmpty()) {
+        if(cryptoExchangeArrayList.isEmpty()) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
@@ -75,7 +75,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     user_BALANCES.add(C_B[i].isChecked());
                     user_TRANSACTIONS.add(C_T[i].isChecked());
                 }
@@ -93,7 +93,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         Button B_SELECTALL = findViewById(R.id.download_exchange_data_dialog_selectAllButton);
         B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     C_B[i].setChecked(true);
                     C_T[i].setChecked(true);
                 }
@@ -103,7 +103,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         Button B_CLEARALL = findViewById(R.id.download_exchange_data_dialog_clearAllButton);
         B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     C_B[i].setChecked(false);
                     C_T[i].setChecked(false);
                 }
@@ -116,12 +116,12 @@ public class DownloadExchangeDataDialog extends BaseDialog {
     public void updateLayout() {
         LinearLayout L = findViewById(R.id.download_exchange_data_dialog_checkBoxLayout);
 
-        C_B = new CheckBox[exchangeArrayList.size()];
-        C_T = new CheckBox[exchangeArrayList.size()];
+        C_B = new CheckBox[cryptoExchangeArrayList.size()];
+        C_T = new CheckBox[cryptoExchangeArrayList.size()];
 
-        for(int i = 0; i < exchangeArrayList.size(); i++) {
+        for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
             TextView T = new TextView(this.activity);
-            T.setText(exchangeArrayList.get(i).toString());
+            T.setText(cryptoExchangeArrayList.get(i).toString());
 
             LinearLayout L_ROW = new LinearLayout(activity);
             L_ROW.setPadding(0, 0, 0, 50);
@@ -147,7 +147,7 @@ public class DownloadExchangeDataDialog extends BaseDialog {
         state_B.clear();
         state_T.clear();
 
-        for(int i = 0; i < exchangeArrayList.size(); i++) {
+        for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
             state_B.add(C_B[i].isChecked());
             state_T.add(C_T[i].isChecked());
         }

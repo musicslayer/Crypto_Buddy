@@ -83,12 +83,6 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Parc
         return (other instanceof Exchange) && getKey().equals(((Exchange)other).getKey());
     }
 
-    public boolean isSameAs(Exchange exchange) {
-        // Returns true if this Exchange is effectively the same as the input Exchange.
-        // For now, just use "equals".
-        return this.equals(exchange);
-    }
-
     @Override
     public int hashCode() {
         return this.getKey().hashCode();

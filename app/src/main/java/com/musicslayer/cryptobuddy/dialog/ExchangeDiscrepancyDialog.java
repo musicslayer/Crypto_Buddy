@@ -8,9 +8,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ExchangeDiscrepancyDialog extends BaseDialog {
-    ArrayList<Exchange> exchangeArrayList;
-    HashMap<Exchange, ExchangeData> exchangeDataMap;
+    ArrayList<CryptoExchange> cryptoExchangeArrayList;
+    HashMap<CryptoExchange, ExchangeData> exchangeDataMap;
 
-    public ExchangeDiscrepancyDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
+    public ExchangeDiscrepancyDialog(Activity activity, ArrayList<CryptoExchange> cryptoExchangeArrayList) {
         super(activity);
-        this.exchangeArrayList = exchangeArrayList;
+        this.cryptoExchangeArrayList = cryptoExchangeArrayList;
         this.exchangeDataMap = StateObj.exchangeDataMap;
     }
 
@@ -52,14 +52,14 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         });
 
         ArrayList<String> options = new ArrayList<>();
-        ArrayList<Exchange> exchangeReducedArrayList = new ArrayList<>();
+        ArrayList<CryptoExchange> cryptoExchangeReducedArrayList = new ArrayList<>();
 
-        for(Exchange exchange : exchangeArrayList) {
+        for(CryptoExchange cryptoExchange : cryptoExchangeArrayList) {
             // Only add option if that exchange has a discrepancy.
-            ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
+            ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
             if(exchangeData.hasDiscrepancy()) {
-                options.add(exchange.toString());
-                exchangeReducedArrayList.add(exchange);
+                options.add(cryptoExchange.exchange.toString());
+                cryptoExchangeReducedArrayList.add(cryptoExchange);
             }
         }
 
@@ -68,15 +68,15 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                Exchange exchange = exchangeReducedArrayList.get(pos);
-                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, exchange);
+                CryptoExchange cryptoExchange = cryptoExchangeReducedArrayList.get(pos);
+                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
 
                 // For each non-zero entry, display the discrepancy.
                 // We do not assume here that any address will have a discrepancy, even though currently we know at least one will.
                 HashMap<Asset, AssetAmount> delta = exchangeData.getDiscrepancyMap();
 
                 StringBuilder s = new StringBuilder();
-                s.append("Exchange = ").append(exchange.toString()).append("\n");
+                s.append("Exchange = ").append(cryptoExchange.exchange.toString()).append("\n");
 
                 boolean hasDiscrepancy = false;
                 for(Asset asset : delta.keySet()) {
@@ -97,11 +97,11 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
             }
         });
 
-        if(exchangeArrayList.size() == 1) {
+        if(cryptoExchangeArrayList.size() == 1) {
             bsv.setVisibility(View.GONE);
         }
 
-        if(exchangeArrayList.size() == 0) {
+        if(cryptoExchangeArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
             T.setText("No exchanges found.");
         }

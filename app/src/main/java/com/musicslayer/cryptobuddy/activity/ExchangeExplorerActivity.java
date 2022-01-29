@@ -15,9 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
@@ -48,7 +47,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
     ExchangeTable table;
 
-    ArrayList<Exchange> exchangeArrayList = new ArrayList<>();
+    ArrayList<CryptoExchange> cryptoExchangeArrayList = new ArrayList<>();
 
     public ArrayList<Boolean> includeBalances;
     public ArrayList<Boolean> includeTransactions;
@@ -82,14 +81,14 @@ public class ExchangeExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        Exchange exchange = getIntent().getParcelableExtra("Exchange");
-        exchangeArrayList.add(exchange);
+        CryptoExchange cryptoExchange = getIntent().getParcelableExtra("CryptoExchange");
+        cryptoExchangeArrayList.add(cryptoExchange);
         if(savedInstanceState == null) {
-            HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, ExchangeData.getNoData(exchange,null));
+            HashMapUtil.putValueInMap(StateObj.exchangeDataMap, cryptoExchange, ExchangeData.getNoData(cryptoExchange));
         }
 
         TextView T_INFO = findViewById(R.id.exchange_explorer_infoTextView);
-        T_INFO.setText("Exchange = " + exchangeArrayList.get(0).toString());
+        T_INFO.setText("Exchange = " + cryptoExchangeArrayList.get(0).toString());
 
         Toolbar toolbar = findViewById(R.id.exchange_explorer_toolbar);
         setSupportActionBar(toolbar);
@@ -98,7 +97,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, exchangeArrayList);
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, cryptoExchangeArrayList);
                 discrepancyDialogFragment.show(ExchangeExplorerActivity.this, "discrepancy");
             }
         });
@@ -107,7 +106,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment problemDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, exchangeArrayList);
+                BaseDialogFragment problemDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, cryptoExchangeArrayList);
                 problemDialogFragment.show(ExchangeExplorerActivity.this, "problem");
             }
         });
@@ -135,7 +134,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ExchangeInfoDialog.class, exchangeArrayList).show(ExchangeExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(ExchangeInfoDialog.class, cryptoExchangeArrayList).show(ExchangeExplorerActivity.this, "info");
             }
         });
 
@@ -152,7 +151,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         fab_authorize.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, exchangeArrayList).show(ExchangeExplorerActivity.this, "authorize_exchange");
+                BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, cryptoExchangeArrayList).show(ExchangeExplorerActivity.this, "authorize_exchange");
             }
         });
 
@@ -162,22 +161,21 @@ public class ExchangeExplorerActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Downloading Exchange Data...");
 
-                Exchange exchange = exchangeArrayList.get(0);
-                ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(StateObj.exchangeAPIMap, exchange);
+                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(0);
 
                 ExchangeData newExchangeData;
 
                 if(includeBalances.get(0) && includeTransactions.get(0)) {
-                    newExchangeData = ExchangeData.getAllData(exchange, exchangeAPI);
+                    newExchangeData = ExchangeData.getAllData(cryptoExchange);
                 }
                 else if(includeBalances.get(0)) {
-                    newExchangeData = ExchangeData.getCurrentBalanceData(exchange, exchangeAPI);
+                    newExchangeData = ExchangeData.getCurrentBalanceData(cryptoExchange);
                 }
                 else if(includeTransactions.get(0)) {
-                    newExchangeData = ExchangeData.getTransactionsData(exchange, exchangeAPI);
+                    newExchangeData = ExchangeData.getTransactionsData(cryptoExchange);
                 }
                 else {
-                    newExchangeData = ExchangeData.getNoData(exchange, exchangeAPI);
+                    newExchangeData = ExchangeData.getNoData(cryptoExchange);
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
@@ -209,10 +207,10 @@ public class ExchangeExplorerActivity extends BaseActivity {
                     ToastUtil.showToast(ExchangeExplorerActivity.this,"incomplete_exchange_data");
                 }
 
-                Exchange exchange = exchangeArrayList.get(0);
-                ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, exchange);
+                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(0);
+                ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, cryptoExchange);
                 ExchangeData mergedExchangeData = ExchangeData.merge(oldExchangeData, newExchangeData);
-                HashMapUtil.putValueInMap(StateObj.exchangeDataMap, exchange, mergedExchangeData);
+                HashMapUtil.putValueInMap(StateObj.exchangeDataMap, cryptoExchange, mergedExchangeData);
 
                 hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
                 hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
@@ -225,7 +223,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class, exchangeArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class, cryptoExchangeArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {

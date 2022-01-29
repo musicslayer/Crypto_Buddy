@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -18,18 +18,18 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.ArrayList;
 
 public class RemoveExchangeDialog extends BaseDialog {
-    ArrayList<Exchange> exchangeArrayList;
+    ArrayList<CryptoExchange> cryptoExchangeArrayList;
 
     CheckBox[] C;
     ArrayList<Boolean> state = new ArrayList<>();
 
-    public ArrayList<Exchange> user_exchangeArrayList;
+    public ArrayList<CryptoExchange> user_cryptoExchangeArrayList;
 
-    public RemoveExchangeDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
+    public RemoveExchangeDialog(Activity activity, ArrayList<CryptoExchange> cryptoExchangeArrayList) {
         super(activity);
-        this.exchangeArrayList = exchangeArrayList;
+        this.cryptoExchangeArrayList = cryptoExchangeArrayList;
 
-        for(int i = 0; i < exchangeArrayList.size(); i++) {
+        for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
             state.add(false);
         }
     }
@@ -42,7 +42,7 @@ public class RemoveExchangeDialog extends BaseDialog {
         setContentView(R.layout.dialog_remove_exchange);
 
         TextView T_MESSAGE = findViewById(R.id.remove_exchange_dialog_messageTextView);
-        if(exchangeArrayList.isEmpty()) {
+        if(cryptoExchangeArrayList.isEmpty()) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
         else {
@@ -64,14 +64,14 @@ public class RemoveExchangeDialog extends BaseDialog {
         Button B_DELETE = findViewById(R.id.remove_exchange_dialog_applyFilterButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                user_exchangeArrayList = new ArrayList<>();
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                user_cryptoExchangeArrayList = new ArrayList<>();
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     if(C[i].isChecked()) {
-                        user_exchangeArrayList.add(exchangeArrayList.get(i));
+                        user_cryptoExchangeArrayList.add(cryptoExchangeArrayList.get(i));
                     }
                 }
 
-                if(user_exchangeArrayList.isEmpty()) {
+                if(user_cryptoExchangeArrayList.isEmpty()) {
                     ToastUtil.showToast(activity, "nothing_to_remove");
                     return;
                 }
@@ -83,7 +83,7 @@ public class RemoveExchangeDialog extends BaseDialog {
         Button B_SELECTALL = findViewById(R.id.remove_exchange_dialog_selectAllButton);
         B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     C[i].setChecked(true);
                 }
             }
@@ -92,7 +92,7 @@ public class RemoveExchangeDialog extends BaseDialog {
         Button B_CLEARALL = findViewById(R.id.remove_exchange_dialog_clearAllButton);
         B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                for(int i = 0; i < exchangeArrayList.size(); i++) {
+                for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
                     C[i].setChecked(false);
                 }
             }
@@ -104,11 +104,11 @@ public class RemoveExchangeDialog extends BaseDialog {
     public void updateLayout() {
         LinearLayout L = findViewById(R.id.remove_exchange_dialog_checkBoxLayout);
 
-        C = new CheckBox[exchangeArrayList.size()];
-        for(int i = 0; i < exchangeArrayList.size(); i++) {
+        C = new CheckBox[cryptoExchangeArrayList.size()];
+        for(int i = 0; i < cryptoExchangeArrayList.size(); i++) {
             C[i] = new CheckBox(this.activity);
             C[i].setChecked(state.get(i));
-            C[i].setText(exchangeArrayList.get(i).toString());
+            C[i].setText(cryptoExchangeArrayList.get(i).toString());
 
             LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             LP.setMargins(0,0,0,50);

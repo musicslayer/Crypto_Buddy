@@ -63,7 +63,16 @@ public class Coinbase extends ExchangeAPI {
         return oAuthToken != null && oAuthToken.isAuthorized();
     }
 
-    public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) {
+    public String getAuthorizationInfo() {
+        if(oAuthToken == null) {
+            return "[Null OAuth Token]";
+        }
+        else {
+            return oAuthToken.getSafeInfo();
+        }
+    }
+
+    public ArrayList<AssetQuantity> getCurrentBalance(CryptoExchange cryptoExchange) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
         return currentBalanceArrayList;
@@ -86,7 +95,7 @@ public class Coinbase extends ExchangeAPI {
         }
     }
 
-    public ArrayList<Transaction> getTransactions(Exchange exchange) {
+    public ArrayList<Transaction> getTransactions(CryptoExchange cryptoExchange) {
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
         return transactionArrayList;

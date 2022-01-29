@@ -9,28 +9,21 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
-import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AuthorizeExchangeDialog extends BaseDialog {
-    public ArrayList<Exchange> exchangeArrayList;
-    public HashMap<Exchange, ExchangeAPI> exchangeAPIMap;
+    public ArrayList<CryptoExchange> cryptoExchangeArrayList;
 
-    public AuthorizeExchangeDialog(Activity activity, ArrayList<Exchange> exchangeArrayList) {
+    public AuthorizeExchangeDialog(Activity activity, ArrayList<CryptoExchange> cryptoExchangeArrayList) {
         super(activity);
-        this.exchangeArrayList = exchangeArrayList;
-        this.exchangeAPIMap = StateObj.exchangeAPIMap;
+        this.cryptoExchangeArrayList = cryptoExchangeArrayList;
     }
 
     public int getBaseViewID() {
@@ -41,8 +34,8 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         setContentView(R.layout.dialog_authorize_exchange);
 
         ArrayList<String> options = new ArrayList<>();
-        for(Exchange exchange : exchangeArrayList) {
-            options.add(exchange.toString());
+        for(CryptoExchange cryptoExchange : cryptoExchangeArrayList) {
+            options.add(cryptoExchange.exchange.toString());
         }
 
         TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
@@ -53,64 +46,59 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                Exchange exchange = exchangeArrayList.get(pos);
-                ExchangeAPI exchangeAPI = ExchangeData.getExchangeAPI(exchange);
+                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(pos);
 
-                // Each exchange has at most one supported API, so just set it in the map here unconditionally.
-                HashMapUtil.putValueInMap(exchangeAPIMap, exchange, exchangeAPI);
-
-                setAuthorizedListeners(activity, exchange, exchangeAPI);
-                setAuthorizedDisplay(exchange, exchangeAPI != null && exchangeAPI.isAuthorized());
+                setAuthorizedListeners(activity, cryptoExchange);
+                setAuthorizedDisplay(cryptoExchange, cryptoExchange.isAuthorized());
 
                 B_AUTHORIZE_BROWSER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                     public void onClickImpl(View v) {
-                        ExchangeAPI exchangeAPI = HashMapUtil.getValueFromMap(exchangeAPIMap, exchange);
-                        authorizeBrowser(activity, exchange, exchangeAPI);
+                        authorizeBrowser(activity, cryptoExchange);
                     }
                 });
             }
         });
 
-        if(exchangeArrayList.size() == 1) {
+        if(cryptoExchangeArrayList.size() == 1) {
             bsv.setVisibility(View.GONE);
         }
 
-        if(exchangeArrayList.size() == 0) {
+        if(cryptoExchangeArrayList.size() == 0) {
             bsv.setVisibility(View.GONE);
             B_AUTHORIZE_BROWSER.setVisibility(View.GONE);
             T.setText("No exchanges found.");
         }
     }
 
-    public void setAuthorizedDisplay(Exchange exchange, boolean isAuthorized) {
+    public void setAuthorizedDisplay(CryptoExchange cryptoExchange, boolean isAuthorized) {
         TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
         if(isAuthorized) {
-            T.setText(exchange.toString() + " = Authorized");
+            T.setText(cryptoExchange.toString() + " = Authorized");
             T.setTextColor(0xFF000000);
         }
         else {
-            T.setText(exchange.toString() + " = Unauthorized");
+            T.setText(cryptoExchange.toString() + " = Unauthorized");
             T.setTextColor(0xFFFF0000);
         }
     }
 
-    public void setAuthorizedListeners(Context context, Exchange exchange, ExchangeAPI exchangeAPI) {
-        if(exchangeAPI != null) {
-            exchangeAPI.restoreListeners(context, new AuthUtil.AuthorizationListener() {
+    public void setAuthorizedListeners(Context context, CryptoExchange cryptoExchange) {
+        if(cryptoExchange.exchangeAPI != null) {
+            cryptoExchange.exchangeAPI.restoreListeners(context, new AuthUtil.AuthorizationListener() {
                 @Override
                 public void onAuthorization() {
-                    setAuthorizedDisplay(exchange, true);
+                    setAuthorizedDisplay(cryptoExchange, true);
                 }
             });
         }
     }
 
-    public void authorizeBrowser(Context context, Exchange exchange, ExchangeAPI exchangeAPI) {
-        if(exchangeAPI != null) {
-            exchangeAPI.authorize(activity, new AuthUtil.AuthorizationListener() {
+    public void authorizeBrowser(Context context, CryptoExchange cryptoExchange) {
+        if(cryptoExchange.exchangeAPI != null) {
+            cryptoExchange.exchangeAPI.authorize(activity, new AuthUtil.AuthorizationListener() {
                 @Override
                 public void onAuthorization() {
-                    setAuthorizedDisplay(exchange, true);
+                    setAuthorizedDisplay(cryptoExchange, true);
                 }
             });
         }

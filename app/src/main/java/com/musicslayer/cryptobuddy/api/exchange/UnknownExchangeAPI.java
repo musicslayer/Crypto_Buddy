@@ -36,8 +36,9 @@ public class UnknownExchangeAPI extends ExchangeAPI {
     public void authorize(Context context, AuthUtil.AuthorizationListener L) {}
     public void restoreListeners(Context context, AuthUtil.AuthorizationListener L) {}
     public boolean isAuthorized() { return false; }
-    public ArrayList<AssetQuantity> getCurrentBalance(Exchange exchange) { return null; }
-    public ArrayList<Transaction> getTransactions(Exchange exchange) { return null; }
+    public String getAuthorizationInfo() { return null; }
+    public ArrayList<AssetQuantity> getCurrentBalance(CryptoExchange cryptoExchange) { return null; }
+    public ArrayList<Transaction> getTransactions(CryptoExchange cryptoExchange) { return null; }
 
     public static UnknownExchangeAPI createUnknownExchangeAPI(String key) {
         return new UnknownExchangeAPI(key);

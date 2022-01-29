@@ -14,8 +14,9 @@ import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
 import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
+import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
@@ -41,6 +42,8 @@ public class ReportFeedbackDialog extends BaseDialog {
     public ReportFeedbackDialog(Activity activity, String type) {
         super(activity);
         this.type = type;
+
+        // Although this may not be needed, we must calculate this already because we do not have access to the table here.
         this.tableInfo = StateObj.tableInfo;
     }
 
@@ -125,53 +128,86 @@ public class ReportFeedbackDialog extends BaseDialog {
 
     public String getInfo() {
         if(activity instanceof TransactionExplorerActivity) {
-            return tableInfo;
+            return "TransactionExplorerActivity:\n\n" + tableInfo;
         }
         else if(activity instanceof TransactionPortfolioExplorerActivity) {
             TransactionPortfolioObj transactionPortfolioObj = StateObj.transactionPortfolioObj;
-            return "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + tableInfo;
+            return "TransactionPortfolioExplorerActivity\n\n" + "Transaction Portfolio:\n\n" + Serialization.serialize(transactionPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof AddressExplorerActivity) {
             HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
 
+            // Full info for the address.
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
                 s.append(addressData.getInfoString()).append("\n\n");
             }
 
-            return "Address Info:\n\n" + s.toString() + tableInfo;
+            return "AddressExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + tableInfo;
         }
         else if(activity instanceof AddressPortfolioExplorerActivity) {
             HashMap<CryptoAddress, AddressData> addressDataMap = StateObj.addressDataMap;
+            HashMap<CryptoAddress, AddressData> addressDataFilterMap = StateObj.addressDataFilterMap;
             AddressPortfolioObj addressPortfolioObj = StateObj.addressPortfolioObj;
 
+            // Full info for all addresses.
             StringBuilder s = new StringBuilder();
             for(AddressData addressData : new ArrayList<>(addressDataMap.values())) {
                 s.append(addressData.getInfoString()).append("\n\n");
             }
 
-            return "Address Info:\n\n" + s.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + tableInfo;
+            // Get the names of the addresses in the filter map.
+            StringBuilder sf = new StringBuilder();
+            for(AddressData addressData : new ArrayList<>(addressDataFilterMap.values())) {
+                sf.append(addressData.cryptoAddress).append("\n\n");
+            }
+
+            return "AddressPortfolioExplorerActivity\n\n" + "Address Info:\n\n" + s.toString() + "Address Filter:\n\n" + sf.toString() + "Address Portfolio:\n\n" + Serialization.serialize(addressPortfolioObj) + "\n\n" + tableInfo;
         }
         else if(activity instanceof ExchangeExplorerActivity) {
-            HashMap<Exchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
+            HashMap<CryptoExchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
 
+            // Full info for the exchange.
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
                 s.append(exchangeData.getInfoString()).append("\n\n");
             }
 
-            return "Exchange Info:\n\n" + s.toString() + tableInfo;
+            // Authorization info of every exchange, whether or not any data was downloaded with it.
+            StringBuilder sa = new StringBuilder();
+            for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
+                CryptoExchange cryptoExchange = exchangeData.cryptoExchange;
+                sa.append(cryptoExchange.getInfo()).append("\n\n");
+            }
+
+            return "ExchangeExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + tableInfo;
         }
 
         else if(activity instanceof ExchangePortfolioExplorerActivity) {
-            HashMap<Exchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
+            HashMap<CryptoExchange, ExchangeData> exchangeDataMap = StateObj.exchangeDataMap;
+            HashMap<CryptoExchange, ExchangeData> exchangeDataFilterMap = StateObj.exchangeDataFilterMap;
             ExchangePortfolioObj exchangePortfolioObj = StateObj.exchangePortfolioObj;
 
+            // Full info for all exchanges.
             StringBuilder s = new StringBuilder();
             for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
                 s.append(exchangeData.getInfoString()).append("\n\n");
             }
-            return "Exchange Info:\n\n" + s.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + tableInfo;
+
+            // Authorization info of every exchange, whether or not any data was downloaded with it.
+            StringBuilder sa = new StringBuilder();
+            for(ExchangeData exchangeData : new ArrayList<>(exchangeDataMap.values())) {
+                CryptoExchange cryptoExchange = exchangeData.cryptoExchange;
+                sa.append(cryptoExchange.getInfo()).append("\n\n");
+            }
+
+            // Get the names of the exchanges in the filter map.
+            StringBuilder sf = new StringBuilder();
+            for(ExchangeData exchangeData : new ArrayList<>(exchangeDataFilterMap.values())) {
+                sf.append(exchangeData.cryptoExchange).append("\n\n");
+            }
+
+            return "ExchangePortfolioExplorerActivity\n\n" + "Exchange Info:\n\n" + s.toString() + "Exchange Authorization:\n\n" + sa.toString() + "Exchange Filter:\n\n" + sf.toString() + "Exchange Portfolio:\n\n" + Serialization.serialize(exchangePortfolioObj) + "\n\n" + tableInfo;
         }
 
         return "?";

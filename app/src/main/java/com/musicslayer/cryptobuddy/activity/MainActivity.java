@@ -14,8 +14,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.app.App;
-import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -188,10 +188,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseExchangeDialog)dialog).isComplete) {
-                    Exchange exchange = ((ChooseExchangeDialog)dialog).user_EXCHANGE;
+                    CryptoExchange cryptoExchange = ((ChooseExchangeDialog)dialog).user_CRYPTOEXCHANGE;
 
                     Intent intent = new Intent(MainActivity.this, ExchangeExplorerActivity.class);
-                    intent.putExtra("Exchange", exchange);
+                    intent.putExtra("CryptoExchange", cryptoExchange);
 
                     MainActivity.this.startActivity(intent);
                     MainActivity.this.finish();
