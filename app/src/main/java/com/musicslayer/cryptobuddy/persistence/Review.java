@@ -34,8 +34,12 @@ public class Review {
     public static void loadAllData(Context context) {
         SharedPreferences settings = context.getSharedPreferences("review_data", MODE_PRIVATE);
 
-        // Default time is now, so that in 5 days all users will get the request for a view.
-        settings_review_time = settings.getLong("review_time", System.currentTimeMillis());
+        // If there is no value in this setting, then immediately store "now" so that in all future calls there will be a value.
+        // We cannot rely on a default value because it would not be fixed in time.
+        if(!settings.contains("review_time")) {
+            setReviewTime(context);
+        }
+        settings_review_time = settings.getLong("review_time", 0);
     }
 
     public static HashMap<String, String> getAllData() {

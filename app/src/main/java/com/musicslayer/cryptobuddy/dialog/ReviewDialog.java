@@ -48,7 +48,7 @@ public class ReviewDialog extends BaseDialog {
                     ToastUtil.showToast(activity,"review");
                 }
 
-                // Either button sets "isComplete" to true. We just want to make sure the user selected something.
+                // Any button sets "isComplete" to true. We just want to make sure the user selected something.
                 isComplete = true;
                 dismiss();
             }
@@ -58,7 +58,7 @@ public class ReviewDialog extends BaseDialog {
         B_NO.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
-                // Either button sets "isComplete" to true. We just want to make sure the user selected something.
+                // Any button sets "isComplete" to true. We just want to make sure the user selected something.
                 isComplete = true;
                 dismiss();
             }
@@ -68,7 +68,7 @@ public class ReviewDialog extends BaseDialog {
         B_LATER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {
-                // Either button sets "isComplete" to true. We just want to make sure the user selected something.
+                // Any button sets "isComplete" to true. We just want to make sure the user selected something.
                 user_LATER = true;
 
                 isComplete = true;
