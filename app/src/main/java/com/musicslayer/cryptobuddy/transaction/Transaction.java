@@ -262,20 +262,23 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
 
     public static HashMap<Asset, AssetAmount> resolveAssets(ArrayList<Transaction> transactionArrayList) {
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
-        for(Transaction t : transactionArrayList) {
-            if(t.isActionedAssetLoss()) {
-                subtract(deltaMap, t.actionedAssetQuantity);
-            }
-            else {
-                add(deltaMap, t.actionedAssetQuantity);
-            }
 
-            if(t.otherAssetQuantity != null) {
-                if(t.isOtherAssetLoss()) {
-                    subtract(deltaMap, t.otherAssetQuantity);
+        if(transactionArrayList != null) {
+            for(Transaction t : transactionArrayList) {
+                if(t.isActionedAssetLoss()) {
+                    subtract(deltaMap, t.actionedAssetQuantity);
                 }
                 else {
-                    add(deltaMap, t.otherAssetQuantity);
+                    add(deltaMap, t.actionedAssetQuantity);
+                }
+
+                if(t.otherAssetQuantity != null) {
+                    if(t.isOtherAssetLoss()) {
+                        subtract(deltaMap, t.otherAssetQuantity);
+                    }
+                    else {
+                        add(deltaMap, t.otherAssetQuantity);
+                    }
                 }
             }
         }

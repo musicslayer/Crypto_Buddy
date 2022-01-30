@@ -83,6 +83,7 @@
         android:clickable="true"
         app:layout_constraintStart_toEndOf="@+id/crypto_converter_dialog_convertButton"
         app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_secondarySelectAndSearchView"
-        app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
+        app:srcCompat="@drawable/ic_baseline_swap_vert_24"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -81,9 +81,9 @@ public class CryptoConverterDialog extends BaseDialog {
                     AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataSecondary.crypto), priceDataSecondary.price);
                     AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
-                    String text = "Conversion:\n" + primaryAssetQuantity.toString() + " = " + secondaryAssetQuantity.toString() +
-                            "\n\nForward Prices:\n" + primaryAssetPrice.toString() +
-                            "\n" + secondaryAssetPrice.toString();
+                    String text = "Conversion:\n" + primaryAssetQuantity + " = " + secondaryAssetQuantity.toString() +
+                            "\n\nForward Prices:\n" + primaryAssetPrice +
+                            "\n" + secondaryAssetPrice;
 
                     if("ForwardBackward".equals(PriceDisplaySetting.value)) {
                         text = text + "\n\nBackward Prices:\n" + primaryAssetPrice.reverseAssetPrice().toString() +

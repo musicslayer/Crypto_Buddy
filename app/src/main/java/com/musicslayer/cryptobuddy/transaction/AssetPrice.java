@@ -26,7 +26,7 @@ public class AssetPrice {
         AssetQuantity normalizedTopAssetQuantity = new AssetQuantity("1", topAssetQuantity.asset);
         AssetQuantity normalizedBottomAssetQuantity = normalizedTopAssetQuantity.convert(this);
 
-        return normalizedTopAssetQuantity.toString() + " / " + normalizedBottomAssetQuantity.toString();
+        return normalizedTopAssetQuantity + " / " + normalizedBottomAssetQuantity.toString();
     }
 
     private int compare(AssetPrice other) {

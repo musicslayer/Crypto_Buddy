@@ -75,7 +75,7 @@ public class DataDumpUtil {
                 .append("\n SD Card state: ").append(Environment.getExternalStorageState());
 
         if(a != null) {
-            sb.append("\n activity: ").append(a.toString())
+            sb.append("\n activity: ").append(a)
                     .append("\n screenWidth: ").append(a.getWindow().getWindowManager().getDefaultDisplay().getWidth())
                     .append("\n screenHeight: ").append(a.getWindow().getWindowManager().getDefaultDisplay().getHeight())
                     .append("\n Keyboard available: ").append(a.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)

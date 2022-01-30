@@ -129,7 +129,7 @@ public class CoinGecko extends PriceAPI {
         }
 
         ProgressDialogFragment.updateProgressSubtitle("Processing Coins...");
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);
@@ -260,7 +260,7 @@ public class CoinGecko extends PriceAPI {
             }
         }
 
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString.toString() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);

@@ -134,7 +134,7 @@ public class TotalDialog extends BaseDialog {
             AssetAmount amount = deltaMap.get(asset);
             AssetQuantity assetQuantity = new AssetQuantity(amount, asset);
 
-            s.append("\n").append(assetQuantity.toString());
+            s.append("\n").append(assetQuantity);
 
             AssetAmount price = priceMap.get(asset);
             if(price != null) {
@@ -142,7 +142,7 @@ public class TotalDialog extends BaseDialog {
                 AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
 
                 grandTotal = grandTotal.add(convertedAssetQuantity.assetAmount);
-                s.append(" = ").append(convertedAssetQuantity.toString());
+                s.append(" = ").append(convertedAssetQuantity);
             }
             else {
                 s.append(" = ?");
@@ -154,7 +154,7 @@ public class TotalDialog extends BaseDialog {
             s.append("\n\nData Source = CoinGecko API V3");
 
             AssetQuantity grandTotalAssetQuantity = new AssetQuantity(grandTotal, new USD());
-            titleString = titleString + " = " + grandTotalAssetQuantity.toString();
+            titleString = titleString + " = " + grandTotalAssetQuantity;
         }
 
         Toolbar toolbar = findViewById(R.id.total_dialog_toolbar);

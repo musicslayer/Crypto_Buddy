@@ -68,7 +68,7 @@ public class ADATokenManager extends TokenManager {
                             throw new IOException(e);
                         }
 
-                        json.append(tokenJSON.toString());
+                        json.append(tokenJSON);
                         json.append(",");
                     }
                 }

@@ -247,7 +247,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
                 for(Asset asset : netTransactionsMap.keySet()) {
                     AssetAmount assetAmount = netTransactionsMap.get(asset);
                     AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-                    s.append("\n    ").append(assetQuantity.toString());
+                    s.append("\n    ").append(assetQuantity);
                 }
             }
         }

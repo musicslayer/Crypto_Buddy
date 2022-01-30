@@ -166,6 +166,7 @@
         android:clickable="true"
         app:layout_constraintStart_toEndOf="@+id/add_transaction_dialog_confirmButton"
         app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_infoEditText"
-        app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
+        app:srcCompat="@drawable/ic_baseline_swap_vert_24"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

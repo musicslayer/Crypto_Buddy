@@ -58,7 +58,7 @@ public class CryptoPricesDialog extends BaseDialog {
                     AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);
                     AssetQuantity marketCapAssetQuantity = priceData.marketCap;
 
-                    String text = "Forward Price = " + assetPrice.toString();
+                    String text = "Forward Price = " + assetPrice;
                     if("ForwardBackward".equals(PriceDisplaySetting.value)) {
                         text = text + "\nBackward Price = " + assetPrice.reverseAssetPrice().toString();
                     }

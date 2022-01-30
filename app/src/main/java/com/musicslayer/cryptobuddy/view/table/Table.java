@@ -405,7 +405,7 @@ abstract public class Table extends CrashTableLayout {
         for(Asset asset : netTransactionsMap.keySet()) {
             AssetAmount assetAmount = netTransactionsMap.get(asset);
             AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-            s.append("\n    ").append(assetQuantity.toString());
+            s.append("\n    ").append(assetQuantity);
         }
 
         //filteredTransactionArrayList and Net Filtered Transaction Sums.
@@ -418,7 +418,7 @@ abstract public class Table extends CrashTableLayout {
         for(Asset asset : netFilteredTransactionsMap.keySet()) {
             AssetAmount assetAmount = netFilteredTransactionsMap.get(asset);
             AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-            s.append("\n    ").append(assetQuantity.toString());
+            s.append("\n    ").append(assetQuantity);
         }
 
         //filterArrayList

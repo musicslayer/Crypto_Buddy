@@ -29,14 +29,18 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
 
-// TODO NFT Viewer
-// TODO Reflections Calculator
-// TODO Make Redirect page look better.
-// TODO Allow user to choose "Unknown/Other Asset" if they want something I don't support?
-// TODO Use TradeView API
-// TODO Actually implement Coinbase/Gemini API.
+// TODO Long Term Items
+//  Data Import/Export
+//  NFT Viewer
+//  Reflections Calculator
+//  Use TradeView API
+//  Allow user to choose "Unknown/Other Asset" if they want something I don't support.
+//  "Tax" View (i.e. Calculate cost basis of transactions)
 
+// TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
+// TODO Actually implement Coinbase/Gemini API.
 // TODO Negative assets are only red in a table...?
+// TODO AddressInfo needs a "get Fiat values" button
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

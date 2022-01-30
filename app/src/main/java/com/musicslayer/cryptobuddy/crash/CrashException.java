@@ -96,7 +96,7 @@ public class CrashException extends RuntimeException {
                 this.extraInfoStringBuilder.append("null").append("\n");
             }
             else {
-                this.extraInfoStringBuilder.append(obj.toString()).append("\n");
+                this.extraInfoStringBuilder.append(obj).append("\n");
             }
         }
         catch(Exception e) {
