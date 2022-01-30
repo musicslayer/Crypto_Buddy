@@ -442,6 +442,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "ExchangePortfolio";
             StateObj.tableInfo = table.getInfo();
+            StateObj.filterInfo = Serialization.serialize(exchangeFilter);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangePortfolioExplorerActivity.this, "feedback");
             return true;
         }

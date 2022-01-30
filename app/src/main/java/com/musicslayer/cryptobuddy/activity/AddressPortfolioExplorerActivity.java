@@ -456,6 +456,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "AddressPortfolio";
             StateObj.tableInfo = table.getInfo();
+            StateObj.filterInfo = Serialization.serialize(addressFilter);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
             return true;
         }

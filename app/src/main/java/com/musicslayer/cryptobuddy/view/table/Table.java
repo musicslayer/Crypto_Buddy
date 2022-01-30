@@ -395,17 +395,28 @@ abstract public class Table extends CrashTableLayout {
             s.append("\n").append(column);
         }
 
-        ArrayList<Transaction> filteredTransactionArrayList = getFilteredTransactionArrayList();
+        //transactionArrayList and Net Transaction Sums.
+        ArrayList<Transaction> transactionArrayList = StateObj.transactionArrayList;
+        s.append("\n\nTransaction Array List:\n");
+        s.append(Serialization.serializeArrayList(transactionArrayList));
 
-        //filteredTransactionArrayList
+        HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+        s.append("\n\nNet Transaction Sums:");
+        for(Asset asset : netTransactionsMap.keySet()) {
+            AssetAmount assetAmount = netTransactionsMap.get(asset);
+            AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+            s.append("\n    ").append(assetQuantity.toString());
+        }
+
+        //filteredTransactionArrayList and Net Filtered Transaction Sums.
+        ArrayList<Transaction> filteredTransactionArrayList = getFilteredTransactionArrayList();
         s.append("\n\nFiltered Transaction Array List:\n");
         s.append(Serialization.serializeArrayList(filteredTransactionArrayList));
 
-        // Net Filtered Transaction Sums (Same as what Total Dialog shows).
-        HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(filteredTransactionArrayList);
+        HashMap<Asset, AssetAmount> netFilteredTransactionsMap = Transaction.resolveAssets(filteredTransactionArrayList);
         s.append("\n\nNet Filtered Transaction Sums:");
-        for(Asset asset : netTransactionsMap.keySet()) {
-            AssetAmount assetAmount = netTransactionsMap.get(asset);
+        for(Asset asset : netFilteredTransactionsMap.keySet()) {
+            AssetAmount assetAmount = netFilteredTransactionsMap.get(asset);
             AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
             s.append("\n    ").append(assetQuantity.toString());
         }

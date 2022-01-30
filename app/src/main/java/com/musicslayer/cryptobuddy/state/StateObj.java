@@ -34,6 +34,7 @@ public class StateObj {
     public static ArrayList<Transaction> filteredTransactionArrayList = new ArrayList<>();
 
     public static String tableInfo;
+    public static String filterInfo;
 
     public static void resetState() {
         addressDataMap = new HashMap<>();
@@ -48,5 +49,6 @@ public class StateObj {
         options_names = new ArrayList<>();
         transactionArrayList = new ArrayList<>();
         tableInfo = null;
+        filterInfo = null;
     }
 }

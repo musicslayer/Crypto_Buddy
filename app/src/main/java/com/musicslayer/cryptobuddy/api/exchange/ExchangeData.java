@@ -248,6 +248,25 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             }
         }
 
+        // Authorization
+        s.append("\n\n").append("Exchange Authorization:");
+        s.append("\n").append(cryptoExchange.getInfo());
+
+        return s.toString();
+    }
+
+    public static String getFullInfoString(ArrayList<ExchangeData> exchangeDataArrayList) {
+        if(exchangeDataArrayList == null) { return null; }
+
+        StringBuilder s = new StringBuilder();
+        for(int i = 0; i < exchangeDataArrayList.size(); i++) {
+            ExchangeData exchangeData = exchangeDataArrayList.get(i);
+            s.append(exchangeData.getFullInfoString());
+
+            if(i < exchangeDataArrayList.size() - 1) {
+                s.append("\n\n");
+            }
+        }
         return s.toString();
     }
 

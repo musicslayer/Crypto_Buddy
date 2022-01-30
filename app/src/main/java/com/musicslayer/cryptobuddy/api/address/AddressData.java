@@ -264,6 +264,21 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         return s.toString();
     }
 
+    public static String getFullInfoString(ArrayList<AddressData> addressDataArrayList) {
+        if(addressDataArrayList == null) { return null; }
+
+        StringBuilder s = new StringBuilder();
+        for(int i = 0; i < addressDataArrayList.size(); i++) {
+            AddressData addressData = addressDataArrayList.get(i);
+            s.append(addressData.getFullInfoString());
+
+            if(i < addressDataArrayList.size() - 1) {
+                s.append("\n\n");
+            }
+        }
+        return s.toString();
+    }
+
     public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
         if(transactionArrayList == null || currentBalanceArrayList == null) {
             return new HashMap<>();
