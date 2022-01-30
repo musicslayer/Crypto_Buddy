@@ -52,6 +52,9 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
 
+    // Calculate at construction since it never changes.
+    HashMap<Asset, AssetAmount> netTransactionsMap;
+
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
@@ -80,6 +83,8 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         this.exchangeAPI_transactions = exchangeAPI_transactions;
         this.currentBalanceArrayList = currentBalanceArrayList;
         this.transactionArrayList = transactionArrayList;
+
+        netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
     }
 
     public static ExchangeData getAllData(CryptoExchange cryptoExchange) {
@@ -191,7 +196,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             transactionArrayList_f = newExchangeData.transactionArrayList;
         }
 
-        // Both ExchangeData objects should have the same exchange, but just in case we favor the newer one for consistency.
+        // Both ExchangeData objects should have the same cryptoExchange, but just in case we favor the newer one for consistency.
         return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
@@ -238,7 +243,6 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
                 s.append("\nTransactions:\n");
                 s.append(Serialization.serializeArrayList(transactionArrayList));
 
-                HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
                 s.append("\n\nNet Transaction Sums:");
                 for(Asset asset : netTransactionsMap.keySet()) {
                     AssetAmount assetAmount = netTransactionsMap.get(asset);
@@ -275,22 +279,16 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             return new HashMap<>();
         }
 
-        // Get the net transactions map.
-        HashMap<Asset, AssetAmount> transactionsMap = Transaction.resolveAssets(transactionArrayList);
-
-        // Get the current balances map.
-        ArrayList<AssetQuantity> balancesMap = currentBalanceArrayList;
-
-        // Create the discrepancy map. Add anything in "transactionsMap", and subtract anything in "balancesMap".
+        // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
         HashMap<Asset, AssetAmount> delta = new HashMap<>();
 
-        for(Asset asset : transactionsMap.keySet()) {
-            AssetAmount assetAmount = transactionsMap.get(asset);
+        for(Asset asset : netTransactionsMap.keySet()) {
+            AssetAmount assetAmount = netTransactionsMap.get(asset);
             add(delta, asset, assetAmount);
         }
 
-        for(AssetQuantity assetQuantity : balancesMap) {
+        for(AssetQuantity assetQuantity : currentBalanceArrayList) {
             subtract(delta, assetQuantity.asset, assetQuantity.assetAmount);
         }
 

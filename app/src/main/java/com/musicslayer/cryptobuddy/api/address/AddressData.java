@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO We could store the net transactions and net balances once, right?
-
 public class AddressData implements Serialization.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
@@ -54,6 +52,9 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
 
+    // Calculate at construction since it never changes.
+    HashMap<Asset, AssetAmount> netTransactionsMap;
+
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
@@ -82,6 +83,8 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         this.addressAPI_transactions = addressAPI_transactions;
         this.currentBalanceArrayList = currentBalanceArrayList;
         this.transactionArrayList = transactionArrayList;
+
+        netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
     }
 
     public static AddressData getAllData(CryptoAddress cryptoAddress) {
@@ -251,7 +254,6 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
                 s.append("\nTransactions:\n");
                 s.append(Serialization.serializeArrayList(transactionArrayList));
 
-                HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
                 s.append("\n\nNet Transaction Sums:");
                 for(Asset asset : netTransactionsMap.keySet()) {
                     AssetAmount assetAmount = netTransactionsMap.get(asset);
@@ -284,22 +286,16 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             return new HashMap<>();
         }
 
-        // Get the net transactions map.
-        HashMap<Asset, AssetAmount> transactionsMap = Transaction.resolveAssets(transactionArrayList);
-
-        // Get the current balances map.
-        ArrayList<AssetQuantity> balancesMap = currentBalanceArrayList;
-
-        // Create the discrepancy map. Add anything in "transactionsMap", and subtract anything in "balancesMap".
+        // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
         HashMap<Asset, AssetAmount> delta = new HashMap<>();
 
-        for(Asset asset : transactionsMap.keySet()) {
-            AssetAmount assetAmount = transactionsMap.get(asset);
+        for(Asset asset : netTransactionsMap.keySet()) {
+            AssetAmount assetAmount = netTransactionsMap.get(asset);
             add(delta, asset, assetAmount);
         }
 
-        for(AssetQuantity assetQuantity : balancesMap) {
+        for(AssetQuantity assetQuantity : currentBalanceArrayList) {
             subtract(delta, assetQuantity.asset, assetQuantity.assetAmount);
         }
 
