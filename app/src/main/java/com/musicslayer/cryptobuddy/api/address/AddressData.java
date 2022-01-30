@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// TODO We could store the net transactions and net balances once, right?
+
 public class AddressData implements Serialization.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
@@ -228,8 +230,8 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             }
             else {
                 s.append("\nCurrent Balances:");
-                for(AssetQuantity a : currentBalanceArrayList) {
-                    s.append("\n    ").append(a.toString());
+                for(AssetQuantity assetQuantity : currentBalanceArrayList) {
+                    s.append("\n    ").append(assetQuantity.toString());
                 }
             }
         }
@@ -238,7 +240,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
     }
 
     public String getFullInfoString() {
-        // Get regular info and also the complete set of transactions.
+        // Get regular info and also the complete set of transactions and net transaction sums.
         StringBuilder s = new StringBuilder(getInfoString());
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
@@ -248,6 +250,14 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             else {
                 s.append("\nTransactions:\n");
                 s.append(Serialization.serializeArrayList(transactionArrayList));
+
+                HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+                s.append("\n\nNet Transaction Sums:");
+                for(Asset asset : netTransactionsMap.keySet()) {
+                    AssetAmount assetAmount = netTransactionsMap.get(asset);
+                    AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+                    s.append("\n    ").append(assetQuantity.toString());
+                }
             }
         }
 

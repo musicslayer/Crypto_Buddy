@@ -31,7 +31,7 @@ public class StateObj {
     public static ArrayList<String> options_names = new ArrayList<>();
 
     public static ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-    public static ArrayList<Transaction> filteredMaskedTransactionArrayList = new ArrayList<>();
+    public static ArrayList<Transaction> filteredTransactionArrayList = new ArrayList<>();
 
     public static String tableInfo;
 

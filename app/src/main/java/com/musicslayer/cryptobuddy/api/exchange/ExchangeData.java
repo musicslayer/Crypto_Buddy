@@ -217,8 +217,8 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             }
             else {
                 s.append("\nCurrent Balances:");
-                for(AssetQuantity a : currentBalanceArrayList) {
-                    s.append("\n    ").append(a.toString());
+                for(AssetQuantity assetQuantity : currentBalanceArrayList) {
+                    s.append("\n    ").append(assetQuantity.toString());
                 }
             }
         }
@@ -227,7 +227,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
     }
 
     public String getFullInfoString() {
-        // Get regular info and also the complete set of transactions.
+        // Get regular info and also the complete set of transactions and net transaction sums.
         StringBuilder s = new StringBuilder(getInfoString());
 
         if(exchangeAPI_transactions != null && transactionArrayList != null) {
@@ -237,6 +237,14 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             else {
                 s.append("\nTransactions:\n");
                 s.append(Serialization.serializeArrayList(transactionArrayList));
+
+                HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+                s.append("\n\nNet Transaction Sums:");
+                for(Asset asset : netTransactionsMap.keySet()) {
+                    AssetAmount assetAmount = netTransactionsMap.get(asset);
+                    AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+                    s.append("\n    ").append(assetQuantity.toString());
+                }
             }
         }
 

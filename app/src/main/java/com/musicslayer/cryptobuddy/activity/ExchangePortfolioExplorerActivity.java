@@ -230,7 +230,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         fab_total.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                StateObj.filteredMaskedTransactionArrayList = table.getFilteredMaskedTransactionArrayList();
+                StateObj.filteredTransactionArrayList = table.getFilteredTransactionArrayList();
                 BaseDialogFragment.newInstance(TotalDialog.class).show(ExchangePortfolioExplorerActivity.this, "total");
             }
         });

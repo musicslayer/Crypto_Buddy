@@ -17,6 +17,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
@@ -25,6 +26,8 @@ import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.dialog.FilterDialog;
 import com.musicslayer.cryptobuddy.settings.setting.NumberTransactionsPerPageSetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
+import com.musicslayer.cryptobuddy.transaction.AssetAmount;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
@@ -32,6 +35,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 abstract public class Table extends CrashTableLayout {
     abstract public BaseRow getRow(Transaction transaction);
@@ -314,14 +318,14 @@ abstract public class Table extends CrashTableLayout {
         }
     }
 
-    public ArrayList<Transaction> getFilteredMaskedTransactionArrayList() {
-        ArrayList<Transaction> filteredMaskedTransactionArrayList = new ArrayList<>();
+    public ArrayList<Transaction> getFilteredTransactionArrayList() {
+        ArrayList<Transaction> filteredTransactionArrayList = new ArrayList<>();
         for(Transaction t : StateObj.transactionArrayList) {
             if(!t.isFiltered(filterArrayList, columnTypes)) {
-                filteredMaskedTransactionArrayList.add(t);
+                filteredTransactionArrayList.add(t);
             }
         }
-        return filteredMaskedTransactionArrayList;
+        return filteredTransactionArrayList;
     }
 
     public void doSortImpl() {
@@ -391,9 +395,20 @@ abstract public class Table extends CrashTableLayout {
             s.append("\n").append(column);
         }
 
-        //transactionArrayList
+        ArrayList<Transaction> filteredTransactionArrayList = getFilteredTransactionArrayList();
+
+        //filteredTransactionArrayList
         s.append("\n\nFiltered Transaction Array List:\n");
-        s.append(Serialization.serializeArrayList(getFilteredMaskedTransactionArrayList()));
+        s.append(Serialization.serializeArrayList(filteredTransactionArrayList));
+
+        // Net Filtered Transaction Sums (Same as what Total Dialog shows).
+        HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(filteredTransactionArrayList);
+        s.append("\n\nNet Filtered Transaction Sums:");
+        for(Asset asset : netTransactionsMap.keySet()) {
+            AssetAmount assetAmount = netTransactionsMap.get(asset);
+            AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+            s.append("\n    ").append(assetQuantity.toString());
+        }
 
         //filterArrayList
         s.append("\n\nFilter Array List:\n");

@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TotalDialog extends BaseDialog {
-    ArrayList<Transaction> filteredMaskedTransactionArrayList;
+    ArrayList<Transaction> filteredTransactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
     HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
 
     public TotalDialog(Activity activity) {
         super(activity);
-        this.filteredMaskedTransactionArrayList = StateObj.filteredMaskedTransactionArrayList;
+        this.filteredTransactionArrayList = StateObj.filteredTransactionArrayList;
     }
 
     public int getBaseViewID() {
@@ -45,7 +45,7 @@ public class TotalDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_total);
 
-        deltaMap = Transaction.resolveAssets(filteredMaskedTransactionArrayList);
+        deltaMap = Transaction.resolveAssets(filteredTransactionArrayList);
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
