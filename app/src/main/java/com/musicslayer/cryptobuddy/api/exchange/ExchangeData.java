@@ -4,10 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
+import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -200,7 +203,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString() {
+    public String getInfoString(HashMap<Asset, AssetAmount> priceMap) {
         StringBuilder s = new StringBuilder("Exchange = " + cryptoExchange.exchange.toString());
 
         if(exchangeAPI_transactions == null || transactionArrayList == null) {
@@ -224,6 +227,24 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
                 s.append("\nCurrent Balances:");
                 for(AssetQuantity assetQuantity : currentBalanceArrayList) {
                     s.append("\n    ").append(assetQuantity.toString());
+
+                    if(priceMap != null) {
+                        Asset asset = assetQuantity.asset;
+                        AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+                        if(price != null) {
+                            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
+                            AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
+
+                            s.append(" = ").append(convertedAssetQuantity);
+                        }
+                        else {
+                            s.append(" = ?");
+                        }
+                    }
+                }
+
+                if(priceMap != null && !priceMap.isEmpty()) {
+                    s.append("\n\nData Source = CoinGecko API V3");
                 }
             }
         }
@@ -233,7 +254,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
 
     public String getFullInfoString() {
         // Get regular info and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString());
+        StringBuilder s = new StringBuilder(getInfoString(null));
 
         if(exchangeAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {

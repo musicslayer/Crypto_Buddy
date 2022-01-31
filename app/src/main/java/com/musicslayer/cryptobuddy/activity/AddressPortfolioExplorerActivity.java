@@ -128,7 +128,16 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(AddressDiscrepancyDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+                // Only pass in cryptoAddresses that have discrepancies.
+                ArrayList<CryptoAddress> cryptoAddressDiscrepancyArrayList = new ArrayList<>();
+                for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+                    AddressData addressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
+                    if(addressData.hasDiscrepancy()) {
+                        cryptoAddressDiscrepancyArrayList.add(cryptoAddress);
+                    }
+                }
+
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(AddressDiscrepancyDialog.class, cryptoAddressDiscrepancyArrayList);
                 discrepancyDialogFragment.show(AddressPortfolioExplorerActivity.this, "discrepancy");
             }
         });

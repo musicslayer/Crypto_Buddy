@@ -15,6 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -114,7 +116,16 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         discrepancyButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, exchangePortfolioObj.cryptoExchangeArrayList);
+                // Only pass in cryptoExchanges that have discrepancies.
+                ArrayList<CryptoExchange> cryptoExchangeDiscrepancyArrayList = new ArrayList<>();
+                for(CryptoExchange cryptoExchange : exchangePortfolioObj.cryptoExchangeArrayList) {
+                    ExchangeData exchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, cryptoExchange);
+                    if(exchangeData.hasDiscrepancy()) {
+                        cryptoExchangeDiscrepancyArrayList.add(cryptoExchange);
+                    }
+                }
+
+                BaseDialogFragment discrepancyDialogFragment = BaseDialogFragment.newInstance(ExchangeDiscrepancyDialog.class, cryptoExchangeDiscrepancyArrayList);
                 discrepancyDialogFragment.show(ExchangePortfolioExplorerActivity.this, "discrepancy");
             }
         });

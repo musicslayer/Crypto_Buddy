@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class TotalDialog extends BaseDialog {
                 ArrayList<Crypto> cryptoKeySet = new ArrayList<>();
                 for(Asset asset : keySet) {
                     if(asset instanceof Fiat) {
-                        newPriceMap.put(asset, new AssetAmount("1"));
+                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetAmount("1"));
                     }
                     else if(asset instanceof Crypto) {
                         cryptoKeySet.add((Crypto)asset);
@@ -74,9 +75,9 @@ public class TotalDialog extends BaseDialog {
                 if(bulkPriceData.isPriceComplete()) {
                     HashMap<Crypto, AssetQuantity> priceHashMap = bulkPriceData.priceHashMap;
                     for(Crypto crypto : priceHashMap.keySet()) {
-                        AssetQuantity price = priceHashMap.get(crypto);
+                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
                         if(price != null) {
-                            newPriceMap.put(crypto, price.assetAmount);
+                            HashMapUtil.putValueInMap(newPriceMap, crypto, price.assetAmount);
                         }
                     }
                 }
@@ -96,7 +97,7 @@ public class TotalDialog extends BaseDialog {
 
                 priceMap.clear();
                 for(Asset asset : newPriceMap.keySet()) {
-                    priceMap.put(asset, newPriceMap.get(asset));
+                    HashMapUtil.putValueInMap(priceMap, asset, newPriceMap.get(asset));
                 }
 
                 updateLayout();
@@ -108,7 +109,7 @@ public class TotalDialog extends BaseDialog {
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(deltaMap.isEmpty()) {
-                    ToastUtil.showToast(activity, "no_assets_found");
+                    ToastUtil.showToast(activity, "no_transactions_found");
                     return;
                 }
 
@@ -131,12 +132,12 @@ public class TotalDialog extends BaseDialog {
         Asset.sortAscendingByType(keySet);
 
         for(Asset asset : keySet) {
-            AssetAmount amount = deltaMap.get(asset);
+            AssetAmount amount = HashMapUtil.getValueFromMap(deltaMap, asset);
             AssetQuantity assetQuantity = new AssetQuantity(amount, asset);
 
             s.append("\n").append(assetQuantity);
 
-            AssetAmount price = priceMap.get(asset);
+            AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
             if(price != null) {
                 AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
                 AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);

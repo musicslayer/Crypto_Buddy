@@ -4,10 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
+import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
     final public ArrayList<Transaction> transactionArrayList;
 
     // Calculate at construction since it never changes.
-    HashMap<Asset, AssetAmount> netTransactionsMap;
+    final public HashMap<Asset, AssetAmount> netTransactionsMap;
 
     public String serializationVersion() { return "1"; }
 
@@ -211,7 +214,8 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString() {
+    public String getInfoString(HashMap<Asset, AssetAmount> priceMap) {
+        // Get address information. If the priceMap is not null, add in the prices of each asset in the map.
         StringBuilder s = new StringBuilder("Address = " + cryptoAddress.toString());
 
         if(addressAPI_transactions == null || transactionArrayList == null) {
@@ -234,7 +238,25 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             else {
                 s.append("\nCurrent Balances:");
                 for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-                    s.append("\n    ").append(assetQuantity.toString());
+                    s.append("\n    ").append(assetQuantity);
+
+                    if(priceMap != null) {
+                        Asset asset = assetQuantity.asset;
+                        AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+                        if(price != null) {
+                            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
+                            AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
+
+                            s.append(" = ").append(convertedAssetQuantity);
+                        }
+                        else {
+                            s.append(" = ?");
+                        }
+                    }
+                }
+
+                if(priceMap != null && !priceMap.isEmpty()) {
+                    s.append("\n\nData Source = CoinGecko API V3");
                 }
             }
         }
@@ -243,8 +265,8 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
     }
 
     public String getFullInfoString() {
-        // Get regular info and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString());
+        // Get regular info (without prices) and also the complete set of transactions and net transaction sums.
+        StringBuilder s = new StringBuilder(getInfoString(null));
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {
