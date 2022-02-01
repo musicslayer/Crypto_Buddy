@@ -26,6 +26,8 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
+import com.musicslayer.cryptobuddy.settings.setting.DefaultCoinSetting;
+import com.musicslayer.cryptobuddy.settings.setting.DefaultFiatSetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -264,6 +266,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setOptionsFiat() {
         bsv.setOptions(options_fiat_text_sorted);
 
+        Fiat defaultFiat = DefaultFiatSetting.value;
+        int idx = options_fiat_sorted.indexOf(defaultFiat);
+        this.bsv.setSelection(idx);
+
         lastButton = "!FIAT!";
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
@@ -276,6 +282,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
         bsv.setOptions(options_coin_text_sorted);
 
         lastButton = "!COIN!";
+
+        Coin defaultCoin = DefaultCoinSetting.value;
+        int idx = options_coin_sorted.indexOf(defaultCoin);
+        this.bsv.setSelection(idx);
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);

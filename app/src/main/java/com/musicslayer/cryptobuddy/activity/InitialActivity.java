@@ -41,7 +41,6 @@ import java.util.Date;
 // TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
 // TODO Actually implement Coinbase/Gemini API.
 
-// TODO Default Fiat/Coin Setting.
 // TODO Create "cryptoPrice" class?
 
 // This Activity class only exists for initialization code, not to be seen by the user.
@@ -61,8 +60,6 @@ public class InitialActivity extends BaseActivity {
         TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Try loading all the persistent data.
-        Setting.initialize(applicationContext);
-        ToastUtil.loadAllToasts(applicationContext);
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
         Exchange.initialize(applicationContext);
@@ -70,6 +67,8 @@ public class InitialActivity extends BaseActivity {
         AddressAPI.initialize(applicationContext);
         PriceAPI.initialize(applicationContext);
         ExchangeAPI.initialize(applicationContext);
+        Setting.initialize(applicationContext);
+        ToastUtil.loadAllToasts(applicationContext);
         Purchases.loadAllPurchases(applicationContext);
         Policy.loadAllData(applicationContext);
         Review.loadAllData(applicationContext);

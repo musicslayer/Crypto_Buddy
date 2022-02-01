@@ -3,6 +3,8 @@ ConfirmationSetting
 DarkModeSetting
 DatetimeFormatSetting
 DatetimeLocaleSetting
+DefaultCoinSetting
+DefaultFiatSetting
 DeleteAllAddressHistorySetting
 DeleteAllAddressPortfoliosSetting
 DeleteAllExchangePortfoliosSetting

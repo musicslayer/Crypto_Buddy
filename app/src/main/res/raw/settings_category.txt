@@ -1,5 +1,6 @@
 AppearanceSettingsCategory
 ConfirmationSettingsCategory
+DefaultSettingsCategory
 DisplayLocalizationSettingsCategory
 FormattingSettingsCategory
 NetworkSettingsCategory
