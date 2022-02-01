@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -167,7 +168,7 @@ public class AddressInfoDialog extends BaseDialog {
         AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
         TextView T = findViewById(R.id.address_info_dialog_textView);
-        T.setText(addressData.getInfoString(priceMap));
+        T.setText(Html.fromHtml(addressData.getInfoString(priceMap, true)));
     }
 
     @Override

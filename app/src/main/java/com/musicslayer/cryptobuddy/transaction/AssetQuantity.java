@@ -10,13 +10,15 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.USD;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+
+// TODO Is loss should be based on the quantity. I shouldn't need to set it.
 
 public class AssetQuantity implements Serialization.SerializableToJSON, Parcelable {
     @Override
@@ -97,18 +99,18 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
         return new AssetQuantity(convertedAssetAmount, p.bottomAssetQuantity.asset);
     }
 
-    public static String getAssetInfo(ArrayList<AssetQuantity> assetQuantityArrayList, HashMap<Asset, AssetAmount> priceMap) {
+    public static String getAssetInfo(ArrayList<AssetQuantity> assetQuantityArrayList, HashMap<Asset, AssetAmount> priceMap, boolean isRich) {
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         for(AssetQuantity assetQuantity : assetQuantityArrayList) {
             HashMapUtil.putValueInMap(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
         }
 
-        return getAssetInfo(deltaMap, priceMap);
+        return getAssetInfo(deltaMap, priceMap, isRich);
     }
 
-    public static String getAssetInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap) {
-        StringBuilder s = new StringBuilder();
+    public static String getAssetInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap, boolean isRich) {
+        RichStringBuilder s = new RichStringBuilder(isRich);
 
         ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
         Asset.sortAscendingByType(keySet);
@@ -117,7 +119,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             AssetAmount assetAmount = deltaMap.get(asset);
             AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
 
-            s.append("\n    ").append(assetQuantity);
+            s.appendRich("\n    ").appendAssetQuantity(assetQuantity);
 
             if(priceMap != null) {
                 AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
@@ -125,17 +127,17 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
                     AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
                     AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
 
-                    s.append(" = ").append(convertedAssetQuantity);
+                    s.appendRich(" = ").appendAssetQuantity(convertedAssetQuantity);
                 }
                 else {
-                    s.append(" = ?");
+                    s.appendRich(" = ?");
                 }
             }
         }
 
         AssetQuantity total = AssetQuantity.getTotal(deltaMap, priceMap);
         if(total != null) {
-            s.append("\n\n    Total = ").append(total);
+            s.appendRich("\n\n    Total = ").appendAssetQuantity(total);
         }
 
         return s.toString();

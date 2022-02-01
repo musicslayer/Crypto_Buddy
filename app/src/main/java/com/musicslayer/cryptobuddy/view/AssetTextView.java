@@ -6,6 +6,9 @@ import com.musicslayer.cryptobuddy.crash.CrashTextView;
 import com.musicslayer.cryptobuddy.settings.setting.LossValuesSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
+// Note: The values used to construct this class should never change, so the color should never need to switch.
+// TODO Do we need this class?
+
 public class AssetTextView extends CrashTextView {
     Boolean isLoss;
     AssetQuantity assetQuantity;
@@ -36,9 +39,7 @@ public class AssetTextView extends CrashTextView {
             if(isLoss && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
                 this.setTextColor(0xFFFF0000);
             }
-            else {
-                this.setTextColor(0xFF000000);
-            }
+            // else, just use the default color, so that it matches the theme.
         }
 
         this.setText(text);

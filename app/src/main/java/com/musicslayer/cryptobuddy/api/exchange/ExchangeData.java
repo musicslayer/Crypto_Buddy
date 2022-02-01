@@ -4,10 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.fiat.USD;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
-import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -203,32 +202,33 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetAmount> priceMap) {
-        StringBuilder s = new StringBuilder("Exchange = " + cryptoExchange.exchange.toString());
+    public String getInfoString(HashMap<Asset, AssetAmount> priceMap, boolean isRich) {
+        RichStringBuilder s = new RichStringBuilder(isRich);
+        s.appendRich("Exchange = " + cryptoExchange.exchange.toString());
 
         if(exchangeAPI_transactions == null || transactionArrayList == null) {
-            s.append("\n(Transaction information not present.)");
+            s.appendRich("\n(Transaction information not present.)");
         }
         else {
-            s.append("\nTransaction Data Source = ").append(exchangeAPI_transactions.getDisplayName());
-            s.append("\nNumber of Transactions = ").append(transactionArrayList.size());
+            s.appendRich("\nTransaction Data Source = ").appendRich(exchangeAPI_transactions.getDisplayName());
+            s.appendRich("\nNumber of Transactions = ").appendRich(Integer.toString(transactionArrayList.size()));
         }
 
         if(exchangeAPI_currentBalance == null || currentBalanceArrayList == null) {
-            s.append("\n(Current balance information not present.)");
+            s.appendRich("\n(Current balance information not present.)");
         }
         else {
-            s.append("\nCurrent Balance Data Source = ").append(exchangeAPI_currentBalance.getDisplayName());
+            s.appendRich("\nCurrent Balance Data Source = ").appendRich(exchangeAPI_currentBalance.getDisplayName());
 
             if(currentBalanceArrayList.isEmpty()) {
-                s.append("\nNo Current Balances");
+                s.appendRich("\nNo Current Balances");
             }
             else {
-                s.append("\nCurrent Balances:");
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap));
+                s.appendRich("\nCurrent Balances:");
+                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
 
                 if(priceMap != null && !priceMap.isEmpty()) {
-                    s.append("\n\nData Source = CoinGecko API V3");
+                    s.appendRich("\n\nData Source = CoinGecko API V3");
                 }
             }
         }
@@ -236,9 +236,9 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return s.toString();
     }
 
-    public String getFullInfoString() {
+    public String getRawFullInfoString() {
         // Get regular info and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString(null));
+        StringBuilder s = new StringBuilder(getInfoString(null, false));
 
         if(exchangeAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {
@@ -264,13 +264,13 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return s.toString();
     }
 
-    public static String getFullInfoString(ArrayList<ExchangeData> exchangeDataArrayList) {
+    public static String getRawFullInfoString(ArrayList<ExchangeData> exchangeDataArrayList) {
         if(exchangeDataArrayList == null) { return null; }
 
         StringBuilder s = new StringBuilder();
         for(int i = 0; i < exchangeDataArrayList.size(); i++) {
             ExchangeData exchangeData = exchangeDataArrayList.get(i);
-            s.append(exchangeData.getFullInfoString());
+            s.append(exchangeData.getRawFullInfoString());
 
             if(i < exchangeDataArrayList.size() - 1) {
                 s.append("\n\n");

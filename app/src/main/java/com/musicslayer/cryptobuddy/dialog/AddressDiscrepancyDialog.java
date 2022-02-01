@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
@@ -28,7 +30,6 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -168,24 +169,24 @@ public class AddressDiscrepancyDialog extends BaseDialog {
     }
 
     public void updateLayout(AddressData addressData) {
-        // For each non-zero entry, display the discrepancy.
-        StringBuilder s = new StringBuilder();
-        s.append("Address = ").append(addressData.cryptoAddress.toString()).append("\n");
+        // For each entry, display the discrepancy.
+        RichStringBuilder s = new RichStringBuilder(true);
+        s.appendRich("Address = ").appendRich(addressData.cryptoAddress.toString()).appendRich("\n");
 
         if(!addressData.hasDiscrepancy()) {
-            s.append("\nThis address has no discrepancies.");
+            s.appendRich("\nThis address has no discrepancies.");
         }
         else {
-            s.append("\nDiscrepancies:");
-            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap));
+            s.appendRich("\nDiscrepancies:");
+            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
 
             if(priceMap != null && !priceMap.isEmpty()) {
-                s.append("\n\nData Source = CoinGecko API V3");
+                s.appendRich("\n\nData Source = CoinGecko API V3");
             }
         }
 
         TextView T = findViewById(R.id.address_discrepancy_dialog_assetTextView);
-        T.setText(s.toString());
+        T.setText(Html.fromHtml(s.toString()));
     }
 
     @Override

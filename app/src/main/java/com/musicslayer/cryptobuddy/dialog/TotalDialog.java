@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -117,22 +119,22 @@ public class TotalDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        StringBuilder s = new StringBuilder();
+        RichStringBuilder s = new RichStringBuilder(true);
 
         if(deltaMap.isEmpty()) {
-            s.append("No assets found.");
+            s.appendRich("No assets found.");
         }
         else {
-            s.append("Net Sums:");
-            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap));
+            s.appendRich("Net Sums:");
+            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
 
             if(priceMap != null && !priceMap.isEmpty()) {
-                s.append("\n\nData Source = CoinGecko API V3");
+                s.appendRich("\n\nData Source = CoinGecko API V3");
             }
         }
 
         TextView T = findViewById(R.id.total_dialog_textView);
-        T.setText(s.toString());
+        T.setText(Html.fromHtml(s.toString()));
     }
 
     @Override

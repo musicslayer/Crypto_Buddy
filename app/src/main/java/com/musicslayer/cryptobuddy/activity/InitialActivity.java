@@ -36,11 +36,11 @@ import java.util.Date;
 //  Use TradeView API
 //  Allow user to choose "Unknown/Other Asset" if they want something I don't support.
 //  "Tax" View (i.e. Calculate cost basis of transactions)
+//  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 
 // TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Negative assets are only red in a table...?
-// TODO AddressInfo needs a "get Fiat values" button
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -167,7 +168,7 @@ public class ExchangeInfoDialog extends BaseDialog {
         ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
 
         TextView T = findViewById(R.id.exchange_info_dialog_textView);
-        T.setText(exchangeData.getInfoString(priceMap));
+        T.setText(Html.fromHtml(exchangeData.getInfoString(priceMap, true)));
     }
 
     @Override

@@ -136,7 +136,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             // Full info for the address.
             s.append("\n\nAddress Info:");
-            s.append("\n\n").append(AddressData.getFullInfoString(new ArrayList<>(StateObj.addressDataMap.values())));
+            s.append("\n\n").append(AddressData.getRawFullInfoString(new ArrayList<>(StateObj.addressDataMap.values())));
 
             s.append("\n\n").append(StateObj.tableInfo);
         }
@@ -145,10 +145,10 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             // Full info for all addresses.
             s.append("\n\nAddress Info Full:");
-            s.append("\n\n").append(AddressData.getFullInfoString(new ArrayList<>(StateObj.addressDataMap.values())));
+            s.append("\n\n").append(AddressData.getRawFullInfoString(new ArrayList<>(StateObj.addressDataMap.values())));
 
             s.append("\n\nAddress Info Filtered:");
-            s.append("\n\n").append(AddressData.getFullInfoString(new ArrayList<>(StateObj.addressDataFilterMap.values())));
+            s.append("\n\n").append(AddressData.getRawFullInfoString(new ArrayList<>(StateObj.addressDataFilterMap.values())));
 
             s.append("\n\nAddress Filter:\n\n").append(StateObj.filterInfo);
             s.append("\n\nAddress Portfolio:\n\n").append(Serialization.serialize(StateObj.addressPortfolioObj));
@@ -159,7 +159,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             // Full info for the exchange.
             s.append("\n\nExchange Info:");
-            s.append("\n\n").append(ExchangeData.getFullInfoString(new ArrayList<>(StateObj.exchangeDataMap.values())));
+            s.append("\n\n").append(ExchangeData.getRawFullInfoString(new ArrayList<>(StateObj.exchangeDataMap.values())));
 
             s.append("\n\n").append(StateObj.tableInfo);
         }
@@ -168,10 +168,10 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             // Full info for all exchanges.
             s.append("\n\nExchange Info Full:");
-            s.append("\n\n").append(ExchangeData.getFullInfoString(new ArrayList<>(StateObj.exchangeDataMap.values())));
+            s.append("\n\n").append(ExchangeData.getRawFullInfoString(new ArrayList<>(StateObj.exchangeDataMap.values())));
 
             s.append("\n\nExchange Info Filtered:");
-            s.append("\n\n").append(ExchangeData.getFullInfoString(new ArrayList<>(StateObj.exchangeDataFilterMap.values())));
+            s.append("\n\n").append(ExchangeData.getRawFullInfoString(new ArrayList<>(StateObj.exchangeDataFilterMap.values())));
 
             s.append("\n\nExchange Filter:\n\n").append(StateObj.filterInfo);
             s.append("\n\nExchange Portfolio:\n\n").append(Serialization.serialize(StateObj.exchangePortfolioObj));
