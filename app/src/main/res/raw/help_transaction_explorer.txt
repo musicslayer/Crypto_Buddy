@@ -1,4 +1,4 @@
-Manually enter transactions, real or hypothetical, and then get the net values of all assets involved, including a total USD value.
+Manually enter transactions, real or hypothetical, and then get the net values of all assets involved, including a total fiat value.
 
 Symbol buttons left to right:
 --> Add new transaction

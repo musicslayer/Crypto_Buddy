@@ -9,7 +9,6 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -142,7 +141,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
     }
 
     public static AssetQuantity getTotal(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat) {
-        // Get the sum total (in USD for now) for all the amounts' fiat values.
+        // Get the sum total for all the amounts' fiat values.
         // Returns null if there are no values at all.
         if(deltaMap.isEmpty() || priceMap == null || priceMap.isEmpty()) {
             return null;
