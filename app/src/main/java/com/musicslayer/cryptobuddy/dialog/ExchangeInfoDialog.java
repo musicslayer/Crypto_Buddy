@@ -155,8 +155,6 @@ public class ExchangeInfoDialog extends BaseDialog {
                     deltaArray = new ArrayList<>();
                 }
 
-                priceMap = new HashMap<>();
-
                 updateLayout();
             }
         });

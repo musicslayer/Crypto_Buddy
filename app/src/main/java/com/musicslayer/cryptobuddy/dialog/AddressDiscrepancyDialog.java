@@ -34,8 +34,6 @@ import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO If you tilt total dialog, it remembers prices, but this dialog doesn't.
-
 public class AddressDiscrepancyDialog extends BaseDialog {
     ArrayList<CryptoAddress> cryptoAddressArrayList;
     HashMap<CryptoAddress, AddressData> addressDataMap;
@@ -162,7 +160,6 @@ public class AddressDiscrepancyDialog extends BaseDialog {
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
                 deltaMap = addressData.getDiscrepancyMap();
-                priceMap = new HashMap<>();
 
                 updateLayout(addressData);
             }

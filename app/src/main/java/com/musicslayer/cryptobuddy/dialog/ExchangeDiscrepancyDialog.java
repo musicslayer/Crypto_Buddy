@@ -160,7 +160,6 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
 
                 deltaMap = exchangeData.getDiscrepancyMap();
-                priceMap = new HashMap<>();
 
                 updateLayout(exchangeData);
             }
