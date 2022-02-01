@@ -1,14 +1,15 @@
 package com.musicslayer.cryptobuddy.view.table;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.view.AssetTextView;
 
 import java.util.ArrayList;
 
@@ -76,11 +77,19 @@ public class ExchangeTable extends Table {
             t0.setText(transaction.action.toString());
             t0.setBackgroundResource(R.drawable.border);
 
-            AssetTextView t1 = new AssetTextView(context, transaction.isActionedAssetLoss(), transaction.actionedAssetQuantity);
+            TextView t1 = new TextView(context);
             t1.setBackgroundResource(R.drawable.border);
 
-            AssetTextView t2 = new AssetTextView(context, transaction.isOtherAssetLoss(), transaction.otherAssetQuantity);
+            RichStringBuilder s1 = new RichStringBuilder(true);
+            s1.appendAssetQuantity(transaction.actionedAssetQuantity);
+            t1.setText(Html.fromHtml(s1.toString()));
+
+            TextView t2 = new TextView(context);
             t2.setBackgroundResource(R.drawable.border);
+
+            RichStringBuilder s2 = new RichStringBuilder(true);
+            s2.appendAssetQuantity(transaction.otherAssetQuantity);
+            t2.setText(Html.fromHtml(s2.toString()));
 
             TextView t3 = new TextView(context);
             t3.setText(transaction.forwardPrice.toString());

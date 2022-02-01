@@ -139,7 +139,7 @@ public class LocaleManager {
 
     public static String formatNegativeNumberOverride(String s) {
         // Format the input based on the setting for loss values.
-        // Note that color is applied in "AssetTextView".
+        // Note that color is applied elsewhere.
         // The symbols used here are not based on any Locale.
         if("negative".equals(LossValuesSetting.value) || "red_negative".equals(LossValuesSetting.value)) {
             s = "-" + s;

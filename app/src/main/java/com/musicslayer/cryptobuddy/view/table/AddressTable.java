@@ -1,13 +1,14 @@
 package com.musicslayer.cryptobuddy.view.table;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.view.AssetTextView;
 
 import java.util.ArrayList;
 
@@ -64,8 +65,12 @@ public class AddressTable extends Table {
             t0.setText(transaction.action.toString());
             t0.setBackgroundResource(R.drawable.border);
 
-            AssetTextView t1 = new AssetTextView(context, transaction.isActionedAssetLoss(), transaction.actionedAssetQuantity);
+            TextView t1 = new TextView(context);
             t1.setBackgroundResource(R.drawable.border);
+
+            RichStringBuilder s1 = new RichStringBuilder(true);
+            s1.appendAssetQuantity(transaction.actionedAssetQuantity);
+            t1.setText(Html.fromHtml(s1.toString()));
 
             TextView t2 = new TextView(context);
             t2.setText(transaction.timestamp.toString());
