@@ -14,7 +14,9 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="(Does not include filtered data)"
+        app:title="Table Transaction Net Sums" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/total_dialog_priceButton"

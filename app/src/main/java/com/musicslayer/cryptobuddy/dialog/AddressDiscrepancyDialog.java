@@ -16,14 +16,12 @@ import com.musicslayer.cryptobuddy.api.price.BulkPriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
-import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -173,34 +171,16 @@ public class AddressDiscrepancyDialog extends BaseDialog {
         StringBuilder s = new StringBuilder();
         s.append("Address = ").append(addressData.cryptoAddress.toString()).append("\n");
 
-        boolean hasDiscrepancy = false;
-        for(Asset asset : deltaMap.keySet()) {
-            AssetAmount assetAmount = deltaMap.get(asset);
-            AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
-                hasDiscrepancy = true;
-                s.append("\n").append(assetQuantity);
-
-                AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
-                if(price != null) {
-                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
-                    AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
-
-                    s.append(" = ").append(convertedAssetQuantity);
-                }
-                else {
-                    s.append(" = ?");
-                }
-            }
-        }
-
-        if(!hasDiscrepancy) {
+        if(!addressData.hasDiscrepancy()) {
             s.append("\nThis address has no discrepancies.");
         }
+        else {
+            s.append("\nDiscrepancies:");
+            s.append(AssetQuantity.getDiscrepancyInfo(deltaMap, priceMap));
 
-        if(hasDiscrepancy && !priceMap.isEmpty()) {
-            s.append("\n\nData Source = CoinGecko API V3");
+            if(priceMap != null && !priceMap.isEmpty()) {
+                s.append("\n\nData Source = CoinGecko API V3");
+            }
         }
 
         TextView T = findViewById(R.id.address_discrepancy_dialog_assetTextView);

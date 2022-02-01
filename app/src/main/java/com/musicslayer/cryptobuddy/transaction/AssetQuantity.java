@@ -9,10 +9,14 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class AssetQuantity implements Serialization.SerializableToJSON, Parcelable {
     @Override
@@ -91,6 +95,71 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
     public AssetQuantity convert(AssetPrice p) {
         AssetAmount convertedAssetAmount = assetAmount.multiply(p.bottomAssetQuantity.assetAmount).divide(p.topAssetQuantity.assetAmount);
         return new AssetQuantity(convertedAssetAmount, p.bottomAssetQuantity.asset);
+    }
+
+    public static String getAssetInfo(ArrayList<AssetQuantity> assetQuantityArrayList, HashMap<Asset, AssetAmount> priceMap) {
+        HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
+
+        for(AssetQuantity assetQuantity : assetQuantityArrayList) {
+            HashMapUtil.putValueInMap(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
+        }
+
+        return getAssetInfo(deltaMap, priceMap);
+    }
+
+    public static String getAssetInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap) {
+        StringBuilder s = new StringBuilder();
+
+        ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
+        Asset.sortAscendingByType(keySet);
+
+        for(Asset asset : keySet) {
+            AssetAmount assetAmount = deltaMap.get(asset);
+            AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+
+            s.append("\n    ").append(assetQuantity);
+
+            if(priceMap != null) {
+                AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+                if(price != null) {
+                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
+                    AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
+
+                    s.append(" = ").append(convertedAssetQuantity);
+                }
+                else {
+                    s.append(" = ?");
+                }
+            }
+        }
+
+        return s.toString();
+    }
+
+    public static String getDiscrepancyInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap) {
+        StringBuilder s = new StringBuilder();
+        for(Asset asset : deltaMap.keySet()) {
+            AssetAmount assetAmount = deltaMap.get(asset);
+            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
+                AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
+                s.append("\n").append(assetQuantity);
+
+                if(priceMap != null) {
+                    AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+                    if(price != null) {
+                        AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
+                        AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
+
+                        s.append(" = ").append(convertedAssetQuantity);
+                    }
+                    else {
+                        s.append(" = ?");
+                    }
+                }
+            }
+        }
+
+        return s.toString();
     }
 
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {

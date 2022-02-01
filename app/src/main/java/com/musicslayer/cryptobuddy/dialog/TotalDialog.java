@@ -7,19 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.price.BulkPriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
-import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -121,46 +117,19 @@ public class TotalDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        AssetAmount grandTotal = new AssetAmount("0");
-        StringBuilder s = new StringBuilder("Net Amounts:");
+        StringBuilder s = new StringBuilder();
 
         if(deltaMap.isEmpty()) {
-            s = new StringBuilder("No assets found.");
+            s.append("No assets found.");
         }
+        else {
+            s.append("Net Sums:");
+            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap));
 
-        ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
-        Asset.sortAscendingByType(keySet);
-
-        for(Asset asset : keySet) {
-            AssetAmount amount = HashMapUtil.getValueFromMap(deltaMap, asset);
-            AssetQuantity assetQuantity = new AssetQuantity(amount, asset);
-
-            s.append("\n").append(assetQuantity);
-
-            AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
-            if(price != null) {
-                AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
-                AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
-
-                grandTotal = grandTotal.add(convertedAssetQuantity.assetAmount);
-                s.append(" = ").append(convertedAssetQuantity);
-            }
-            else {
-                s.append(" = ?");
+            if(priceMap != null && !priceMap.isEmpty()) {
+                s.append("\n\nData Source = CoinGecko API V3");
             }
         }
-
-        String titleString = "Grand Total";
-        if(!priceMap.isEmpty()) {
-            s.append("\n\nData Source = CoinGecko API V3");
-
-            AssetQuantity grandTotalAssetQuantity = new AssetQuantity(grandTotal, new USD());
-            titleString = titleString + " = " + grandTotalAssetQuantity;
-        }
-
-        Toolbar toolbar = findViewById(R.id.total_dialog_toolbar);
-        toolbar.setTitle(titleString);
-        toolbar.setSubtitle("(Does not include filtered data)");
 
         TextView T = findViewById(R.id.total_dialog_textView);
         T.setText(s.toString());

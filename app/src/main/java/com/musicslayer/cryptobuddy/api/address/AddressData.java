@@ -237,23 +237,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             }
             else {
                 s.append("\nCurrent Balances:");
-                for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-                    s.append("\n    ").append(assetQuantity);
-
-                    if(priceMap != null) {
-                        Asset asset = assetQuantity.asset;
-                        AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
-                        if(price != null) {
-                            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
-                            AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
-
-                            s.append(" = ").append(convertedAssetQuantity);
-                        }
-                        else {
-                            s.append(" = ?");
-                        }
-                    }
-                }
+                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap));
 
                 if(priceMap != null && !priceMap.isEmpty()) {
                     s.append("\n\nData Source = CoinGecko API V3");
