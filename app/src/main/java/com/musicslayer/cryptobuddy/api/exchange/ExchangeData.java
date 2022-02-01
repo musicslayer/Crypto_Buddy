@@ -286,18 +286,27 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
 
         // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
-        HashMap<Asset, AssetAmount> delta = new HashMap<>();
+        HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         for(Asset asset : netTransactionsMap.keySet()) {
             AssetAmount assetAmount = netTransactionsMap.get(asset);
-            add(delta, asset, assetAmount);
+            add(deltaMap, asset, assetAmount);
         }
 
         for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-            subtract(delta, assetQuantity.asset, assetQuantity.assetAmount);
+            subtract(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
         }
 
-        return delta;
+        // If an amount is zero, we do not count that as a discrepancy, so let's remove it.
+        // This also means that if an asset appears in one place with an amount of zero, and is absent from another place, it does not count as a discrepancy.
+        for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
+            AssetAmount assetAmount = HashMapUtil.getValueFromMap(deltaMap, asset);
+            if(assetAmount.amount.compareTo(BigDecimal.ZERO) == 0) {
+                HashMapUtil.removeValueFromMap(deltaMap, asset);
+            }
+        }
+
+        return deltaMap;
     }
 
     public boolean hasDiscrepancy() {

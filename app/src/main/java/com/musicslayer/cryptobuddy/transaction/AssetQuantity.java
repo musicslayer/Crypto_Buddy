@@ -136,32 +136,6 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
         return s.toString();
     }
 
-    public static String getDiscrepancyInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap) {
-        StringBuilder s = new StringBuilder();
-        for(Asset asset : deltaMap.keySet()) {
-            AssetAmount assetAmount = deltaMap.get(asset);
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
-                AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-                s.append("\n").append(assetQuantity);
-
-                if(priceMap != null) {
-                    AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
-                    if(price != null) {
-                        AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
-                        AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
-
-                        s.append(" = ").append(convertedAssetQuantity);
-                    }
-                    else {
-                        s.append(" = ?");
-                    }
-                }
-            }
-        }
-
-        return s.toString();
-    }
-
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {
         Collections.sort(assetQuantityArrayList, (a, b) -> compare(a, b));
     }

@@ -176,7 +176,7 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         }
         else {
             s.append("\nDiscrepancies:");
-            s.append(AssetQuantity.getDiscrepancyInfo(deltaMap, priceMap));
+            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap));
 
             if(priceMap != null && !priceMap.isEmpty()) {
                 s.append("\n\nData Source = CoinGecko API V3");
