@@ -199,6 +199,10 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
             s.append("\nThis exchange has no discrepancies.");
         }
 
+        if(hasDiscrepancy && !priceMap.isEmpty()) {
+            s.append("\n\nData Source = CoinGecko API V3");
+        }
+
         TextView T = findViewById(R.id.exchange_discrepancy_dialog_assetTextView);
         T.setText(s.toString());
     }
