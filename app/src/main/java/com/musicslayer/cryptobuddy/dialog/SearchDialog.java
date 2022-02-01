@@ -34,7 +34,6 @@ public class SearchDialog extends BaseDialog {
 
     public Asset user_OPTION;
 
-    //public SearchDialog(Activity activity, ArrayList<Asset> assetArrayList, ArrayList<String> options_symbols, ArrayList<String> options_names) {
     public SearchDialog(Activity activity) {
         super(activity);
 

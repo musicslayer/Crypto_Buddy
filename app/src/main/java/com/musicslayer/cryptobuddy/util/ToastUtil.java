@@ -31,7 +31,7 @@ public class ToastUtil {
         toastMap.put("unrecognized_address", Toast.makeText(context, "This address is not recognized as a valid crypto address.", getToastDuration()));
         toastMap.put("incomplete_address_data", Toast.makeText(context, "Could not access all address information. Check your internet connection and try again.", getToastDuration()));
         toastMap.put("incomplete_exchange_data", Toast.makeText(context, "Could not access all exchange information. Ensure exchanges are authorized, check your internet connection, and try again.", getToastDuration()));
-        toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Check your internet connection and try again.", getToastDuration()));
+        toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Some assets may not be supported, or check your internet connection and try again.", getToastDuration()));
 
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", getToastDuration()));
         toastMap.put("google_play_missing", Toast.makeText(context, "Google Play services is missing.", getToastDuration()));

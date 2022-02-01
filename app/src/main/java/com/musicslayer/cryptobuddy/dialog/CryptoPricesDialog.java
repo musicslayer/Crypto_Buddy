@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
@@ -36,7 +37,15 @@ public class CryptoPricesDialog extends BaseDialog {
         TextView T = findViewById(R.id.crypto_prices_dialog_textView);
         SelectAndSearchView ssv = findViewById(R.id.crypto_prices_dialog_selectAndSearchView);
         ssv.setIncludesFiat(false);
+        ssv.setIncludesCoin(true);
+        ssv.setIncludesToken(true);
         ssv.setOptionsCoin();
+
+        SelectAndSearchView fssv = findViewById(R.id.crypto_prices_dialog_fiatSelectAndSearchView);
+        fssv.setIncludesFiat(true);
+        fssv.setIncludesCoin(false);
+        fssv.setIncludesToken(false);
+        fssv.setOptionsFiat();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
@@ -44,7 +53,9 @@ public class CryptoPricesDialog extends BaseDialog {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Obtaining Price...");
 
-                PriceData priceData = PriceData.getAllData(crypto);
+                Fiat priceFiat = (Fiat)fssv.getChosenAsset();
+
+                PriceData priceData = PriceData.getAllData(crypto, priceFiat);
                 ProgressDialogFragment.setValue(Serialization.serialize(priceData));
             }
         });

@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.api.price;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
-import com.musicslayer.cryptobuddy.asset.fiat.USD;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -56,9 +56,11 @@ public class CoinGecko extends PriceAPI {
         return true;
     }
 
-    public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList) {
+    public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
         // Separate cryptoArrayList into coins and tokens.
         // Further separate tokens by blockchain.
+        String fiatName = fiat.getName().toLowerCase();
+
         HashMap<String, ArrayList<Crypto>> blockchainHashMap = new HashMap<>();
         ArrayList<Crypto> coinArrayList = new ArrayList<>();
         for(Crypto crypto : cryptoArrayList) {
@@ -94,7 +96,7 @@ public class CoinGecko extends PriceAPI {
             }
 
             ProgressDialogFragment.updateProgressSubtitle("Processing Tokens...");
-            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
             if(priceDataTokenJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataTokenJSON);
@@ -103,11 +105,8 @@ public class CoinGecko extends PriceAPI {
                         if(!json.has(token.getID())) { continue; }
 
                         JSONObject json2 = json.getJSONObject(token.getID());
-
-                        BigDecimal d = new BigDecimal(json2.getString("usd"));
-
-                        // For now, just use USD.
-                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), new USD()));
+                        BigDecimal d = new BigDecimal(json2.getString(fiatName));
+                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), fiat));
                     }
                 }
                 catch(Exception e) {
@@ -129,7 +128,7 @@ public class CoinGecko extends PriceAPI {
         }
 
         ProgressDialogFragment.updateProgressSubtitle("Processing Coins...");
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);
@@ -138,11 +137,8 @@ public class CoinGecko extends PriceAPI {
                     if(!json.has(coin.getID())) { continue; }
 
                     JSONObject json2 = json.getJSONObject(coin.getID());
-
-                    BigDecimal d = new BigDecimal(json2.getString("usd"));
-
-                    // For now, just use USD.
-                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), new USD()));
+                    BigDecimal d = new BigDecimal(json2.getString(fiatName));
+                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), fiat));
                 }
             }
             catch(Exception e) {
@@ -156,15 +152,16 @@ public class CoinGecko extends PriceAPI {
         return priceHashMap;
     }
 
-    public AssetQuantity getPrice(Crypto crypto) {
+    public AssetQuantity getPrice(Crypto crypto, Fiat fiat) {
         AssetQuantity price = null;
+        String fiatName = fiat.getName().toLowerCase();
 
         String priceDataJSON = null;
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {
@@ -172,11 +169,8 @@ public class CoinGecko extends PriceAPI {
                 JSONObject json = new JSONObject(priceDataJSON);
                 if(json.has(crypto.getID())) {
                     JSONObject json2 = json.getJSONObject(crypto.getID());
-
-                    BigDecimal d = new BigDecimal(json2.getString("usd"));
-
-                    // For now, just use USD.
-                    price = new AssetQuantity(d.toPlainString(), new USD());
+                    BigDecimal d = new BigDecimal(json2.getString(fiatName));
+                    price = new AssetQuantity(d.toPlainString(), fiat);
                 }
             }
             catch(Exception e) {
@@ -189,9 +183,11 @@ public class CoinGecko extends PriceAPI {
         return price;
     }
 
-    public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList) {
+    public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
         // Separate cryptoArrayList into coins and tokens.
         // Further separate tokens by blockchain.
+        String fiatName = fiat.getName().toLowerCase();
+
         HashMap<String, ArrayList<Crypto>> blockchainHashMap = new HashMap<>();
         ArrayList<Crypto> coinArrayList = new ArrayList<>();
         for(Crypto crypto : cryptoArrayList) {
@@ -226,7 +222,7 @@ public class CoinGecko extends PriceAPI {
                 }
             }
 
-            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
             if(priceDataTokenJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataTokenJSON);
@@ -235,11 +231,8 @@ public class CoinGecko extends PriceAPI {
                         if(!json.has(token.getID())) { continue; }
 
                         JSONObject json2 = json.getJSONObject(token.getID());
-
-                        BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
-
-                        // For now, just use USD.
-                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), new USD()));
+                        BigDecimal d = new BigDecimal(json2.getString(fiatName + "_market_cap"));
+                        priceHashMap.put(token, new AssetQuantity(d.toPlainString(), fiat));
                     }
                 }
                 catch(Exception e) {
@@ -260,7 +253,7 @@ public class CoinGecko extends PriceAPI {
             }
         }
 
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         if(priceDataCoinJSON != null) {
             try {
                 JSONObject json = new JSONObject(priceDataCoinJSON);
@@ -269,11 +262,8 @@ public class CoinGecko extends PriceAPI {
                     if(!json.has(coin.getID())) { continue; }
 
                     JSONObject json2 = json.getJSONObject(coin.getID());
-
-                    BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
-
-                    // For now, just use USD.
-                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), new USD()));
+                    BigDecimal d = new BigDecimal(json2.getString(fiatName + "_market_cap"));
+                    priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), fiat));
                 }
             }
             catch(Exception e) {
@@ -287,16 +277,17 @@ public class CoinGecko extends PriceAPI {
         return priceHashMap;
     }
 
-    public AssetQuantity getMarketCap(Crypto crypto) {
+    public AssetQuantity getMarketCap(Crypto crypto, Fiat fiat) {
         AssetQuantity marketCap = null;
+        String fiatName = fiat.getName().toLowerCase();
 
         String priceDataJSON = null;
 
         if(crypto instanceof Token && !"?".equals(crypto.getID())) {
-            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + ((Token)crypto).getBlockchainID() + "?contract_addresses=" + crypto.getID() + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         }
         else if(crypto instanceof Coin) {
-            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true");
+            priceDataJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + crypto.getID() + "&vs_currencies=" + fiatName + "&include_market_cap=true&include_last_updated_at=true");
         }
 
         if(priceDataJSON != null) {
@@ -304,11 +295,8 @@ public class CoinGecko extends PriceAPI {
                 JSONObject json = new JSONObject(priceDataJSON);
                 if(json.has(crypto.getID())) {
                     JSONObject json2 = json.getJSONObject(crypto.getID());
-
-                    BigDecimal d = new BigDecimal(json2.getString("usd_market_cap"));
-
-                    // For now, just use USD.
-                    marketCap = new AssetQuantity(d.toPlainString(), new USD());
+                    BigDecimal d = new BigDecimal(json2.getString(fiatName + "_market_cap"));
+                    marketCap = new AssetQuantity(d.toPlainString(), fiat);
                 }
             }
             catch(Exception e) {

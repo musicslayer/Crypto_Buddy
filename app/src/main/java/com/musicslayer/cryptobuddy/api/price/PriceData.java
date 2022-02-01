@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
@@ -41,7 +42,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         this.marketCap = marketCap;
     }
 
-    public static PriceData getAllData(Crypto crypto) {
+    public static PriceData getAllData(Crypto crypto, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         AssetQuantity price_f = null;
@@ -53,7 +54,7 @@ public class PriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            price_f = priceAPI.getPrice(crypto);
+            price_f = priceAPI.getPrice(crypto, fiat);
             if(price_f != null) {
                 priceAPI_price_f = priceAPI;
                 break;
@@ -66,7 +67,7 @@ public class PriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            marketCap_f = priceAPI.getMarketCap(crypto);
+            marketCap_f = priceAPI.getMarketCap(crypto, fiat);
             if(marketCap_f != null) {
                 priceAPI_marketCap_f = priceAPI;
                 break;
@@ -76,7 +77,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
-    public static PriceData getPriceData(Crypto crypto) {
+    public static PriceData getPriceData(Crypto crypto, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         AssetQuantity price_f = null;
@@ -88,7 +89,7 @@ public class PriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            price_f = priceAPI.getPrice(crypto);
+            price_f = priceAPI.getPrice(crypto, fiat);
             if(price_f != null) {
                 priceAPI_price_f = priceAPI;
                 break;
@@ -98,7 +99,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
-    public static PriceData getMarketCapData(Crypto crypto) {
+    public static PriceData getMarketCapData(Crypto crypto, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         AssetQuantity price_f = null;
@@ -110,7 +111,7 @@ public class PriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            marketCap_f = priceAPI.getMarketCap(crypto);
+            marketCap_f = priceAPI.getMarketCap(crypto, fiat);
             if(marketCap_f != null) {
                 priceAPI_marketCap_f = priceAPI;
                 break;
@@ -120,7 +121,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(crypto, priceAPI_price_f, priceAPI_marketCap_f, price_f, marketCap_f);
     }
 
-    public static PriceData getNoData(Crypto crypto) {
+    public static PriceData getNoData(Crypto crypto, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         AssetQuantity price_f = null;

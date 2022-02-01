@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
@@ -17,6 +19,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
@@ -38,17 +41,35 @@ public class CryptoConverterDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_crypto_converter);
 
+        ImageButton helpButton = findViewById(R.id.crypto_converter_dialog_helpButton);
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            @Override
+            public void onClickImpl(View view) {
+                HelpUtil.showHelp(activity, R.raw.help_crypto_converter);
+            }
+        });
+
         TextView T = findViewById(R.id.crypto_converter_dialog_textView);
 
         NumericEditText E_PRIMARYASSET = findViewById(R.id.crypto_converter_dialog_primaryEditText);
 
         SelectAndSearchView ssvPrimary = findViewById(R.id.crypto_converter_dialog_primarySelectAndSearchView);
         ssvPrimary.setIncludesFiat(false);
+        ssvPrimary.setIncludesCoin(true);
+        ssvPrimary.setIncludesToken(true);
         ssvPrimary.setOptionsCoin();
 
         SelectAndSearchView ssvSecondary = findViewById(R.id.crypto_converter_dialog_secondarySelectAndSearchView);
         ssvSecondary.setIncludesFiat(false);
+        ssvSecondary.setIncludesCoin(true);
+        ssvSecondary.setIncludesToken(true);
         ssvSecondary.setOptionsCoin();
+
+        SelectAndSearchView fssv = findViewById(R.id.crypto_converter_dialog_fiatSelectAndSearchView);
+        fssv.setIncludesFiat(true);
+        fssv.setIncludesCoin(false);
+        fssv.setIncludesToken(false);
+        fssv.setOptionsFiat();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
@@ -56,9 +77,11 @@ public class CryptoConverterDialog extends BaseDialog {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Performing Conversion...");
 
-                PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary);
+                Fiat priceFiat = (Fiat)fssv.getChosenAsset();
+
+                PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary, priceFiat);
                 if(ProgressDialogFragment.isCancelled()) { return; }
-                PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary);
+                PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary, priceFiat);
 
                 ArrayList<PriceData> priceDataArrayList = new ArrayList<>();
                 priceDataArrayList.add(priceDataPrimary);

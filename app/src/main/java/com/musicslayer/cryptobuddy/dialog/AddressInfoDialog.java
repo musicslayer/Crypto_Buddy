@@ -26,6 +26,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +52,12 @@ public class AddressInfoDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_address_info);
 
+        SelectAndSearchView fssv = findViewById(R.id.address_info_dialog_fiatSelectAndSearchView);
+        fssv.setIncludesFiat(true);
+        fssv.setIncludesCoin(false);
+        fssv.setIncludesToken(false);
+        fssv.setOptionsFiat();
+
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
@@ -67,11 +74,11 @@ public class AddressInfoDialog extends BaseDialog {
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
                 Asset.sortAscendingByType(keySet);
 
-                // For now, USD is the only fiat, and it's price is 1 by definition.
-                // Take it out of the array and deal with it ourselves.
+                // Cryptos and Fiat need to be converted by different means.
                 ArrayList<Crypto> cryptoKeySet = new ArrayList<>();
                 for(Asset asset : keySet) {
                     if(asset instanceof Fiat) {
+                        // TODO Actually perform fiat conversions. (Use Bitcoin as an intermediary?)
                         HashMapUtil.putValueInMap(newPriceMap, asset, new AssetAmount("1"));
                     }
                     else if(asset instanceof Crypto) {
@@ -79,7 +86,8 @@ public class AddressInfoDialog extends BaseDialog {
                     }
                 }
 
-                BulkPriceData bulkPriceData = BulkPriceData.getBulkPriceData(cryptoKeySet);
+                Fiat priceFiat = (Fiat)fssv.getChosenAsset();
+                BulkPriceData bulkPriceData = BulkPriceData.getBulkPriceData(cryptoKeySet, priceFiat);
                 if(bulkPriceData.isPriceComplete()) {
                     HashMap<Crypto, AssetQuantity> priceHashMap = bulkPriceData.priceHashMap;
                     for(Crypto crypto : priceHashMap.keySet()) {
@@ -168,7 +176,10 @@ public class AddressInfoDialog extends BaseDialog {
         AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
         TextView T = findViewById(R.id.address_info_dialog_textView);
-        T.setText(Html.fromHtml(addressData.getInfoString(priceMap, true)));
+        SelectAndSearchView fssv = findViewById(R.id.address_info_dialog_fiatSelectAndSearchView);
+
+        Fiat priceFiat = (Fiat)fssv.getChosenAsset();
+        T.setText(Html.fromHtml(addressData.getInfoString(priceMap, priceFiat, true)));
     }
 
     @Override

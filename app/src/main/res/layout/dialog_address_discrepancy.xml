@@ -46,19 +46,27 @@
 
     </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
 
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/address_discrepancy_dialog_fiatSelectAndSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_spinner" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/address_discrepancy_dialog_priceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Retrieve USD Values"
+        android:text="Retrieve Fiat Values"
         app:drawableLeftCompat="@drawable/ic_baseline_price_change_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_spinner" />
+        app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_fiatSelectAndSearchView" />
 
     <TextView
         android:id="@+id/address_discrepancy_dialog_assetTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/address_discrepancy_dialog_priceButton" />
 

@@ -1,0 +1,2 @@
+Cryptocurrency conversions are done by using fiat prices to perform the calculation.
+You may select the fiat used, although the converted amount should more or less be the same.

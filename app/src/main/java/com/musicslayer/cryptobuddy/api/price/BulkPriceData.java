@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
@@ -44,7 +45,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
         this.marketCapHashMap = marketCapHashMap;
     }
 
-    public static BulkPriceData getAllBulkData(ArrayList<Crypto> cryptoArrayList) {
+    public static BulkPriceData getBulkAllData(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
@@ -56,7 +57,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            priceHashMap_f = priceAPI.getBulkPrice(cryptoArrayList);
+            priceHashMap_f = priceAPI.getBulkPrice(cryptoArrayList, fiat);
             if(priceHashMap_f != null) {
                 priceAPI_price_f = priceAPI;
                 break;
@@ -69,7 +70,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            marketCapHashMap_f = priceAPI.getBulkMarketCap(cryptoArrayList);
+            marketCapHashMap_f = priceAPI.getBulkMarketCap(cryptoArrayList, fiat);
             if(marketCapHashMap_f != null) {
                 priceAPI_marketCap_f = priceAPI;
                 break;
@@ -79,7 +80,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
         return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }
 
-    public static BulkPriceData getBulkPriceData(ArrayList<Crypto> cryptoArrayList) {
+    public static BulkPriceData getBulkPriceData(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
@@ -91,7 +92,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            priceHashMap_f = priceAPI.getBulkPrice(cryptoArrayList);
+            priceHashMap_f = priceAPI.getBulkPrice(cryptoArrayList, fiat);
             if(priceHashMap_f != null) {
                 priceAPI_price_f = priceAPI;
                 break;
@@ -101,7 +102,7 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
         return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }
 
-    public static BulkPriceData getBulkMarketCapData(ArrayList<Crypto> cryptoArrayList) {
+    public static BulkPriceData getBulkMarketCapData(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
@@ -113,12 +114,21 @@ public class BulkPriceData implements Serialization.SerializableToJSON {
                 continue;
             }
 
-            marketCapHashMap_f = priceAPI.getBulkMarketCap(cryptoArrayList);
+            marketCapHashMap_f = priceAPI.getBulkMarketCap(cryptoArrayList, fiat);
             if(marketCapHashMap_f != null) {
                 priceAPI_marketCap_f = priceAPI;
                 break;
             }
         }
+
+        return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
+    }
+
+    public static BulkPriceData getBulkNoData(ArrayList<Crypto> cryptoArrayList, Fiat fiat) {
+        PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
+        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
+        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
 
         return new BulkPriceData(cryptoArrayList, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }

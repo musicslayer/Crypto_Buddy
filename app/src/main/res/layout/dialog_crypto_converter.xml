@@ -17,6 +17,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Crypto Converter" />
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/crypto_converter_dialog_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@id/crypto_converter_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@id/crypto_converter_dialog_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
     <TextView
         android:id="@+id/crypto_converter_dialog_textView"
         android:layout_width="wrap_content"
@@ -65,6 +77,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_toTextView" />
 
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/crypto_converter_dialog_fiatSelectAndSearchView"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/crypto_converter_dialog_secondarySelectAndSearchView" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/crypto_converter_dialog_convertButton"
         android:layout_width="wrap_content"
@@ -82,7 +102,7 @@
         android:layout_marginStart="20dp"
         android:clickable="true"
         app:layout_constraintStart_toEndOf="@+id/crypto_converter_dialog_convertButton"
-        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_secondarySelectAndSearchView"
+        app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_fiatSelectAndSearchView"
         app:srcCompat="@drawable/ic_baseline_swap_vert_24"
         android:focusable="true" />
 

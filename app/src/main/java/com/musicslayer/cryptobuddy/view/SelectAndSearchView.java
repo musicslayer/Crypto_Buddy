@@ -40,7 +40,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     BaseDialogFragment searchAssetDialogFragment;
     public String lastButton;
     public Asset lastSearchAsset;
+
     public boolean includesFiat;
+    public boolean includesCoin;
+    public boolean includesToken;
 
     public ArrayList<String> options_fiat_text_sorted;
     public ArrayList<Fiat> options_fiat_sorted;
@@ -104,7 +107,23 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setIncludesFiat(boolean includesFiat) {
         this.includesFiat = includesFiat;
 
-        // Remake layout to refresh Fiat button visibility and search options.
+        // Remake layout to refresh button visibility and search options.
+        this.removeAllViews();
+        makeLayout();
+    }
+
+    public void setIncludesCoin(boolean includesCoin) {
+        this.includesCoin = includesCoin;
+
+        // Remake layout to refresh button visibility and search options.
+        this.removeAllViews();
+        makeLayout();
+    }
+
+    public void setIncludesToken(boolean includesToken) {
+        this.includesToken = includesToken;
+
+        // Remake layout to refresh button visibility and search options.
         this.removeAllViews();
         makeLayout();
     }
@@ -140,6 +159,13 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 setOptionsCoin();
             }
         });
+
+        if(includesCoin) {
+            B_COIN.setVisibility(VISIBLE);
+        }
+        else {
+            B_COIN.setVisibility(GONE);
+        }
 
         B_TOKEN = new AppCompatButton(context);
         B_TOKEN.setText("TOKEN");
@@ -178,13 +204,19 @@ public class SelectAndSearchView extends CrashLinearLayout {
             }
         });
 
+        if(includesToken) {
+            B_TOKEN.setVisibility(VISIBLE);
+        }
+        else {
+            B_TOKEN.setVisibility(GONE);
+        }
+
         bsv = new BorderedSpinnerView(context);
 
         StateObj.assetArrayList = getSearchAssets();
         StateObj.options_symbols = getSearchOptionsSymbols();
         StateObj.options_names = getSearchOptionsNames();
 
-        //searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class, getSearchAssets(), getSearchOptionsSymbols(), getSearchOptionsNames());
         searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class);
         searchAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
@@ -338,8 +370,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
         if(includesFiat) {
             options.addAll(Fiat.fiat_names);
         }
-        options.addAll(Coin.coin_names);
-        options.addAll(TokenManager.getAllTokenNames());
+        if(includesCoin) {
+            options.addAll(Coin.coin_names);
+        }
+        if(includesToken) {
+            options.addAll(TokenManager.getAllTokenNames());
+        }
         return options;
     }
 
@@ -348,8 +384,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
         if(includesFiat) {
             options.addAll(Fiat.fiat_display_names);
         }
-        options.addAll(Coin.coin_display_names);
-        options.addAll(TokenManager.getAllTokenDisplayNames());
+        if(includesCoin) {
+            options.addAll(Coin.coin_display_names);
+        }
+        if(includesToken) {
+            options.addAll(TokenManager.getAllTokenDisplayNames());
+        }
         return options;
     }
 
@@ -358,8 +398,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
         if(includesFiat) {
             assets.addAll(Fiat.fiats);
         }
-        assets.addAll(Coin.coins);
-        assets.addAll(TokenManager.getAllTokens());
+        if(includesCoin) {
+            assets.addAll(Coin.coins);
+        }
+        if(includesToken) {
+            assets.addAll(TokenManager.getAllTokens());
+        }
         return assets;
     }
 

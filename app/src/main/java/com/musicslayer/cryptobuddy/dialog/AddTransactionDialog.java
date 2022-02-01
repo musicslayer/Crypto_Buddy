@@ -146,12 +146,16 @@ public class AddTransactionDialog extends BaseDialog {
 
         SelectAndSearchView ssvPrimary = findViewById(R.id.add_transaction_dialog_primarySelectAndSearchView);
         ssvPrimary.setIncludesFiat(true);
+        ssvPrimary.setIncludesCoin(true);
+        ssvPrimary.setIncludesToken(true);
         ssvPrimary.setOptionsCoin();
 
         final NumericEditText E_SECONDARYASSET = findViewById(R.id.add_transaction_dialog_secondaryEditText);
 
         SelectAndSearchView ssvSecondary = findViewById(R.id.add_transaction_dialog_secondarySelectAndSearchView);
         ssvSecondary.setIncludesFiat(true);
+        ssvSecondary.setIncludesCoin(true);
+        ssvSecondary.setIncludesToken(true);
         ssvSecondary.setOptionsFiat();
 
         final TextView T = findViewById(R.id.add_transaction_dialog_forTextView);

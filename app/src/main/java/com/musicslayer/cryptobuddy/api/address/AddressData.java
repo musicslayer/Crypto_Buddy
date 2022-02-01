@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -213,7 +214,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetAmount> priceMap, boolean isRich) {
+    public String getInfoString(HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat, boolean isRich) {
         // Get address information. If the priceMap is not null, add in the prices of each asset in the map.
         RichStringBuilder s = new RichStringBuilder(isRich);
         s.appendRich("Address = " + cryptoAddress.toString());
@@ -237,7 +238,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             }
             else {
                 s.appendRich("\nCurrent Balances:");
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
+                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, priceFiat, isRich));
 
                 if(priceMap != null && !priceMap.isEmpty()) {
                     s.appendRich("\n\nData Source = CoinGecko API V3");
@@ -250,7 +251,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
 
     public String getRawFullInfoString() {
         // Get regular info (without prices) and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString(null, false));
+        StringBuilder s = new StringBuilder(getInfoString(null, null, false));
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {
