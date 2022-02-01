@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-// TODO Is loss should be based on the quantity. I shouldn't need to set it.
-
 public class AssetQuantity implements Serialization.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
