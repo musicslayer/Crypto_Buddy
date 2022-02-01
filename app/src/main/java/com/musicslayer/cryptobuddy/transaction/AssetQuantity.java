@@ -133,7 +133,37 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             }
         }
 
+        AssetQuantity total = AssetQuantity.getTotal(deltaMap, priceMap);
+        if(total != null) {
+            s.append("\n\n    Total = ").append(total);
+        }
+
         return s.toString();
+    }
+
+    public static AssetQuantity getTotal(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap) {
+        // Get the sum total (in USD for now) for all the amounts' fiat values.
+        // Returns null if there are no values at all.
+        if(deltaMap.isEmpty() || priceMap == null || priceMap.isEmpty()) {
+            return null;
+        }
+
+        AssetAmount grandTotal = new AssetAmount("0");
+
+        for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
+            AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+            if(price != null) {
+                AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, new USD()));
+
+                AssetAmount amount = HashMapUtil.getValueFromMap(deltaMap, asset);
+                AssetQuantity assetQuantity = new AssetQuantity(amount, asset);
+                AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
+
+                grandTotal = grandTotal.add(convertedAssetQuantity.assetAmount);
+            }
+        }
+
+        return new AssetQuantity(grandTotal, new USD());
     }
 
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {

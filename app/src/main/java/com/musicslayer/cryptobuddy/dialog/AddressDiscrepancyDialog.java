@@ -151,6 +151,7 @@ public class AddressDiscrepancyDialog extends BaseDialog {
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
                 deltaMap = addressData.getDiscrepancyMap();
+                priceMap = new HashMap<>();
 
                 updateLayout(addressData);
             }
