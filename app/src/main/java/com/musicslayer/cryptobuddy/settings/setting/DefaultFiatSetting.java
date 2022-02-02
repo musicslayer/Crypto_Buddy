@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.settings.setting;
 
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,8 @@ public class DefaultFiatSetting extends Setting {
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
 
-        for(Fiat fiat : Fiat.fiats) {
+        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        for(Fiat fiat : fiatManager.getFiats()) {
             optionNames.add(fiat.getDisplayName() + " (" + fiat.getName() + ")");
         }
 
@@ -26,7 +28,8 @@ public class DefaultFiatSetting extends Setting {
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
 
-        for(Fiat fiat : Fiat.fiats) {
+        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        for(Fiat fiat : fiatManager.getFiats()) {
             optionDisplays.add("Use " + fiat.getDisplayName() + " (" + fiat.getName() + ") by default.");
         }
 
@@ -35,7 +38,8 @@ public class DefaultFiatSetting extends Setting {
 
     @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        ArrayList<Fiat> optionValues = new ArrayList<>(Fiat.fiats);
+        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        ArrayList<Fiat> optionValues = new ArrayList<>(fiatManager.getFiats());
         return (ArrayList<T>)optionValues;
     }
 }

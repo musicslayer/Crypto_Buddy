@@ -39,7 +39,14 @@ public class StandardSettingsView extends SettingsView {
 
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        prefText.setText(setting.getOptionDisplays().get(setting.chosenOptionPosition));
+
+        // TODO Default to each setting's default value.
+        int idx = setting.getOptionNames().indexOf(setting.chosenOptionName);
+        if(idx == -1) {
+            // If saved option choice no longer exists, just default to first one.
+            idx = 0;
+        }
+        prefText.setText(setting.getOptionDisplays().get(idx));
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
@@ -56,7 +63,7 @@ public class StandardSettingsView extends SettingsView {
             }
         });
 
-        bsv.spinner.setSelection(setting.chosenOptionPosition);
+        bsv.spinner.setSelection(idx);
 
         prefText.setPadding(0,0,0, 50);
 

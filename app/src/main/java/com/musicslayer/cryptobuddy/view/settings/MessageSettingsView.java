@@ -43,7 +43,13 @@ public class MessageSettingsView extends SettingsView {
 
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        prefText.setText(setting.getOptionDisplays().get(setting.chosenOptionPosition));
+
+        int idx = setting.getOptionNames().indexOf(setting.chosenOptionName);
+        if(idx == -1) {
+            // If saved option choice no longer exists, just default to first one.
+            idx = 0;
+        }
+        prefText.setText(setting.getOptionDisplays().get(idx));
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}

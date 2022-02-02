@@ -1,10 +1,9 @@
 package com.musicslayer.cryptobuddy.settings.setting;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 
 import java.util.ArrayList;
-
-// TODO Can the default fiat/coin be something that is custom?
 
 public class DefaultCoinSetting extends Setting {
     public static Coin value;
@@ -18,7 +17,8 @@ public class DefaultCoinSetting extends Setting {
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
 
-        for(Coin coin : Coin.coins) {
+        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        for(Coin coin : coinManager.getCoins()) {
             optionNames.add(coin.getDisplayName() + " (" + coin.getName() + ")");
         }
 
@@ -28,7 +28,8 @@ public class DefaultCoinSetting extends Setting {
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
 
-        for(Coin coin : Coin.coins) {
+        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        for(Coin coin : coinManager.getCoins()) {
             optionDisplays.add("Use " + coin.getDisplayName() + " (" + coin.getName() + ") by default.");
         }
 
@@ -37,7 +38,8 @@ public class DefaultCoinSetting extends Setting {
 
     @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        ArrayList<Coin> optionValues = new ArrayList<>(Coin.coins);
+        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        ArrayList<Coin> optionValues = new ArrayList<>(coinManager.getCoins());
         return (ArrayList<T>)optionValues;
     }
 }

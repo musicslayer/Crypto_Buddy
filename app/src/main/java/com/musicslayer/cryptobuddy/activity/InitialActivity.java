@@ -61,12 +61,16 @@ public class InitialActivity extends BaseActivity {
         TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Try loading all the persistent data.
+        // TODO Untangle the web of dependencies.
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
         Exchange.initialize(applicationContext);
         AddressAPI.initialize(applicationContext);
         PriceAPI.initialize(applicationContext);
         ExchangeAPI.initialize(applicationContext);
+        FiatManager.initialize(applicationContext);
+        CoinManager.initialize(applicationContext);
+        Network.initialize(applicationContext);
         Setting.initialize(applicationContext);
         ToastUtil.loadAllToasts(applicationContext);
         Purchases.loadAllPurchases(applicationContext);
@@ -77,11 +81,6 @@ public class InitialActivity extends BaseActivity {
         InAppPurchase.setWrapperPurchasesUpdatedListener(this);
         InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
         InAppPurchase.initialize(applicationContext);
-
-        FiatManager.initialize(applicationContext);
-        CoinManager.initialize(applicationContext);
-
-        Network.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);
         if(!Purchases.isUnlockTokensPurchased()) {

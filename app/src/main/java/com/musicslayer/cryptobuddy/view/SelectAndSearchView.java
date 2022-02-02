@@ -273,6 +273,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
         Fiat defaultFiat = DefaultFiatSetting.value;
         int idx = options_fiat_sorted.indexOf(defaultFiat);
+        if(idx == -1) {
+            // If saved option choice no longer exists, just default to first one.
+            idx = 0;
+        }
+
         this.bsv.setSelection(idx);
 
         lastButton = "!FIAT!";
@@ -286,11 +291,16 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setOptionsCoin() {
         bsv.setOptions(options_coin_text_sorted);
 
-        lastButton = "!COIN!";
-
         Coin defaultCoin = DefaultCoinSetting.value;
         int idx = options_coin_sorted.indexOf(defaultCoin);
+        if(idx == -1) {
+            // If saved option choice no longer exists, just default to first one.
+            idx = 0;
+        }
+
         this.bsv.setSelection(idx);
+
+        lastButton = "!COIN!";
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
