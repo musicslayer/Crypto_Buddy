@@ -17,39 +17,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Delete Coins" />
 
-    <TextView
-        android:id="@+id/delete_coins_dialog_foundTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete found coins from the app's database."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delete_coins_dialog_toolbar" />
-
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/delete_coins_dialog_foundButton"
+        android:id="@+id/delete_coins_dialog_deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Found Coins"
+        android:text="Delete Coins"
         app:drawableLeftCompat="@drawable/ic_baseline_delete_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete_coins_dialog_foundTextView" />
+        app:layout_constraintTop_toBottomOf="@id/delete_coins_dialog_toolbar" />
 
-    <TextView
-        android:id="@+id/delete_coins_dialog_customTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/delete_coins_dialog_checkBoxLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Delete custom coins from the app's database."
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete_coins_dialog_foundButton" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/delete_coins_dialog_customButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete Custom Coins"
-        app:drawableLeftCompat="@drawable/ic_baseline_delete_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/delete_coins_dialog_customTextView" />
+        app:layout_constraintTop_toBottomOf="@id/delete_coins_dialog_deleteButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

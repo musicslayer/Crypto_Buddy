@@ -24,11 +24,13 @@ import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.util.ArrayList;
+
 public class FiatManagerView extends CrashTableRow {
     public TextView T;
     public AppCompatButton B_DELETE;
     public FiatManager fiatManager;
-    public String choice;
+    public ArrayList<String> choices;
 
     public FiatManagerView(Context context) {
         super(context);
@@ -54,10 +56,10 @@ public class FiatManagerView extends CrashTableRow {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteFiatsDialog)dialog).isComplete) {
-                    if("found".equals(choice)) {
+                    if(choices.contains("found")) {
                         fiatManager.resetFoundFiats();
                     }
-                    else if("custom".equals(choice)) {
+                    if(choices.contains("custom")) {
                         fiatManager.resetCustomFiats();
                     }
 
@@ -79,7 +81,7 @@ public class FiatManagerView extends CrashTableRow {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteFiatsDialog)dialog).isComplete) {
-                    choice = ((DeleteFiatsDialog)dialog).user_CHOICE;
+                    choices = ((DeleteFiatsDialog)dialog).user_CHOICES;
                     confirmDeleteFiatsDialogFragment.show(context, "confirm_delete_fiats");
                 }
             }
@@ -110,7 +112,7 @@ public class FiatManagerView extends CrashTableRow {
     {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
-        bundle.putString("choice", choice);
+        bundle.putStringArrayList("choices", choices);
 
         return bundle;
     }
@@ -122,7 +124,7 @@ public class FiatManagerView extends CrashTableRow {
         {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
-            choice = bundle.getString("choice");
+            choices = bundle.getStringArrayList("choices");
         }
         return state;
     }

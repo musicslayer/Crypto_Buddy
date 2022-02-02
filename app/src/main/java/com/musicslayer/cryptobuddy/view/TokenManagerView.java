@@ -26,12 +26,14 @@ import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.util.ArrayList;
+
 public class TokenManagerView extends CrashTableRow {
     public TextView T;
     public AppCompatButton B_DELETE;
     public AppCompatButton B_DOWNLOAD;
     public TokenManager tokenManager;
-    public String choice;
+    public ArrayList<String> choices;
 
     public TokenManagerView(Context context) {
         super(context);
@@ -122,13 +124,13 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
-                    if("downloaded".equals(choice)) {
+                    if(choices.contains("downloaded")) {
                         tokenManager.resetDownloadedTokens();
                     }
-                    else if("found".equals(choice)) {
+                    if(choices.contains("found")) {
                         tokenManager.resetFoundTokens();
                     }
-                    else if("custom".equals(choice)) {
+                    if(choices.contains("custom")) {
                         tokenManager.resetCustomTokens();
                     }
 
@@ -146,7 +148,7 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteTokensDialog)dialog).isComplete) {
-                    choice = ((DeleteTokensDialog)dialog).user_CHOICE;
+                    choices = ((DeleteTokensDialog)dialog).user_CHOICES;
                     confirmDeleteTokensDialogFragment.show(context, "confirm_delete_" + tokenManager.getSettingsKey());
                 }
             }
@@ -209,7 +211,7 @@ public class TokenManagerView extends CrashTableRow {
     {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
-        bundle.putString("choice", choice);
+        bundle.putStringArrayList("choices", choices);
 
         return bundle;
     }
@@ -221,7 +223,7 @@ public class TokenManagerView extends CrashTableRow {
         {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
-            choice = bundle.getString("choice");
+            choices = bundle.getStringArrayList("choices");
         }
         return state;
     }
