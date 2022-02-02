@@ -38,7 +38,7 @@ public class AddressInfoDialog extends BaseDialog {
     int cryptoAddressIdx;
 
     ArrayList<AssetQuantity> deltaArray = new ArrayList<>();
-    HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
+    HashMap<Asset, AssetQuantity> priceMap = new HashMap<>();
 
     public AddressInfoDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
         super(activity);
@@ -65,7 +65,7 @@ public class AddressInfoDialog extends BaseDialog {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Calculating Total...");
 
-                HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
+                HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
 
                 HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
                 for(AssetQuantity assetQuantity : deltaArray) {
@@ -80,7 +80,7 @@ public class AddressInfoDialog extends BaseDialog {
                 for(Asset asset : keySet) {
                     if(asset instanceof Fiat) {
                         // TODO Actually perform fiat conversions. (Use Bitcoin as an intermediary?)
-                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetAmount("1"));
+                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetQuantity("1", asset));
                     }
                     else if(asset instanceof Crypto) {
                         cryptoKeySet.add((Crypto)asset);
@@ -96,7 +96,7 @@ public class AddressInfoDialog extends BaseDialog {
                     for(Crypto crypto : priceHashMap.keySet()) {
                         AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
                         if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, crypto, price.assetAmount);
+                            HashMapUtil.putValueInMap(newPriceMap, crypto, price);
                         }
                     }
                 }
@@ -108,7 +108,7 @@ public class AddressInfoDialog extends BaseDialog {
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetAmount.class);
+                HashMap<Asset, AssetQuantity> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetQuantity.class);
 
                 if(newPriceMap.size() != deltaArray.size()) {
                     ToastUtil.showToast(activity,"incomplete_price_data");
@@ -180,7 +180,7 @@ public class AddressInfoDialog extends BaseDialog {
         SelectAndSearchView fssv = findViewById(R.id.address_info_dialog_fiatSelectAndSearchView);
 
         Fiat priceFiat = (Fiat)fssv.getChosenAsset();
-        T.setText(Html.fromHtml(addressData.getInfoString(priceMap, priceFiat, true)));
+        T.setText(Html.fromHtml(addressData.getInfoString(priceMap, true)));
     }
 
     @Override
@@ -194,7 +194,7 @@ public class AddressInfoDialog extends BaseDialog {
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            priceMap = (HashMap<Asset, AssetAmount>)bundle.getSerializable("priceMap");
+            priceMap = (HashMap<Asset, AssetQuantity>)bundle.getSerializable("priceMap");
             cryptoAddressIdx = bundle.getInt("cryptoAddressIdx");
         }
     }

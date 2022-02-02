@@ -96,17 +96,17 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
         return new AssetQuantity(convertedAssetAmount, p.bottomAssetQuantity.asset);
     }
 
-    public static String getAssetInfo(ArrayList<AssetQuantity> assetQuantityArrayList, HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat, boolean isRich) {
+    public static String getAssetInfo(ArrayList<AssetQuantity> assetQuantityArrayList, HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         for(AssetQuantity assetQuantity : assetQuantityArrayList) {
             HashMapUtil.putValueInMap(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
         }
 
-        return getAssetInfo(deltaMap, priceMap, priceFiat, isRich);
+        return getAssetInfo(deltaMap, priceMap, isRich);
     }
 
-    public static String getAssetInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat, boolean isRich) {
+    public static String getAssetInfo(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
         RichStringBuilder s = new RichStringBuilder(isRich);
 
         ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
@@ -119,9 +119,9 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             s.appendRich("\n    ").appendAssetQuantity(assetQuantity);
 
             if(priceMap != null) {
-                AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+                AssetQuantity price = HashMapUtil.getValueFromMap(priceMap, asset);
                 if(price != null) {
-                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, priceFiat));
+                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), price);
                     AssetQuantity convertedAssetQuantity = assetQuantity.convert(assetPrice);
 
                     s.appendRich(" = ").appendAssetQuantity(convertedAssetQuantity);
@@ -132,7 +132,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             }
         }
 
-        AssetQuantity total = AssetQuantity.getTotal(deltaMap, priceMap, priceFiat);
+        AssetQuantity total = AssetQuantity.getTotal(deltaMap, priceMap);
         if(total != null) {
             s.appendRich("\n\n    Total = ").appendAssetQuantity(total);
         }
@@ -140,19 +140,23 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
         return s.toString();
     }
 
-    public static AssetQuantity getTotal(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat) {
+    public static AssetQuantity getTotal(HashMap<Asset, AssetAmount> deltaMap, HashMap<Asset, AssetQuantity> priceMap) {
         // Get the sum total for all the amounts' fiat values.
         // Returns null if there are no values at all.
+        // Note that all prices should be of the same fiat.
         if(deltaMap.isEmpty() || priceMap == null || priceMap.isEmpty()) {
             return null;
         }
 
         AssetAmount grandTotal = new AssetAmount("0");
+        Fiat fiat = null;
 
         for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
-            AssetAmount price = HashMapUtil.getValueFromMap(priceMap, asset);
+            AssetQuantity price = HashMapUtil.getValueFromMap(priceMap, asset);
             if(price != null) {
-                AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), new AssetQuantity(price, priceFiat));
+                fiat = (Fiat)price.asset;
+
+                AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), price);
 
                 AssetAmount amount = HashMapUtil.getValueFromMap(deltaMap, asset);
                 AssetQuantity assetQuantity = new AssetQuantity(amount, asset);
@@ -162,7 +166,7 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Parcelab
             }
         }
 
-        return new AssetQuantity(grandTotal, priceFiat);
+        return new AssetQuantity(grandTotal, fiat);
     }
 
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {

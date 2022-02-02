@@ -214,7 +214,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat, boolean isRich) {
+    public String getInfoString(HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
         // Get address information. If the priceMap is not null, add in the prices of each asset in the map.
         RichStringBuilder s = new RichStringBuilder(isRich);
         s.appendRich("Address = " + cryptoAddress.toString());
@@ -238,7 +238,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             }
             else {
                 s.appendRich("\nCurrent Balances:");
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, priceFiat, isRich));
+                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
 
                 if(priceMap != null && !priceMap.isEmpty()) {
                     s.appendRich("\n\nData Source = CoinGecko API V3");
@@ -251,7 +251,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
 
     public String getRawFullInfoString() {
         // Get regular info (without prices) and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString(null, null, false));
+        StringBuilder s = new StringBuilder(getInfoString(null, false));
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {

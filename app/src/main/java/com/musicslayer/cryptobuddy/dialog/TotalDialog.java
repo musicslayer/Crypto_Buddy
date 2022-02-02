@@ -32,7 +32,7 @@ import java.util.HashMap;
 public class TotalDialog extends BaseDialog {
     ArrayList<Transaction> filteredTransactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
-    HashMap<Asset, AssetAmount> priceMap = new HashMap<>();
+    HashMap<Asset, AssetQuantity> priceMap = new HashMap<>();
 
     public TotalDialog(Activity activity) {
         super(activity);
@@ -60,7 +60,7 @@ public class TotalDialog extends BaseDialog {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Calculating Total...");
 
-                HashMap<Asset, AssetAmount> newPriceMap = new HashMap<>();
+                HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
 
                 ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
                 Asset.sortAscendingByType(keySet);
@@ -70,7 +70,7 @@ public class TotalDialog extends BaseDialog {
                 for(Asset asset : keySet) {
                     if(asset instanceof Fiat) {
                         // TODO Actually perform fiat conversions. (Use Bitcoin as an intermediary?)
-                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetAmount("1"));
+                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetQuantity("1", asset));
                     }
                     else if(asset instanceof Crypto) {
                         cryptoKeySet.add((Crypto)asset);
@@ -86,7 +86,7 @@ public class TotalDialog extends BaseDialog {
                     for(Crypto crypto : priceHashMap.keySet()) {
                         AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
                         if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, crypto, price.assetAmount);
+                            HashMapUtil.putValueInMap(newPriceMap, crypto, price);
                         }
                     }
                 }
@@ -98,7 +98,7 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                HashMap<Asset, AssetAmount> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetAmount.class);
+                HashMap<Asset, AssetQuantity> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetQuantity.class);
 
                 if(newPriceMap.size() != deltaMap.size()) {
                     ToastUtil.showToast(activity,"incomplete_price_data");
@@ -137,11 +137,7 @@ public class TotalDialog extends BaseDialog {
         }
         else {
             s.appendRich("Net Sums:");
-
-            SelectAndSearchView fssv = findViewById(R.id.total_dialog_fiatSelectAndSearchView);
-            Fiat priceFiat = (Fiat)fssv.getChosenAsset();
-            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, priceFiat, true));
-
+            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
             if(priceMap != null && !priceMap.isEmpty()) {
                 s.appendRich("\n\nData Source = CoinGecko API V3");
             }
@@ -161,7 +157,7 @@ public class TotalDialog extends BaseDialog {
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            priceMap = (HashMap<Asset, AssetAmount>)bundle.getSerializable("priceMap");
+            priceMap = (HashMap<Asset, AssetQuantity>)bundle.getSerializable("priceMap");
         }
     }
 }

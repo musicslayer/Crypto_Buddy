@@ -203,7 +203,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetAmount> priceMap, Fiat priceFiat, boolean isRich) {
+    public String getInfoString(HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
         RichStringBuilder s = new RichStringBuilder(isRich);
         s.appendRich("Exchange = " + cryptoExchange.exchange.toString());
 
@@ -226,7 +226,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             }
             else {
                 s.appendRich("\nCurrent Balances:");
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, priceFiat, isRich));
+                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
 
                 if(priceMap != null && !priceMap.isEmpty()) {
                     s.appendRich("\n\nData Source = CoinGecko API V3");
@@ -239,7 +239,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
 
     public String getRawFullInfoString() {
         // Get regular info and also the complete set of transactions and net transaction sums.
-        StringBuilder s = new StringBuilder(getInfoString(null, null, false));
+        StringBuilder s = new StringBuilder(getInfoString(null, false));
 
         if(exchangeAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {
