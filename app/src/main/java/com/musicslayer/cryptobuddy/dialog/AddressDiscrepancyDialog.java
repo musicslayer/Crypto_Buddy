@@ -16,7 +16,6 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -71,7 +70,6 @@ public class AddressDiscrepancyDialog extends BaseDialog {
                 HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
-                Asset.sortAscendingByType(assetKeySet);
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
                 CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);

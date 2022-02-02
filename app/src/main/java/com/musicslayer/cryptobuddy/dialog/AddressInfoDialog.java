@@ -72,7 +72,6 @@ public class AddressInfoDialog extends BaseDialog {
                 }
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
-                Asset.sortAscendingByType(assetKeySet);
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
                 CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
