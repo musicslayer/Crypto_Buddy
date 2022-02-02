@@ -21,6 +21,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
@@ -97,26 +98,35 @@ public class CryptoConverterDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
+                boolean isComplete = false;
+
                 if(priceData.isPriceComplete()) {
-                    AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
-                    AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), priceData.priceHashMap.get(cryptoPrimary));
-                    AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), priceData.priceHashMap.get(cryptoSecondary));
-                    AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
+                    AssetQuantity primaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceData.priceHashMap, cryptoPrimary);
+                    AssetQuantity secondaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceData.priceHashMap, cryptoSecondary);
 
-                    String text = "Conversion:\n" + primaryAssetQuantity + " = " + secondaryAssetQuantity.toString() +
-                            "\n\nForward Prices:\n" + primaryAssetPrice +
-                            "\n" + secondaryAssetPrice;
+                    if(primaryPriceAssetQuantity != null && secondaryPriceAssetQuantity != null) {
+                        AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
+                        AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), primaryPriceAssetQuantity);
+                        AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), secondaryPriceAssetQuantity);
+                        AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
-                    if("ForwardBackward".equals(PriceDisplaySetting.value)) {
-                        text = text + "\n\nBackward Prices:\n" + primaryAssetPrice.reverseAssetPrice().toString() +
-                                "\n" + secondaryAssetPrice.reverseAssetPrice().toString();
+                        String text = "Conversion:\n" + primaryAssetQuantity + " = " + secondaryAssetQuantity.toString() +
+                                "\n\nForward Prices:\n" + primaryAssetPrice +
+                                "\n" + secondaryAssetPrice;
+
+                        if("ForwardBackward".equals(PriceDisplaySetting.value)) {
+                            text = text + "\n\nBackward Prices:\n" + primaryAssetPrice.reverseAssetPrice().toString() +
+                                    "\n" + secondaryAssetPrice.reverseAssetPrice().toString();
+                        }
+
+                        text = text + "\n\nData Source = CoinGecko API V3";
+
+                        T.setText(text);
+                        isComplete = true;
                     }
-
-                    text = text + "\n\nData Source = CoinGecko API V3";
-
-                    T.setText(text);
                 }
-                else {
+
+                if(!isComplete) {
                     T.setText("");
                     ToastUtil.showToast(activity,"incomplete_price_data");
                 }

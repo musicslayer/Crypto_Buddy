@@ -66,7 +66,7 @@ public class AboutActivity extends BaseActivity {
         TextView T_EXCHANGES_TEXT = findViewById(R.id.about_exchangesText);
         T_EXCHANGES_TEXT.setText(exchangesText + "\n");
 
-        // List of all assets
+        // List of all hardcoded assets
         ArrayList<String> sortedFiatDisplayNames = Fiat.fiat_display_names;
         Collections.sort(sortedFiatDisplayNames);
 

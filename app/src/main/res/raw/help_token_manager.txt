@@ -1,4 +1,4 @@
-The app is hardcoded to recognize coins, and often will automatically recognize tokens as well.
+The app will often automatically recognize tokens.
 However for some blockchain networks or particular tokens this is not possible.
 
 You can use the Token Manager to download lists of tokens into the app's database.
@@ -6,7 +6,7 @@ If your token is newer and/or not officially recognized, you can also manually a
 
 Key:
 Downloaded Tokens - Tokens from lists downloaded from the internet.
-Found Tokens - Tokens seen while analyzing a crypto address.
+Found Tokens - Tokens seen while analyzing a crypto address or an exchange account.
 Custom Tokens - Tokens the user manually added.
 
 (x, y, z) -> x tokens downloaded*, y tokens found, and z custom tokens
@@ -16,6 +16,3 @@ Custom Tokens - Tokens the user manually added.
 
 There is a precedence ordering when tokens are in more than one category.
 The app will recognize a downloaded token first, then a found token, and lastly a custom token.
-
-So for example, if you add a custom token, but then later that same token is officially recognized and in the downloaded list, the custom token will remain but the downloaded information will be used.
-If the downloaded token is later removed, then the custom token's information will be used again.

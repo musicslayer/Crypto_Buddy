@@ -144,45 +144,6 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Button bCryptoPrices = findViewById(R.id.main_cryptoPricesButton);
-        bCryptoPrices.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(MainActivity.this, "price");
-            }
-        });
-
-        Button bCryptoPriceConverter = findViewById(R.id.main_cryptoConverterButton);
-        bCryptoPriceConverter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(MainActivity.this, "converter");
-            }
-        });
-
-        Button B_INAPP = findViewById(R.id.main_inAppPurchasesButton);
-        B_INAPP.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
-                finish();
-            }
-        });
-
-        Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
-        B_TokenManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                if(Purchases.isUnlockTokensPurchased()) {
-                    startActivity(new Intent(MainActivity.this, TokenManagerActivity.class));
-                    finish();
-                }
-                else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_tokens_required");
-                }
-            }
-        });
-
         BaseDialogFragment chooseExchangeDialogFragment = BaseDialogFragment.newInstance(ChooseExchangeDialog.class);
         chooseExchangeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
@@ -223,6 +184,63 @@ public class MainActivity extends BaseActivity {
                 }
                 else {
                     ToastUtil.showToast(MainActivity.this,"unlock_exchange_integration_required");
+                }
+            }
+        });
+
+        Button B_INAPP = findViewById(R.id.main_inAppPurchasesButton);
+        B_INAPP.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                startActivity(new Intent(MainActivity.this, InAppPurchasesActivity.class));
+                finish();
+            }
+        });
+
+        Button bCryptoPrices = findViewById(R.id.main_cryptoPricesButton);
+        bCryptoPrices.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(MainActivity.this, "price");
+            }
+        });
+
+        Button bCryptoPriceConverter = findViewById(R.id.main_cryptoConverterButton);
+        bCryptoPriceConverter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(MainActivity.this, "converter");
+            }
+        });
+
+        Button B_FiatManager = findViewById(R.id.main_fiatManagerButton);
+        B_FiatManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                startActivity(new Intent(MainActivity.this, FiatManagerActivity.class));
+                finish();
+            }
+        });
+
+        Button B_CoinManager = findViewById(R.id.main_coinManagerButton);
+        B_CoinManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                startActivity(new Intent(MainActivity.this, CoinManagerActivity.class));
+                finish();
+            }
+        });
+
+        Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
+        B_TokenManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                if(Purchases.isUnlockTokensPurchased()) {
+                    startActivity(new Intent(MainActivity.this, TokenManagerActivity.class));
+                    finish();
+                }
+                else {
+                    ToastUtil.showToast(MainActivity.this,"unlock_tokens_required");
                 }
             }
         });

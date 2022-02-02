@@ -49,12 +49,17 @@
                 <data android:scheme="com.musicslayer.cryptobuddy"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activity.CoinManagerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangeExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangePortfolioExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangePortfolioViewerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.FiatManagerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.InAppPurchasesActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.InitialActivity" android:screenOrientation="locked" android:exported="true">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.SettingsActivity" android:screenOrientation="locked"/>

@@ -1,0 +1,2 @@
+The app has a hardcoded list of coins that it recognizes.
+However, if you wish to add a coin yourself manually, you may do so here.

@@ -1,6 +1,10 @@
 package com.musicslayer.cryptobuddy.serialize;
 
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -513,7 +517,153 @@ public class Serialization {
     }
 
     // Asset.serializeToJSON only serializes a key used to lookup an Asset later.
-    // This method serializes all the information needed to reconstruct a token from scratch.
+    // These method serializes all the information needed to construct an asset from scratch.
+    public static String fiat_serialize(Fiat obj) {
+        if(obj == null) { return null; }
+
+        try {
+            return new Serialization.JSONObjectWithNull()
+                    .put("key", string_serialize(obj.getKey()))
+                    .put("name", string_serialize(obj.getName()))
+                    .put("display_name", string_serialize(obj.getDisplayName()))
+                    .put("scale", int_serialize(obj.getScale()))
+                    .toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Fiat fiat_deserialize(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+
+            return new Fiat_Impl(key, name, display_name, scale);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String fiat_serializeArrayList(ArrayList<Fiat> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(Fiat obj : arrayList) {
+                a.put(Serialization.fiat_serialize(obj));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Fiat> fiat_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Fiat> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.fiat_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String coin_serialize(Coin obj) {
+        if(obj == null) { return null; }
+
+        try {
+            return new Serialization.JSONObjectWithNull()
+                    .put("key", string_serialize(obj.getKey()))
+                    .put("name", string_serialize(obj.getName()))
+                    .put("display_name", string_serialize(obj.getDisplayName()))
+                    .put("scale", int_serialize(obj.getScale()))
+                    .put("id", string_serialize(obj.getID()))
+                    .toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Coin coin_deserialize(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+            String id = Serialization.string_deserialize(o.getString("id"));
+
+            return new Coin_Impl(key, name, display_name, scale, id);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String coin_serializeArrayList(ArrayList<Coin> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONArrayWithNull a = new JSONArrayWithNull();
+            for(Coin obj : arrayList) {
+                a.put(Serialization.coin_serialize(obj));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Coin> coin_deserializeArrayList(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Coin> arrayList = new ArrayList<>();
+
+            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(Serialization.coin_deserialize(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static String token_serialize(Token obj) {
         if(obj == null) { return null; }
 

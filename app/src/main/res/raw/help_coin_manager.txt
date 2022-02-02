@@ -1,0 +1,13 @@
+The app is hardcoded to recognize a list of coins.
+However if you wish to record a transaction for a different coin, you may use the Coin Manager to add it yourself.
+
+Key:
+Hardcoded Coins - Coins built into the app by the developer.
+Found Coins - Coins seen while analyzing an exchange account.
+Custom Coins - Coins the user manually added.
+
+(x, y, z) -> x coins hardcoded, y coins found, and z custom coins
+
+
+There is a precedence ordering when coins are in more than one category.
+The app will recognize a hardcoded coin first, then a found coin, and lastly a custom coin.

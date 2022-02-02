@@ -1,0 +1,2 @@
+The app has a hardcoded list of fiats that it recognizes.
+However, if you wish to add a fiat yourself manually, you may do so here.

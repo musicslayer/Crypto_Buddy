@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
@@ -74,19 +75,27 @@ public class CryptoPricesDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
+                boolean isComplete = false;
+
                 if(priceData.isComplete()) {
-                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", crypto), priceData.priceHashMap.get(crypto));
-                    AssetQuantity marketCapAssetQuantity = priceData.marketCapHashMap.get(crypto);
+                    AssetQuantity priceAssetQuantity = HashMapUtil.getValueFromMap(priceData.priceHashMap, crypto);
+                    AssetQuantity marketCapAssetQuantity = HashMapUtil.getValueFromMap(priceData.marketCapHashMap, crypto);
 
-                    String text = "Forward Price = " + assetPrice;
-                    if("ForwardBackward".equals(PriceDisplaySetting.value)) {
-                        text = text + "\nBackward Price = " + assetPrice.reverseAssetPrice().toString();
+                    if(priceAssetQuantity != null && marketCapAssetQuantity != null) {
+                        AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", crypto), priceAssetQuantity);
+
+                        String text = "Forward Price = " + assetPrice;
+                        if("ForwardBackward".equals(PriceDisplaySetting.value)) {
+                            text = text + "\nBackward Price = " + assetPrice.reverseAssetPrice().toString();
+                        }
+                        text = text + "\nMarket Cap = " + marketCapAssetQuantity.toString() + "\nData Source = CoinGecko API V3";
+
+                        T.setText(text);
+                        isComplete = true;
                     }
-                    text = text + "\nMarket Cap = " + marketCapAssetQuantity.toString() + "\nData Source = CoinGecko API V3";
-
-                    T.setText(text);
                 }
-                else {
+
+                if(!isComplete) {
                     T.setText("");
                     ToastUtil.showToast(activity,"incomplete_price_data");
                 }

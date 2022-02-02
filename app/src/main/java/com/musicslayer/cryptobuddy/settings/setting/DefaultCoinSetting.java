@@ -4,6 +4,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 
 import java.util.ArrayList;
 
+// TODO Can the default fiat/coin be something that is custom?
+
 public class DefaultCoinSetting extends Setting {
     public static Coin value;
     public void updateValue() { value = (Coin)getOptionValues().get(chosenOptionPosition); }

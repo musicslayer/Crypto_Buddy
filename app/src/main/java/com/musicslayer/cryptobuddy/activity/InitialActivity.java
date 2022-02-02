@@ -8,9 +8,11 @@ import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
@@ -34,14 +36,13 @@ import java.util.Date;
 //  NFT Viewer
 //  Reflections Calculator
 //  Use TradeView API
-//  Allow user to choose "Unknown/Other Asset" if they want something I don't support.
 //  "Tax" View (i.e. Calculate cost basis of transactions)
 //  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 
 // TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
 // TODO Actually implement Coinbase/Gemini API.
 
-// TODO Sorting for A/E Info/Discrepancy, and Total Dialog.
+// TODO Update the "Reset Data" section of the settings.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -63,7 +64,6 @@ public class InitialActivity extends BaseActivity {
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
         Exchange.initialize(applicationContext);
-        Network.initialize(applicationContext);
         AddressAPI.initialize(applicationContext);
         PriceAPI.initialize(applicationContext);
         ExchangeAPI.initialize(applicationContext);
@@ -77,6 +77,11 @@ public class InitialActivity extends BaseActivity {
         InAppPurchase.setWrapperPurchasesUpdatedListener(this);
         InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
         InAppPurchase.initialize(applicationContext);
+
+        FiatManager.initialize(applicationContext);
+        CoinManager.initialize(applicationContext);
+
+        Network.initialize(applicationContext);
 
         TokenManager.initialize(applicationContext);
         if(!Purchases.isUnlockTokensPurchased()) {

@@ -16,12 +16,14 @@ public class Persistence {
         persistentClassMap = new HashMap<>();
         persistentClassMap.put("AddressHistory", AddressHistory.class);
         persistentClassMap.put("AddressPortfolio", AddressPortfolio.class);
+        persistentClassMap.put("CoinManagerList", CoinManagerList.class);
         persistentClassMap.put("ExchangePortfolio", ExchangePortfolio.class);
+        persistentClassMap.put("FiatManagerList", FiatManagerList.class);
         persistentClassMap.put("Policy", Policy.class);
         persistentClassMap.put("Purchases", Purchases.class);
         persistentClassMap.put("Review", Review.class);
         persistentClassMap.put("SettingList", SettingList.class);
-        persistentClassMap.put("TokenList", TokenManagerList.class);
+        persistentClassMap.put("TokenManagerList", TokenManagerList.class);
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }
 

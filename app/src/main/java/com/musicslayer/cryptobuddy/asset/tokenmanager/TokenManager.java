@@ -52,7 +52,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
     // Used to store persistent state
     abstract public String getSettingsKey();
 
-    // Most times we cannot do these, but subclasses can override these if they can do any of them.
+    // Most times we cannot do lookup, but subclasses can override if they can.
     public Token lookupToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) { return null; }
 
     public boolean canGetJSON() { return false; }

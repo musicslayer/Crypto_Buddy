@@ -137,10 +137,10 @@
                 app:drawableLeftCompat="@drawable/ic_baseline_key_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_tokenManagerButton"
+                android:id="@+id/main_fiatManagerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Token\nManager"
+                android:text="Fiat\nManager"
                 app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
 
         </TableRow>
@@ -158,11 +158,32 @@
                 app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_coinManagerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coin\nManager"
+                app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/main_tableRow6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/main_cryptoConverterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Crypto\nConverter"
                 app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_tokenManagerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Token\nManager"
+                app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
 
         </TableRow>
 
@@ -189,7 +210,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/main_tableRowC"
+            android:id="@+id/main_tableRowS"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteY="80dp">

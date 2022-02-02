@@ -77,9 +77,14 @@ public class ToastUtil {
 
         toastMap.put("no_tokens", Toast.makeText(context, "There are currently no tokens in the app's database.", getToastDuration()));
 
+        toastMap.put("custom_fiat_added", Toast.makeText(context, "Custom fiat added.", getToastDuration()));
+        toastMap.put("fiats_deleted", Toast.makeText(context, "Fiats Deleted.", getToastDuration()));
+
+        toastMap.put("custom_coin_added", Toast.makeText(context, "Custom coin added.", getToastDuration()));
+        toastMap.put("coins_deleted", Toast.makeText(context, "Coins Deleted.", getToastDuration()));
+
         toastMap.put("tokens_not_downloaded", Toast.makeText(context, "Could not download all tokens.", getToastDuration()));
         toastMap.put("custom_token_added", Toast.makeText(context, "Custom token added.", getToastDuration()));
-        toastMap.put("custom_token_exists", Toast.makeText(context, "Custom token has already been added or conflicts with a previously found token.", getToastDuration()));
         toastMap.put("tokens_deleted", Toast.makeText(context, "Tokens Deleted.", getToastDuration()));
 
         toastMap.put("restoring_purchases", Toast.makeText(context, "Restoring purchases. Please wait a few seconds.", getToastDuration()));

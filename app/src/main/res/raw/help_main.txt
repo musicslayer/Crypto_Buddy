@@ -9,8 +9,12 @@ Portfolios - Store collections of data.
 --> Exchange Portfolio* - Store a collection of exchange accounts.
 
 Crypto Tools:
---> Token Manager* - Download token lists, or add your own custom tokens, to help the app recognize them.
 --> Crypto Prices - View up-to-date prices for various crypto.
 --> Crypto Converter - Convert crypto quantities.
+
+Asset Managers:
+--> Fiat Manager - Add your own custom fiats.
+--> Coin Manager - Add your own custom coins.
+--> Token Manager* - Download token lists, or add your own custom tokens, to help the app recognize them.
 
 *Premium Feature (Requires In-app Purchase)

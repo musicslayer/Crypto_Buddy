@@ -14,9 +14,11 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
@@ -43,6 +45,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public String lastButton;
     public Asset lastSearchAsset;
 
+    FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+    CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+
     public boolean includesFiat;
     public boolean includesCoin;
     public boolean includesToken;
@@ -67,12 +72,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
         super(context, attributeSet);
 
         // Initialize the sorted lists for Fiats and Coins.
-        options_fiat_sorted = Fiat.fiats;
-        options_coin_sorted = Coin.coins;
+        options_fiat_sorted = fiatManager.getFiats();
+        options_coin_sorted = coinManager.getCoins();
 
         if("full".equals(AssetDisplaySetting.value)) {
-            options_fiat_text_sorted = Fiat.fiat_display_names;
-            options_coin_text_sorted = Coin.coin_display_names;
+            options_fiat_text_sorted = fiatManager.getFiatDisplayNames();
+            options_coin_text_sorted = coinManager.getCoinDisplayNames();
 
             Collections.sort(options_fiat_text_sorted, getComparatorString());
             Collections.sort(options_fiat_sorted, getNameComparatorAsset());
@@ -81,8 +86,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
             Collections.sort(options_coin_sorted, getNameComparatorAsset());
         }
         else {
-            options_fiat_text_sorted = Fiat.fiat_names;
-            options_coin_text_sorted = Coin.coin_names;
+            options_fiat_text_sorted = fiatManager.getFiatNames();
+            options_coin_text_sorted = coinManager.getCoinNames();
 
             Collections.sort(options_fiat_text_sorted, getComparatorString());
             Collections.sort(options_fiat_sorted, getSymbolComparatorAsset());
@@ -343,11 +348,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
         int idx = bsv.spinner.getSelectedItemPosition();
 
         if("!FIAT!".equals(lastButton)) {
-            //return Fiat.fiats.get(idx);
             return options_fiat_sorted.get(idx);
         }
         else if("!COIN!".equals(lastButton)) {
-            //return Coin.coins.get(idx);
             return options_coin_sorted.get(idx);
         }
         else if("!SEARCH!".equals(lastButton)) {
@@ -378,10 +381,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private ArrayList<String> getSearchOptionsSymbols() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
-            options.addAll(Fiat.fiat_names);
+            options.addAll(fiatManager.getFiatNames());
         }
         if(includesCoin) {
-            options.addAll(Coin.coin_names);
+            options.addAll(coinManager.getCoinNames());
         }
         if(includesToken) {
             options.addAll(TokenManager.getAllTokenNames());
@@ -392,10 +395,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private ArrayList<String> getSearchOptionsNames() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
-            options.addAll(Fiat.fiat_display_names);
+            options.addAll(fiatManager.getFiatDisplayNames());
         }
         if(includesCoin) {
-            options.addAll(Coin.coin_display_names);
+            options.addAll(coinManager.getCoinDisplayNames());
         }
         if(includesToken) {
             options.addAll(TokenManager.getAllTokenDisplayNames());
@@ -406,10 +409,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private ArrayList<Asset> getSearchAssets() {
         ArrayList<Asset> assets = new ArrayList<>();
         if(includesFiat) {
-            assets.addAll(Fiat.fiats);
+            assets.addAll(fiatManager.getFiats());
         }
         if(includesCoin) {
-            assets.addAll(Coin.coins);
+            assets.addAll(coinManager.getCoins());
         }
         if(includesToken) {
             assets.addAll(TokenManager.getAllTokens());
