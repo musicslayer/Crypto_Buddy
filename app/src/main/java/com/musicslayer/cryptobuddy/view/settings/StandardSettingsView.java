@@ -40,11 +40,7 @@ public class StandardSettingsView extends SettingsView {
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        int idx = setting.getOptionNames().indexOf(setting.chosenOptionName);
-        if(idx == -1) {
-            // If saved option choice no longer exists, use default value.
-            idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
-        }
+        int idx = setting.getIndexByName(setting.chosenOptionName);
         prefText.setText(setting.getOptionDisplays().get(idx));
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {

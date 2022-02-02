@@ -30,7 +30,6 @@ import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultCoinSetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultFiatSetting;
-import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -272,14 +271,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setOptionsFiat() {
         bsv.setOptions(options_fiat_text_sorted);
 
-        Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
         Fiat defaultFiat = DefaultFiatSetting.value;
         int idx = options_fiat_sorted.indexOf(defaultFiat);
-        if(idx == -1) {
-            // If saved option choice no longer exists, use default value.
-            idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
-        }
-
         this.bsv.setSelection(idx);
 
         lastButton = "!FIAT!";
@@ -293,14 +286,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setOptionsCoin() {
         bsv.setOptions(options_coin_text_sorted);
 
-        Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
         Coin defaultCoin = DefaultCoinSetting.value;
         int idx = options_coin_sorted.indexOf(defaultCoin);
-        if(idx == -1) {
-            // If saved option choice no longer exists, use default value.
-            idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
-        }
-
         this.bsv.setSelection(idx);
 
         lastButton = "!COIN!";

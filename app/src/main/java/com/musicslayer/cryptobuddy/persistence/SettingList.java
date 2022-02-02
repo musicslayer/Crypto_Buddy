@@ -23,6 +23,17 @@ public class SettingList {
         editor.apply();
     }
 
+    public static void saveAllSettings(Context context) {
+        SharedPreferences settings = context.getSharedPreferences("settings_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        for(Setting setting : Setting.settings) {
+            editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting));
+        }
+
+        editor.apply();
+    }
+
     public static Setting loadData(Context context, String settingsKey) {
         // Setting will create empty objects, but then this method will fill them in with data.
         // If a new Setting is introduced later, it will still be created but will get no data from here.

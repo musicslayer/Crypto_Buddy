@@ -20,6 +20,8 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
+import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 public class CoinManagerView extends CrashTableRow {
@@ -60,6 +62,10 @@ public class CoinManagerView extends CrashTableRow {
                     }
 
                     CoinManagerList.updateCoinManager(getContext(), coinManager);
+
+                    Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
+                    setting.refreshSetting();
+                    SettingList.saveSetting(context, setting);
 
                     updateLayout();
                     ToastUtil.showToast(context,"coins_deleted");

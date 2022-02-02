@@ -104,12 +104,36 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         return setting;
     }
 
+    public void refreshSetting() {
+        // If the setting's current choice no longer exists, set it to the default value.
+        // Otherwise, do nothing.
+        int idx = this.getOptionNames().indexOf(this.chosenOptionName);
+        if(idx == -1) {
+            resetSetting();
+        }
+    }
+
+    public void resetSetting() {
+        // Resets a setting to its default value.
+        int idx = this.getOptionNames().indexOf(this.getDefaultOptionName());
+        this.setSetting(idx);
+    }
+
     public static void resetAllSettings() {
         // Resets all settings to their default values.
         for(Setting setting : settings) {
-            int idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
-            setting.setSetting(idx);
+            setting.resetSetting();
         }
+    }
+
+    public int getIndexByName(String name) {
+        // Return the index that goes with the name.
+        // If the name is not an option, return the setting's default index.
+        int idx = this.getOptionNames().indexOf(name);
+        if(idx == -1) {
+            idx = this.getOptionNames().indexOf(this.getDefaultOptionName());
+        }
+        return idx;
     }
 
     public String serializationVersion() { return "1"; }

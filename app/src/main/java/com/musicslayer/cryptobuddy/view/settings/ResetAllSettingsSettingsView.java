@@ -42,7 +42,11 @@ public class ResetAllSettingsSettingsView extends SettingsView {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
                     Setting.resetAllSettings();
+
+                    // Clear out any existing data, and then make sure our recently defaulted settings are saved.
                     SettingList.resetAllData(context);
+                    SettingList.saveAllSettings(context);
+
                     ContextUtil.getActivityFromContext(context).recreate();
                     ToastUtil.showToast(context,"reset_settings");
                 }
