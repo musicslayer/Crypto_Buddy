@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class MessageLengthSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Integer)getSettingValue(); }
 
     public String getKey() { return "MessageLengthSetting"; }
     public String getName() { return "MessageLengthSetting"; }

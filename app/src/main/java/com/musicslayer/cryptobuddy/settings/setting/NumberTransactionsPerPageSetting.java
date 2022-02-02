@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class NumberTransactionsPerPageSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Integer)getSettingValue(); }
 
     public String getKey() { return "NumberTransactionsPerPageSetting"; }
     public String getName() { return "NumberTransactionsPerPageSetting"; }

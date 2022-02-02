@@ -22,6 +22,7 @@ public class TimeZoneManager {
 
     public static ArrayList<ZoneId> getAvailableTimeZones() {
         // Return the time zone strings directly, sorted by time zone offset for "now".
+        // This list should not change while the app is running.
         ArrayList<ZoneId> zoneIdArrayList = new ArrayList<>();
 
         for(String zoneIdString : ZoneId.getAvailableZoneIds()) {

@@ -39,26 +39,25 @@ public class StandardSettingsView extends SettingsView {
 
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        int idx = setting.getIndexByName(setting.chosenOptionName);
-        prefText.setText(setting.getOptionDisplays().get(idx));
+        prefText.setText(setting.chosenOptionDisplay);
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                int oldSetting = setting.chosenOptionPosition;
-
+                String oldSetting = setting.chosenOptionName;
                 setting.setSetting(pos);
-                prefText.setText(setting.getOptionDisplays().get(pos));
+                String newSetting = setting.chosenOptionName;
+
+                prefText.setText(setting.chosenOptionDisplay);
                 SettingList.saveSetting(context, setting);
 
-                if(oldSetting != pos && setting.needsRefresh()) {
+                if(!oldSetting.equals(newSetting) && setting.needsRecreate()) {
                     ContextUtil.getActivityFromContext(context).recreate();
                 }
             }
         });
 
-        bsv.spinner.setSelection(idx);
+        bsv.spinner.setSelection(setting.getChosenOptionNameIndex());
 
         prefText.setPadding(0,0,0, 50);
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class MaxNumberTransactionsSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Integer)getSettingValue(); }
 
     public String getKey() { return "MaxNumberTransactionsSetting"; }
     public String getName() { return "MaxNumberTransactionsSetting"; }

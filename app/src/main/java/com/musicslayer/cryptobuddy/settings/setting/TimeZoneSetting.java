@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class TimeZoneSetting extends Setting {
     public static ZoneId value;
-    public void updateValue() { value = (ZoneId)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (ZoneId)getSettingValue(); }
 
     public String getKey() { return "TimeZoneSetting"; }
     public String getName() { return "TimeZoneSetting"; }

@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public class OrientationSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Integer)getSettingValue(); }
 
     public String getKey() { return "OrientationSetting"; }
     public String getName() { return "OrientationSetting"; }
     public String getDisplayName() { return "Orientation"; }
     public String getSettingsKey() { return "orientation"; }
 
-    public boolean needsRefresh() { return true; }
+    public boolean needsRecreate() { return true; }
 
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();

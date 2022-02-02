@@ -175,6 +175,7 @@ public class LocaleManager {
 
     public static ArrayList<Locale> getAvailableLocalesNumeric() {
         // Return all numeric locales, sorted by name.
+        // This list should not change while the app is running.
         ArrayList<Locale> localeArrayList = new ArrayList<>(Arrays.asList(NumberFormat.getAvailableLocales()));
 
         Collections.sort(localeArrayList, (a, b) -> a.toString().compareToIgnoreCase(b.toString()));
@@ -184,6 +185,7 @@ public class LocaleManager {
 
     public static ArrayList<Locale> getAvailableLocalesDatetime() {
         // Return all datetime locales, sorted by name.
+        // This list should not change while the app is running.
         ArrayList<Locale> localeArrayList = new ArrayList<>(Arrays.asList(Calendar.getAvailableLocales()));
 
         Collections.sort(localeArrayList, (a, b) -> a.toString().compareToIgnoreCase(b.toString()));

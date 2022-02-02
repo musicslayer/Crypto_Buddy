@@ -43,22 +43,20 @@ public class MessageSettingsView extends SettingsView {
 
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-        int idx = setting.getIndexByName(setting.chosenOptionName);
-        prefText.setText(setting.getOptionDisplays().get(idx));
+        prefText.setText(setting.chosenOptionDisplay);
 
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 setting.setSetting(pos);
-                prefText.setText(setting.getOptionDisplays().get(pos));
+                prefText.setText(setting.chosenOptionDisplay);
                 SettingList.saveSetting(context, setting);
 
                 ToastUtil.loadAllToasts(context.getApplicationContext());
             }
         });
 
-        bsv.spinner.setSelection(setting.chosenOptionPosition);
+        bsv.spinner.setSelection(setting.getChosenOptionNameIndex());
 
         final AppCompatButton B_MessageTest = new AppCompatButton(context);
         B_MessageTest.setText("Message Test");

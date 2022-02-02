@@ -20,8 +20,8 @@ abstract public class Setting implements Serialization.SerializableToJSON {
     public static ArrayList<String> setting_names;
     public static ArrayList<String> setting_display_names;
 
-    public int chosenOptionPosition;
     public String chosenOptionName;
+    public String chosenOptionDisplay;
 
     abstract public String getKey();
     abstract public String getName();
@@ -37,16 +37,36 @@ abstract public class Setting implements Serialization.SerializableToJSON {
     abstract public <T> ArrayList<T> getOptionValues();
     abstract public void updateValue();
 
-    public void setSetting(int chosenOptionPosition) {
-        this.chosenOptionPosition = chosenOptionPosition;
-        this.chosenOptionName = getOptionNames().get(chosenOptionPosition);
+    public int getChosenOptionNameIndex() {
+        // This is used by the SettingsActivity's spinners.
+        // Return the index that goes with the chosen option name.
+        return this.getOptionNames().indexOf(chosenOptionName);
+    }
+
+    public void setSetting(int chosenOptionNameIdx) {
+        // This is used by the SettingsActivity's spinners.
+        setSetting(this.getOptionNames().get(chosenOptionNameIdx));
+    }
+
+    public void setSetting(String chosenOptionName) {
+        this.chosenOptionName = chosenOptionName;
+        this.chosenOptionDisplay = getOptionDisplays().get(this.getOptionNames().indexOf(chosenOptionName));
+
+        // Each setting must call this method because the value may be of a different type.
         updateValue();
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getSettingValue() {
+        int idx = getOptionNames().indexOf(chosenOptionName);
+        return (T)getOptionValues().get(idx);
+    }
+
     // Usually this is not the case, but when some settings are changed we must recreate the Activity.
-    public boolean needsRefresh() { return false; }
+    public boolean needsRecreate() { return false; }
 
     // Can be used to modify how we display options with extra data that we don't want to store (like the time zone offset).
+    // This does not affect the option name itself, merely how it is displayed.
     public String modifyOptionName(String optionName) { return optionName; }
 
     public ArrayList<String> getModifiedOptionNames() {
@@ -73,20 +93,15 @@ abstract public class Setting implements Serialization.SerializableToJSON {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
             Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
 
-            int idx;
-            if(copySetting == null) {
-                // If this is a new setting, use default value.
-                idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
+            String optionName;
+            if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {
+                optionName = copySetting.chosenOptionName;
             }
             else {
-                idx = setting.getOptionNames().indexOf(copySetting.chosenOptionName);
-                if(idx == -1) {
-                    // If saved option choice no longer exists, use default value.
-                    idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
-                }
+                optionName = setting.getDefaultOptionName();
             }
 
-            setting.setSetting(idx);
+            setting.setSetting(optionName);
 
             settings.add(setting);
             setting_map.put(settingName, setting);
@@ -107,16 +122,14 @@ abstract public class Setting implements Serialization.SerializableToJSON {
     public void refreshSetting() {
         // If the setting's current choice no longer exists, set it to the default value.
         // Otherwise, do nothing.
-        int idx = this.getOptionNames().indexOf(this.chosenOptionName);
-        if(idx == -1) {
+        if(!this.getOptionNames().contains(this.chosenOptionName)) {
             resetSetting();
         }
     }
 
     public void resetSetting() {
         // Resets a setting to its default value.
-        int idx = this.getOptionNames().indexOf(this.getDefaultOptionName());
-        this.setSetting(idx);
+        this.setSetting(this.getDefaultOptionName());
     }
 
     public static void resetAllSettings() {
@@ -126,23 +139,12 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         }
     }
 
-    public int getIndexByName(String name) {
-        // Return the index that goes with the name.
-        // If the name is not an option, return the setting's default index.
-        int idx = this.getOptionNames().indexOf(name);
-        if(idx == -1) {
-            idx = this.getOptionNames().indexOf(this.getDefaultOptionName());
-        }
-        return idx;
-    }
-
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("settingsKey", Serialization.string_serialize(getSettingsKey()))
-            .put("chosenOptionPosition", Serialization.int_serialize(chosenOptionPosition))
             .put("chosenOptionName", Serialization.string_serialize(chosenOptionName))
             .toStringOrNull();
     }
@@ -151,14 +153,12 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String settingsKey = Serialization.string_deserialize(o.getString("settingsKey"));
-        int chosenOptionPosition = Serialization.int_deserialize(o.getString("chosenOptionPosition"));
         String chosenOptionName = Serialization.string_deserialize(o.getString("chosenOptionName"));
 
         // This is a dummy object that only has to hold onto the data.
         Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);
 
-        // The option may not actually be at this position anymore, but this was true at the time of serialization.
-        setting.chosenOptionPosition = chosenOptionPosition;
+        // The option may not actually exist anymore, but it did at the time of serialization.
         setting.chosenOptionName = chosenOptionName;
 
         return setting;

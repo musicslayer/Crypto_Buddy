@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class DeleteDownloadedTokensSetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (String)getSettingValue(); }
 
     public String getKey() { return "DeleteDownloadedTokensSetting"; }
     public String getName() { return "DeleteDownloadedTokensSetting"; }

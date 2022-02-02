@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class DatetimeLocaleSetting extends Setting {
     public static Locale value;
-    public void updateValue() { value = (Locale)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Locale)getSettingValue(); }
 
     public String getKey() { return "DatetimeLocaleSetting"; }
     public String getName() { return "DatetimeLocaleSetting"; }

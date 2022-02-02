@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public class DarkModeSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getOptionValues().get(chosenOptionPosition); }
+    public void updateValue() { value = (Integer)getSettingValue(); }
 
     public String getKey() { return "DarkModeSetting"; }
     public String getName() { return "DarkModeSetting"; }
     public String getDisplayName() { return "Dark Mode"; }
     public String getSettingsKey() { return "dark"; }
 
-    public boolean needsRefresh() { return true; }
+    public boolean needsRecreate() { return true; }
 
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
