@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -80,11 +81,11 @@ public class CryptoConverterDialog extends BaseDialog {
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
 
-                ArrayList<Crypto> cryptoArrayList = new ArrayList<>();
-                cryptoArrayList.add(cryptoPrimary);
-                cryptoArrayList.add(cryptoSecondary);
+                ArrayList<Asset> assetArrayList = new ArrayList<>();
+                assetArrayList.add(cryptoPrimary);
+                assetArrayList.add(cryptoSecondary);
 
-                CryptoPrice cryptoPrice = new CryptoPrice(cryptoArrayList, priceFiat);
+                CryptoPrice cryptoPrice = new CryptoPrice(assetArrayList, priceFiat);
 
                 PriceData priceData = PriceData.getPriceData(cryptoPrice);
                 ProgressDialogFragment.setValue(Serialization.serialize(priceData));

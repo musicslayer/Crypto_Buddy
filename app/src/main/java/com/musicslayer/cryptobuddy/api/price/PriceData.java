@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.api.price;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
@@ -10,8 +10,8 @@ public class PriceData implements Serialization.SerializableToJSON {
     public CryptoPrice cryptoPrice;
     public PriceAPI priceAPI_price;
     public PriceAPI priceAPI_marketCap;
-    public HashMap<Crypto, AssetQuantity> priceHashMap;
-    public HashMap<Crypto, AssetQuantity> marketCapHashMap;
+    public HashMap<Asset, AssetQuantity> priceHashMap;
+    public HashMap<Asset, AssetQuantity> marketCapHashMap;
 
     public String serializationVersion() { return "1"; }
 
@@ -30,12 +30,12 @@ public class PriceData implements Serialization.SerializableToJSON {
         CryptoPrice cryptoPrice = Serialization.deserialize(o.getJSONObjectString("cryptoPrice"), CryptoPrice.class);
         PriceAPI priceAPI_price = Serialization.deserialize(o.getJSONObjectString("priceAPI_price"), PriceAPI.class);
         PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObjectString("priceAPI_marketCap"), PriceAPI.class);
-        HashMap<Crypto, AssetQuantity> priceHashMap = Serialization.deserializeHashMap(o.getJSONObjectString("priceHashMap"), Crypto.class, AssetQuantity.class);
-        HashMap<Crypto, AssetQuantity> marketCapHashMap = Serialization.deserializeHashMap(o.getJSONObjectString("marketCapHashMap"), Crypto.class, AssetQuantity.class);
+        HashMap<Asset, AssetQuantity> priceHashMap = Serialization.deserializeHashMap(o.getJSONObjectString("priceHashMap"), Asset.class, AssetQuantity.class);
+        HashMap<Asset, AssetQuantity> marketCapHashMap = Serialization.deserializeHashMap(o.getJSONObjectString("marketCapHashMap"), Asset.class, AssetQuantity.class);
         return new PriceData(cryptoPrice, priceAPI_price, priceAPI_marketCap, priceHashMap, marketCapHashMap);
     }
 
-    public PriceData(CryptoPrice cryptoPrice, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, HashMap<Crypto, AssetQuantity> priceHashMap, HashMap<Crypto, AssetQuantity> marketCapHashMap) {
+    public PriceData(CryptoPrice cryptoPrice, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, HashMap<Asset, AssetQuantity> priceHashMap, HashMap<Asset, AssetQuantity> marketCapHashMap) {
         this.cryptoPrice = cryptoPrice;
         this.priceAPI_price = priceAPI_price;
         this.priceAPI_marketCap = priceAPI_marketCap;
@@ -46,8 +46,8 @@ public class PriceData implements Serialization.SerializableToJSON {
     public static PriceData getAllData(CryptoPrice cryptoPrice) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
-        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
-        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+        HashMap<Asset, AssetQuantity> priceHashMap_f = null;
+        HashMap<Asset, AssetQuantity> marketCapHashMap_f = null;
 
         // Get price information.
         for(PriceAPI priceAPI : PriceAPI.price_apis) {
@@ -81,8 +81,8 @@ public class PriceData implements Serialization.SerializableToJSON {
     public static PriceData getPriceData(CryptoPrice cryptoPrice) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
-        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
-        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+        HashMap<Asset, AssetQuantity> priceHashMap_f = null;
+        HashMap<Asset, AssetQuantity> marketCapHashMap_f = null;
 
         // Get price information.
         for(PriceAPI priceAPI : PriceAPI.price_apis) {
@@ -103,8 +103,8 @@ public class PriceData implements Serialization.SerializableToJSON {
     public static PriceData getMarketCapData(CryptoPrice cryptoPrice) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
-        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
-        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+        HashMap<Asset, AssetQuantity> priceHashMap_f = null;
+        HashMap<Asset, AssetQuantity> marketCapHashMap_f = null;
 
         // Get market cap information.
         for(PriceAPI priceAPI : PriceAPI.price_apis) {
@@ -125,8 +125,8 @@ public class PriceData implements Serialization.SerializableToJSON {
     public static PriceData getNoData(CryptoPrice cryptoPrice) {
         PriceAPI priceAPI_price_f = UnknownPriceAPI.createUnknownPriceAPI(null);
         PriceAPI priceAPI_marketCap_f = UnknownPriceAPI.createUnknownPriceAPI(null);
-        HashMap<Crypto, AssetQuantity> priceHashMap_f = null;
-        HashMap<Crypto, AssetQuantity> marketCapHashMap_f = null;
+        HashMap<Asset, AssetQuantity> priceHashMap_f = null;
+        HashMap<Asset, AssetQuantity> marketCapHashMap_f = null;
 
         return new PriceData(cryptoPrice, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f);
     }

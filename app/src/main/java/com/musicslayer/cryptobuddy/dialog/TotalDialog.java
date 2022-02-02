@@ -12,7 +12,6 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -62,31 +61,19 @@ public class TotalDialog extends BaseDialog {
 
                 HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
 
-                ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
-                Asset.sortAscendingByType(keySet);
-
-                // Cryptos and Fiat need to be converted by different means.
-                ArrayList<Crypto> cryptoKeySet = new ArrayList<>();
-                for(Asset asset : keySet) {
-                    if(asset instanceof Fiat) {
-                        // TODO Actually perform fiat conversions. (Use Bitcoin as an intermediary?)
-                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetQuantity("1", asset));
-                    }
-                    else if(asset instanceof Crypto) {
-                        cryptoKeySet.add((Crypto)asset);
-                    }
-                }
+                ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
+                Asset.sortAscendingByType(assetKeySet);
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
-                CryptoPrice cryptoPrice = new CryptoPrice(cryptoKeySet, priceFiat);
+                CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
 
                 PriceData priceData = PriceData.getPriceData(cryptoPrice);
                 if(priceData.isPriceComplete()) {
-                    HashMap<Crypto, AssetQuantity> priceHashMap = priceData.priceHashMap;
-                    for(Crypto crypto : priceHashMap.keySet()) {
-                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
+                    HashMap<Asset, AssetQuantity> priceHashMap = priceData.priceHashMap;
+                    for(Asset asset : priceHashMap.keySet()) {
+                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, asset);
                         if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, crypto, price);
+                            HashMapUtil.putValueInMap(newPriceMap, asset, price);
                         }
                     }
                 }

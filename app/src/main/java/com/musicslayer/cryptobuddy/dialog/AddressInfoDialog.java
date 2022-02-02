@@ -15,7 +15,6 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -72,31 +71,19 @@ public class AddressInfoDialog extends BaseDialog {
                     HashMapUtil.putValueInMap(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
                 }
 
-                ArrayList<Asset> keySet = new ArrayList<>(deltaMap.keySet());
-                Asset.sortAscendingByType(keySet);
-
-                // Cryptos and Fiat need to be converted by different means.
-                ArrayList<Crypto> cryptoKeySet = new ArrayList<>();
-                for(Asset asset : keySet) {
-                    if(asset instanceof Fiat) {
-                        // TODO Actually perform fiat conversions. (Use Bitcoin as an intermediary?)
-                        HashMapUtil.putValueInMap(newPriceMap, asset, new AssetQuantity("1", asset));
-                    }
-                    else if(asset instanceof Crypto) {
-                        cryptoKeySet.add((Crypto)asset);
-                    }
-                }
+                ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
+                Asset.sortAscendingByType(assetKeySet);
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
-                CryptoPrice cryptoPrice = new CryptoPrice(cryptoKeySet, priceFiat);
+                CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
 
                 PriceData priceData = PriceData.getPriceData(cryptoPrice);
                 if(priceData.isPriceComplete()) {
-                    HashMap<Crypto, AssetQuantity> priceHashMap = priceData.priceHashMap;
-                    for(Crypto crypto : priceHashMap.keySet()) {
-                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
+                    HashMap<Asset, AssetQuantity> priceHashMap = priceData.priceHashMap;
+                    for(Asset asset : priceHashMap.keySet()) {
+                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, asset);
                         if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, crypto, price);
+                            HashMapUtil.putValueInMap(newPriceMap, asset, price);
                         }
                     }
                 }
@@ -177,9 +164,6 @@ public class AddressInfoDialog extends BaseDialog {
         AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
 
         TextView T = findViewById(R.id.address_info_dialog_textView);
-        SelectAndSearchView fssv = findViewById(R.id.address_info_dialog_fiatSelectAndSearchView);
-
-        Fiat priceFiat = (Fiat)fssv.getChosenAsset();
         T.setText(Html.fromHtml(addressData.getInfoString(priceMap, true)));
     }
 
