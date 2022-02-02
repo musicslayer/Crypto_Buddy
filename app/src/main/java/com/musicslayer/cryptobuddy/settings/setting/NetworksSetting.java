@@ -18,6 +18,10 @@ public class NetworksSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "All";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Recognize all addresses.");

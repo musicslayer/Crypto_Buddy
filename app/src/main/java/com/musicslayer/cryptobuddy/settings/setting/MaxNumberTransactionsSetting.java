@@ -21,6 +21,10 @@ public class MaxNumberTransactionsSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "5000";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Analyze up to 500 transactions per address.\n** Excessive transactions may crash older devices. **");

@@ -19,6 +19,10 @@ public class ConfirmationSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Use Confirmation Code";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Confirm deletes and resets with a small input code to help prevent accidental removals.");

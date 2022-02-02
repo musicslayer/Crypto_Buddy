@@ -32,6 +32,7 @@ abstract public class Setting implements Serialization.SerializableToJSON {
 
     // These have all the options a user can choose.
     abstract public ArrayList<String> getOptionNames();
+    abstract public String getDefaultOptionName();
     abstract public ArrayList<String> getOptionDisplays();
     abstract public <T> ArrayList<T> getOptionValues();
     abstract public void updateValue();
@@ -70,20 +71,19 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         setting_names = FileUtil.readFileIntoLines(context, R.raw.settings_setting);
         for(String settingName : setting_names) {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
-
             Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
+
             int idx;
             if(copySetting == null) {
-                // If this is a new setting, just set it to the first value.
-                idx = 0;
+                // If this is a new setting, use default value.
+                idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
             }
             else {
                 idx = setting.getOptionNames().indexOf(copySetting.chosenOptionName);
                 if(idx == -1) {
-                    // If saved option choice no longer exists, just default to first one.
-                    idx = 0;
+                    // If saved option choice no longer exists, use default value.
+                    idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
                 }
-                setting.setSetting(idx);
             }
 
             setting.setSetting(idx);
@@ -102,6 +102,14 @@ abstract public class Setting implements Serialization.SerializableToJSON {
         }
 
         return setting;
+    }
+
+    public static void resetAllSettings() {
+        // Resets all settings to their default values.
+        for(Setting setting : settings) {
+            int idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
+            setting.setSetting(idx);
+        }
     }
 
     public String serializationVersion() { return "1"; }

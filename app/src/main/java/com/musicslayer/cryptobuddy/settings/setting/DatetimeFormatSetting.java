@@ -23,6 +23,10 @@ public class DatetimeFormatSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Medium";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Short format datetime:\n" + DateTimeUtil.toDateString(FormatStyle.SHORT));

@@ -8,25 +8,35 @@ import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 import java.util.ArrayList;
 
 public class ResetAllSettingsSetting extends Setting {
-    public void updateValue() {}
+    public static String value;
+    public void updateValue() { value = (String)getOptionValues().get(chosenOptionPosition); }
 
     public String getKey() { return "ResetAllSettingsSetting"; }
     public String getName() { return "ResetAllSettingsSetting"; }
     public String getDisplayName() { return "Reset All Settings"; }
     public String getSettingsKey() { return "reset_all_settings"; }
 
-    public void setSetting(int chosenOptionPosition) {}
-
     public ArrayList<String> getOptionNames() {
-        return null;
+        ArrayList<String> optionNames = new ArrayList<>();
+        optionNames.add("?");
+        return optionNames;
+    }
+
+    public String getDefaultOptionName() {
+        return "?";
     }
 
     public ArrayList<String> getOptionDisplays() {
-        return null;
+        ArrayList<String> optionDisplays = new ArrayList<>();
+        optionDisplays.add("?");
+        return optionDisplays;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        return null;
+        ArrayList<String> optionValues = new ArrayList<>();
+        optionValues.add("?");
+        return (ArrayList<T>)optionValues;
     }
 
     public SettingsView createSettingView(Context context) {

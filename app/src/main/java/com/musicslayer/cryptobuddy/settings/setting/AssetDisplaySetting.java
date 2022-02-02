@@ -18,6 +18,10 @@ public class AssetDisplaySetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Use Full Asset Names";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Use full asset names.\nUS Dollar, Bitcoin, Litecoin, Dogecoin\n(Searches always allow choice of symbol or name.)");

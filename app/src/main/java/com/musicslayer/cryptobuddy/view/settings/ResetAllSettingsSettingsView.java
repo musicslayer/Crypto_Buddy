@@ -41,6 +41,7 @@ public class ResetAllSettingsSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
+                    Setting.resetAllSettings();
                     SettingList.resetAllData(context);
                     ContextUtil.getActivityFromContext(context).recreate();
                     ToastUtil.showToast(context,"reset_settings");

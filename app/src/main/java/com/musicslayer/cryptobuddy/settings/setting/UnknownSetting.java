@@ -20,6 +20,10 @@ public class UnknownSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "?";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("?");

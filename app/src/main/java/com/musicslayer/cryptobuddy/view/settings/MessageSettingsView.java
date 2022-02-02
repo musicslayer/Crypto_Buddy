@@ -46,8 +46,8 @@ public class MessageSettingsView extends SettingsView {
 
         int idx = setting.getOptionNames().indexOf(setting.chosenOptionName);
         if(idx == -1) {
-            // If saved option choice no longer exists, just default to first one.
-            idx = 0;
+            // If saved option choice no longer exists, use default value.
+            idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
         }
         prefText.setText(setting.getOptionDisplays().get(idx));
 

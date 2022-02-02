@@ -40,11 +40,10 @@ public class StandardSettingsView extends SettingsView {
         final TextView prefText=new TextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        // TODO Default to each setting's default value.
         int idx = setting.getOptionNames().indexOf(setting.chosenOptionName);
         if(idx == -1) {
-            // If saved option choice no longer exists, just default to first one.
-            idx = 0;
+            // If saved option choice no longer exists, use default value.
+            idx = setting.getOptionNames().indexOf(setting.getDefaultOptionName());
         }
         prefText.setText(setting.getOptionDisplays().get(idx));
 

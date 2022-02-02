@@ -19,6 +19,10 @@ public class PriceDisplaySetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Forward";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show price in both forward and backward directions. For example, if you buy or sell 1 BTC for 20000 USD, the forward price is 1 BTC / 20000 USD, and the backward price is 1 USD / 0.00005 BTC.");

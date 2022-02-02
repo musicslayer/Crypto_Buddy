@@ -18,6 +18,10 @@ public class NumberDecimalPlacesSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Truncated";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show all decimal places expected for the crypto.\n0.00010000 BTC.");

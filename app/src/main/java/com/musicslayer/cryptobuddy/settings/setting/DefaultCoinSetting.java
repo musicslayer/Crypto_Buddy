@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.settings.setting;
 
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.BTC;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 
 import java.util.ArrayList;
@@ -23,6 +24,12 @@ public class DefaultCoinSetting extends Setting {
         }
 
         return optionNames;
+    }
+
+    public String getDefaultOptionName() {
+        // Assume that BTC is always available.
+        Coin coin = new BTC();
+        return coin.getDisplayName() + " (" + coin.getName() + ")";
     }
 
     public ArrayList<String> getOptionDisplays() {

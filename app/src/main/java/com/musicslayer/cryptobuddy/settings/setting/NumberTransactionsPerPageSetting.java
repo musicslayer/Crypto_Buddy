@@ -21,6 +21,10 @@ public class NumberTransactionsPerPageSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "100";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show 10 transactions per page.\n** Showing too many transactions per page may be slower on older devices. **");

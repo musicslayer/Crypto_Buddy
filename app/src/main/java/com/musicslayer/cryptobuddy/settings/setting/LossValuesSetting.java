@@ -23,6 +23,10 @@ public class LossValuesSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Red";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show asset losses using numbers of the chosen locale's negative format.");

@@ -24,6 +24,10 @@ public class MessageLengthSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Short";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show messages for a shorter time.");

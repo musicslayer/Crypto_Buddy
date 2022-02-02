@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.settings.setting;
 
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiat.USD;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 
 import java.util.ArrayList;
@@ -23,6 +24,12 @@ public class DefaultFiatSetting extends Setting {
         }
 
         return optionNames;
+    }
+
+    public String getDefaultOptionName() {
+        // Assume that USD is always available.
+        Fiat fiat = new USD();
+        return fiat.getDisplayName() + " (" + fiat.getName() + ")";
     }
 
     public ArrayList<String> getOptionDisplays() {

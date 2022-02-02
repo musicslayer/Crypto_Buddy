@@ -20,6 +20,10 @@ public class ProgressDisplaySetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Combo";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Show progress as both a number complete out of the total and a percentage complete.\n7/20 (35%) Finished");

@@ -19,6 +19,10 @@ public class TimeoutSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "60 Seconds";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("30 seconds timeout for each API call.");

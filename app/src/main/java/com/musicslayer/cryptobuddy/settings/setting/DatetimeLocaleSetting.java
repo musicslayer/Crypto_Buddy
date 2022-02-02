@@ -27,6 +27,10 @@ public class DatetimeLocaleSetting extends Setting {
         return optionNames;
     }
 
+    public String getDefaultOptionName() {
+        return "Match System";
+    }
+
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Match system setting for datetime locale.");
