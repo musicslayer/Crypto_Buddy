@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
+import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -16,7 +18,6 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
-import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -79,29 +80,26 @@ public class CryptoConverterDialog extends BaseDialog {
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
 
-                PriceData priceDataPrimary = PriceData.getPriceData(cryptoPrimary, priceFiat);
-                if(ProgressDialogFragment.isCancelled()) { return; }
-                PriceData priceDataSecondary = PriceData.getPriceData(cryptoSecondary, priceFiat);
+                ArrayList<Crypto> cryptoArrayList = new ArrayList<>();
+                cryptoArrayList.add(cryptoPrimary);
+                cryptoArrayList.add(cryptoSecondary);
 
-                ArrayList<PriceData> priceDataArrayList = new ArrayList<>();
-                priceDataArrayList.add(priceDataPrimary);
-                priceDataArrayList.add(priceDataSecondary);
+                CryptoPrice cryptoPrice = new CryptoPrice(cryptoArrayList, priceFiat);
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(priceDataArrayList));
+                PriceData priceData = PriceData.getPriceData(cryptoPrice);
+                ProgressDialogFragment.setValue(Serialization.serialize(priceData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<PriceData> priceDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), PriceData.class);
-                PriceData priceDataPrimary = priceDataArrayList.get(0);
-                PriceData priceDataSecondary = priceDataArrayList.get(1);
+                PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
-                if(priceDataPrimary.isPriceComplete() && priceDataSecondary.isPriceComplete()) {
+                if(priceData.isPriceComplete()) {
                     AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
-                    AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataPrimary.crypto), priceDataPrimary.price);
-                    AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", priceDataSecondary.crypto), priceDataSecondary.price);
+                    AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), priceData.priceHashMap.get(cryptoPrimary));
+                    AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), priceData.priceHashMap.get(cryptoSecondary));
                     AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
                     String text = "Conversion:\n" + primaryAssetQuantity + " = " + secondaryAssetQuantity.toString() +

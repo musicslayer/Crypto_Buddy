@@ -13,7 +13,8 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.api.price.BulkPriceData;
+import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
+import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -85,9 +86,11 @@ public class AddressDiscrepancyDialog extends BaseDialog {
                 }
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
-                BulkPriceData bulkPriceData = BulkPriceData.getBulkPriceData(cryptoKeySet, priceFiat);
-                if(bulkPriceData.isPriceComplete()) {
-                    HashMap<Crypto, AssetQuantity> priceHashMap = bulkPriceData.priceHashMap;
+                CryptoPrice cryptoPrice = new CryptoPrice(cryptoKeySet, priceFiat);
+
+                PriceData priceData = PriceData.getPriceData(cryptoPrice);
+                if(priceData.isPriceComplete()) {
+                    HashMap<Crypto, AssetQuantity> priceHashMap = priceData.priceHashMap;
                     for(Crypto crypto : priceHashMap.keySet()) {
                         AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, crypto);
                         if(price != null) {

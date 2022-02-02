@@ -34,21 +34,9 @@ abstract public class PriceAPI extends API {
         }
     }
 
-    public boolean isSupported(ArrayList<Crypto> cryptoArrayList) {
-        // Everything in the array must be supported.
-        for(Crypto crypto : cryptoArrayList) {
-            if(!isSupported(crypto)) { return false; }
-        }
-
-        return true;
-    }
-
-    abstract public boolean isSupported(Crypto crypto);
-
-    abstract public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList, Fiat fiat);
-    abstract public AssetQuantity getPrice(Crypto crypto, Fiat fiat);
-    abstract public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList, Fiat fiat);
-    abstract public AssetQuantity getMarketCap(Crypto crypto, Fiat fiat);
+    abstract public boolean isSupported(CryptoPrice cryptoPrice);
+    abstract public HashMap<Crypto, AssetQuantity> getPrice(CryptoPrice cryptoPrice);
+    abstract public HashMap<Crypto, AssetQuantity> getMarketCap(CryptoPrice cryptoPrice);
 
     public static PriceAPI getPriceAPIFromKey(String key) {
         PriceAPI priceAPI = price_api_map.get(key);

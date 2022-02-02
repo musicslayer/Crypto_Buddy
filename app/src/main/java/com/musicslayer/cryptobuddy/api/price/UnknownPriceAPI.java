@@ -30,11 +30,9 @@ public class UnknownPriceAPI extends PriceAPI {
         }
     }
 
-    public boolean isSupported(Crypto crypto) { return false; }
-    public HashMap<Crypto, AssetQuantity> getBulkPrice(ArrayList<Crypto> cryptoArrayList, Fiat fiat) { return null; }
-    public HashMap<Crypto, AssetQuantity> getBulkMarketCap(ArrayList<Crypto> cryptoArrayList, Fiat fiat) { return null; }
-    public AssetQuantity getPrice(Crypto crypto, Fiat fiat) { return null; }
-    public AssetQuantity getMarketCap(Crypto crypto, Fiat fiat) { return null; }
+    public boolean isSupported(CryptoPrice cryptoPrice) { return false; }
+    public HashMap<Crypto, AssetQuantity> getPrice(CryptoPrice cryptoPrice) { return null; }
+    public HashMap<Crypto, AssetQuantity> getMarketCap(CryptoPrice cryptoPrice) { return null; }
 
     public static UnknownPriceAPI createUnknownPriceAPI(String key) {
         return new UnknownPriceAPI(key);

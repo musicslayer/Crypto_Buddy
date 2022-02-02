@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.musicslayer.cryptobuddy.api.price.CryptoPrice;
+import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -14,11 +16,12 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
-import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
+
+import java.util.ArrayList;
 
 public class CryptoPricesDialog extends BaseDialog {
     Crypto crypto;
@@ -55,7 +58,12 @@ public class CryptoPricesDialog extends BaseDialog {
 
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
 
-                PriceData priceData = PriceData.getAllData(crypto, priceFiat);
+                ArrayList<Crypto> cryptoArrayList = new ArrayList<>();
+                cryptoArrayList.add(crypto);
+
+                CryptoPrice cryptoPrice = new CryptoPrice(cryptoArrayList, priceFiat);
+
+                PriceData priceData = PriceData.getAllData(cryptoPrice);
                 ProgressDialogFragment.setValue(Serialization.serialize(priceData));
             }
         });
@@ -66,8 +74,8 @@ public class CryptoPricesDialog extends BaseDialog {
                 PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(priceData.isComplete()) {
-                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", priceData.crypto), priceData.price);
-                    AssetQuantity marketCapAssetQuantity = priceData.marketCap;
+                    AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", crypto), priceData.priceHashMap.get(crypto));
+                    AssetQuantity marketCapAssetQuantity = priceData.marketCapHashMap.get(crypto);
 
                     String text = "Forward Price = " + assetPrice;
                     if("ForwardBackward".equals(PriceDisplaySetting.value)) {
