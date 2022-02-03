@@ -70,7 +70,6 @@ public class FiatManagerView extends CrashTableRow {
                     SettingList.saveSetting(context, setting);
 
                     updateLayout();
-                    ToastUtil.showToast(context,"fiats_deleted");
                 }
             }
         });

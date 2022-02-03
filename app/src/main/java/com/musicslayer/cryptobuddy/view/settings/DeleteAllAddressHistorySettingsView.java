@@ -32,7 +32,7 @@ public class DeleteAllAddressHistorySettingsView extends SettingsView {
 
         final TextView T_Reset=new TextView(context);
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        T_Reset.setText("Delete all stored address history.");
+        T_Reset.setText("Delete all address history.");
 
         BaseDialogFragment confirmDeleteAllAddressHistoryDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAllAddressHistoryDialog.class);
         confirmDeleteAllAddressHistoryDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -40,7 +40,7 @@ public class DeleteAllAddressHistorySettingsView extends SettingsView {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
                     AddressHistory.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_stored_addresses");
+                    ToastUtil.showToast(context,"reset_address_history");
                 }
             }
         });

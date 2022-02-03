@@ -229,7 +229,7 @@ public class InAppPurchase {
                         billingClient.consumeAsync(params.build(), new CrashConsumeResponseListener(context) {
                             @Override
                             public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
-                                ToastUtil.showToast(context,"refund_purchase_complete");
+                                ToastUtil.showToast(context,"refund_purchases_complete");
                             }
                         });
                     }

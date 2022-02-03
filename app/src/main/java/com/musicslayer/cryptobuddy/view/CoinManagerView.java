@@ -70,7 +70,6 @@ public class CoinManagerView extends CrashTableRow {
                     SettingList.saveSetting(context, setting);
 
                     updateLayout();
-                    ToastUtil.showToast(context,"coins_deleted");
                 }
             }
         });

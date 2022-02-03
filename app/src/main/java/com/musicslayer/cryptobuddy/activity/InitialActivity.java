@@ -42,6 +42,8 @@ import java.util.Date;
 // TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
 // TODO Actually implement Coinbase/Gemini API.
 
+// TODO Get rid of null???!!!
+
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {

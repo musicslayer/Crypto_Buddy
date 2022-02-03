@@ -137,7 +137,6 @@ public class TokenManagerView extends CrashTableRow {
                     TokenManagerList.updateTokenManager(getContext(), tokenManager);
 
                     updateLayout();
-                    ToastUtil.showToast(context,"tokens_deleted");
                 }
             }
         });
