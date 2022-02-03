@@ -16,11 +16,11 @@ public class ResetDataSettingsCategory extends SettingsCategory {
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllTransactionPortfoliosSetting"));
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllAddressPortfoliosSetting"));
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllExchangePortfoliosSetting"));
+        settingArrayList.add(Setting.getSettingFromKey("DeleteFiatsSetting"));
+        settingArrayList.add(Setting.getSettingFromKey("DeleteCoinsSetting"));
 
         if(Purchases.isUnlockTokensPurchased()) {
-            settingArrayList.add(Setting.getSettingFromKey("DeleteDownloadedTokensSetting"));
-            settingArrayList.add(Setting.getSettingFromKey("DeleteFoundTokensSetting"));
-            settingArrayList.add(Setting.getSettingFromKey("DeleteCustomTokensSetting"));
+            settingArrayList.add(Setting.getSettingFromKey("DeleteTokensSetting"));
         }
 
         // This must be last, as it resets everything.

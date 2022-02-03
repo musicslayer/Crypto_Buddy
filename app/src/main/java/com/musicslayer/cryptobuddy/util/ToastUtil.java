@@ -14,6 +14,8 @@ import java.util.HashMap;
 public class ToastUtil {
     final static HashMap<String, Toast> toastMap = new HashMap<>();
 
+    // TODO Organize/trim this...
+
     @SuppressLint({"ShowToast"})
     public static void loadAllToasts(Context context) {
         toastMap.put("setting_message_test_short", Toast.makeText(context, "Short Test Message.", getToastDuration()));
@@ -70,9 +72,9 @@ public class ToastUtil {
         toastMap.put("reset_address_portfolios", Toast.makeText(context, "Address portfolios have been deleted.", getToastDuration()));
         toastMap.put("reset_exchange_portfolios", Toast.makeText(context, "Exchange portfolios have been deleted.", getToastDuration()));
         toastMap.put("reset_transaction_portfolios", Toast.makeText(context, "Transaction portfolios have been deleted.", getToastDuration()));
-        toastMap.put("reset_downloaded_tokens", Toast.makeText(context, "Downloaded tokens have been deleted.", getToastDuration()));
-        toastMap.put("reset_found_tokens", Toast.makeText(context, "Found tokens have been deleted.", getToastDuration()));
-        toastMap.put("reset_custom_tokens", Toast.makeText(context, "Custom tokens have been deleted.", getToastDuration()));
+        toastMap.put("reset_fiats", Toast.makeText(context, "Fiats have been deleted.", getToastDuration()));
+        toastMap.put("reset_coins", Toast.makeText(context, "Coins have been deleted.", getToastDuration()));
+        toastMap.put("reset_tokens", Toast.makeText(context, "Tokens have been deleted.", getToastDuration()));
         toastMap.put("reset_everything", Toast.makeText(context, "All stored app data has been reset.", getToastDuration()));
         toastMap.put("reset_everything_fail", Toast.makeText(context, "Could not reset all stored app data.", getToastDuration()));
 

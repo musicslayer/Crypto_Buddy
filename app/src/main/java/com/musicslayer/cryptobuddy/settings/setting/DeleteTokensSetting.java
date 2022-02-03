@@ -2,19 +2,19 @@ package com.musicslayer.cryptobuddy.settings.setting;
 
 import android.content.Context;
 
-import com.musicslayer.cryptobuddy.view.settings.DeleteFoundTokensSettingsView;
+import com.musicslayer.cryptobuddy.view.settings.DeleteTokensSettingsView;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 
 import java.util.ArrayList;
 
-public class DeleteFoundTokensSetting extends Setting {
+public class DeleteTokensSetting extends Setting {
     public static String value;
     public void updateValue() { value = (String)getSettingValue(); }
 
-    public String getKey() { return "DeleteFoundTokensSetting"; }
-    public String getName() { return "DeleteFoundTokensSetting"; }
-    public String getDisplayName() { return "Delete Found Tokens"; }
-    public String getSettingsKey() { return "delete_found_tokens"; }
+    public String getKey() { return "DeleteTokensSetting"; }
+    public String getName() { return "DeleteTokensSetting"; }
+    public String getDisplayName() { return "Delete Tokens"; }
+    public String getSettingsKey() { return "delete_tokens"; }
 
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
@@ -40,6 +40,6 @@ public class DeleteFoundTokensSetting extends Setting {
     }
 
     public SettingsView createSettingView(Context context) {
-        return new DeleteFoundTokensSettingsView(context, this);
+        return new DeleteTokensSettingsView(context, this);
     }
 }
