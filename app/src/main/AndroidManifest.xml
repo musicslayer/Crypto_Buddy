@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.musicslayer.cryptobuddy">
 
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
@@ -25,7 +27,11 @@
         android:theme="@style/Theme.CryptoBuddy"
         android:icon="@mipmap/app_icon"
         android:roundIcon="@mipmap/app_icon_round"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        tools:replace="android:allowBackup"
+        tools:targetApi="s">
 
         <provider
             android:name="com.musicslayer.cryptobuddy.provider.CachedFileProvider"
