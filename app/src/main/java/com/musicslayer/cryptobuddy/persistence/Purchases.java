@@ -61,6 +61,7 @@ public class Purchases {
                 if(hasChanged) {
                     TokenManager.initialize(context);
                     if(!isPurchased) {
+                        TokenManager.resetAllTokens();
                         TokenManagerList.resetAllData(context);
                     }
                 }

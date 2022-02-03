@@ -58,42 +58,50 @@ public class InitialActivity extends BaseActivity {
         Context applicationContext = getApplicationContext();
 
         // Set time zone base date.
-        TimeZoneManager.nowInstant = new Date().toInstant();
+        TimeZoneManager.nowInstant = new Date().toInstant(); // TODO Move this?
 
-        // Try loading all the persistent data.
-        // TODO Untangle the web of dependencies.
+        // Purchases should be initialized first, as others may depend on this.
+        Purchases.loadAllPurchases(applicationContext);
+
         Fiat.initialize(applicationContext);
         Coin.initialize(applicationContext);
-        Exchange.initialize(applicationContext);
-        AddressAPI.initialize(applicationContext);
-        PriceAPI.initialize(applicationContext);
-        ExchangeAPI.initialize(applicationContext);
         FiatManager.initialize(applicationContext);
         CoinManager.initialize(applicationContext);
-        Network.initialize(applicationContext);
-        Setting.initialize(applicationContext);
-        ToastUtil.loadAllToasts(applicationContext);
-        Purchases.loadAllPurchases(applicationContext);
-        Policy.loadAllData(applicationContext);
-        Review.loadAllData(applicationContext);
-        SettingsCategory.initialize(applicationContext);
-
-        InAppPurchase.setWrapperPurchasesUpdatedListener(this);
-        InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
-        InAppPurchase.initialize(applicationContext);
-
         TokenManager.initialize(applicationContext);
-        if(!Purchases.isUnlockTokensPurchased()) {
-            // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
-            TokenManagerList.resetAllData(applicationContext);
-        }
-
+        Exchange.initialize(applicationContext);
+        Network.initialize(applicationContext); // Requires Coins and CoinManagers for display names.
+        AddressAPI.initialize(applicationContext);
+        ExchangeAPI.initialize(applicationContext);
+        PriceAPI.initialize(applicationContext);
+        InAppPurchase.initialize(applicationContext); // Requires Purchases
+        SettingsCategory.initialize(applicationContext);
+        ToastUtil.loadAllToasts(applicationContext);
         AddressHistory.loadAllData(applicationContext);
         AddressPortfolio.loadAllData(applicationContext);
         ExchangePortfolio.loadAllData(applicationContext);
         TransactionPortfolio.loadAllData(applicationContext);
+        Policy.loadAllData(applicationContext);
+        Review.loadAllData(applicationContext);
+
+        // Settings should be initialized last, as this could theoretically depend on anything.
+        Setting.initialize(applicationContext);
 
         App.isAppInitialized = true;
+
+        // Initialize or override the hardcoded assets here.
+        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        fiatManager.resetHardcodedFiats();
+        fiatManager.addHardcodedFiat(Fiat.fiats);
+
+        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        coinManager.resetHardcodedCoins();
+        coinManager.addHardcodedCoin(Coin.coins);
+
+        // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
+        if(!Purchases.isUnlockTokensPurchased()) {
+            TokenManager.resetAllTokens();
+            TokenManagerList.resetAllData(applicationContext);
+        }
 
         startActivity(new Intent(this, MainActivity.class));
         finish();

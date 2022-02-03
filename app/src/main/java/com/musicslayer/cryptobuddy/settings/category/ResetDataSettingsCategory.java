@@ -23,7 +23,7 @@ public class ResetDataSettingsCategory extends SettingsCategory {
             settingArrayList.add(Setting.getSettingFromKey("DeleteTokensSetting"));
         }
 
-        // This must be last, as it resets everything.
+        // This should be presented last, as it resets everything.
         settingArrayList.add(Setting.getSettingFromKey("ResetEverythingSetting"));
         return settingArrayList;
     }

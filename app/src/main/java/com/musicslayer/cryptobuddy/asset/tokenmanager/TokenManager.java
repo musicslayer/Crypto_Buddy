@@ -89,16 +89,14 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
 
-            if(Purchases.isUnlockTokensPurchased()) {
-                // Use the deserialized dummy object to fill in the tokens in this real one.
-                TokenManager copyTokenManager = TokenManagerList.loadData(context, tokenManager.getSettingsKey());
+            // Use the deserialized dummy object to fill in the tokens in this real one.
+            TokenManager copyTokenManager = TokenManagerList.loadData(context, tokenManager.getSettingsKey());
 
-                // If this is a new TokenManager that wasn't previously saved, then there are no tokens to add.
-                if(copyTokenManager != null) {
-                    tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
-                    tokenManager.addFoundToken(copyTokenManager.found_tokens);
-                    tokenManager.addCustomToken(copyTokenManager.custom_tokens);
-                }
+            // If this is a new TokenManager that wasn't previously saved, then there are no tokens to add.
+            if(copyTokenManager != null) {
+                tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
+                tokenManager.addFoundToken(copyTokenManager.found_tokens);
+                tokenManager.addCustomToken(copyTokenManager.custom_tokens);
             }
 
             tokenManagers.add(tokenManager);
@@ -249,6 +247,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON {
             custom_token_names.set(idx, token.getName());
             custom_token_display_names.set(idx, token.getDisplayName());
         }
+    }
+
+    public static void resetAllTokens() {
+        resetAllDownloadedTokens();
+        resetAllFoundTokens();
+        resetAllCustomTokens();
     }
 
     public static void resetAllDownloadedTokens() {

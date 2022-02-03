@@ -51,8 +51,6 @@ public class MessageSettingsView extends SettingsView {
                 setting.setSetting(pos);
                 prefText.setText(setting.chosenOptionDisplay);
                 SettingList.saveSetting(context, setting);
-
-                ToastUtil.loadAllToasts(context.getApplicationContext());
             }
         });
 

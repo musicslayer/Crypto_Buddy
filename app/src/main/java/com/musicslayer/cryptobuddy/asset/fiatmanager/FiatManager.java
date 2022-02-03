@@ -83,9 +83,6 @@ abstract public class FiatManager implements Serialization.SerializableToJSON {
             fiatManagers.add(fiatManager);
             fiatManagers_map.put(fiatManager.getKey(), fiatManager);
         }
-
-        // Initialize or override the hardcoded fiats here.
-        FiatManager.getFiatManagerFromKey("BaseFiatManager").addHardcodedFiat(Fiat.fiats);
     }
 
     public static FiatManager getFiatManagerFromKey(String key) {
@@ -221,7 +218,19 @@ abstract public class FiatManager implements Serialization.SerializableToJSON {
         }
     }
 
-    // There is no method to reset hardcoded fiats.
+    // Hardcoded fiats are normally not reset.
+    public static void resetAllHardcodedFiats() {
+        for(FiatManager fiatManager : fiatManagers) {
+            fiatManager.resetHardcodedFiats();
+        }
+    }
+
+    public void resetHardcodedFiats() {
+        hardcoded_fiats = new ArrayList<>();
+        hardcoded_fiat_map = new HashMap<>();
+        hardcoded_fiat_names = new ArrayList<>();
+        hardcoded_fiat_display_names = new ArrayList<>();
+    }
 
     public static void resetAllFoundFiats() {
         for(FiatManager fiatManager : fiatManagers) {

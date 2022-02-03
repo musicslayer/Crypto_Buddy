@@ -83,9 +83,6 @@ abstract public class CoinManager implements Serialization.SerializableToJSON {
             coinManagers.add(coinManager);
             coinManagers_map.put(coinManager.getKey(), coinManager);
         }
-
-        // Initialize or override the hardcoded coins here.
-        CoinManager.getCoinManagerFromKey("BaseCoinManager").addHardcodedCoin(Coin.coins);
     }
 
     public static CoinManager getCoinManagerFromKey(String key) {
@@ -221,7 +218,19 @@ abstract public class CoinManager implements Serialization.SerializableToJSON {
         }
     }
 
-    // There is no method to reset hardcoded coins.
+    // Hardcoded coins are normally not reset.
+    public static void resetAllHardcodedCoins() {
+        for(CoinManager coinManager : coinManagers) {
+            coinManager.resetHardcodedCoins();
+        }
+    }
+
+    public void resetHardcodedCoins() {
+        hardcoded_coins = new ArrayList<>();
+        hardcoded_coin_map = new HashMap<>();
+        hardcoded_coin_names = new ArrayList<>();
+        hardcoded_coin_display_names = new ArrayList<>();
+    }
 
     public static void resetAllFoundCoins() {
         for(CoinManager coinManager : coinManagers) {
