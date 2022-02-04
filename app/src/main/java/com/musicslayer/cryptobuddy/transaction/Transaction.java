@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -287,19 +289,63 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
     }
 
     public static void add(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
-        AssetAmount oldValue = map.get(assetQuantity.asset);
+        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 
         AssetAmount newValue = oldValue.add(assetQuantity.assetAmount);
-        map.put(assetQuantity.asset, newValue);
+        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
     }
 
     public static void subtract(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
-        AssetAmount oldValue = map.get(assetQuantity.asset);
+        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 
         AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount);
-        map.put(assetQuantity.asset, newValue);
+        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
+    }
+
+    // Put in Reflection Taxes
+    public static HashMap<Asset, AssetAmount> resolveAssets2(ArrayList<Transaction> transactionArrayList, BigDecimal tax) {
+        HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
+
+        if(transactionArrayList != null) {
+            for(Transaction t : transactionArrayList) {
+                // Assume all loses are from sends, and apply the tax.
+                if(t.isActionedAssetLoss()) {
+                    subtract2(deltaMap, t.actionedAssetQuantity, tax);
+                }
+                else {
+                    add2(deltaMap, t.actionedAssetQuantity);
+                }
+
+                if(t.otherAssetQuantity != null) {
+                    if(t.isOtherAssetLoss()) {
+                        subtract2(deltaMap, t.otherAssetQuantity, tax);
+                    }
+                    else {
+                        add2(deltaMap, t.otherAssetQuantity);
+                    }
+                }
+            }
+        }
+
+        return deltaMap;
+    }
+
+    public static void add2(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
+        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.add(assetQuantity.assetAmount);
+        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
+    }
+
+    public static void subtract2(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity, BigDecimal tax) {
+        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
+        if(oldValue == null) { oldValue = new AssetAmount("0"); }
+
+        AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount.multiply(new AssetAmount(BigDecimal.ONE.add(tax).toPlainString())));
+        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
     }
 
     public String serializationVersion() { return "1"; }

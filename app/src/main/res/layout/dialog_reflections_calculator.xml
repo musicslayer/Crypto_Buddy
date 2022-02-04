@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reflections_calculator_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/reflections_calculator_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Reflections Calculator" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/reflections_calculator_dialog_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@id/reflections_calculator_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@id/reflections_calculator_dialog_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_addressInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 1 - Choose address"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/reflections_calculator_dialog_addressButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Address"
+        app:drawableLeftCompat="@drawable/ic_baseline_forward_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_addressInstructionTextView" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_addressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_addressButton" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_downloadInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Step 2 - Download data"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_addressTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/reflections_calculator_dialog_downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download Data"
+        app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadInstructionTextView" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_downloadTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadButton" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_cryptoInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Step 3 - Choose Crypto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadTextView" />
+
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/reflections_calculator_dialog_cryptoSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoInstructionTextView" >
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_percentageInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Step 4 - Enter Send Tax Percentage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoSpinner" />
+
+    <com.musicslayer.cryptobuddy.view.red.NumericEditText
+        android:id="@+id/reflections_calculator_dialog_percentageTaxEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Tax %"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_percentageInstructionTextView" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_calculateInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:text="Step 5 - Calculate Reflections"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_percentageTaxEditText" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/reflections_calculator_dialog_calculateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate Reflections"
+        app:drawableLeftCompat="@drawable/ic_baseline_price_change_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_calculateInstructionTextView" />
+
+    <TextView
+        android:id="@+id/reflections_calculator_dialog_resultsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_calculateButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -177,6 +178,43 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
         ArrayList<Transaction> transactionArrayList_f = null;
+
+        return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+    }
+
+    public static AddressData getSingleAllData(CryptoAddress cryptoAddress, Crypto crypto) {
+        AddressAPI addressAPI_currentBalance_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        AddressAPI addressAPI_transactions_f = UnknownAddressAPI.createUnknownAddressAPI(null);
+        ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
+        ArrayList<Transaction> transactionArrayList_f = null;
+
+        // Get current balance information.
+        for(AddressAPI addressAPI : AddressAPI.address_apis) {
+            if(!addressAPI.isSupported(cryptoAddress)) {
+                continue;
+            }
+
+            currentBalanceArrayList_f = addressAPI.getSingleCurrentBalance(cryptoAddress, crypto);
+            if(currentBalanceArrayList_f != null) {
+                // Sort currentBalanceArrayList_f so that Coins come before Tokens.
+                AssetQuantity.sortAscendingByType(currentBalanceArrayList_f);
+                addressAPI_currentBalance_f = addressAPI;
+                break;
+            }
+        }
+
+        // Get transaction information.
+        for(AddressAPI addressAPI : AddressAPI.address_apis) {
+            if(!addressAPI.isSupported(cryptoAddress)) {
+                continue;
+            }
+
+            transactionArrayList_f = addressAPI.getSingleTransactions(cryptoAddress, crypto);
+            if(transactionArrayList_f != null) {
+                addressAPI_transactions_f = addressAPI;
+                break;
+            }
+        }
 
         return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
     }

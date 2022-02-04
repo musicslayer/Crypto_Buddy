@@ -37,6 +37,11 @@ public class Purchases {
         return isUnlockPremiumFeaturesPurchased;
     }
 
+    public static boolean isUnlockReflectionsCalculatorPurchased() {
+        // Currently, this is only sold as a premium feature.
+        return isUnlockPremiumFeaturesPurchased;
+    }
+
     public static int getTotalSupportAmount() {
 
         return totalSupportAmount;

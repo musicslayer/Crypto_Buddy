@@ -1,0 +1,15 @@
+Calculate the reflections of a particular crypto on a particular address.
+In practice only tokens give reflections, but we support performing the hypothetical calculation for any supported crypto.
+
+Reflections are calculated by looking at the current balance, the net sum of all transactions, and the tax imposed on sending that crypto, which the user must supply.
+(Although project teams often advertise both a receive/buy tax and send/sell tax, we only need the send tax to perform the calculation.)
+
+Note that the expected reflections calculated may not match the actual amount of reflections earned.
+Some reasons for discrepancies:
+--> The provided percentage information is incorrect.
+--> There are too many transactions to analyze.
+--> The smart contract for a token does not provide reflections as the project team advertised.
+--> The smart contract has not used a constant tax percentage for sending tokens.
+--> The smart contract uses a difference tax for different kinds of transfers (e.g. 5% to send to another wallet, but 20% to sell).
+
+Given this, any amount calculated should be treated as an estimate.

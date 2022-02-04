@@ -34,15 +34,12 @@ import java.util.Date;
 // TODO Long Term Items
 //  Data Import/Export
 //  NFT Viewer
-//  Reflections Calculator
 //  Use TradeView API
 //  "Tax" View (i.e. Calculate cost basis of transactions)
 //  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 
-// TODO MultiWallet (TrustWallet) View (Merge with AddressPortfolio?);
 // TODO Actually implement Coinbase/Gemini API.
-
-// TODO Get rid of null???!!!
+// TODO Merge isLoss with BigDecimal math.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -58,7 +55,7 @@ public class InitialActivity extends BaseActivity {
         Context applicationContext = getApplicationContext();
 
         // Set time zone base date.
-        TimeZoneManager.nowInstant = new Date().toInstant(); // TODO Move this?
+        TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Purchases should be initialized first, as others may depend on this.
         Purchases.loadAllPurchases(applicationContext);

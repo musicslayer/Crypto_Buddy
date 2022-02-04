@@ -25,6 +25,7 @@ import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.DisclaimerDialog;
 import com.musicslayer.cryptobuddy.dialog.PrivacyPolicyDialog;
+import com.musicslayer.cryptobuddy.dialog.ReflectionsCalculatorDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReviewDialog;
@@ -205,11 +206,24 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Button bCryptoPriceConverter = findViewById(R.id.main_cryptoConverterButton);
-        bCryptoPriceConverter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        Button bCryptoConverter = findViewById(R.id.main_cryptoConverterButton);
+        bCryptoConverter.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(MainActivity.this, "converter");
+            }
+        });
+
+        Button bReflectionsCalculator = findViewById(R.id.main_reflectionsCalculatorButton);
+        bReflectionsCalculator.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                if(Purchases.isUnlockReflectionsCalculatorPurchased()) {
+                    BaseDialogFragment.newInstance(ReflectionsCalculatorDialog.class).show(MainActivity.this, "reflections");
+                }
+                else {
+                    ToastUtil.showToast(MainActivity.this,"unlock_reflections_calculator_required");
+                }
             }
         });
 
@@ -310,6 +324,9 @@ public class MainActivity extends BaseActivity {
 
         Button B2 = findViewById(R.id.main_transactionPortfolioViewerButton);
         B2.setText("Transaction\n     Portfolio     ");
+
+        Button B3 = findViewById(R.id.main_reflectionsCalculatorButton);
+        B3.setText("Reflections\n     Calculator     ");
     }
 
     public void updateLayout() {

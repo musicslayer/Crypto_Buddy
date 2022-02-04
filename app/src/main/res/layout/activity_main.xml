@@ -136,13 +136,6 @@
                 android:text="In-app\nPurchases"
                 app:drawableLeftCompat="@drawable/ic_baseline_key_24" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_fiatManagerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fiat\nManager"
-                app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
-
         </TableRow>
 
         <TableRow
@@ -158,10 +151,10 @@
                 app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/main_coinManagerButton"
+                android:id="@+id/main_fiatManagerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Coin\nManager"
+                android:text="Fiat\nManager"
                 app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
 
         </TableRow>
@@ -176,6 +169,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Crypto\nConverter"
+                app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_coinManagerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coin\nManager"
+                app:drawableLeftCompat="@drawable/ic_baseline_api_24" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/main_tableRow7"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_reflectionsCalculatorButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reflections\nCalculator"
                 app:drawableLeftCompat="@drawable/ic_baseline_price_change_24" />
 
             <androidx.appcompat.widget.AppCompatButton

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.MaxNumberTransactionsSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -41,7 +42,18 @@ abstract public class AddressAPI extends API {
 
     abstract public boolean isSupported(CryptoAddress cryptoAddress);
     abstract public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress);
+    //abstract public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto);
     abstract public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress);
+    //abstract public ArrayList<Transaction> getSingleTransactions(CryptoAddress cryptoAddress, Crypto crypto);
+
+    // Most APIs don't support getting single data.
+    public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto) {
+        return null;
+    }
+
+    public ArrayList<Transaction> getSingleTransactions(CryptoAddress cryptoAddress, Crypto crypto) {
+        return null;
+    }
 
     public static AddressAPI getAddressAPIFromKey(String key) {
         AddressAPI addressAPI = address_api_map.get(key);

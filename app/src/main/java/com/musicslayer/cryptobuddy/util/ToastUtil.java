@@ -28,9 +28,12 @@ public class ToastUtil {
 
         // Address
         toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", duration));
-        toastMap.put("empty_address", Toast.makeText(context, "A crypto address cannot be empty.", duration));
+        toastMap.put("empty_address", Toast.makeText(context, "An address cannot be empty.", duration));
         toastMap.put("incomplete_address_data", Toast.makeText(context, "Could not access all address information. Check your internet connection and try again.", duration));
+        toastMap.put("incomplete_reflections_data", Toast.makeText(context, "Could not access all reflections information. Check your internet connection and try again.", duration));
         toastMap.put("unrecognized_address", Toast.makeText(context, "This address is not recognized as a valid crypto address.", duration));
+        toastMap.put("must_choose_address", Toast.makeText(context, "An address needs to be chosen.", duration));
+        toastMap.put("must_download_data", Toast.makeText(context, "Data needs to be downloaded.", duration));
 
         // Exchange
         toastMap.put("authorization_failed", Toast.makeText(context, "Authorization did not complete successfully. Check your internet connection and try again.", duration));
@@ -107,6 +110,7 @@ public class ToastUtil {
 
         // Purchase Required
         toastMap.put("unlock_exchange_integration_required", Toast.makeText(context, "In-app purchase required to unlock exchange integration.", duration));
+        toastMap.put("unlock_reflections_calculator_required", Toast.makeText(context, "In-app purchase required to unlock reflection calculator.", duration));
         toastMap.put("unlock_tokens_required", Toast.makeText(context, "In-app purchase required to unlock tokens.", duration));
 
         // Google Play Billing Service
