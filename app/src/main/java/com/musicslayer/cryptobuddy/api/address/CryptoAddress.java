@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.network.Network;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
@@ -50,9 +51,12 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Parcelab
         this.includeTokens = includeTokens;
     }
 
-    // For now, just get the crypto from the network.
     public Crypto getCrypto() {
         return network.getCrypto();
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return network.getTokenManagers();
     }
 
     public boolean matchesAddress(String address) {
@@ -88,6 +92,11 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Parcelab
         else {
             return "(" + network.getDisplayName() + ") (Coins) " + address;
         }
+    }
+
+    public String toSimpleString() {
+        // Don't include the coins/tokens part.
+        return "(" + network.getDisplayName() + ") " + address;
     }
 
     public static ArrayList<CryptoAddress> getAllValidCryptoAddress(String address, boolean includeTokens) {

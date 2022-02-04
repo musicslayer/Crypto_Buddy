@@ -2,7 +2,11 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Bech32;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class ADA_Mainnet_Shelley extends Network {
     public boolean isMainnet() {
@@ -19,6 +23,10 @@ public class ADA_Mainnet_Shelley extends Network {
 
     public String getName() {
         return "ADA_Mainnet_Shelley";
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Collections.singletonList(TokenManager.getTokenManagerFromKey("ADATokenManager")));
     }
 
     public String getDisplayName() {

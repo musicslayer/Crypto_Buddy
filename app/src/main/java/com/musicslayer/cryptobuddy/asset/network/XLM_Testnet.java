@@ -2,7 +2,11 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base32;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class XLM_Testnet extends Network {
     public boolean isMainnet() {
@@ -15,6 +19,10 @@ public class XLM_Testnet extends Network {
 
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("XLM");
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Collections.singletonList(TokenManager.getTokenManagerFromKey("StellarTokenManager")));
     }
 
     public String getName() {

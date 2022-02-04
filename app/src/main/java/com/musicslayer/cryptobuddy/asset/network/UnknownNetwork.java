@@ -2,6 +2,11 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.UnknownTokenManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class UnknownNetwork extends Network {
     String key;
@@ -18,6 +23,10 @@ public class UnknownNetwork extends Network {
 
     public Crypto getCrypto() {
         return UnknownCoin.createUnknownCoin(null);
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Collections.singletonList(UnknownTokenManager.createUnknownTokenManager("?", "?")));
     }
 
     public String getName() {

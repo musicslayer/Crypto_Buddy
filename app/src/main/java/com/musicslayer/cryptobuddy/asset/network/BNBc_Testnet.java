@@ -2,7 +2,11 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Bech32;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BNBc_Testnet extends Network {
     public boolean isMainnet() {
@@ -15,6 +19,10 @@ public class BNBc_Testnet extends Network {
 
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BNBc");
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Arrays.asList(TokenManager.getTokenManagerFromKey("BinanceChainMiniTokenManager"), TokenManager.getTokenManagerFromKey("BinanceChainTokenManager")));
     }
 
     public String getName() {

@@ -263,67 +263,31 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
     }
 
     public static HashMap<Asset, AssetAmount> resolveAssets(ArrayList<Transaction> transactionArrayList) {
-        HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
-
-        if(transactionArrayList != null) {
-            for(Transaction t : transactionArrayList) {
-                if(t.isActionedAssetLoss()) {
-                    subtract(deltaMap, t.actionedAssetQuantity);
-                }
-                else {
-                    add(deltaMap, t.actionedAssetQuantity);
-                }
-
-                if(t.otherAssetQuantity != null) {
-                    if(t.isOtherAssetLoss()) {
-                        subtract(deltaMap, t.otherAssetQuantity);
-                    }
-                    else {
-                        add(deltaMap, t.otherAssetQuantity);
-                    }
-                }
-            }
-        }
-
-        return deltaMap;
+        return resolveAssets(transactionArrayList, BigDecimal.ONE, BigDecimal.ONE);
     }
 
-    public static void add(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
-        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
-        if(oldValue == null) { oldValue = new AssetAmount("0"); }
-
-        AssetAmount newValue = oldValue.add(assetQuantity.assetAmount);
-        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
-    }
-
-    public static void subtract(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
-        AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
-        if(oldValue == null) { oldValue = new AssetAmount("0"); }
-
-        AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount);
-        HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
-    }
-
-    // Put in Reflection Taxes
-    public static HashMap<Asset, AssetAmount> resolveAssets2(ArrayList<Transaction> transactionArrayList, BigDecimal tax) {
+    public static HashMap<Asset, AssetAmount> resolveAssets(ArrayList<Transaction> transactionArrayList, BigDecimal receiveTaxMultiplier, BigDecimal sendTaxMultiplier) {
+        // Factor in potential taxes. For example, if a token has a send tax of 10%, then 1.1 is the sendTaxMultiplier.
+        // With tokenomics, the amount actually sent is greater than what the recorded transaction states.
+        // Typically, receiveTaxMultiplier is still always 1.
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         if(transactionArrayList != null) {
             for(Transaction t : transactionArrayList) {
                 // Assume all loses are from sends, and apply the tax.
                 if(t.isActionedAssetLoss()) {
-                    subtract2(deltaMap, t.actionedAssetQuantity, tax);
+                    subtractWithSendTax(deltaMap, t.actionedAssetQuantity, sendTaxMultiplier);
                 }
                 else {
-                    add2(deltaMap, t.actionedAssetQuantity);
+                    addWithReceiveTax(deltaMap, t.actionedAssetQuantity, receiveTaxMultiplier);
                 }
 
                 if(t.otherAssetQuantity != null) {
                     if(t.isOtherAssetLoss()) {
-                        subtract2(deltaMap, t.otherAssetQuantity, tax);
+                        subtractWithSendTax(deltaMap, t.otherAssetQuantity, sendTaxMultiplier);
                     }
                     else {
-                        add2(deltaMap, t.otherAssetQuantity);
+                        addWithReceiveTax(deltaMap, t.otherAssetQuantity, receiveTaxMultiplier);
                     }
                 }
             }
@@ -332,19 +296,19 @@ public class Transaction implements Serialization.SerializableToJSON, Parcelable
         return deltaMap;
     }
 
-    public static void add2(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity) {
+    public static void addWithReceiveTax(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity, BigDecimal receiveTaxMultiplier) {
         AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 
-        AssetAmount newValue = oldValue.add(assetQuantity.assetAmount);
+        AssetAmount newValue = oldValue.add(assetQuantity.assetAmount.multiply(new AssetAmount(receiveTaxMultiplier.toPlainString())));
         HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
     }
 
-    public static void subtract2(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity, BigDecimal tax) {
+    public static void subtractWithSendTax(HashMap<Asset, AssetAmount> map, AssetQuantity assetQuantity, BigDecimal sendTaxMultiplier) {
         AssetAmount oldValue = HashMapUtil.getValueFromMap(map, assetQuantity.asset);
         if(oldValue == null) { oldValue = new AssetAmount("0"); }
 
-        AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount.multiply(new AssetAmount(BigDecimal.ONE.add(tax).toPlainString())));
+        AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount.multiply(new AssetAmount(sendTaxMultiplier.toPlainString())));
         HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
     }
 

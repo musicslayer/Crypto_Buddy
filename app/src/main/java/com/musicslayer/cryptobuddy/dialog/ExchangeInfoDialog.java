@@ -56,7 +56,8 @@ public class ExchangeInfoDialog extends BaseDialog {
         fssv.setIncludesFiat(true);
         fssv.setIncludesCoin(false);
         fssv.setIncludesToken(false);
-        fssv.setOptionsFiat();
+        fssv.setCompleteOptions();
+        fssv.chooseFiat();
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {

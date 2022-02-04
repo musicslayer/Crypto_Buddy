@@ -1,5 +1,5 @@
 Calculate the reflections of a particular crypto on a particular address.
-In practice only tokens give reflections, but we support performing the hypothetical calculation for any supported crypto.
+Typically only tokens give reflections, but we support performing the hypothetical calculation for any supported crypto.
 
 Reflections are calculated by looking at the current balance, the net sum of all transactions, and the tax imposed on sending that crypto, which the user must supply.
 (Although project teams often advertise both a receive/buy tax and send/sell tax, we only need the send tax to perform the calculation.)

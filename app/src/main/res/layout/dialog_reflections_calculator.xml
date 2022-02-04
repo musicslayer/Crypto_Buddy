@@ -33,7 +33,7 @@
         android:id="@+id/reflections_calculator_dialog_addressInstructionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Step 1 - Choose address"
+        android:text="Step 1 - Choose address\n(Tokens will always be included)"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_toolbar" />
 
@@ -59,26 +59,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Step 2 - Download data"
+        android:text="Step 2 (Optional) - Scan address for new tokens"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_addressTextView" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/reflections_calculator_dialog_downloadButton"
+        android:id="@+id/reflections_calculator_dialog_scanButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Download Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+        android:text="Scan for Tokens"
+        app:drawableLeftCompat="@drawable/ic_baseline_radar_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadInstructionTextView" />
-
-    <TextView
-        android:id="@+id/reflections_calculator_dialog_downloadTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadButton" />
 
     <TextView
         android:id="@+id/reflections_calculator_dialog_cryptoInstructionTextView"
@@ -87,16 +79,14 @@
         android:layout_marginTop="10dp"
         android:text="Step 3 - Choose Crypto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_downloadTextView" />
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_scanButton" />
 
-    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
-        android:id="@+id/reflections_calculator_dialog_cryptoSpinner"
+    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+        android:id="@+id/reflections_calculator_dialog_selectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoInstructionTextView" >
-
-    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoInstructionTextView" />
 
     <TextView
         android:id="@+id/reflections_calculator_dialog_percentageInstructionTextView"
@@ -105,7 +95,7 @@
         android:layout_marginTop="10dp"
         android:text="Step 4 - Enter Send Tax Percentage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoSpinner" />
+        app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_selectAndSearchView" />
 
     <com.musicslayer.cryptobuddy.view.red.NumericEditText
         android:id="@+id/reflections_calculator_dialog_percentageTaxEditText"

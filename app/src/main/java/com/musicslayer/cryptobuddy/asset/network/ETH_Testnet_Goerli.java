@@ -2,7 +2,11 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Ethereum;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class ETH_Testnet_Goerli extends Network {
     public boolean isMainnet() {
@@ -15,6 +19,10 @@ public class ETH_Testnet_Goerli extends Network {
 
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("ETH");
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Collections.singletonList(TokenManager.getTokenManagerFromKey("EthereumTokenManager")));
     }
 
     public String getName() {

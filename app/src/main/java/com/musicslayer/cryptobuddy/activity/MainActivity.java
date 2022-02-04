@@ -333,16 +333,19 @@ public class MainActivity extends BaseActivity {
         Button B_TokenManager = findViewById(R.id.main_tokenManagerButton);
         Button B_EXCHANGE_EXPLORER = findViewById(R.id.main_exchangeExplorerButton);
         Button B_EXCHANGE_PORTFOLIO = findViewById(R.id.main_exchangePortfolioViewerButton);
+        Button B_ReflectionsCalculator = findViewById(R.id.main_reflectionsCalculatorButton);
 
         if(Purchases.isUnlockPremiumFeaturesPurchased()) {
             B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_api_24, 0, 0, 0);
             B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_forward_24, 0, 0, 0);
             B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
+            B_ReflectionsCalculator.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_price_change_24, 0, 0, 0);
         }
         else {
             B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
             B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
             B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
+            B_ReflectionsCalculator.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
         }
     }
 

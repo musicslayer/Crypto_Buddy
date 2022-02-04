@@ -49,7 +49,8 @@ public class TotalDialog extends BaseDialog {
         fssv.setIncludesFiat(true);
         fssv.setIncludesCoin(false);
         fssv.setIncludesToken(false);
-        fssv.setOptionsFiat();
+        fssv.setCompleteOptions();
+        fssv.chooseFiat();
 
         deltaMap = Transaction.resolveAssets(filteredTransactionArrayList);
 

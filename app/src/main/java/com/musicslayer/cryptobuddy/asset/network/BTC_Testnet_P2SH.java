@@ -2,7 +2,10 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base58;
+
+import java.util.ArrayList;
 
 public class BTC_Testnet_P2SH extends Network {
     public boolean isMainnet() {
@@ -15,6 +18,10 @@ public class BTC_Testnet_P2SH extends Network {
 
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("BTC");
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>();
     }
 
     public String getName() {

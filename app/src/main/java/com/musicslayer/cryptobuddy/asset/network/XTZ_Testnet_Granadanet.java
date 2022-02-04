@@ -2,6 +2,10 @@ package com.musicslayer.cryptobuddy.asset.network;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class XTZ_Testnet_Granadanet extends Network {
     public boolean isMainnet() {
@@ -14,6 +18,10 @@ public class XTZ_Testnet_Granadanet extends Network {
 
     public Crypto getCrypto() {
         return Coin.getCoinFromKey("XTZ");
+    }
+
+    public ArrayList<TokenManager> getTokenManagers() {
+        return new ArrayList<>(Collections.singletonList(TokenManager.getTokenManagerFromKey("XTZTokenManager")));
     }
 
     public String getName() {

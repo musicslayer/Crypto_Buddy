@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -17,7 +16,8 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
@@ -29,19 +29,15 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO Do we need to download the first address data, or can we just let the pick a token...
-
 public class ReflectionsCalculatorDialog extends BaseDialog {
     CryptoAddress cryptoAddress;
-    ArrayList<Crypto> cryptoArrayList;
-    Crypto crypto;
 
     public ReflectionsCalculatorDialog(Activity activity) {
         super(activity);
@@ -62,14 +58,15 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             }
         });
 
-        // TODO Don't show "Token" toggle button.
         BaseDialogFragment chooseAddressDialogFragment = BaseDialogFragment.newInstance(ChooseAddressDialog.class);
         chooseAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseAddressDialog)dialog).isComplete) {
+                    // Always include tokens regardless of user choice.
                     cryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
-                    cryptoArrayList = null;
+                    cryptoAddress.includeTokens = true;
+
                     updateLayout();
                 }
             }
@@ -88,40 +85,25 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                ProgressDialogFragment.updateProgressTitle("Downloading Address Data...");
+                ProgressDialogFragment.updateProgressTitle("Scanning For Tokens...");
 
-                // We need all data for the address to perform the calculation.
-                AddressData newAddressData = AddressData.getAllData(cryptoAddress);
-
-                // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(activity);
-
-                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData));
+                // Search the address balances and transactions for any tokens.
+                // If any new tokens are found, save them here.
+                // Then, when the layout is updated, they will be added to the available options.
+                AddressData.getAllData(cryptoAddress);
+                TokenManagerList.saveAllData(activity); // TODO Should AddressData just do this?
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
-
-                if(newAddressData.isComplete()) {
-                    // Don't merge anything. Just store all the cryptos that were seen.
-                    cryptoArrayList = getCryptoArrayList(newAddressData);
-                    ToastUtil.showToast(activity,"address_data_downloaded");
-                }
-                else {
-                    // Do not process incomplete data.
-                    cryptoArrayList = null;
-                    ToastUtil.showToast(activity,"incomplete_address_data");
-                }
-
                 updateLayout();
             }
         });
         progressDialogFragment.restoreListeners(activity, "progress");
 
-        AppCompatButton downloadDataButton = findViewById(R.id.reflections_calculator_dialog_downloadButton);
-        downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+        AppCompatButton scanButton = findViewById(R.id.reflections_calculator_dialog_scanButton);
+        scanButton.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
             @Override
             public void onClickImpl(View view) {
                 if(cryptoAddress == null) {
@@ -133,15 +115,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             }
         });
 
-        BorderedSpinnerView bsv_crypto = findViewById(R.id.reflections_calculator_dialog_cryptoSpinner);
-        bsv_crypto.setOptions(new ArrayList<>());
-        bsv_crypto.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
-            public void onNothingSelectedImpl(AdapterView<?> parent){}
-            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                crypto = cryptoArrayList.get(pos);
-            }
-        });
-
+        SelectAndSearchView ssv = findViewById(R.id.reflections_calculator_dialog_selectAndSearchView);
         NumericEditText E_TAX = findViewById(R.id.reflections_calculator_dialog_percentageTaxEditText);
 
         ProgressDialogFragment reflectionsProgressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
@@ -151,7 +125,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 ProgressDialogFragment.updateProgressTitle("Downloading Reflections Data...");
 
                 // We need all data for the address to perform the calculation.
-                AddressData reflectionsAddressData = AddressData.getSingleAllData(cryptoAddress, crypto);
+                AddressData reflectionsAddressData = AddressData.getSingleAllData(cryptoAddress, (Crypto)ssv.getChosenAsset());
 
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(activity);
@@ -165,16 +139,18 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 AddressData reflectionsAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 if(reflectionsAddressData.isComplete()) {
-                    // Convert percentage to decimal
-                    BigDecimal D_TAX = new BigDecimal(E_TAX.getTextString()).movePointLeft(2);
+                    // Convert percentage to decimal.
+                    // With reflections, only sends are taxed.
+                    BigDecimal D_RECEIVETAX = BigDecimal.ONE;
+                    BigDecimal D_SENDTAX = BigDecimal.ONE.add(new BigDecimal(E_TAX.getTextString()).movePointLeft(2));
 
                     ArrayList<AssetQuantity> reflectionsCurrentBalanceArrayList = reflectionsAddressData.currentBalanceArrayList;
                     AssetQuantity reflectionsCurrentBalanceAssetQuantity = reflectionsCurrentBalanceArrayList.get(0);
 
-                    HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets2(reflectionsAddressData.transactionArrayList, D_TAX);
-                    AssetAmount reflectionsTransactionsAssetAmount = HashMapUtil.getValueFromMap(reflectionsTransactionsMap, crypto);
+                    HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets(reflectionsAddressData.transactionArrayList, D_RECEIVETAX, D_SENDTAX);
+                    AssetAmount reflectionsTransactionsAssetAmount = HashMapUtil.getValueFromMap(reflectionsTransactionsMap, (Crypto)ssv.getChosenAsset());
 
-                    AssetQuantity resultAssetQuantity = new AssetQuantity(reflectionsCurrentBalanceAssetQuantity.assetAmount.subtract(reflectionsTransactionsAssetAmount), crypto);
+                    AssetQuantity resultAssetQuantity = new AssetQuantity(reflectionsCurrentBalanceAssetQuantity.assetAmount.subtract(reflectionsTransactionsAssetAmount), (Crypto)ssv.getChosenAsset());
 
                     RichStringBuilder s = new RichStringBuilder(true);
                     s.appendRich("Reflections = ");
@@ -201,9 +177,6 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 if(cryptoAddress == null) {
                     ToastUtil.showToast(activity, "must_choose_address");
                 }
-                else if(cryptoArrayList == null) {
-                    ToastUtil.showToast(activity, "must_download_data");
-                }
                 else if(isValid) {
                     reflectionsProgressDialogFragment.show(activity, "progress_reflections");
                 }
@@ -215,77 +188,37 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
 
     public void updateLayout() {
         TextView T_ADDRESS = findViewById(R.id.reflections_calculator_dialog_addressTextView);
-        TextView T_DOWNLOAD = findViewById(R.id.reflections_calculator_dialog_downloadTextView);
-        BorderedSpinnerView bsv_crypto = findViewById(R.id.reflections_calculator_dialog_cryptoSpinner);
+        SelectAndSearchView ssv = findViewById(R.id.reflections_calculator_dialog_selectAndSearchView);
 
         if(cryptoAddress == null) {
-            T_ADDRESS.setText("");
+            T_ADDRESS.setVisibility(View.GONE);
+            ssv.setVisibility(View.GONE);
         }
         else {
-            T_ADDRESS.setText(cryptoAddress.toString());
+            // Show the address but don't include the coins/tokens part.
+            T_ADDRESS.setVisibility(View.VISIBLE);
+            T_ADDRESS.setText(cryptoAddress.toSimpleString());
+
+            // Set crypto
+            ssv.setVisibility(View.VISIBLE);
+            ssv.setIncludesFiat(false);
+            ssv.setIncludesCoin(true);
+            ssv.setIncludesToken(true);
+
+            ArrayList<Coin> coinArrayList = new ArrayList<>();
+            coinArrayList.add((Coin)cryptoAddress.getCrypto());
+            ssv.setCoinOptions(coinArrayList);
+
+            ArrayList<TokenManager> tokenManagerArrayList = new ArrayList<>(cryptoAddress.getTokenManagers());
+            ssv.setTokenManagerOptions(tokenManagerArrayList);
+
+            ssv.chooseCoin();
         }
-
-        if(cryptoArrayList == null) {
-            T_DOWNLOAD.setText("");
-            bsv_crypto.setVisibility(View.GONE);
-        }
-        else {
-            T_DOWNLOAD.setText("Data Downloaded");
-            bsv_crypto.setVisibility(View.VISIBLE);
-
-            // Update options.
-            ArrayList<String> options = new ArrayList<>();
-            for(Crypto crypto : cryptoArrayList) {
-                options.add(crypto.getSettingName());
-            }
-
-            bsv_crypto.setOptions(options);
-        }
-    }
-
-    public ArrayList<Crypto> getCryptoArrayList(AddressData addressData) {
-        ArrayList<Crypto> cryptoArrayList = new ArrayList<>();
-
-        // Ensure there is at least one entry.
-        cryptoArrayList.add(cryptoAddress.getCrypto());
-
-        // Everything here should be cryptos, but check anyway.
-        // Also only add something once.
-
-        // Check Balance Data
-        for(AssetQuantity assetQuantity : addressData.currentBalanceArrayList) {
-            Asset asset = assetQuantity.asset;
-            if(asset instanceof Crypto && !cryptoArrayList.contains((Crypto)asset)) {
-                cryptoArrayList.add((Crypto)asset);
-            }
-        }
-
-        // Check Transaction Data
-        for(Transaction transaction : addressData.transactionArrayList) {
-            AssetQuantity actionedAssetQuantity = transaction.actionedAssetQuantity;
-            Asset actionedAsset = actionedAssetQuantity.asset;
-            if(actionedAsset instanceof Crypto && !cryptoArrayList.contains((Crypto)actionedAsset)) {
-                cryptoArrayList.add((Crypto)actionedAsset);
-            }
-
-            AssetQuantity otherAssetQuantity = transaction.actionedAssetQuantity;
-            if(otherAssetQuantity != null) {
-                Asset otherAsset = otherAssetQuantity.asset;
-                if(otherAsset instanceof Crypto && !cryptoArrayList.contains((Crypto)otherAsset)) {
-                    cryptoArrayList.add((Crypto)otherAsset);
-                }
-            }
-        }
-
-        return cryptoArrayList;
     }
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putParcelable("cryptoAddress", cryptoAddress);
-        bundle.putParcelableArrayList("cryptoArrayList", cryptoArrayList);
-        bundle.putParcelable("crypto", crypto);
-
         return bundle;
     }
 
@@ -293,8 +226,6 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             cryptoAddress = bundle.getParcelable("cryptoAddress");
-            cryptoArrayList = bundle.getParcelableArrayList("cryptoArrayList");
-            crypto = bundle.getParcelable("crypto");
         }
     }
 }

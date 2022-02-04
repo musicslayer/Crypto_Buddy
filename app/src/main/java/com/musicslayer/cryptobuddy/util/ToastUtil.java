@@ -23,7 +23,6 @@ public class ToastUtil {
         toastMap.put("custom_fiat_added", Toast.makeText(context, "Custom fiat added.", duration));
         toastMap.put("custom_coin_added", Toast.makeText(context, "Custom coin added.", duration));
         toastMap.put("custom_token_added", Toast.makeText(context, "Custom token added.", duration));
-        toastMap.put("no_tokens", Toast.makeText(context, "There are currently no tokens in the app's database.", duration));
         toastMap.put("tokens_not_downloaded", Toast.makeText(context, "Could not download all tokens.", duration));
 
         // Address
