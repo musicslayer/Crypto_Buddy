@@ -14,7 +14,7 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class FiatManager implements Serialization.SerializableToJSON {
+abstract public class FiatManager implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<FiatManager> fiatManagers;
     public static HashMap<String, FiatManager> fiatManagers_map;
     public static ArrayList<String> fiatManagers_names;

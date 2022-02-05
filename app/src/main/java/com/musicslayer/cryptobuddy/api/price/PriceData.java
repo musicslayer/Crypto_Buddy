@@ -4,6 +4,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public class PriceData implements Serialization.SerializableToJSON {
@@ -13,7 +14,7 @@ public class PriceData implements Serialization.SerializableToJSON {
     public HashMap<Asset, AssetQuantity> priceHashMap;
     public HashMap<Asset, AssetQuantity> marketCapHashMap;
 
-    public String serializationVersion() { return "1"; }
+    final public Date timestamp;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -25,7 +26,7 @@ public class PriceData implements Serialization.SerializableToJSON {
             .toStringOrNull();
     }
 
-    public static PriceData deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static PriceData deserializeFromJSON(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         CryptoPrice cryptoPrice = Serialization.deserialize(o.getJSONObjectString("cryptoPrice"), CryptoPrice.class);
         PriceAPI priceAPI_price = Serialization.deserialize(o.getJSONObjectString("priceAPI_price"), PriceAPI.class);
@@ -41,6 +42,8 @@ public class PriceData implements Serialization.SerializableToJSON {
         this.priceAPI_marketCap = priceAPI_marketCap;
         this.priceHashMap = priceHashMap;
         this.marketCapHashMap = marketCapHashMap;
+
+        timestamp = new Date();
     }
 
     public static PriceData getAllData(CryptoPrice cryptoPrice) {

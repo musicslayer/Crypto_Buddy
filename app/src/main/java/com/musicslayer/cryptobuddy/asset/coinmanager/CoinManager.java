@@ -14,7 +14,7 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class CoinManager implements Serialization.SerializableToJSON {
+abstract public class CoinManager implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<CoinManager> coinManagers;
     public static HashMap<String, CoinManager> coinManagers_map;
     public static ArrayList<String> coinManagers_names;

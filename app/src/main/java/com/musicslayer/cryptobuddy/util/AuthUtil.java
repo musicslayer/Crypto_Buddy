@@ -216,8 +216,6 @@ public class AuthUtil {
             return 0;
         }
 
-        public String serializationVersion() { return "1"; }
-
         public String serializeToJSON() throws org.json.JSONException {
             return new Serialization.JSONObjectWithNull()
                     .put("token_e", Serialization.byte_serializeArray(token_e))
@@ -225,7 +223,7 @@ public class AuthUtil {
                     .toStringOrNull();
         }
 
-        public static OAuthToken deserializeFromJSON1(String s) throws org.json.JSONException {
+        public static OAuthToken deserializeFromJSON(String s) throws org.json.JSONException {
             Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
             byte[] token_e = Serialization.byte_deserializeArray(o.getString("token_e"));
             long expiryTime = Serialization.long_deserialize(o.getString("expiryTime"));

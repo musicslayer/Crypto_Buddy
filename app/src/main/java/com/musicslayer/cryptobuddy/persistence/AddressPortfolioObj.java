@@ -5,7 +5,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class AddressPortfolioObj implements Serialization.SerializableToJSON {
+public class AddressPortfolioObj implements Serialization.SerializableToJSON, Serialization.Versionable {
     public String name;
     public ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 

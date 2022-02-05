@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract public class Exchange implements Serialization.SerializableToJSON, Parcelable {
+abstract public class Exchange implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());

@@ -5,7 +5,7 @@ import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
-abstract public class API implements Serialization.SerializableToJSON {
+abstract public class API implements Serialization.SerializableToJSON, Serialization.Versionable {
     // For now, just use the name as the key.
     public String getKey() {
         return getName();

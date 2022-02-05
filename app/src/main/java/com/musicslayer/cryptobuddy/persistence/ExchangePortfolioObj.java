@@ -5,7 +5,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class ExchangePortfolioObj implements Serialization.SerializableToJSON {
+public class ExchangePortfolioObj implements Serialization.SerializableToJSON, Serialization.Versionable {
     public String name;
     public ArrayList<CryptoExchange> cryptoExchangeArrayList = new ArrayList<>();
 

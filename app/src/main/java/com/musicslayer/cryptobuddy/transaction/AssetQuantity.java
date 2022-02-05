@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class AssetQuantity implements Serialization.SerializableToJSON, Parcelable {
+public class AssetQuantity implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeParcelable(assetAmount, flags);

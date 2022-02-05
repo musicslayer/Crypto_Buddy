@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class CryptoPrice implements Serialization.SerializableToJSON, Parcelable {
+public class CryptoPrice implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         // Writing a List directly requires a higher Android API.

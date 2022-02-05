@@ -22,6 +22,7 @@
       <w>testnet</w>
       <w>tokenmanager</w>
       <w>tokenomics</w>
+      <w>versionable</w>
     </words>
   </dictionary>
 </component>

@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class Action implements Serialization.SerializableToJSON, Parcelable {
+public class Action implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(actionString);

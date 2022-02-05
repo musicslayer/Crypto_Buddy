@@ -13,51 +13,18 @@ import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
-public class ExchangeData implements Serialization.SerializableToJSON, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeParcelable(cryptoExchange, flags);
-        out.writeString(exchangeAPI_currentBalance.getKey());
-        out.writeString(exchangeAPI_transactions.getKey());
-        out.writeTypedList(currentBalanceArrayList);
-        out.writeTypedList(transactionArrayList);
-    }
-
-    public static final Creator<ExchangeData> CREATOR = new Creator<ExchangeData>() {
-        @Override
-        public ExchangeData createFromParcel(Parcel in) {
-            CryptoExchange cryptoExchange = in.readParcelable(CryptoExchange.class.getClassLoader());
-            ExchangeAPI exchangeAPI_currentBalance_f = ExchangeAPI.getExchangeAPIFromKey(in.readString());
-            ExchangeAPI exchangeAPI_transactions_f = ExchangeAPI.getExchangeAPIFromKey(in.readString());
-            ArrayList<AssetQuantity> currentBalanceArrayList_f = in.createTypedArrayList(AssetQuantity.CREATOR);
-            ArrayList<Transaction> transactionArrayList_f = in.createTypedArrayList(Transaction.CREATOR);
-
-            return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
-        }
-
-        @Override
-        public ExchangeData[] newArray(int size) {
-            return new ExchangeData[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class ExchangeData implements Serialization.SerializableToJSON {
     final public CryptoExchange cryptoExchange;
     final public ExchangeAPI exchangeAPI_currentBalance;
     final public ExchangeAPI exchangeAPI_transactions;
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
 
-    // Calculate at construction since it never changes.
     HashMap<Asset, AssetAmount> netTransactionsMap;
-
-    public String serializationVersion() { return "1"; }
+    final public Date timestamp;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -69,7 +36,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
             .toStringOrNull();
     }
 
-    public static ExchangeData deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static ExchangeData deserializeFromJSON(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         CryptoExchange cryptoExchange = Serialization.deserialize(o.getJSONObjectString("cryptoExchange"), CryptoExchange.class);
         ExchangeAPI exchangeAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_currentBalance"), ExchangeAPI.class);
@@ -87,6 +54,7 @@ public class ExchangeData implements Serialization.SerializableToJSON, Parcelabl
         this.transactionArrayList = transactionArrayList;
 
         netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+        timestamp = new Date();
     }
 
     public static ExchangeData getAllData(CryptoExchange cryptoExchange) {

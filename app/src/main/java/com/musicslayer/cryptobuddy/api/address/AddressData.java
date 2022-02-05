@@ -14,51 +14,18 @@ import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
-public class AddressData implements Serialization.SerializableToJSON, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeParcelable(cryptoAddress, flags);
-        out.writeString(addressAPI_currentBalance.getKey());
-        out.writeString(addressAPI_transactions.getKey());
-        out.writeTypedList(currentBalanceArrayList);
-        out.writeTypedList(transactionArrayList);
-    }
-
-    public static final Parcelable.Creator<AddressData> CREATOR = new Parcelable.Creator<AddressData>() {
-        @Override
-        public AddressData createFromParcel(Parcel in) {
-            CryptoAddress cryptoAddress = in.readParcelable(CryptoAddress.class.getClassLoader());
-            AddressAPI addressAPI_currentBalance_f = AddressAPI.getAddressAPIFromKey(in.readString());
-            AddressAPI addressAPI_transactions_f = AddressAPI.getAddressAPIFromKey(in.readString());
-            ArrayList<AssetQuantity> currentBalanceArrayList_f = in.createTypedArrayList(AssetQuantity.CREATOR);
-            ArrayList<Transaction> transactionArrayList_f = in.createTypedArrayList(Transaction.CREATOR);
-
-            return new AddressData(cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
-        }
-
-        @Override
-        public AddressData[] newArray(int size) {
-            return new AddressData[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class AddressData implements Serialization.SerializableToJSON {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
 
-    // Calculate at construction since it never changes.
     final public HashMap<Asset, AssetAmount> netTransactionsMap;
-
-    public String serializationVersion() { return "1"; }
+    final public Date timestamp;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -70,7 +37,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
             .toStringOrNull();
     }
 
-    public static AddressData deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static AddressData deserializeFromJSON(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
         AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("addressAPI_currentBalance"), AddressAPI.class);
@@ -88,6 +55,7 @@ public class AddressData implements Serialization.SerializableToJSON, Parcelable
         this.transactionArrayList = transactionArrayList;
 
         netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+        timestamp = new Date();
     }
 
     public static AddressData getAllData(CryptoAddress cryptoAddress) {

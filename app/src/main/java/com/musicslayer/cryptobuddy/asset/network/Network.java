@@ -20,7 +20,7 @@ import java.util.HashMap;
 // addr1v9s96gdnn9nmhmyz2duu0ghgnt6wvzdjkavkcv92smj69uc4rsp5h
 // CardanoExplorer.java can get balance but not transactions.
 
-abstract public class Network implements Serialization.SerializableToJSON, Parcelable {
+abstract public class Network implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());

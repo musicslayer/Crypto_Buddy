@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class AssetAmount implements Serialization.SerializableToJSON, Parcelable {
+public class AssetAmount implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(amount.toString());

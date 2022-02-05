@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class CryptoExchange implements Serialization.SerializableToJSON, Parcelable {
+public class CryptoExchange implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeParcelable(exchange, flags);

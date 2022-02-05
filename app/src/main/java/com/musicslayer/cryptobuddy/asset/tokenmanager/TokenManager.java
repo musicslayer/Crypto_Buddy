@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class TokenManager implements Serialization.SerializableToJSON {
+abstract public class TokenManager implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<TokenManager> tokenManagers;
     public static HashMap<String, TokenManager> tokenManagers_map;
     public static HashMap<String, TokenManager> tokenManagers_token_type_map;

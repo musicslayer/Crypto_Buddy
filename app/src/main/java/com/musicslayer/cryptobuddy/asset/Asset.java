@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 import java.util.ArrayList;
 import java.util.Collections;
 
-abstract public class Asset implements Serialization.SerializableToJSON, Parcelable {
+abstract public class Asset implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getAssetType());

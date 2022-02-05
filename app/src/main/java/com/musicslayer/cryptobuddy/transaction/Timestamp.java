@@ -10,7 +10,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.Date;
 
-public class Timestamp implements Serialization.SerializableToJSON, Parcelable {
+public class Timestamp implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(date.getTime());

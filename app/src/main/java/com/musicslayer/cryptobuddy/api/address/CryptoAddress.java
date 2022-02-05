@@ -13,7 +13,7 @@ import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
 import java.util.ArrayList;
 
-public class CryptoAddress implements Serialization.SerializableToJSON, Parcelable {
+public class CryptoAddress implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(address);

@@ -13,7 +13,7 @@ import com.musicslayer.cryptobuddy.view.settings.StandardSettingsView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class Setting implements Serialization.SerializableToJSON {
+abstract public class Setting implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<Setting> settings;
     public static HashMap<String, Setting> setting_map;
     public static HashMap<String, Setting> setting_settings_map;

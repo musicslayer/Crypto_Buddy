@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
-public class AddressHistoryObj implements Serialization.SerializableToJSON {
+public class AddressHistoryObj implements Serialization.SerializableToJSON, Serialization.Versionable {
     public CryptoAddress cryptoAddress;
 
     public AddressHistoryObj(CryptoAddress cryptoAddress) {
