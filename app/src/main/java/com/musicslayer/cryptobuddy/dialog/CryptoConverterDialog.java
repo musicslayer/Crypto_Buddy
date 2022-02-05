@@ -148,7 +148,10 @@ public class CryptoConverterDialog extends BaseDialog {
                 if(ssvPrimary.getChosenAsset() == null || ssvSecondary.getChosenAsset() == null || fssv.getChosenAsset() == null) {
                     ToastUtil.showToast(activity,"must_choose_assets");
                 }
-                else if(isValid) {
+                else if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     progressDialogFragment.show(CryptoConverterDialog.this.activity, "progress");
                 }
             }

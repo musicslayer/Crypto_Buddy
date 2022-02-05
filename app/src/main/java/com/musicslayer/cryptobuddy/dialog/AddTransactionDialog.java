@@ -212,8 +212,8 @@ public class AddTransactionDialog extends BaseDialog {
                 Action action = new Action(Action.actions.get(bsv_action.spinner.getSelectedItemPosition()));
 
                 // Don't short circuit - we want to test everything.
-                boolean isValid1 = action.numAssets() == 1 & E_PRIMARYASSET.test();
-                boolean isValid2 = E_PRIMARYASSET.test() & E_SECONDARYASSET.test();
+                boolean isValid1 = E_PRIMARYASSET.test();
+                boolean isValid2 = action.numAssets() == 1 || E_SECONDARYASSET.test();
 
                 if(ssvPrimary.getChosenAsset() == null || (action.numAssets() == 2 && ssvSecondary.getChosenAsset() == null)) {
                     ToastUtil.showToast(activity,"must_choose_assets");
@@ -225,7 +225,8 @@ public class AddTransactionDialog extends BaseDialog {
                     return;
                 }
 
-                if(!isValid1 && !isValid2) {
+                if(!isValid1 || !isValid2) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
                     return;
                 }
 

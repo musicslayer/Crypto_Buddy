@@ -17,6 +17,11 @@ public class RichStringBuilder {
 
     public RichStringBuilder appendAssetQuantity(AssetQuantity assetQuantity) {
         // Append AssetQuantity, applying rich formatting for color if applicable.
+        if(assetQuantity == null) {
+            s.append("-");
+            return this;
+        }
+
         String str = assetQuantity.toString();
 
         if(isRich) {

@@ -58,7 +58,6 @@ public class ChooseAddressDialog extends BaseDialog {
             });
         }
 
-        // Enforce a global maximum address length to protect algorithms from having to process large values.
         final AnythingEditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
 
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);

@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 public class CreatePortfolioDialog extends BaseDialog {
@@ -28,7 +29,12 @@ public class CreatePortfolioDialog extends BaseDialog {
         Button B_CREATE = findViewById(R.id.create_portfolio_dialog_createButton);
         B_CREATE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                if(E.test()) {
+                boolean isValid = E.test();
+
+                if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     user_NAME = E.getTextString();
 
                     isComplete = true;

@@ -68,7 +68,10 @@ public class AddCustomCoinDialog extends BaseDialog {
                 // Don't short circuit - we need to test everything.
                 boolean isValid = E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
-                if(isValid) {
+                if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     String name = E_SYMBOL.getTextString();
                     String display_name = E_NAME.getTextString();
                     int scale = new BigInteger(E_DECIMALS.getTextString()).intValue();

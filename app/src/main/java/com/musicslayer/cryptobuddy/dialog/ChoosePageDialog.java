@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.PageEditText;
 
 import java.math.BigInteger;
@@ -44,7 +45,10 @@ public class ChoosePageDialog extends BaseDialog {
             public void onClickImpl(View view) {
                 boolean isValid = E_PAGE.test();
 
-                if(isValid) {
+                if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     user_PAGE = new BigInteger(E_PAGE.getTextString()).intValue();
 
                     isComplete = true;

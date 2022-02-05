@@ -80,7 +80,10 @@ public class AddCustomTokenDialog extends BaseDialog {
                 // Don't short circuit - we need to test everything.
                 boolean isValid = E_ID.test() & E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
-                if(isValid) {
+                if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     String key = E_ID.getTextString();
                     String name = E_SYMBOL.getTextString();
                     String display_name = E_NAME.getTextString();

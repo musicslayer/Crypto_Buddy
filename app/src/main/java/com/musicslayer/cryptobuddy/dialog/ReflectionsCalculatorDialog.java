@@ -180,7 +180,10 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 else if(ssv.getChosenAsset() == null) {
                     ToastUtil.showToast(activity,"must_choose_assets");
                 }
-                else if(isValid) {
+                else if(!isValid) {
+                    ToastUtil.showToast(activity,"must_fill_inputs");
+                }
+                else {
                     reflectionsProgressDialogFragment.show(activity, "progress_reflections");
                 }
             }

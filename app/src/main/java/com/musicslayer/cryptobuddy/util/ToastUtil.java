@@ -46,8 +46,8 @@ public class ToastUtil {
         // Explorers
         toastMap.put("assets_same", Toast.makeText(context, "Assets must be different.", duration));
         toastMap.put("must_choose_assets", Toast.makeText(context, "All assets must be chosen.", duration));
+        toastMap.put("must_fill_inputs", Toast.makeText(context, "All red input fields must be filled with appropriate values.", duration));
         toastMap.put("new_transaction_filtered", Toast.makeText(context, "Added transaction(s) are being filtered.", duration));
-        // TODO "Fill in all fields".
         toastMap.put("no_balances_found", Toast.makeText(context, "There are no balances.", duration));
         toastMap.put("no_discrepancies_found", Toast.makeText(context, "There are no discrepancies.", duration));
         toastMap.put("no_transactions_found", Toast.makeText(context, "There are no transactions.", duration));
