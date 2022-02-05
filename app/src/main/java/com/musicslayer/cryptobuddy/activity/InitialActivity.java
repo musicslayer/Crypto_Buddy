@@ -37,6 +37,7 @@ import java.util.Date;
 //  Use TradeView API
 //  "Tax" View (i.e. Calculate cost basis of transactions)
 //  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
+//  Chart Explorer, Chart Portfolio
 
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.

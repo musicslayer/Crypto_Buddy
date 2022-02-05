@@ -10,6 +10,10 @@ import java.util.Date;
 public class Timestamp implements Serialization.SerializableToJSON, Serialization.Versionable {
     public Date date;
 
+    public Timestamp() {
+        this.date = new Date();
+    }
+
     public Timestamp(Date date) {
         this.date = date;
     }

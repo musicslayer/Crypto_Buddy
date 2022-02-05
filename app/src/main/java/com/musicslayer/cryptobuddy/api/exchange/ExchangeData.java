@@ -5,12 +5,12 @@ import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class ExchangeData implements Serialization.SerializableToJSON {
@@ -19,9 +19,10 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public ExchangeAPI exchangeAPI_transactions;
     final public ArrayList<AssetQuantity> currentBalanceArrayList;
     final public ArrayList<Transaction> transactionArrayList;
+    final public Timestamp timestamp_currentBalance;
+    final public Timestamp timestamp_transactions;
 
     HashMap<Asset, AssetAmount> netTransactionsMap;
-    final public Date timestamp;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -30,6 +31,8 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             .put("exchangeAPI_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI_transactions)))
             .put("currentBalanceArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
             .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .put("timestamp_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
+            .put("timestamp_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
             .toStringOrNull();
     }
 
@@ -40,18 +43,21 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         ExchangeAPI exchangeAPI_transactions = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_transactions"), ExchangeAPI.class);
         ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("currentBalanceArrayList"), AssetQuantity.class);
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
-        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList);
+        Timestamp timestamp_currentBalance = Serialization.deserialize(o.getJSONObjectString("timestamp_currentBalance"), Timestamp.class);
+        Timestamp timestamp_transactions = Serialization.deserialize(o.getJSONObjectString("timestamp_transactions"), Timestamp.class);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList, timestamp_currentBalance, timestamp_transactions);
     }
 
-    public ExchangeData(CryptoExchange CryptoExchange, ExchangeAPI exchangeAPI_currentBalance, ExchangeAPI exchangeAPI_transactions, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList) {
+    public ExchangeData(CryptoExchange CryptoExchange, ExchangeAPI exchangeAPI_currentBalance, ExchangeAPI exchangeAPI_transactions, ArrayList<AssetQuantity> currentBalanceArrayList, ArrayList<Transaction> transactionArrayList, Timestamp timestamp_currentBalance, Timestamp timestamp_transactions) {
         this.cryptoExchange = CryptoExchange;
         this.exchangeAPI_currentBalance = exchangeAPI_currentBalance;
         this.exchangeAPI_transactions = exchangeAPI_transactions;
         this.currentBalanceArrayList = currentBalanceArrayList;
         this.transactionArrayList = transactionArrayList;
+        this.timestamp_currentBalance = timestamp_currentBalance;
+        this.timestamp_transactions = timestamp_transactions;
 
         netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
-        timestamp = new Date();
     }
 
     public static ExchangeData getAllData(CryptoExchange cryptoExchange) {
@@ -79,7 +85,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, new Timestamp(), new Timestamp());
     }
 
     public static ExchangeData getCurrentBalanceData(CryptoExchange cryptoExchange) {
@@ -101,7 +107,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, new Timestamp(), new Timestamp());
     }
 
     public static ExchangeData getTransactionsData(CryptoExchange cryptoExchange) {
@@ -121,7 +127,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             }
         }
 
-        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, new Timestamp(), new Timestamp());
     }
 
     public static ExchangeData getNoData(CryptoExchange cryptoExchange) {
@@ -132,7 +138,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         ArrayList<AssetQuantity> currentBalanceArrayList_f = null;
         ArrayList<Transaction> transactionArrayList_f = null;
 
-        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, new Timestamp(), new Timestamp());
     }
 
     public boolean isComplete() {
@@ -152,19 +158,23 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         ExchangeAPI exchangeAPI_transactions_f = oldExchangeData.exchangeAPI_transactions;
         ArrayList<AssetQuantity> currentBalanceArrayList_f = oldExchangeData.currentBalanceArrayList;
         ArrayList<Transaction> transactionArrayList_f = oldExchangeData.transactionArrayList;
+        Timestamp timestamp_currentBalance_f = oldExchangeData.timestamp_currentBalance;
+        Timestamp timestamp_transactions_f = oldExchangeData.timestamp_transactions;
 
         if(newExchangeData.isCurrentBalanceComplete()) {
             exchangeAPI_currentBalance_f = newExchangeData.exchangeAPI_currentBalance;
             currentBalanceArrayList_f = newExchangeData.currentBalanceArrayList;
+            timestamp_currentBalance_f = newExchangeData.timestamp_currentBalance;
         }
 
         if(newExchangeData.isTransactionsComplete()) {
             exchangeAPI_transactions_f = newExchangeData.exchangeAPI_transactions;
             transactionArrayList_f = newExchangeData.transactionArrayList;
+            timestamp_transactions_f = newExchangeData.timestamp_transactions;
         }
 
         // Both ExchangeData objects should have the same cryptoExchange, but just in case we favor the newer one for consistency.
-        return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f);
+        return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, timestamp_currentBalance_f, timestamp_transactions_f);
     }
 
     public String getInfoString(HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
@@ -176,6 +186,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         }
         else {
             s.appendRich("\nTransaction Data Source = ").appendRich(exchangeAPI_transactions.getDisplayName());
+            s.appendRich("\nTransaction Data Timestamp = ").appendRich(timestamp_transactions.toString());
             s.appendRich("\nNumber of Transactions = ").appendRich(Integer.toString(transactionArrayList.size()));
         }
 
@@ -184,6 +195,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         }
         else {
             s.appendRich("\nCurrent Balance Data Source = ").appendRich(exchangeAPI_currentBalance.getDisplayName());
+            s.appendRich("\nCurrent Balance Data Timestamp = ").appendRich(timestamp_currentBalance.toString());
 
             if(currentBalanceArrayList.isEmpty()) {
                 s.appendRich("\nNo Current Balances");
