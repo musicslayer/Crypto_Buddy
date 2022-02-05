@@ -108,6 +108,9 @@ public class TotalDialog extends BaseDialog {
                     ToastUtil.showToast(activity, "no_transactions_found");
                     return;
                 }
+                else if(fssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
+                }
 
                 progressDialogFragment.show(TotalDialog.this.activity, "progress");
             }

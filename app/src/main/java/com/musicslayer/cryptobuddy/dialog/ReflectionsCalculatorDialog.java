@@ -91,7 +91,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 // If any new tokens are found, save them here.
                 // Then, when the layout is updated, they will be added to the available options.
                 AddressData.getAllData(cryptoAddress);
-                TokenManagerList.saveAllData(activity); // TODO Should AddressData just do this?
+                TokenManagerList.saveAllData(activity);
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
@@ -176,6 +176,9 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
 
                 if(cryptoAddress == null) {
                     ToastUtil.showToast(activity, "must_choose_address");
+                }
+                else if(ssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
                 }
                 else if(isValid) {
                     reflectionsProgressDialogFragment.show(activity, "progress_reflections");

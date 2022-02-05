@@ -118,6 +118,10 @@ public class AddressInfoDialog extends BaseDialog {
                     ToastUtil.showToast(activity, "no_balances_found");
                     return;
                 }
+                else if(fssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
+                    return;
+                }
 
                 progressDialogFragment.show(activity, "progress");
             }

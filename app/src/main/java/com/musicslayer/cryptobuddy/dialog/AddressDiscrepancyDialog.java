@@ -119,6 +119,10 @@ public class AddressDiscrepancyDialog extends BaseDialog {
                     ToastUtil.showToast(activity, "no_discrepancies_found");
                     return;
                 }
+                else if(fssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
+                    return;
+                }
 
                 progressDialogFragment.show(activity, "progress");
             }

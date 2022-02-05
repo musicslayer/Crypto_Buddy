@@ -109,7 +109,13 @@ public class CryptoPricesDialog extends BaseDialog {
         B.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 crypto = (Crypto)ssv.getChosenAsset();
-                progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");
+
+                if(ssv.getChosenAsset() == null || fssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
+                }
+                else {
+                    progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");
+                }
             }
         });
     }

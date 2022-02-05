@@ -140,10 +140,15 @@ public class CryptoConverterDialog extends BaseDialog {
         Button B_CONVERT = findViewById(R.id.crypto_converter_dialog_convertButton);
         B_CONVERT.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                boolean isValid = E_PRIMARYASSET.test();
+
                 cryptoPrimary = (Crypto)ssvPrimary.getChosenAsset();
                 cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
 
-                if(E_PRIMARYASSET.test()) {
+                if(ssvPrimary.getChosenAsset() == null || ssvSecondary.getChosenAsset() == null || fssv.getChosenAsset() == null) {
+                    ToastUtil.showToast(activity,"must_choose_assets");
+                }
+                else if(isValid) {
                     progressDialogFragment.show(CryptoConverterDialog.this.activity, "progress");
                 }
             }

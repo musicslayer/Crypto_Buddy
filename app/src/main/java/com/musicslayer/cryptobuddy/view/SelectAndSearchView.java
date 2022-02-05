@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-// TODO What if getChosenAsset returns null?
-
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
@@ -456,17 +454,32 @@ public class SelectAndSearchView extends CrashLinearLayout {
         int idx = bsv.spinner.getSelectedItemPosition();
 
         if("!FIAT!".equals(lastButton)) {
-            return options_fiat_sorted.get(idx);
+            if(options_fiat_sorted.isEmpty()) {
+                return null;
+            }
+            else {
+                return options_fiat_sorted.get(idx);
+            }
         }
         else if("!COIN!".equals(lastButton)) {
-            return options_coin_sorted.get(idx);
+            if(options_coin_sorted.isEmpty()) {
+                return null;
+            }
+            else {
+                return options_coin_sorted.get(idx);
+            }
         }
         else if("!SEARCH!".equals(lastButton)) {
             return lastSearchAsset;
         }
         else if(lastButton != null) {
             // Token and token type were selected.
-            return options_token_sorted.get(idx);
+            if(options_token_sorted.isEmpty()) {
+                return null;
+            }
+            else {
+                return options_token_sorted.get(idx);
+            }
         }
         else {
             // Token was selected, but there are no token types available.
