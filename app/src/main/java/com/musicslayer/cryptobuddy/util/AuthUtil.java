@@ -182,39 +182,9 @@ public class AuthUtil {
         }
     }
 
-    public static class OAuthToken implements Serialization.SerializableToJSON, Parcelable {
+    public static class OAuthToken implements Serialization.SerializableToJSON {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            out.writeInt(token_e.length);
-            out.writeByteArray(token_e);
-            out.writeLong(expiryTime);
-        }
-
-        public static final Parcelable.Creator<OAuthToken> CREATOR = new Parcelable.Creator<OAuthToken>() {
-            @Override
-            public OAuthToken createFromParcel(Parcel in) {
-                int token_e_length = in.readInt();
-                byte[] token_e = new byte[token_e_length];
-                in.readByteArray(token_e);
-
-                long expiryTime = in.readLong();
-
-                return new OAuthToken(token_e, expiryTime);
-            }
-
-            @Override
-            public OAuthToken[] newArray(int size) {
-                return new OAuthToken[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
 
         public String serializeToJSON() throws org.json.JSONException {
             return new Serialization.JSONObjectWithNull()

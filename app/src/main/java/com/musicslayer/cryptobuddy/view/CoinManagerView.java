@@ -22,7 +22,6 @@ import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
-import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 

@@ -1,38 +1,12 @@
 package com.musicslayer.cryptobuddy.transaction;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 import java.util.ArrayList;
 
-public class Action implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeString(actionString);
-    }
-
-    public static final Parcelable.Creator<Action> CREATOR = new Parcelable.Creator<Action>() {
-        @Override
-        public Action createFromParcel(Parcel in) {
-            String actionString = in.readString();
-            return new Action(actionString);
-        }
-
-        @Override
-        public Action[] newArray(int size) {
-            return new Action[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class Action implements Serialization.SerializableToJSON, Serialization.Versionable {
     final public static ArrayList<String> actions;
     static {
         actions = new ArrayList<>();

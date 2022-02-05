@@ -22,7 +22,6 @@ import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
-import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 

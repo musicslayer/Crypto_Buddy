@@ -1,8 +1,5 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;

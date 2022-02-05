@@ -1,8 +1,5 @@
 package com.musicslayer.cryptobuddy.transaction;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
@@ -17,32 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class AssetQuantity implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeParcelable(assetAmount, flags);
-        out.writeParcelable(asset, flags);
-    }
-
-    public static final Parcelable.Creator<AssetQuantity> CREATOR = new Parcelable.Creator<AssetQuantity>() {
-        @Override
-        public AssetQuantity createFromParcel(Parcel in) {
-            AssetAmount assetAmount = in.readParcelable(AssetAmount.class.getClassLoader());
-            Asset asset = in.readParcelable(Asset.class.getClassLoader());
-            return new AssetQuantity(assetAmount, asset);
-        }
-
-        @Override
-        public AssetQuantity[] newArray(int size) {
-            return new AssetQuantity[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class AssetQuantity implements Serialization.SerializableToJSON, Serialization.Versionable {
     public AssetAmount assetAmount;
     public Asset asset;
 

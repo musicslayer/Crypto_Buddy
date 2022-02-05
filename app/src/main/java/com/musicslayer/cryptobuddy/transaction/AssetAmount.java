@@ -1,8 +1,5 @@
 package com.musicslayer.cryptobuddy.transaction;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
@@ -12,29 +9,7 @@ import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class AssetAmount implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeString(amount.toString());
-    }
-
-    public static final Parcelable.Creator<AssetAmount> CREATOR = new Parcelable.Creator<AssetAmount>() {
-        @Override
-        public AssetAmount createFromParcel(Parcel in) {
-            return new AssetAmount(new BigDecimal(in.readString()));
-        }
-
-        @Override
-        public AssetAmount[] newArray(int size) {
-            return new AssetAmount[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class AssetAmount implements Serialization.SerializableToJSON, Serialization.Versionable {
     public final static int MAXSCALE = 20;
 
     public BigDecimal amount;

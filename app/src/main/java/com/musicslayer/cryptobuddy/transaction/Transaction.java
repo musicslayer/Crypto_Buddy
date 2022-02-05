@@ -1,8 +1,5 @@
 package com.musicslayer.cryptobuddy.transaction;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -14,38 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class Transaction implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeParcelable(action, flags);
-        out.writeParcelable(actionedAssetQuantity, flags);
-        out.writeParcelable(otherAssetQuantity, flags);
-        out.writeParcelable(timestamp, flags);
-        out.writeString(info);
-    }
-
-    public static final Parcelable.Creator<Transaction> CREATOR = new Parcelable.Creator<Transaction>() {
-        @Override
-        public Transaction createFromParcel(Parcel in) {
-            Action action = in.readParcelable(Action.class.getClassLoader());
-            AssetQuantity actionedAssetQuantity = in.readParcelable(AssetQuantity.class.getClassLoader());
-            AssetQuantity otherAssetQuantity = in.readParcelable(AssetQuantity.class.getClassLoader());
-            Timestamp timestamp = in.readParcelable(Timestamp.class.getClassLoader());
-            String info = in.readString();
-            return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
-        }
-
-        @Override
-        public Transaction[] newArray(int size) {
-            return new Transaction[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+public class Transaction implements Serialization.SerializableToJSON, Serialization.Versionable {
     public Action action;
     public AssetQuantity actionedAssetQuantity;
     public AssetQuantity otherAssetQuantity;
