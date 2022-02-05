@@ -137,7 +137,6 @@
         app:layout_constraintStart_toEndOf="@+id/add_transaction_dialog_chooseDateButton"
         app:layout_constraintTop_toTopOf="@+id/add_transaction_dialog_chooseDateButton" />
 
-    <!-- Enforce a global maximum address length to protect algorithms from having to process large values. -->
     <com.musicslayer.cryptobuddy.view.red.AnythingEditText
         android:id="@+id/add_transaction_dialog_infoEditText"
         android:layout_width="wrap_content"
@@ -145,7 +144,6 @@
         android:ems="10"
         android:hint="Optional Transaction Info"
         android:inputType="textPersonName"
-        android:maxLength="300"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_chooseDateButton" />
 

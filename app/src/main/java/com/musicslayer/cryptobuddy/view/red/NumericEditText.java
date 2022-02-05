@@ -12,6 +12,10 @@ public class NumericEditText extends RedEditText {
 
     public NumericEditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        // Enforce a maximum length to protect algorithms from having to process large values.
+        // For now, any asset amount should not need more than 50 digits.
+        setMaxLength(50);
     }
 
     // Returns if the value is a number.

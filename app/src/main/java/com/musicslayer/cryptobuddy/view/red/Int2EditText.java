@@ -12,6 +12,10 @@ public class Int2EditText extends RedEditText {
 
     public Int2EditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        // Enforce a maximum length to protect algorithms from having to process large values.
+        // For now, all of these only need 2 digits.
+        setMaxLength(2);
     }
 
     // Returns if the value is an integer with up to 2 digits.

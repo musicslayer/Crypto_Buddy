@@ -15,6 +15,10 @@ public class PageEditText extends RedEditText {
 
     public PageEditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        // Enforce a maximum length to protect algorithms from having to process large values.
+        // For now, there should not be more than 5 digits of pages.
+        setMaxLength(5);
     }
 
     public void setPageMinMax(int pageMin, int pageMax) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.util.AttributeSet;
 
 import androidx.core.graphics.BlendModeColorFilterCompat;
@@ -31,6 +32,12 @@ abstract public class RedEditText extends CrashEditText {
         Editable E = getText();
         assert E != null;
         return E.toString();
+    }
+
+    public void setMaxLength(int maxLength) {
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(maxLength);
+        this.setFilters(filterArray);
     }
 
     // Returns if the value satisfies the condition, and will highlight itself in red if it does not.

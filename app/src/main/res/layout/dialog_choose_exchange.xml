@@ -17,8 +17,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Choose Exchange" />
 
-    <!-- Enforce a global maximum address length to protect algorithms from having to process large values. -->
-
     <TableLayout
         android:id="@+id/choose_exchange_dialog_tableLayout"
         android:layout_width="wrap_content"
