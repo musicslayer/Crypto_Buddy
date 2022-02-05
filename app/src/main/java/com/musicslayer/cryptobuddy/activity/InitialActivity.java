@@ -42,7 +42,6 @@ import java.util.Date;
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
-// TODO Add back dates along with AddressData/ExchangeData/PriceData
 // TODO Stop hardcoding CoinGecko.
 
 // This Activity class only exists for initialization code, not to be seen by the user.

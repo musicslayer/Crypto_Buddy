@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,12 +17,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
-import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
@@ -101,36 +98,12 @@ public class CryptoConverterDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
-                boolean isComplete = false;
-
-                if(priceData.isPriceComplete()) {
-                    AssetQuantity primaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceData.priceHashMap, cryptoPrimary);
-                    AssetQuantity secondaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceData.priceHashMap, cryptoSecondary);
-
-                    if(primaryPriceAssetQuantity != null && secondaryPriceAssetQuantity != null) {
-                        AssetQuantity primaryAssetQuantity = new AssetQuantity(E_PRIMARYASSET.getTextString(), cryptoPrimary);
-                        AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), primaryPriceAssetQuantity);
-                        AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), secondaryPriceAssetQuantity);
-                        AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
-
-                        String text = "Conversion:\n" + primaryAssetQuantity + " = " + secondaryAssetQuantity.toString() +
-                                "\n\nForward Prices:\n" + primaryAssetPrice +
-                                "\n" + secondaryAssetPrice;
-
-                        if("ForwardBackward".equals(PriceDisplaySetting.value)) {
-                            text = text + "\n\nBackward Prices:\n" + primaryAssetPrice.reverseAssetPrice().toString() +
-                                    "\n" + secondaryAssetPrice.reverseAssetPrice().toString();
-                        }
-
-                        text = text + "\n\nData Source = CoinGecko API V3";
-
-                        T.setText(text);
-                        isComplete = true;
-                    }
+                if(priceData.isPriceComplete(cryptoPrimary) && priceData.isPriceComplete(cryptoSecondary)) {
+                    T.setVisibility(View.VISIBLE);
+                    T.setText(Html.fromHtml(priceData.getConverterInfoString(E_PRIMARYASSET.getTextString(), cryptoPrimary, cryptoSecondary, true)));
                 }
-
-                if(!isComplete) {
-                    T.setText("");
+                else {
+                    T.setVisibility(View.GONE);
                     ToastUtil.showToast(activity,"incomplete_price_data");
                 }
             }

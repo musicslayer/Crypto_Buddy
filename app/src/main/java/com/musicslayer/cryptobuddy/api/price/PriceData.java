@@ -1,9 +1,14 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
+import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.util.HashMap;
 
@@ -162,6 +167,70 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(newPriceData.cryptoPrice, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f, timestamp_price_f, timestamp_marketCap_f);
     }
 
+    public String getPriceInfoString(Crypto crypto, boolean isRich) {
+        // Get info for "CryptoPriceDialog".
+        // Note that prices are all positive, so we do not need to call "appendAssetQuantity"
+        RichStringBuilder s = new RichStringBuilder(isRich);
+
+        if(!isPriceComplete(crypto)) {
+            s.appendRich("(Price information not present.)");
+        }
+        else {
+            AssetQuantity priceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, crypto);
+
+            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", crypto), priceAssetQuantity);
+            s.appendRich("Forward Price = ").appendRich(assetPrice.toString());
+            if("ForwardBackward".equals(PriceDisplaySetting.value)) {
+                s.appendRich("\nBackward Price = ").appendRich(assetPrice.reverseAssetPrice().toString());
+            }
+            s.appendRich("\n\nPrice Data Source = ").appendRich(priceAPI_price.getDisplayName());
+            s.appendRich("\nPrice Data Timestamp = ").appendRich(timestamp_price.toString());
+        }
+
+        if(!isMarketCapComplete(crypto)) {
+            s.appendRich("\n\n(Market cap information not present.)");
+        }
+        else {
+            AssetQuantity marketCapAssetQuantity = HashMapUtil.getValueFromMap(marketCapHashMap, crypto);
+
+            s.appendRich("\n\nMarket Cap = ").appendRich(marketCapAssetQuantity.toString());
+            s.appendRich("\n\nMarket Cap Data Source = ").appendRich(priceAPI_marketCap.getDisplayName());
+            s.appendRich("\nMarket Cap Data Timestamp = ").appendRich(timestamp_marketCap.toString());
+        }
+
+        return s.toString();
+    }
+
+    public String getConverterInfoString(String amount, Crypto cryptoPrimary, Crypto cryptoSecondary, boolean isRich) {
+        // Get info for "CryptoConverterDialog".
+        // Note that prices are all positive, so we do not need to call "appendAssetQuantity"
+        RichStringBuilder s = new RichStringBuilder(isRich);
+
+        if(!isPriceComplete(cryptoPrimary) || !isPriceComplete(cryptoSecondary)) {
+            s.appendRich("(Conversion information not present.)");
+        }
+        else {
+            AssetQuantity primaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, cryptoPrimary);
+            AssetQuantity secondaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, cryptoSecondary);
+
+            AssetQuantity primaryAssetQuantity = new AssetQuantity(amount, cryptoPrimary);
+            AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), primaryPriceAssetQuantity);
+            AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), secondaryPriceAssetQuantity);
+            AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
+
+            s.appendRich("Conversion:\n").appendRich(primaryAssetQuantity.toString()).appendRich(" = ").appendRich(secondaryAssetQuantity.toString());
+
+            s.appendRich("\n\nForward Prices:\n").appendRich(primaryAssetPrice.toString()).appendRich("\n").appendRich(secondaryAssetPrice.toString());
+            if("ForwardBackward".equals(PriceDisplaySetting.value)) {
+                s.appendRich("\n\nBackward Prices:\n").appendRich(primaryAssetPrice.reverseAssetPrice().toString()).appendRich("\n").appendRich(secondaryAssetPrice.reverseAssetPrice().toString());
+            }
+            s.appendRich("\n\nPrice Data Source = ").appendRich(priceAPI_price.getDisplayName());
+            s.appendRich("\nPrice Data Timestamp = ").appendRich(timestamp_price.toString());
+        }
+
+        return s.toString();
+    }
+
     public boolean isComplete() {
         return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && priceHashMap != null && marketCapHashMap != null;
     }
@@ -172,5 +241,18 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     public boolean isMarketCapComplete() {
         return !(priceAPI_marketCap instanceof UnknownPriceAPI) && marketCapHashMap != null;
+    }
+
+    // TODO Can we just get this from the cryptoPrice?
+    public boolean isComplete(Crypto crypto) {
+        return isComplete() && HashMapUtil.getValueFromMap(priceHashMap, crypto) != null && HashMapUtil.getValueFromMap(marketCapHashMap, crypto) != null;
+    }
+
+    public boolean isPriceComplete(Crypto crypto) {
+        return isPriceComplete() && HashMapUtil.getValueFromMap(priceHashMap, crypto) != null;
+    }
+
+    public boolean isMarketCapComplete(Crypto crypto) {
+        return isMarketCapComplete() && HashMapUtil.getValueFromMap(marketCapHashMap, crypto) != null;
     }
 }

@@ -18,8 +18,6 @@ import java.util.HashMap;
 
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
-// TODO coin_serialize, etc... are too complicated. We need versioning.
-
 public class Serialization {
     // Keep this short because it will appear on every piece of stored data.
     public final static String SERIALIZATION_VERSION_MARKER = "!V!";
