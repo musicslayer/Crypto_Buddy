@@ -26,9 +26,9 @@ public class StateObj {
     public static TransactionPortfolioObj transactionPortfolioObj;
     public static ExchangePortfolioObj exchangePortfolioObj;
 
-    public static ArrayList<Asset> assetArrayList = new ArrayList<>();
-    public static ArrayList<String> options_symbols = new ArrayList<>();
-    public static ArrayList<String> options_names = new ArrayList<>();
+    public static ArrayList<Asset> search_options_assets = new ArrayList<>();
+    public static ArrayList<String> search_options_asset_names = new ArrayList<>();
+    public static ArrayList<String> search_options_asset_display_names = new ArrayList<>();
 
     public static ArrayList<Transaction> transactionArrayList = new ArrayList<>();
     public static ArrayList<Transaction> filteredTransactionArrayList = new ArrayList<>();
@@ -44,9 +44,9 @@ public class StateObj {
         addressPortfolioObj = null;
         transactionPortfolioObj = null;
         exchangePortfolioObj = null;
-        assetArrayList = new ArrayList<>();
-        options_symbols = new ArrayList<>();
-        options_names = new ArrayList<>();
+        search_options_assets = new ArrayList<>();
+        search_options_asset_names = new ArrayList<>();
+        search_options_asset_display_names = new ArrayList<>();
         transactionArrayList = new ArrayList<>();
         tableInfo = null;
         filterInfo = null;

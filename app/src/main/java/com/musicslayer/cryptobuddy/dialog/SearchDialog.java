@@ -23,12 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SearchDialog extends BaseDialog {
-    public ArrayList<Asset> assetArrayList;
-    public ArrayList<String> options_symbols_SORTED;
-    public ArrayList<String> options_symbols_LC_SORTED;
-    public ArrayList<String> options_names_SORTED;
-    public ArrayList<String> options_names_LC_SORTED;
-    public boolean isNames = false;
+    public ArrayList<Asset> search_options_assets;
+    public ArrayList<String> search_options_asset_names_SORTED;
+    public ArrayList<String> search_options_asset_names_LC_SORTED;
+    public ArrayList<String> search_options_asset_display_names_SORTED;
+    public ArrayList<String> search_options_asset_display_names_LC_SORTED;
+
+    public boolean isDisplayNames = false;
     public String searchText = "";
     TableLayout table;
 
@@ -37,27 +38,27 @@ public class SearchDialog extends BaseDialog {
     public SearchDialog(Activity activity) {
         super(activity);
 
-        this.assetArrayList = StateObj.assetArrayList;
+        this.search_options_assets = StateObj.search_options_assets;
 
         // Searches are case insensitive, so store lowercase options as well. Also sort everything for better UX.
-        this.options_symbols_SORTED = StateObj.options_symbols;
-        this.options_names_SORTED = StateObj.options_names;
+        this.search_options_asset_names_SORTED = StateObj.search_options_asset_names;
+        this.search_options_asset_display_names_SORTED = StateObj.search_options_asset_display_names;
 
-        sortAscendingByType(options_symbols_SORTED);
-        sortAscendingByType(options_names_SORTED);
+        sortAscendingByType(search_options_asset_names_SORTED);
+        sortAscendingByType(search_options_asset_display_names_SORTED);
 
-        this.options_symbols_LC_SORTED = new ArrayList<>();
-        for(String o : this.options_symbols_SORTED) {
-            this.options_symbols_LC_SORTED.add(o.toLowerCase());
+        this.search_options_asset_names_LC_SORTED = new ArrayList<>();
+        for(String o : this.search_options_asset_names_SORTED) {
+            this.search_options_asset_names_LC_SORTED.add(o.toLowerCase());
         }
 
-        this.options_names_LC_SORTED = new ArrayList<>();
-        for(String o : this.options_names_SORTED) {
-            this.options_names_LC_SORTED.add(o.toLowerCase());
+        this.search_options_asset_display_names_LC_SORTED = new ArrayList<>();
+        for(String o : this.search_options_asset_display_names_SORTED) {
+            this.search_options_asset_display_names_LC_SORTED.add(o.toLowerCase());
         }
 
-        sortAscendingByType(options_symbols_LC_SORTED);
-        sortAscendingByType(options_names_LC_SORTED);
+        sortAscendingByType(search_options_asset_names_LC_SORTED);
+        sortAscendingByType(search_options_asset_display_names_LC_SORTED);
     }
 
     public static void sortAscendingByType(ArrayList<String> optionsArrayList) {
@@ -94,7 +95,7 @@ public class SearchDialog extends BaseDialog {
         Button B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
         B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                isNames = !isNames;
+                isDisplayNames = !isDisplayNames;
                 updateLayout();
                 updateList();
             }
@@ -123,7 +124,7 @@ public class SearchDialog extends BaseDialog {
 
     public void updateLayout() {
         Button B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
-        if(isNames) {
+        if(isDisplayNames) {
             B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
             B_TOGGLE.setText("Names");
         }
@@ -139,15 +140,15 @@ public class SearchDialog extends BaseDialog {
         // Make sure we don't accidentally return the entire list of options here.
         if(searchText.trim().isEmpty()) { return; }
 
-        ArrayList<String> options_SORTED;
-        ArrayList<String> options_LC_SORTED;
-        if(isNames) {
-            options_SORTED = options_names_SORTED;
-            options_LC_SORTED = options_names_LC_SORTED;
+        ArrayList<String> search_options_SORTED;
+        ArrayList<String> search_options_LC_SORTED;
+        if(isDisplayNames) {
+            search_options_SORTED = search_options_asset_display_names_SORTED;
+            search_options_LC_SORTED = search_options_asset_display_names_LC_SORTED;
         }
         else {
-            options_SORTED = options_symbols_SORTED;
-            options_LC_SORTED = options_symbols_LC_SORTED;
+            search_options_SORTED = search_options_asset_names_SORTED;
+            search_options_LC_SORTED = search_options_asset_names_LC_SORTED;
         }
 
         // For performance reasons, we have to limit the number of results we show.
@@ -156,9 +157,9 @@ public class SearchDialog extends BaseDialog {
 
         String[] searchTextWords = searchText.trim().toLowerCase().split(" ");
 
-        for(int oIDX = 0; oIDX < options_LC_SORTED.size(); oIDX++) {
+        for(int oIDX = 0; oIDX < search_options_LC_SORTED.size(); oIDX++) {
             final int oIDX_F = oIDX;
-            String oL = options_LC_SORTED.get(oIDX);
+            String oL = search_options_LC_SORTED.get(oIDX);
 
             boolean shouldInclude = true;
             for(String word : searchTextWords) {
@@ -175,12 +176,12 @@ public class SearchDialog extends BaseDialog {
 
                 AppCompatButton B = new AppCompatButton(this.activity);
                 B.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                B.setText(options_SORTED.get(oIDX_F));
+                B.setText(search_options_SORTED.get(oIDX_F));
                 B.setOnClickListener(new CrashView.CrashOnClickListener(SearchDialog.this.activity) {
                     public void onClickImpl(View v) {
                         // Sort assetArrayList in the same way as the options we used so that the index lines up.
-                        if(isNames) {
-                            Collections.sort(assetArrayList, (a, b) -> {
+                        if(isDisplayNames) {
+                            Collections.sort(search_options_assets, (a, b) -> {
                                 // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
                                 // If length is equal, just go alphabetically.
                                 int s = Integer.compare(a.getDisplayName().length(), b.getDisplayName().length());
@@ -193,7 +194,7 @@ public class SearchDialog extends BaseDialog {
                             });
                         }
                         else {
-                            Collections.sort(assetArrayList, (a, b) -> {
+                            Collections.sort(search_options_assets, (a, b) -> {
                                 // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
                                 // If length is equal, just go alphabetically.
                                 int s = Integer.compare(a.getName().length(), b.getName().length());
@@ -206,7 +207,7 @@ public class SearchDialog extends BaseDialog {
                             });
                         }
 
-                        user_OPTION = assetArrayList.get(oIDX_F);
+                        user_OPTION = search_options_assets.get(oIDX_F);
 
                         isComplete = true;
                         dismiss();
@@ -242,14 +243,14 @@ public class SearchDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putBoolean("isNames", isNames);
+        bundle.putBoolean("isDisplayNames", isDisplayNames);
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            isNames = bundle.getBoolean("isNames");
+            isDisplayNames = bundle.getBoolean("isDisplayNames");
         }
     }
 }

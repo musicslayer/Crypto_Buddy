@@ -87,18 +87,18 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public Comparator<Asset> getSettingComparatorAsset() {
         if("full".equals(AssetDisplaySetting.value)) {
-            return getNameComparatorAsset();
+            return getDisplayNameComparatorAsset();
         }
         else {
-            return getSymbolComparatorAsset();
+            return getNameComparatorAsset();
         }
-    }
-
-    public Comparator<Asset> getSymbolComparatorAsset() {
-        return Comparator.comparing(a -> a.getName().toLowerCase());
     }
 
     public Comparator<Asset> getNameComparatorAsset() {
+        return Comparator.comparing(a -> a.getName().toLowerCase());
+    }
+
+    public Comparator<Asset> getDisplayNameComparatorAsset() {
         return Comparator.comparing(a -> a.getDisplayName().toLowerCase());
     }
 
@@ -383,13 +383,13 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
         B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                if(getSearchAssets().isEmpty()) {
+                if(getSearchOptionsAssets().isEmpty()) {
                     chooseSearch(null);
                 }
                 else {
-                    StateObj.assetArrayList = getSearchAssets();
-                    StateObj.options_symbols = getSearchOptionsSymbols();
-                    StateObj.options_names = getSearchOptionsNames();
+                    StateObj.search_options_assets = getSearchOptionsAssets();
+                    StateObj.search_options_asset_names = getSearchOptionsNames();
+                    StateObj.search_options_asset_display_names = getSearchOptionsDisplayNames();
                     searchAssetDialogFragment.show(context, "search");
                 }
             }
@@ -504,7 +504,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         }
     }
 
-    private ArrayList<String> getSearchOptionsSymbols() {
+    private ArrayList<String> getSearchOptionsNames() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
             options.addAll(search_options_fiat_names);
@@ -520,7 +520,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         return options;
     }
 
-    private ArrayList<String> getSearchOptionsNames() {
+    private ArrayList<String> getSearchOptionsDisplayNames() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
             options.addAll(search_options_fiat_display_names);
@@ -536,7 +536,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         return options;
     }
 
-    private ArrayList<Asset> getSearchAssets() {
+    private ArrayList<Asset> getSearchOptionsAssets() {
         ArrayList<Asset> assets = new ArrayList<>();
         if(includesFiat) {
             assets.addAll(search_options_fiats);
