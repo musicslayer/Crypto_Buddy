@@ -42,7 +42,6 @@ import java.util.Date;
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
-// TODO When getting raw info, we need the combo name/symbol
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

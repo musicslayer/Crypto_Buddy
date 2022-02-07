@@ -17,20 +17,28 @@ public class RichStringBuilder {
 
     public RichStringBuilder appendAssetQuantity(AssetQuantity assetQuantity) {
         // Append AssetQuantity, applying rich formatting for color if applicable.
+        String str;
+
         if(assetQuantity == null) {
-            s.append("-");
-            return this;
-        }
-
-        String str = assetQuantity.toString();
-
-        if(isRich) {
-            String lossSetting = LossValuesSetting.value;
-            if((assetQuantity.assetAmount.isLoss || assetQuantity.assetAmount.amount.compareTo(BigDecimal.ZERO) < 0) && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
-                // Make the string red.
-                str = "<font color=#ff0000>" + enrich(str) + "</font>";
+            str = "-";
+            if(isRich) {
+                str = enrich(str);
             }
-            // else, just use the default color, so that it matches the theme.
+        }
+        else {
+            if(isRich) {
+                str = enrich(assetQuantity.toString());
+
+                String lossSetting = LossValuesSetting.value;
+                if((assetQuantity.assetAmount.isLoss || assetQuantity.assetAmount.amount.compareTo(BigDecimal.ZERO) < 0) && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
+                    // Make the string red.
+                    str = "<font color=#ff0000>" + str + "</font>";
+                }
+                // else, just use the default color, so that it matches the theme.
+            }
+            else {
+                str = assetQuantity.toRawString();
+            }
         }
 
         s.append(str);

@@ -63,6 +63,11 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         }
     }
 
+    public String getRawName() {
+        // When creating data dumps, combine names.
+        return getDisplayName() + " (" + getName() + ")";
+    }
+
     private int compare(Asset other) {
         // Fiat comes before Coins, Coins come before Tokens, and then sort alphabetically.
         boolean isFiatA = this instanceof Fiat;

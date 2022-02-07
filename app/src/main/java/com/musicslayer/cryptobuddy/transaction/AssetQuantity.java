@@ -40,6 +40,10 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
         return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getSettingName();
     }
 
+    public String toRawString() {
+        return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getRawName();
+    }
+
     private int compare(AssetQuantity other) {
         // First compare asset, then quantity.
         int s = Asset.compare(asset, other.asset);
