@@ -2,11 +2,15 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 import java.util.ArrayList;
@@ -14,6 +18,8 @@ import java.util.ArrayList;
 public class ViewTokensDialog extends BaseDialog {
     public String tokenType;
     public boolean canGetJSON;
+
+    int LAST_CHECK = 0;
 
     public ViewTokensDialog(Activity activity, String tokenType, Boolean canGetJSON) {
         super(activity);
@@ -31,20 +37,74 @@ public class ViewTokensDialog extends BaseDialog {
         Toolbar toolbar = findViewById(R.id.view_tokens_dialog_toolbar);
         toolbar.setTitle("View " + tokenType + " Tokens");
 
-        SelectAndSearchView ssv = findViewById(R.id.view_tokens_dialog_selectAndSearchView);
-        ssv.setIncludesFiat(false);
-        ssv.setIncludesCoin(false);
-        ssv.setIncludesToken(true);
+        RadioGroup radioGroup = findViewById(R.id.view_tokens_dialog_radioGroup);
+        RadioButton[] rb = new RadioButton[3];
 
-        ArrayList<TokenManager> tokenManagerArrayList = new ArrayList<>();
-        tokenManagerArrayList.add(TokenManager.getTokenManagerFromTokenType(tokenType));
-        ssv.setTokenManagerOptions(tokenManagerArrayList);
+        rb[0] = findViewById(R.id.view_tokens_dialog_downloadedRadioButton);
+        rb[0].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 0;
+                updateLayout();
+            }
+        });
 
-        ssv.chooseToken(tokenType);
+        rb[1] = findViewById(R.id.view_tokens_dialog_foundRadioButton);
+        rb[1].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 1;
+                updateLayout();
+            }
+        });
+
+        rb[2] = findViewById(R.id.view_tokens_dialog_customRadioButton);
+        rb[2].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 2;
+                updateLayout();
+            }
+        });
+
+        radioGroup.check(rb[LAST_CHECK].getId());
+        rb[LAST_CHECK].callOnClick();
 
         updateLayout();
     }
 
     public void updateLayout() {
+        SelectAndSearchView ssv = findViewById(R.id.view_tokens_dialog_selectAndSearchView);
+        ssv.setIncludesFiat(false);
+        ssv.setIncludesCoin(false);
+        ssv.setIncludesToken(true);
+
+        TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
+
+        if(LAST_CHECK == 0) {
+            ssv.setTokenOptions(tokenManager.downloaded_tokens);
+        }
+        else if(LAST_CHECK == 1) {
+            ssv.setTokenOptions(tokenManager.found_tokens);
+        }
+        else if(LAST_CHECK == 2) {
+            ssv.setTokenOptions(tokenManager.custom_tokens);
+        }
+
+        ArrayList<TokenManager> tokenManagerArrayList = new ArrayList<>();
+        tokenManagerArrayList.add(tokenManager);
+        ssv.setTokenManagerOptions(tokenManagerArrayList);
+
+        ssv.chooseToken(tokenType);
+    }
+
+    @Override
+    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
+        bundle.putInt("lastcheck", LAST_CHECK);
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        if(bundle != null) {
+            LAST_CHECK = bundle.getInt("lastcheck");
+        }
     }
 }

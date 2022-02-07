@@ -17,11 +17,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="View Coins" />
 
+    <RadioGroup
+        android:id="@+id/view_coins_dialog_radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_coins_dialog_toolbar">
+
+        <RadioButton
+            android:id="@+id/view_coins_dialog_hardcodedRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hardcoded Coins" />
+
+        <RadioButton
+            android:id="@+id/view_coins_dialog_foundRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Found Coins" />
+
+        <RadioButton
+            android:id="@+id/view_coins_dialog_customRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Custom Coins" />
+    </RadioGroup>
+
     <com.musicslayer.cryptobuddy.view.SelectAndSearchView
         android:id="@+id/view_coins_dialog_selectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_coins_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/view_coins_dialog_radioGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

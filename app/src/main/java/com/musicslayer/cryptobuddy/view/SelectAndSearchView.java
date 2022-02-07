@@ -122,7 +122,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public void setCompleteOptions() {
         // All available assets will be shown as options.
-        // TODO Act like tokens ("base" is the only option)
         setFiatOptions(FiatManager.getAllFiats());
         setCoinOptions(CoinManager.getAllCoins());
         setTokenOptions(TokenManager.getAllTokens());
@@ -223,13 +222,17 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
         for(String tokenType : new ArrayList<>(options_token_setting_names_sorted.keySet())) {
             ArrayList<String> tokenSettingNamesSorted = HashMapUtil.getValueFromMap(options_token_setting_names_sorted, tokenType);
-            Collections.sort(tokenSettingNamesSorted, getComparatorString());
+            if(tokenSettingNamesSorted != null) {
+                Collections.sort(tokenSettingNamesSorted, getComparatorString());
+            }
             HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
         }
 
         for(String tokenType : new ArrayList<>(options_token_sorted.keySet())) {
             ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_token_sorted, tokenType);
-            Collections.sort(tokensSorted, getSettingComparatorAsset());
+            if(tokensSorted != null) {
+                Collections.sort(tokensSorted, getSettingComparatorAsset());
+            }
             HashMapUtil.putValueInMap(options_token_sorted, tokenType, tokensSorted);
         }
     }
@@ -298,11 +301,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
         // Initialize the sorted lists for this kind of token.
         // There is no "DefaultTokenSetting" - the first token will always be chosen.
         lastButton = tokenType;
-
-        if(tokenType != null) {
-            ArrayList<Token> tokenArrayList = TokenManager.getTokenManagerFromTokenType(tokenType).getTokens();
-            setTokenOptions(tokenArrayList);
-        }
 
         // Remake layout to refresh button visibility and search options.
         this.removeAllViews();
