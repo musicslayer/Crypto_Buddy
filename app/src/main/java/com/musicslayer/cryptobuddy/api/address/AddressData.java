@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
+import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
@@ -14,6 +15,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// TODO Unknown vs null values for complete.
+
 public class AddressData implements Serialization.SerializableToJSON {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
@@ -24,6 +27,7 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_transactions;
 
     final public HashMap<Asset, AssetAmount> netTransactionsMap;
+    final public HashMap<Asset, AssetAmount> discrepancyMap;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -59,6 +63,7 @@ public class AddressData implements Serialization.SerializableToJSON {
         this.timestamp_transactions = timestamp_transactions;
 
         netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+        discrepancyMap = getDiscrepancyMap();
     }
 
     public static AddressData getAllData(CryptoAddress cryptoAddress) {
@@ -226,7 +231,7 @@ public class AddressData implements Serialization.SerializableToJSON {
         return new AddressData(newAddressData.cryptoAddress, addressAPI_currentBalance_f, addressAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, timestamp_currentBalance_f, timestamp_transactions_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
+    public String getInfoString(PriceData priceData, boolean isRich) {
         // Get address information. If the priceMap is not null, add in the prices of each asset in the map.
         RichStringBuilder s = new RichStringBuilder(isRich);
         s.appendRich("Address = " + cryptoAddress.toString());
@@ -252,10 +257,13 @@ public class AddressData implements Serialization.SerializableToJSON {
             }
             else {
                 s.appendRich("\nCurrent Balances:");
+
+                HashMap<Asset, AssetQuantity> priceMap = priceData == null ? null : priceData.priceHashMap;
                 s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
 
-                if(priceMap != null && !priceMap.isEmpty()) {
-                    s.appendRich("\n\nData Source = CoinGecko API V3");
+                if(priceData != null) {
+                    s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
+                    s.appendRich("\nPrice Data Timestamp = ").appendRich(priceData.timestamp_price.toString());
                 }
             }
         }
@@ -269,18 +277,14 @@ public class AddressData implements Serialization.SerializableToJSON {
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
             if(transactionArrayList.isEmpty()) {
-                s.append("\nNo Transactions");
+                s.append("\nNo transactions found.");
             }
             else {
                 s.append("\nTransactions:\n");
                 s.append(Serialization.serializeArrayList(transactionArrayList));
 
                 s.append("\n\nNet Transaction Sums:");
-                for(Asset asset : netTransactionsMap.keySet()) {
-                    AssetAmount assetAmount = netTransactionsMap.get(asset);
-                    AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-                    s.append("\n    ").append(assetQuantity);
-                }
+                s.append(AssetQuantity.getAssetInfo(netTransactionsMap, null, false));
             }
         }
 
@@ -302,30 +306,51 @@ public class AddressData implements Serialization.SerializableToJSON {
         return s.toString();
     }
 
-    public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
-        if(transactionArrayList == null || currentBalanceArrayList == null) {
-            return new HashMap<>();
+    public String getDiscrepancyString(PriceData priceData, boolean isRich) {
+        // Get discrepancy information. If the priceMap is not null, add in the prices of each asset in the map.
+        RichStringBuilder s = new RichStringBuilder(isRich);
+        s.appendRich("Address = ").appendRich(cryptoAddress.toString()).appendRich("\n");
+
+        if(!hasDiscrepancy()) {
+            s.appendRich("\nThis address has no discrepancies.");
+        }
+        else {
+            s.appendRich("\nDiscrepancies:");
+
+            HashMap<Asset, AssetQuantity> priceHashMap = priceData == null ? null : priceData.priceHashMap;
+            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, true));
+
+            if(priceData != null) {
+                s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
+                s.appendRich("\nPrice Data Timestamp = ").appendRich(priceData.timestamp_price.toString());
+            }
         }
 
+        return s.toString();
+    }
+
+    public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
         // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
-        for(Asset asset : netTransactionsMap.keySet()) {
-            AssetAmount assetAmount = netTransactionsMap.get(asset);
-            add(deltaMap, asset, assetAmount);
-        }
+        if(transactionArrayList != null && currentBalanceArrayList != null) {
+            for(Asset asset : netTransactionsMap.keySet()) {
+                AssetAmount assetAmount = netTransactionsMap.get(asset);
+                add(deltaMap, asset, assetAmount);
+            }
 
-        for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-            subtract(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
-        }
+            for(AssetQuantity assetQuantity : currentBalanceArrayList) {
+                subtract(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
+            }
 
-        // If an amount is zero, we do not count that as a discrepancy, so let's remove it.
-        // This also means that if an asset appears in one place with an amount of zero, and is absent from another place, it does not count as a discrepancy.
-        for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
-            AssetAmount assetAmount = HashMapUtil.getValueFromMap(deltaMap, asset);
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) == 0) {
-                HashMapUtil.removeValueFromMap(deltaMap, asset);
+            // If an amount is zero, we do not count that as a discrepancy, so let's remove it.
+            // This also means that if an asset appears in one place with an amount of zero, and is absent from another place, it does not count as a discrepancy.
+            for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
+                AssetAmount assetAmount = HashMapUtil.getValueFromMap(deltaMap, asset);
+                if(assetAmount.amount.compareTo(BigDecimal.ZERO) == 0) {
+                    HashMapUtil.removeValueFromMap(deltaMap, asset);
+                }
             }
         }
 

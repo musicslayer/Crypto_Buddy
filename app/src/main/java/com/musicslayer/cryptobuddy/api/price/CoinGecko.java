@@ -71,6 +71,7 @@ public class CoinGecko extends PriceAPI {
 
         for(Asset asset : cryptoPrice.assetArrayList) {
             if(asset instanceof Fiat) {
+                // TODO Should Fiats have ID
                 Fiat fiat = (Fiat)asset;
                 fiatArrayList.add(fiat);
             }

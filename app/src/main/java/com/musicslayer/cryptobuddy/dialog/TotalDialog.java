@@ -21,7 +21,6 @@ import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
@@ -31,7 +30,6 @@ import java.util.HashMap;
 public class TotalDialog extends BaseDialog {
     ArrayList<Transaction> filteredTransactionArrayList;
     HashMap<Asset, AssetAmount> deltaMap;
-    HashMap<Asset, AssetQuantity> priceMap = new HashMap<>();
 
     public TotalDialog(Activity activity) {
         super(activity);
@@ -44,6 +42,10 @@ public class TotalDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_total);
+
+        if(savedInstanceState == null) {
+            StateObj.priceData = null;
+        }
 
         SelectAndSearchView fssv = findViewById(R.id.total_dialog_fiatSelectAndSearchView);
         fssv.setIncludesFiat(true);
@@ -58,43 +60,29 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
+                // TODO "Calculating Prices..."?
                 ProgressDialogFragment.updateProgressTitle("Calculating Total...");
 
-                HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
-
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
-
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
                 CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
 
-                PriceData priceData = PriceData.getPriceData(cryptoPrice);
-                if(priceData.isPriceComplete()) {
-                    HashMap<Asset, AssetQuantity> priceHashMap = priceData.priceHashMap;
-                    for(Asset asset : priceHashMap.keySet()) {
-                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, asset);
-                        if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, asset, price);
-                        }
-                    }
-                }
+                PriceData newPriceData = PriceData.getPriceData(cryptoPrice);
 
-                ProgressDialogFragment.setValue(Serialization.serializeHashMap(newPriceMap));
+                ProgressDialogFragment.setValue(Serialization.serialize(newPriceData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                HashMap<Asset, AssetQuantity> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetQuantity.class);
+                PriceData newPriceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
-                if(newPriceMap.size() != deltaMap.size()) {
+                if(!newPriceData.isPriceFull()) {
                     ToastUtil.showToast(activity,"incomplete_price_data");
                 }
 
-                priceMap.clear();
-                for(Asset asset : newPriceMap.keySet()) {
-                    HashMapUtil.putValueInMap(priceMap, asset, newPriceMap.get(asset));
-                }
+                StateObj.priceData = newPriceData;
 
                 updateLayout();
             }
@@ -104,7 +92,7 @@ public class TotalDialog extends BaseDialog {
         Button B_PRICES = findViewById(R.id.total_dialog_priceButton);
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                if(deltaMap.isEmpty()) {
+                if(filteredTransactionArrayList.isEmpty()) {
                     ToastUtil.showToast(activity, "no_transactions_found");
                     return;
                 }
@@ -122,32 +110,22 @@ public class TotalDialog extends BaseDialog {
     public void updateLayout() {
         RichStringBuilder s = new RichStringBuilder(true);
 
-        if(deltaMap.isEmpty()) {
-            s.appendRich("No assets found.");
+        if(filteredTransactionArrayList.isEmpty()) {
+            s.appendRich("No transactions found.");
         }
         else {
-            s.appendRich("Net Sums:");
+            s.appendRich("Net Transaction Sums:");
+
+            HashMap<Asset, AssetQuantity> priceMap = StateObj.priceData == null ? null : StateObj.priceData.priceHashMap;
             s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
-            if(priceMap != null && !priceMap.isEmpty()) {
-                s.appendRich("\n\nData Source = CoinGecko API V3");
+
+            if(StateObj.priceData != null) {
+                s.appendRich("\n\nPrice Data Source = ").appendRich(StateObj.priceData.priceAPI_price.getDisplayName());
+                s.appendRich("\nPrice Data Timestamp = ").appendRich(StateObj.priceData.timestamp_price.toString());
             }
         }
 
         TextView T = findViewById(R.id.total_dialog_textView);
         T.setText(Html.fromHtml(s.toString()));
-    }
-
-    @Override
-    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putSerializable("priceMap", priceMap);
-        return bundle;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void onRestoreInstanceStateImpl(Bundle bundle) {
-        if(bundle != null) {
-            priceMap = (HashMap<Asset, AssetQuantity>)bundle.getSerializable("priceMap");
-        }
     }
 }

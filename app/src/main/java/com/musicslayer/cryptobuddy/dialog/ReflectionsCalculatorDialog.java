@@ -148,7 +148,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                     AssetQuantity reflectionsCurrentBalanceAssetQuantity = reflectionsCurrentBalanceArrayList.get(0);
 
                     HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets(reflectionsAddressData.transactionArrayList, D_RECEIVETAX, D_SENDTAX);
-                    AssetAmount reflectionsTransactionsAssetAmount = HashMapUtil.getValueFromMap(reflectionsTransactionsMap, (Crypto)ssv.getChosenAsset());
+                    AssetAmount reflectionsTransactionsAssetAmount = HashMapUtil.getValueFromMap(reflectionsTransactionsMap, ssv.getChosenAsset());
 
                     AssetQuantity resultAssetQuantity = new AssetQuantity(reflectionsCurrentBalanceAssetQuantity.assetAmount.subtract(reflectionsTransactionsAssetAmount), (Crypto)ssv.getChosenAsset());
 

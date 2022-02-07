@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
@@ -143,42 +142,18 @@ public class PriceData implements Serialization.SerializableToJSON {
         return new PriceData(cryptoPrice, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f, new Timestamp(), new Timestamp());
     }
 
-    public static PriceData merge(PriceData oldPriceData, PriceData newPriceData) {
-        PriceAPI priceAPI_price_f = oldPriceData.priceAPI_price;
-        PriceAPI priceAPI_marketCap_f = oldPriceData.priceAPI_marketCap;
-        HashMap<Asset, AssetQuantity> priceHashMap_f = oldPriceData.priceHashMap;
-        HashMap<Asset, AssetQuantity> marketCapHashMap_f = oldPriceData.marketCapHashMap;
-        Timestamp timestamp_price_f = oldPriceData.timestamp_price;
-        Timestamp timestamp_marketCap_f = oldPriceData.timestamp_marketCap;
-
-        if(newPriceData.isPriceComplete()) {
-            priceAPI_price_f = newPriceData.priceAPI_price;
-            priceHashMap_f = newPriceData.priceHashMap;
-            timestamp_price_f = newPriceData.timestamp_price;
-        }
-
-        if(newPriceData.isMarketCapComplete()) {
-            priceAPI_marketCap_f = newPriceData.priceAPI_marketCap;
-            marketCapHashMap_f = newPriceData.marketCapHashMap;
-            timestamp_marketCap_f = newPriceData.timestamp_marketCap;
-        }
-
-        // Both PriceData objects should have the same cryptoPrice, but just in case we favor the newer one for consistency.
-        return new PriceData(newPriceData.cryptoPrice, priceAPI_price_f, priceAPI_marketCap_f, priceHashMap_f, marketCapHashMap_f, timestamp_price_f, timestamp_marketCap_f);
-    }
-
-    public String getPriceInfoString(Crypto crypto, boolean isRich) {
+    public String getPriceInfoString(Asset asset, boolean isRich) {
         // Get info for "CryptoPriceDialog".
         // Note that prices are all positive, so we do not need to call "appendAssetQuantity"
         RichStringBuilder s = new RichStringBuilder(isRich);
 
-        if(!isPriceComplete(crypto)) {
+        if(!isPriceComplete(asset)) {
             s.appendRich("(Price information not present.)");
         }
         else {
-            AssetQuantity priceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, crypto);
+            AssetQuantity priceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, asset);
 
-            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", crypto), priceAssetQuantity);
+            AssetPrice assetPrice = new AssetPrice(new AssetQuantity("1", asset), priceAssetQuantity);
             s.appendRich("Forward Price = ").appendRich(assetPrice.toString());
             if("ForwardBackward".equals(PriceDisplaySetting.value)) {
                 s.appendRich("\nBackward Price = ").appendRich(assetPrice.reverseAssetPrice().toString());
@@ -187,11 +162,11 @@ public class PriceData implements Serialization.SerializableToJSON {
             s.appendRich("\nPrice Data Timestamp = ").appendRich(timestamp_price.toString());
         }
 
-        if(!isMarketCapComplete(crypto)) {
+        if(!isMarketCapComplete(asset)) {
             s.appendRich("\n\n(Market cap information not present.)");
         }
         else {
-            AssetQuantity marketCapAssetQuantity = HashMapUtil.getValueFromMap(marketCapHashMap, crypto);
+            AssetQuantity marketCapAssetQuantity = HashMapUtil.getValueFromMap(marketCapHashMap, asset);
 
             s.appendRich("\n\nMarket Cap = ").appendRich(marketCapAssetQuantity.toString());
             s.appendRich("\n\nMarket Cap Data Source = ").appendRich(priceAPI_marketCap.getDisplayName());
@@ -201,21 +176,21 @@ public class PriceData implements Serialization.SerializableToJSON {
         return s.toString();
     }
 
-    public String getConverterInfoString(String amount, Crypto cryptoPrimary, Crypto cryptoSecondary, boolean isRich) {
+    public String getConverterInfoString(String amount, Asset assetPrimary, Asset assetSecondary, boolean isRich) {
         // Get info for "CryptoConverterDialog".
         // Note that prices are all positive, so we do not need to call "appendAssetQuantity"
         RichStringBuilder s = new RichStringBuilder(isRich);
 
-        if(!isPriceComplete(cryptoPrimary) || !isPriceComplete(cryptoSecondary)) {
+        if(!isPriceComplete(assetPrimary) || !isPriceComplete(assetSecondary)) {
             s.appendRich("(Conversion information not present.)");
         }
         else {
-            AssetQuantity primaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, cryptoPrimary);
-            AssetQuantity secondaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, cryptoSecondary);
+            AssetQuantity primaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, assetPrimary);
+            AssetQuantity secondaryPriceAssetQuantity = HashMapUtil.getValueFromMap(priceHashMap, assetSecondary);
 
-            AssetQuantity primaryAssetQuantity = new AssetQuantity(amount, cryptoPrimary);
-            AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoPrimary), primaryPriceAssetQuantity);
-            AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", cryptoSecondary), secondaryPriceAssetQuantity);
+            AssetQuantity primaryAssetQuantity = new AssetQuantity(amount, assetPrimary);
+            AssetPrice primaryAssetPrice = new AssetPrice(new AssetQuantity("1", assetPrimary), primaryPriceAssetQuantity);
+            AssetPrice secondaryAssetPrice = new AssetPrice(new AssetQuantity("1", assetSecondary), secondaryPriceAssetQuantity);
             AssetQuantity secondaryAssetQuantity = primaryAssetQuantity.convert(primaryAssetPrice).convert(secondaryAssetPrice.reverseAssetPrice());
 
             s.appendRich("Conversion:\n").appendRich(primaryAssetQuantity.toString()).appendRich(" = ").appendRich(secondaryAssetQuantity.toString());
@@ -243,16 +218,29 @@ public class PriceData implements Serialization.SerializableToJSON {
         return !(priceAPI_marketCap instanceof UnknownPriceAPI) && marketCapHashMap != null;
     }
 
-    // TODO Can we just get this from the cryptoPrice?
-    public boolean isComplete(Crypto crypto) {
-        return isComplete() && HashMapUtil.getValueFromMap(priceHashMap, crypto) != null && HashMapUtil.getValueFromMap(marketCapHashMap, crypto) != null;
+    // Since we get the info for multiple assets, these functions check that a particular asset has complete information.
+    public boolean isComplete(Asset asset) {
+        return isComplete() && HashMapUtil.getValueFromMap(priceHashMap, asset) != null && HashMapUtil.getValueFromMap(marketCapHashMap, asset) != null;
     }
 
-    public boolean isPriceComplete(Crypto crypto) {
-        return isPriceComplete() && HashMapUtil.getValueFromMap(priceHashMap, crypto) != null;
+    public boolean isPriceComplete(Asset asset) {
+        return isPriceComplete() && HashMapUtil.getValueFromMap(priceHashMap, asset) != null;
     }
 
-    public boolean isMarketCapComplete(Crypto crypto) {
-        return isMarketCapComplete() && HashMapUtil.getValueFromMap(marketCapHashMap, crypto) != null;
+    public boolean isMarketCapComplete(Asset asset) {
+        return isMarketCapComplete() && HashMapUtil.getValueFromMap(marketCapHashMap, asset) != null;
+    }
+
+    // Check that all assets have complete data.
+    public boolean isFull() {
+        return priceHashMap.size() == cryptoPrice.assetArrayList.size() && marketCapHashMap.size() == cryptoPrice.assetArrayList.size();
+    }
+
+    public boolean isPriceFull() {
+        return priceHashMap.size() == cryptoPrice.assetArrayList.size();
+    }
+
+    public boolean isMarketFull() {
+        return marketCapHashMap.size() == cryptoPrice.assetArrayList.size();
     }
 }

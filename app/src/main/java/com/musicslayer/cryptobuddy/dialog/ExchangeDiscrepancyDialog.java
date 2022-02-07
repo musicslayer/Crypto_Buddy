@@ -20,11 +20,9 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -39,9 +37,6 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
     HashMap<CryptoExchange, ExchangeData> exchangeDataMap;
     int cryptoExchangeIdx;
 
-    HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
-    HashMap<Asset, AssetQuantity> priceMap = new HashMap<>();
-
     public ExchangeDiscrepancyDialog(Activity activity, ArrayList<CryptoExchange> cryptoExchangeArrayList) {
         super(activity);
         this.cryptoExchangeArrayList = cryptoExchangeArrayList;
@@ -54,6 +49,10 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_exchange_discrepancy);
+
+        if(savedInstanceState == null) {
+            StateObj.priceData = null;
+        }
 
         SelectAndSearchView fssv = findViewById(R.id.exchange_discrepancy_dialog_fiatSelectAndSearchView);
         fssv.setIncludesFiat(true);
@@ -68,46 +67,32 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Calculating Total...");
 
-                HashMap<Asset, AssetQuantity> newPriceMap = new HashMap<>();
+                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
+                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
+                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyMap;
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
-
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
                 CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
 
-                PriceData priceData = PriceData.getPriceData(cryptoPrice);
-                if(priceData.isPriceComplete()) {
-                    HashMap<Asset, AssetQuantity> priceHashMap = priceData.priceHashMap;
-                    for(Asset asset : priceHashMap.keySet()) {
-                        AssetQuantity price = HashMapUtil.getValueFromMap(priceHashMap, asset);
-                        if(price != null) {
-                            HashMapUtil.putValueInMap(newPriceMap, asset, price);
-                        }
-                    }
-                }
+                PriceData newPriceData = PriceData.getPriceData(cryptoPrice);
 
-                ProgressDialogFragment.setValue(Serialization.serializeHashMap(newPriceMap));
+                ProgressDialogFragment.setValue(Serialization.serialize(newPriceData));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                HashMap<Asset, AssetQuantity> newPriceMap = Serialization.deserializeHashMap(ProgressDialogFragment.getValue(), Asset.class, AssetQuantity.class);
+                PriceData newPriceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
-                if(newPriceMap.size() != deltaMap.size()) {
+                if(!newPriceData.isPriceFull()) {
                     ToastUtil.showToast(activity,"incomplete_price_data");
                 }
 
-                priceMap.clear();
-                for(Asset asset : newPriceMap.keySet()) {
-                    HashMapUtil.putValueInMap(priceMap, asset, newPriceMap.get(asset));
-                }
+                StateObj.priceData = newPriceData;
 
-                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
-                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
-
-                updateLayout(exchangeData);
+                updateLayout();
             }
         });
         progressDialogFragment.restoreListeners(this.activity, "progress");
@@ -115,6 +100,10 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         Button B_PRICES = findViewById(R.id.exchange_discrepancy_dialog_priceButton);
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
+                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
+                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
+                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyMap;
+
                 if(deltaMap.isEmpty()) {
                     ToastUtil.showToast(activity, "no_discrepancies_found");
                     return;
@@ -149,13 +138,7 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 cryptoExchangeIdx = pos;
-
-                CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
-                ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
-
-                deltaMap = exchangeData.getDiscrepancyMap();
-
-                updateLayout(exchangeData);
+                updateLayout();
             }
         });
 
@@ -169,30 +152,18 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
         }
     }
 
-    public void updateLayout(ExchangeData exchangeData) {
+    public void updateLayout() {
         // For each non-zero entry, display the discrepancy.
-        RichStringBuilder s = new RichStringBuilder(true);
-        s.appendRich("Exchange = ").appendRich(exchangeData.cryptoExchange.toString()).appendRich("\n");
-
-        if(!exchangeData.hasDiscrepancy()) {
-            s.appendRich("\nThis exchange has no discrepancies.");
-        }
-        else {
-            s.appendRich("\nDiscrepancies:");
-            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
-            if(priceMap != null && !priceMap.isEmpty()) {
-                s.appendRich("\n\nData Source = CoinGecko API V3");
-            }
-        }
+        CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
+        ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
 
         TextView T = findViewById(R.id.exchange_discrepancy_dialog_assetTextView);
-        T.setText(Html.fromHtml(s.toString()));
+        T.setText(Html.fromHtml(exchangeData.getDiscrepancyString(StateObj.priceData, true)));
     }
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
         bundle.putInt("cryptoExchangeIdx", cryptoExchangeIdx);
-        bundle.putSerializable("priceMap", priceMap);
         return bundle;
     }
 
@@ -200,7 +171,6 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            priceMap = (HashMap<Asset, AssetQuantity>)bundle.getSerializable("priceMap");
             cryptoExchangeIdx = bundle.getInt("cryptoExchangeIdx");
         }
     }

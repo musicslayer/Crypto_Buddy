@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.exchange;
 
+import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -23,6 +24,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_transactions;
 
     HashMap<Asset, AssetAmount> netTransactionsMap;
+    final public HashMap<Asset, AssetAmount> discrepancyMap;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -58,6 +60,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         this.timestamp_transactions = timestamp_transactions;
 
         netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
+        discrepancyMap = getDiscrepancyMap();
     }
 
     public static ExchangeData getAllData(CryptoExchange cryptoExchange) {
@@ -177,7 +180,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         return new ExchangeData(newExchangeData.cryptoExchange, exchangeAPI_currentBalance_f, exchangeAPI_transactions_f, currentBalanceArrayList_f, transactionArrayList_f, timestamp_currentBalance_f, timestamp_transactions_f);
     }
 
-    public String getInfoString(HashMap<Asset, AssetQuantity> priceMap, boolean isRich) {
+    public String getInfoString(PriceData priceData, boolean isRich) {
         RichStringBuilder s = new RichStringBuilder(isRich);
         s.appendRich("Exchange = " + cryptoExchange.exchange.toString());
 
@@ -202,10 +205,13 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             }
             else {
                 s.appendRich("\nCurrent Balances:");
+
+                HashMap<Asset, AssetQuantity> priceMap = priceData == null ? null : priceData.priceHashMap;
                 s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
 
-                if(priceMap != null && !priceMap.isEmpty()) {
-                    s.appendRich("\n\nData Source = CoinGecko API V3");
+                if(priceData != null) {
+                    s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
+                    s.appendRich("\nPrice Data Timestamp = ").appendRich(priceData.timestamp_price.toString());
                 }
             }
         }
@@ -226,11 +232,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
                 s.append(Serialization.serializeArrayList(transactionArrayList));
 
                 s.append("\n\nNet Transaction Sums:");
-                for(Asset asset : netTransactionsMap.keySet()) {
-                    AssetAmount assetAmount = netTransactionsMap.get(asset);
-                    AssetQuantity assetQuantity = new AssetQuantity(assetAmount, asset);
-                    s.append("\n    ").append(assetQuantity);
-                }
+                s.append(AssetQuantity.getAssetInfo(netTransactionsMap, null, false));
             }
         }
 
@@ -253,6 +255,29 @@ public class ExchangeData implements Serialization.SerializableToJSON {
                 s.append("\n\n");
             }
         }
+        return s.toString();
+    }
+
+    public String getDiscrepancyString(PriceData priceData, boolean isRich) {
+        // Get discrepancy information. If the priceMap is not null, add in the prices of each asset in the map.
+        RichStringBuilder s = new RichStringBuilder(isRich);
+        s.appendRich("Exchange = ").appendRich(cryptoExchange.toString()).appendRich("\n");
+
+        if(!hasDiscrepancy()) {
+            s.appendRich("\nThis exchange has no discrepancies.");
+        }
+        else {
+            s.appendRich("\nDiscrepancies:");
+
+            HashMap<Asset, AssetQuantity> priceHashMap = priceData == null ? null : priceData.priceHashMap;
+            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, true));
+
+            if(priceData != null) {
+                s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
+                s.appendRich("\nPrice Data Timestamp = ").appendRich(priceData.timestamp_price.toString());
+            }
+        }
+
         return s.toString();
     }
 
