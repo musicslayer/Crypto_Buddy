@@ -51,7 +51,7 @@ public class FiatManagerActivity extends BaseActivity {
 
         // For now, there is only one type of Fiat.
         fiatManagerViewArrayList = new ArrayList<>();
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         FiatManagerView fiatManagerView = new FiatManagerView(FiatManagerActivity.this, fiatManager);
         fiatManagerView.updateLayout();
 

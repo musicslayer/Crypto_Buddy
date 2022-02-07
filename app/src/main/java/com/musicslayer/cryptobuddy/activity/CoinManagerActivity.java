@@ -51,7 +51,7 @@ public class CoinManagerActivity extends BaseActivity {
 
         // For now, there is only one type of Coin.
         coinManagerViewArrayList = new ArrayList<>();
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
         CoinManagerView coinManagerView = new CoinManagerView(CoinManagerActivity.this, coinManager);
         coinManagerView.updateLayout();
 

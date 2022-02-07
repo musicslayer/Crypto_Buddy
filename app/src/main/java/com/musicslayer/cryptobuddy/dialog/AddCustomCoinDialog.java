@@ -22,7 +22,7 @@ import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 import java.math.BigInteger;
 
 public class AddCustomCoinDialog extends BaseDialog {
-    public CoinManager chosenCoinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+    public CoinManager chosenCoinManager = CoinManager.getDefaultCoinManager();
 
     public AddCustomCoinDialog(Activity activity) {
         super(activity);

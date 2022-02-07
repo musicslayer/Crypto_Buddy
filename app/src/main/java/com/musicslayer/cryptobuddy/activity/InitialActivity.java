@@ -43,6 +43,8 @@ import java.util.Date;
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
+// TODO Make Coin/Fiat behave like tokens
+
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
@@ -88,11 +90,11 @@ public class InitialActivity extends BaseActivity {
         App.isAppInitialized = true;
 
         // Initialize or override the hardcoded assets here.
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         fiatManager.resetHardcodedFiats();
         fiatManager.addHardcodedFiat(Fiat.fiats);
 
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
         coinManager.resetHardcodedCoins();
         coinManager.addHardcodedCoin(Coin.coins);
 

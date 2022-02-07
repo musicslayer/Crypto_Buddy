@@ -33,7 +33,7 @@ abstract public class Fiat extends Asset {
     }
 
     public static Fiat getFiatFromKey(String key) {
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
 
         Fiat fiat = fiatManager.hardcoded_fiat_map.get(key);
         if(fiat == null) {

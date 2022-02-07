@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ViewTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -30,8 +31,9 @@ import java.util.ArrayList;
 
 public class TokenManagerView extends CrashTableRow {
     public TextView T;
-    public AppCompatButton B_DELETE;
-    public AppCompatButton B_DOWNLOAD;
+    public AppCompatImageButton B_DELETE;
+    public AppCompatImageButton B_VIEW;
+    public AppCompatImageButton B_DOWNLOAD;
     public TokenManager tokenManager;
     public ArrayList<String> choices;
 
@@ -84,7 +86,7 @@ public class TokenManagerView extends CrashTableRow {
                 }
             }
         });
-        progressFixedDialogFragment.restoreListeners(context, "progress_fixed_" + tokenManager.getSettingsKey());
+        progressFixedDialogFragment.restoreListeners(context, "progress_fixed_tokens_" + tokenManager.getSettingsKey());
 
         ProgressDialogFragment progressDirectDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDirectDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
@@ -117,7 +119,7 @@ public class TokenManagerView extends CrashTableRow {
                 }
             }
         });
-        progressDirectDialogFragment.restoreListeners(context, "progress_direct_" + tokenManager.getSettingsKey());
+        progressDirectDialogFragment.restoreListeners(context, "progress_direct_tokens_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, tokenManager.getTokenType());
         confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -140,7 +142,7 @@ public class TokenManagerView extends CrashTableRow {
                 }
             }
         });
-        confirmDeleteTokensDialogFragment.restoreListeners(context, "confirm_delete_" + tokenManager.getSettingsKey());
+        confirmDeleteTokensDialogFragment.restoreListeners(context, "confirm_delete_tokens_" + tokenManager.getSettingsKey());
 
         BaseDialogFragment deleteTokensDialogFragment = BaseDialogFragment.newInstance(DeleteTokensDialog.class, tokenManager.getTokenType(), tokenManager.canGetJSON());
         deleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -148,18 +150,25 @@ public class TokenManagerView extends CrashTableRow {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteTokensDialog)dialog).isComplete) {
                     choices = ((DeleteTokensDialog)dialog).user_CHOICES;
-                    confirmDeleteTokensDialogFragment.show(context, "confirm_delete_" + tokenManager.getSettingsKey());
+                    confirmDeleteTokensDialogFragment.show(context, "confirm_delete_tokens_" + tokenManager.getSettingsKey());
                 }
             }
         });
-        deleteTokensDialogFragment.restoreListeners(context, "delete_" + tokenManager.getSettingsKey());
+        deleteTokensDialogFragment.restoreListeners(context, "delete_tokens_" + tokenManager.getSettingsKey());
 
-        B_DELETE = new AppCompatButton(context);
-        B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-        B_DELETE.setText("Delete");
+        B_DELETE = new AppCompatImageButton(context);
+        B_DELETE.setImageResource(R.drawable.ic_baseline_delete_24);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                deleteTokensDialogFragment.show(context, "delete_" + tokenManager.getSettingsKey());
+                deleteTokensDialogFragment.show(context, "delete_tokens_" + tokenManager.getSettingsKey());
+            }
+        });
+
+        B_VIEW = new AppCompatImageButton(context);
+        B_VIEW.setImageResource(R.drawable.ic_baseline_pageview_24);
+        B_VIEW.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
+                BaseDialogFragment.newInstance(ViewTokensDialog.class, tokenManager.getTokenType(), tokenManager.canGetJSON()).show(context, "view_" + tokenManager.getSettingsKey());
             }
         });
 
@@ -169,30 +178,30 @@ public class TokenManagerView extends CrashTableRow {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DownloadTokensDialog)dialog).isComplete) {
                     if(((DownloadTokensDialog)dialog).isFixed) {
-                        progressFixedDialogFragment.show(context, "progress_fixed_" + tokenManager.getSettingsKey());
+                        progressFixedDialogFragment.show(context, "progress_fixed_tokens_" + tokenManager.getSettingsKey());
                     }
                     else {
-                        progressDirectDialogFragment.show(context, "progress_direct_" + tokenManager.getSettingsKey());
+                        progressDirectDialogFragment.show(context, "progress_direct_tokens_" + tokenManager.getSettingsKey());
                     }
                 }
             }
         });
-        downloadTokensDialogFragment.restoreListeners(context, "download_" + tokenManager.getSettingsKey());
+        downloadTokensDialogFragment.restoreListeners(context, "download_tokens_" + tokenManager.getSettingsKey());
 
-        B_DOWNLOAD = new AppCompatButton(context);
-        B_DOWNLOAD.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_download_24, 0, 0, 0);
-        B_DOWNLOAD.setText("Download");
+        B_DOWNLOAD = new AppCompatImageButton(context);
+        B_DOWNLOAD.setImageResource(R.drawable.ic_baseline_download_24);
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                downloadTokensDialogFragment.show(context, "download_" + tokenManager.getSettingsKey());
+                downloadTokensDialogFragment.show(context, "download_tokens_" + tokenManager.getSettingsKey());
             }
         });
 
         L.addView(B_DELETE);
-        L.addView(T);
+        L.addView(B_VIEW);
+        L.addView(B_DOWNLOAD);
 
         this.addView(L);
-        this.addView(B_DOWNLOAD);
+        this.addView(T);
     }
 
     public void updateLayout() {

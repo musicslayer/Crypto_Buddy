@@ -13,11 +13,11 @@ import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteTokensDialog extends BaseDialog {
-    String tokenString;
+    String tokenType;
 
-    public ConfirmDeleteTokensDialog(Activity activity, String tokenString) {
+    public ConfirmDeleteTokensDialog(Activity activity, String tokenType) {
         super(activity);
-        this.tokenString = tokenString;
+        this.tokenType = tokenType;
     }
 
     public int getBaseViewID() {
@@ -39,7 +39,7 @@ public class ConfirmDeleteTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_delete_tokens);
 
         Toolbar toolbar = findViewById(R.id.confirm_delete_tokens_dialog_toolbar);
-        toolbar.setTitle("Delete " + tokenString + " Tokens?");
+        toolbar.setTitle("Delete " + tokenType + " Tokens?");
 
         ConfirmationView C = findViewById(R.id.confirm_delete_tokens_dialog_confirmationView);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {

@@ -18,7 +18,7 @@ public class DefaultFiatSetting extends Setting {
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
 
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         for(Fiat fiat : fiatManager.getFiats()) {
             optionNames.add(fiat.getDisplayName() + " (" + fiat.getName() + ")");
         }
@@ -35,7 +35,7 @@ public class DefaultFiatSetting extends Setting {
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
 
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         for(Fiat fiat : fiatManager.getFiats()) {
             optionDisplays.add("Use " + fiat.getDisplayName() + " (" + fiat.getName() + ") by default.");
         }
@@ -45,7 +45,7 @@ public class DefaultFiatSetting extends Setting {
 
     @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         ArrayList<Fiat> optionValues = new ArrayList<>(fiatManager.getFiats());
         return (ArrayList<T>)optionValues;
     }

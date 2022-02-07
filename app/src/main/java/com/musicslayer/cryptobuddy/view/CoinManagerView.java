@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
+import com.musicslayer.cryptobuddy.dialog.ViewCoinsDialog;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
@@ -27,7 +28,8 @@ import java.util.ArrayList;
 
 public class CoinManagerView extends CrashTableRow {
     public TextView T;
-    public AppCompatButton B_DELETE;
+    public AppCompatImageButton B_DELETE;
+    public AppCompatImageButton B_VIEW;
     public CoinManager coinManager;
     public ArrayList<String> choices;
 
@@ -72,7 +74,7 @@ public class CoinManagerView extends CrashTableRow {
                 }
             }
         });
-        confirmDeleteCoinsDialogFragment.restoreListeners(context, "confirm_delete_coins");
+        confirmDeleteCoinsDialogFragment.restoreListeners(context, "confirm_delete_coins_" + coinManager.getSettingsKey());
 
         BaseDialogFragment deleteCoinsDialogFragment = BaseDialogFragment.newInstance(DeleteCoinsDialog.class);
         deleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -80,25 +82,33 @@ public class CoinManagerView extends CrashTableRow {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteCoinsDialog)dialog).isComplete) {
                     choices = ((DeleteCoinsDialog)dialog).user_CHOICES;
-                    confirmDeleteCoinsDialogFragment.show(context, "confirm_delete_coins");
+                    confirmDeleteCoinsDialogFragment.show(context, "confirm_delete_coins_" + coinManager.getSettingsKey());
                 }
             }
         });
-        deleteCoinsDialogFragment.restoreListeners(context, "delete_coins");
+        deleteCoinsDialogFragment.restoreListeners(context, "delete_coins_" + coinManager.getSettingsKey());
 
-        B_DELETE = new AppCompatButton(context);
-        B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-        B_DELETE.setText("Delete");
+        B_DELETE = new AppCompatImageButton(context);
+        B_DELETE.setImageResource(R.drawable.ic_baseline_delete_24);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                deleteCoinsDialogFragment.show(context, "delete_coins");
+                deleteCoinsDialogFragment.show(context, "delete_coins_" + coinManager.getSettingsKey());
+            }
+        });
+
+        B_VIEW = new AppCompatImageButton(context);
+        B_VIEW.setImageResource(R.drawable.ic_baseline_pageview_24);
+        B_VIEW.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
+                BaseDialogFragment.newInstance(ViewCoinsDialog.class).show(context, "view_coins_" + coinManager.getSettingsKey());
             }
         });
 
         L.addView(B_DELETE);
-        L.addView(T);
+        L.addView(B_VIEW);
 
         this.addView(L);
+        this.addView(T);
     }
 
     public void updateLayout() {

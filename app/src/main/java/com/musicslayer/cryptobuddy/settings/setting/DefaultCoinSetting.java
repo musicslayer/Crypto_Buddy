@@ -18,7 +18,7 @@ public class DefaultCoinSetting extends Setting {
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
 
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
         for(Coin coin : coinManager.getCoins()) {
             optionNames.add(coin.getDisplayName() + " (" + coin.getName() + ")");
         }
@@ -35,7 +35,7 @@ public class DefaultCoinSetting extends Setting {
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
 
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
         for(Coin coin : coinManager.getCoins()) {
             optionDisplays.add("Use " + coin.getDisplayName() + " (" + coin.getName() + ") by default.");
         }
@@ -45,7 +45,7 @@ public class DefaultCoinSetting extends Setting {
 
     @SuppressWarnings("unchecked")
     public <T> ArrayList<T> getOptionValues() {
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
         ArrayList<Coin> optionValues = new ArrayList<>(coinManager.getCoins());
         return (ArrayList<T>)optionValues;
     }

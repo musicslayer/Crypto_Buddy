@@ -116,12 +116,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public void setCompleteOptions() {
         // All available assets will be shown as options.
-        FiatManager fiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
-        setFiatOptions(fiatManager.getFiats());
-
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
-        setCoinOptions(coinManager.getCoins());
-
+        // TODO Act like tokens ("base" is the only option)
+        // TODO Allow choice of tokens within token manager.
+        setFiatOptions(FiatManager.getAllFiats());
+        setCoinOptions(CoinManager.getAllCoins());
         setTokenManagerOptions(TokenManager.tokenManagers);
     }
 
@@ -192,7 +190,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
         for(TokenManager tokenManager : tokenManagerArrayList) {
             search_options_token_types.add(tokenManager.getTokenType());
-
             options_token_types.add(tokenManager.getTokenType());
         }
 
@@ -334,6 +331,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 if(options_token_types.isEmpty()) {
                     // There are no token types to choose from.
                     chooseToken(null);
+                }
+                else if(options_token_types.size() == 1) {
+                    // There is only one token type, so just choose it.
+                    chooseToken(options_token_types.get(0));
                 }
                 else {
                     // Present a list of available token types to choose from.

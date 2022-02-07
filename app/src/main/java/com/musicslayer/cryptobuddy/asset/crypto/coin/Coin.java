@@ -33,7 +33,7 @@ abstract public class Coin extends Crypto {
     }
 
     public static Coin getCoinFromKey(String key) {
-        CoinManager coinManager = CoinManager.getCoinManagerFromKey("BaseCoinManager");
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
 
         Coin coin = coinManager.hardcoded_coin_map.get(key);
         if(coin == null) {

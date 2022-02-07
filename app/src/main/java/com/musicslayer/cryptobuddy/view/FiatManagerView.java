@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
+import com.musicslayer.cryptobuddy.dialog.ViewFiatsDialog;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
@@ -27,7 +28,8 @@ import java.util.ArrayList;
 
 public class FiatManagerView extends CrashTableRow {
     public TextView T;
-    public AppCompatButton B_DELETE;
+    public AppCompatImageButton B_DELETE;
+    public AppCompatImageButton B_VIEW;
     public FiatManager fiatManager;
     public ArrayList<String> choices;
 
@@ -72,7 +74,7 @@ public class FiatManagerView extends CrashTableRow {
                 }
             }
         });
-        confirmDeleteFiatsDialogFragment.restoreListeners(context, "confirm_delete_fiats");
+        confirmDeleteFiatsDialogFragment.restoreListeners(context, "confirm_delete_fiats_" + fiatManager.getSettingsKey());
 
         BaseDialogFragment deleteFiatsDialogFragment = BaseDialogFragment.newInstance(DeleteFiatsDialog.class);
         deleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -80,25 +82,33 @@ public class FiatManagerView extends CrashTableRow {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((DeleteFiatsDialog)dialog).isComplete) {
                     choices = ((DeleteFiatsDialog)dialog).user_CHOICES;
-                    confirmDeleteFiatsDialogFragment.show(context, "confirm_delete_fiats");
+                    confirmDeleteFiatsDialogFragment.show(context, "confirm_delete_fiats_" + fiatManager.getSettingsKey());
                 }
             }
         });
-        deleteFiatsDialogFragment.restoreListeners(context, "delete_fiats");
+        deleteFiatsDialogFragment.restoreListeners(context, "delete_fiats_" + fiatManager.getSettingsKey());
 
-        B_DELETE = new AppCompatButton(context);
-        B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_24, 0, 0, 0);
-        B_DELETE.setText("Delete");
+        B_DELETE = new AppCompatImageButton(context);
+        B_DELETE.setImageResource(R.drawable.ic_baseline_delete_24);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                deleteFiatsDialogFragment.show(context, "delete_fiats");
+                deleteFiatsDialogFragment.show(context, "delete_fiats_" + fiatManager.getSettingsKey());
+            }
+        });
+
+        B_VIEW = new AppCompatImageButton(context);
+        B_VIEW.setImageResource(R.drawable.ic_baseline_pageview_24);
+        B_VIEW.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+            public void onClickImpl(View v) {
+                BaseDialogFragment.newInstance(ViewFiatsDialog.class).show(context, "view_fiats_" + fiatManager.getSettingsKey());
             }
         });
 
         L.addView(B_DELETE);
-        L.addView(T);
+        L.addView(B_VIEW);
 
         this.addView(L);
+        this.addView(T);
     }
 
     public void updateLayout() {

@@ -22,7 +22,7 @@ import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 import java.math.BigInteger;
 
 public class AddCustomFiatDialog extends BaseDialog {
-    public FiatManager chosenFiatManager = FiatManager.getFiatManagerFromKey("BaseFiatManager");
+    public FiatManager chosenFiatManager = FiatManager.getDefaultFiatManager();
 
     public AddCustomFiatDialog(Activity activity) {
         super(activity);

@@ -11,12 +11,12 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class DownloadTokensDialog extends BaseDialog {
-    public String tokenString;
+    public String tokenType;
     public boolean isFixed;
 
-    public DownloadTokensDialog(Activity activity, String tokenString) {
+    public DownloadTokensDialog(Activity activity, String tokenType) {
         super(activity);
-        this.tokenString = tokenString;
+        this.tokenType = tokenType;
     }
 
     public int getBaseViewID() {
@@ -27,7 +27,7 @@ public class DownloadTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_download_tokens);
 
         Toolbar toolbar = findViewById(R.id.download_tokens_dialog_toolbar);
-        toolbar.setTitle("Download " + tokenString + " Tokens");
+        toolbar.setTitle("Download " + tokenType + " Tokens");
 
         Button B_FIXED = findViewById(R.id.download_tokens_dialog_fixedButton);
         B_FIXED.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

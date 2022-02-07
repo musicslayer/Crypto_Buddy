@@ -19,14 +19,14 @@ public class DeleteTokensDialog extends BaseDialog {
     CheckBox[] C;
     ArrayList<Boolean> state = new ArrayList<>();
 
-    public String tokenString;
+    public String tokenType;
     public boolean canGetJSON;
 
     public ArrayList<String> user_CHOICES;
 
-    public DeleteTokensDialog(Activity activity, String tokenString, Boolean canGetJSON) {
+    public DeleteTokensDialog(Activity activity, String tokenType, Boolean canGetJSON) {
         super(activity);
-        this.tokenString = tokenString;
+        this.tokenType = tokenType;
         this.canGetJSON = canGetJSON;
 
         // Checkboxes always start as unselected.
@@ -43,7 +43,7 @@ public class DeleteTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_delete_tokens);
 
         Toolbar toolbar = findViewById(R.id.delete_tokens_dialog_toolbar);
-        toolbar.setTitle("Delete " + tokenString + " Tokens");
+        toolbar.setTitle("Delete " + tokenType + " Tokens");
 
         Button B_DELETE = findViewById(R.id.delete_tokens_dialog_deleteButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

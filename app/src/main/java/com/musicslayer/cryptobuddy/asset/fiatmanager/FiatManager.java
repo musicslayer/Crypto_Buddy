@@ -85,6 +85,10 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         }
     }
 
+    public static FiatManager getDefaultFiatManager() {
+        return FiatManager.getFiatManagerFromKey("BaseFiatManager");
+    }
+
     public static FiatManager getFiatManagerFromKey(String key) {
         FiatManager fiatManager = fiatManagers_map.get(key);
         if(fiatManager == null) {

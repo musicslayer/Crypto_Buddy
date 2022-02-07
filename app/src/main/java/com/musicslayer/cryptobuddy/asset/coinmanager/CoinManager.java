@@ -85,6 +85,10 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         }
     }
 
+    public static CoinManager getDefaultCoinManager() {
+        return CoinManager.getCoinManagerFromKey("BaseCoinManager");
+    }
+
     public static CoinManager getCoinManagerFromKey(String key) {
         CoinManager coinManager = coinManagers_map.get(key);
         if(coinManager == null) {
