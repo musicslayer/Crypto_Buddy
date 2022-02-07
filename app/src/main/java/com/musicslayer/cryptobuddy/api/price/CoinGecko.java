@@ -61,7 +61,7 @@ public class CoinGecko extends PriceAPI {
 
     public HashMap<Asset, AssetQuantity> getPrice(CryptoPrice cryptoPrice) {
         Fiat priceFiat = cryptoPrice.fiat;
-        String priceFiatName = priceFiat.getName().toLowerCase();
+        String priceFiatName = priceFiat.getID();
 
         // Separate assetArrayList into fiat, coins, and tokens.
         // Further separate tokens by blockchain.
@@ -71,7 +71,7 @@ public class CoinGecko extends PriceAPI {
 
         for(Asset asset : cryptoPrice.assetArrayList) {
             if(asset instanceof Fiat) {
-                // TODO Should Fiats have ID
+                // All Fiats can be looked up.
                 Fiat fiat = (Fiat)asset;
                 fiatArrayList.add(fiat);
             }
@@ -174,7 +174,7 @@ public class CoinGecko extends PriceAPI {
         if(!fiatArrayList.isEmpty()) {
             StringBuilder fiatString = new StringBuilder();
             for(int i = 0; i < fiatArrayList.size(); i++) {
-                fiatString.append(fiatArrayList.get(i).getName());
+                fiatString.append(fiatArrayList.get(i).getID());
                 fiatString.append(",");
             }
             fiatString.append(priceFiatName);
@@ -191,7 +191,7 @@ public class CoinGecko extends PriceAPI {
                     BigDecimal dPrice = new BigDecimal(json2.getString(priceFiatName));
 
                     for(Fiat fiat : fiatArrayList) {
-                        BigDecimal dFiat = new BigDecimal(json2.getString(fiat.getName().toLowerCase()));
+                        BigDecimal dFiat = new BigDecimal(json2.getString(fiat.getID()));
 
                         AssetQuantity fiatAssetQuantity = new AssetQuantity("1", fiat);
                         AssetPrice fiatAssetPrice = new AssetPrice(new AssetQuantity(dFiat.toPlainString(), fiat), new AssetQuantity("1", conversionCrypto));
@@ -216,7 +216,7 @@ public class CoinGecko extends PriceAPI {
     public HashMap<Asset, AssetQuantity> getMarketCap(CryptoPrice cryptoPrice) {
         // Note that only cryptos have a market cap. This should never be called with fiats.
         Fiat priceFiat = cryptoPrice.fiat;
-        String priceFiatName = priceFiat.getName().toLowerCase();
+        String priceFiatName = priceFiat.getID();
 
         // Separate assetArrayList into coins and tokens (there should be no fiats).
         // Further separate tokens by blockchain.

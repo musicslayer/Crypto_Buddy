@@ -53,6 +53,11 @@ abstract public class Fiat extends Asset {
         return "!FIAT!";
     }
 
+    public String getID() {
+        // For now, just use lowercase symbol.
+        return getName().toLowerCase();
+    }
+
     public boolean isComplete() {
         // Fiats may be created from incomplete information, and while we may use the fiat,
         // we do not want to store it long term and have it prevent the complete version from being used later.
