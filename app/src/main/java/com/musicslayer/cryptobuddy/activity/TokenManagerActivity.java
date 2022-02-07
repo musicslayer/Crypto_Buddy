@@ -25,7 +25,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.TokenManagerView;
+import com.musicslayer.cryptobuddy.view.asset.TokenManagerView;
 
 import org.json.JSONObject;
 

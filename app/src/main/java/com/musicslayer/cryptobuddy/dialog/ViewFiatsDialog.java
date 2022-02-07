@@ -7,9 +7,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
+import com.musicslayer.cryptobuddy.view.asset.FiatView;
+import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
 public class ViewFiatsDialog extends BaseDialog {
     int LAST_CHECK = 0;
@@ -59,7 +62,16 @@ public class ViewFiatsDialog extends BaseDialog {
     }
 
     public void updateLayout() {
+        FiatView fiatView = findViewById(R.id.view_fiats_dialog_fiatView);
+
         SelectAndSearchView ssv = findViewById(R.id.view_fiats_dialog_selectAndSearchView);
+        ssv.setChooseAssetListener(new SelectAndSearchView.ChooseAssetListener() {
+            @Override
+            public void onAssetChosen(Asset asset) {
+                fiatView.setFiat((Fiat)asset);
+            }
+        });
+
         ssv.setIncludesFiat(true);
         ssv.setIncludesCoin(false);
         ssv.setIncludesToken(false);

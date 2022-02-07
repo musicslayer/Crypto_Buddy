@@ -17,7 +17,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddCustomCoinDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.view.CoinManagerView;
+import com.musicslayer.cryptobuddy.view.asset.CoinManagerView;
 
 import java.util.ArrayList;
 

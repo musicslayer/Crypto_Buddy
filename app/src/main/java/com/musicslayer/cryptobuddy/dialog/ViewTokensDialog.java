@@ -9,9 +9,12 @@ import android.widget.RadioGroup;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
+import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
+import com.musicslayer.cryptobuddy.view.asset.TokenView;
 
 import java.util.ArrayList;
 
@@ -71,7 +74,16 @@ public class ViewTokensDialog extends BaseDialog {
     }
 
     public void updateLayout() {
+        TokenView tokenView = findViewById(R.id.view_tokens_dialog_tokenView);
+
         SelectAndSearchView ssv = findViewById(R.id.view_tokens_dialog_selectAndSearchView);
+        ssv.setChooseAssetListener(new SelectAndSearchView.ChooseAssetListener() {
+            @Override
+            public void onAssetChosen(Asset asset) {
+                tokenView.setToken((Token)asset);
+            }
+        });
+
         ssv.setIncludesFiat(false);
         ssv.setIncludesCoin(false);
         ssv.setIncludesToken(true);

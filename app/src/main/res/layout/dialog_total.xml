@@ -18,7 +18,7 @@
         app:subtitle="(Does not include filtered data)"
         app:title="Table Transaction Net Sums" />
 
-    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/total_dialog_fiatSelectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

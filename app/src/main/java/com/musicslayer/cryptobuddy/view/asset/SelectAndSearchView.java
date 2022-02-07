@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.view;
+package com.musicslayer.cryptobuddy.view.asset;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
@@ -21,6 +22,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashPopupMenu;
@@ -33,6 +35,7 @@ import com.musicslayer.cryptobuddy.settings.setting.DefaultCoinSetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultFiatSetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
+import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +45,8 @@ import java.util.HashMap;
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
+    ChooseAssetListener chooseAssetListener;
+
     public String lastButton;
     public Asset lastSearchAsset;
 
@@ -85,6 +90,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public SelectAndSearchView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.makeLayout();
+    }
+
+    public void setChooseAssetListener(ChooseAssetListener chooseAssetListener) {
+        this.chooseAssetListener = chooseAssetListener;
     }
 
     public Comparator<String> getComparatorString() {
@@ -418,7 +427,21 @@ public class SelectAndSearchView extends CrashLinearLayout {
         }
 
         AppCompatTextView T = new AppCompatTextView(context);
+
+        if(chooseAssetListener != null) {
+            chooseAssetListener.onAssetChosen(null);
+        }
+
         bsv = new BorderedSpinnerView(context);
+        bsv.setOptions(new ArrayList<>());
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent) {}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
+                if(chooseAssetListener != null) {
+                    chooseAssetListener.onAssetChosen(getChosenAsset());
+                }
+            }
+        });
 
         searchAssetDialogFragment = BaseDialogFragment.newInstance(SearchDialog.class);
         searchAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -660,5 +683,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
             this.bsv.setSelection(bundle.getInt("selection"));
         }
         return state;
+    }
+
+    abstract public static class ChooseAssetListener {
+        abstract public void onAssetChosen(Asset asset);
     }
 }

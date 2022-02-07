@@ -25,7 +25,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 import com.musicslayer.cryptobuddy.view.red.NumericEditText;
-import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
+import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
 import java.util.Calendar;
 import java.util.Date;

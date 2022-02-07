@@ -43,11 +43,18 @@
             android:text="Custom Coins" />
     </RadioGroup>
 
-    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/view_coins_dialog_selectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_coins_dialog_radioGroup" />
+
+    <com.musicslayer.cryptobuddy.view.asset.CoinView
+        android:id="@+id/view_coins_dialog_coinView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_coins_dialog_selectAndSearchView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

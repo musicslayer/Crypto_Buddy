@@ -18,7 +18,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
+import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
 import java.util.ArrayList;
 

@@ -17,7 +17,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.AddCustomFiatDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.view.FiatManagerView;
+import com.musicslayer.cryptobuddy.view.asset.FiatManagerView;
 
 import java.util.ArrayList;
 

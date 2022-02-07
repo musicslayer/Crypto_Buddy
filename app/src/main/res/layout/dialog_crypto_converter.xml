@@ -55,7 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_fromTextView" />
 
-    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/crypto_converter_dialog_primarySelectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,14 +70,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_primarySelectAndSearchView" />
 
-    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/crypto_converter_dialog_secondarySelectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/crypto_converter_dialog_toTextView" />
 
-    <com.musicslayer.cryptobuddy.view.SelectAndSearchView
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/crypto_converter_dialog_fiatSelectAndSearchView"
         android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
