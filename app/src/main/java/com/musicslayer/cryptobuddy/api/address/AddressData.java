@@ -303,6 +303,7 @@ public class AddressData implements Serialization.SerializableToJSON {
                 s.append("\n\n");
             }
         }
+
         return s.toString();
     }
 
@@ -318,7 +319,7 @@ public class AddressData implements Serialization.SerializableToJSON {
             s.appendRich("\nDiscrepancies:");
 
             HashMap<Asset, AssetQuantity> priceHashMap = priceData == null ? null : priceData.priceHashMap;
-            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, true));
+            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, isRich));
 
             if(priceData != null) {
                 s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
