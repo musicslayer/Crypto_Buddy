@@ -69,7 +69,7 @@ public class AddressDiscrepancyDialog extends BaseDialog {
 
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(cryptoAddressIdx);
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
-                HashMap<Asset, AssetAmount> deltaMap = addressData.discrepancyMap;
+                HashMap<Asset, AssetAmount> deltaMap = addressData.discrepancyData.deltaMap;
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
@@ -102,7 +102,7 @@ public class AddressDiscrepancyDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(cryptoAddressIdx);
                 AddressData addressData = HashMapUtil.getValueFromMap(addressDataMap, cryptoAddress);
-                HashMap<Asset, AssetAmount> deltaMap = addressData.discrepancyMap;
+                HashMap<Asset, AssetAmount> deltaMap = addressData.discrepancyData.deltaMap;
 
                 if(deltaMap.isEmpty()) {
                     ToastUtil.showToast(activity, "no_discrepancies_found");

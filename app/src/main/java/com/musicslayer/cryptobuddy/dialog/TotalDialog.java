@@ -15,21 +15,17 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.state.StateObj;
-import com.musicslayer.cryptobuddy.transaction.AssetAmount;
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.SelectAndSearchView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TotalDialog extends BaseDialog {
     ArrayList<Transaction> filteredTransactionArrayList;
-    HashMap<Asset, AssetAmount> deltaMap;
 
     public TotalDialog(Activity activity) {
         super(activity);
@@ -45,6 +41,7 @@ public class TotalDialog extends BaseDialog {
 
         if(savedInstanceState == null) {
             StateObj.priceData = null;
+            StateObj.transactionData = new TransactionData(filteredTransactionArrayList);
         }
 
         SelectAndSearchView fssv = findViewById(R.id.total_dialog_fiatSelectAndSearchView);
@@ -54,15 +51,13 @@ public class TotalDialog extends BaseDialog {
         fssv.setCompleteOptions();
         fssv.chooseFiat();
 
-        deltaMap = Transaction.resolveAssets(filteredTransactionArrayList);
-
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Retrieving Fiat Values...");
 
-                ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
+                ArrayList<Asset> assetKeySet = new ArrayList<>(StateObj.transactionData.netTransactionsMap.keySet());
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
                 CryptoPrice cryptoPrice = new CryptoPrice(assetKeySet, priceFiat);
 
@@ -107,24 +102,7 @@ public class TotalDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        RichStringBuilder s = new RichStringBuilder(true);
-
-        if(filteredTransactionArrayList.isEmpty()) {
-            s.appendRich("No transactions found.");
-        }
-        else {
-            s.appendRich("Net Transaction Sums:");
-
-            HashMap<Asset, AssetQuantity> priceMap = StateObj.priceData == null ? null : StateObj.priceData.priceHashMap;
-            s.append(AssetQuantity.getAssetInfo(deltaMap, priceMap, true));
-
-            if(StateObj.priceData != null) {
-                s.appendRich("\n\nPrice Data Source = ").appendRich(StateObj.priceData.priceAPI_price.getDisplayName());
-                s.appendRich("\nPrice Data Timestamp = ").appendRich(StateObj.priceData.timestamp_price.toString());
-            }
-        }
-
         TextView T = findViewById(R.id.total_dialog_textView);
-        T.setText(Html.fromHtml(s.toString()));
+        T.setText(Html.fromHtml(StateObj.transactionData.getNetSumsInfo(StateObj.priceData, true)));
     }
 }

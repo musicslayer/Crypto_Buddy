@@ -6,9 +6,11 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
@@ -24,8 +26,9 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_currentBalance;
     final public Timestamp timestamp_transactions;
 
-    final public HashMap<Asset, AssetAmount> netTransactionsMap;
-    final public HashMap<Asset, AssetAmount> discrepancyMap;
+    final public AssetQuantityData currentBalanceData;
+    final public TransactionData transactionData;
+    final public AssetQuantityData discrepancyData;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -60,8 +63,9 @@ public class AddressData implements Serialization.SerializableToJSON {
         this.timestamp_currentBalance = timestamp_currentBalance;
         this.timestamp_transactions = timestamp_transactions;
 
-        netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
-        discrepancyMap = getDiscrepancyMap();
+        currentBalanceData = new AssetQuantityData(currentBalanceArrayList);
+        transactionData = new TransactionData(transactionArrayList);
+        discrepancyData = new AssetQuantityData(getDiscrepancyMap());
     }
 
     public static AddressData getAllData(CryptoAddress cryptoAddress) {
@@ -257,7 +261,7 @@ public class AddressData implements Serialization.SerializableToJSON {
                 s.appendRich("\nCurrent Balances:");
 
                 HashMap<Asset, AssetQuantity> priceMap = priceData == null ? null : priceData.priceHashMap;
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
+                s.append(currentBalanceData.getAssetQuantityInfo(priceMap, isRich));
 
                 if(priceData != null) {
                     s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
@@ -274,16 +278,7 @@ public class AddressData implements Serialization.SerializableToJSON {
         StringBuilder s = new StringBuilder(getInfoString(null, false));
 
         if(addressAPI_transactions != null && transactionArrayList != null) {
-            if(transactionArrayList.isEmpty()) {
-                s.append("\nNo transactions found.");
-            }
-            else {
-                s.append("\nTransactions:\n");
-                s.append(Serialization.serializeArrayList(transactionArrayList));
-
-                s.append("\n\nNet Transaction Sums:");
-                s.append(AssetQuantity.getAssetInfo(netTransactionsMap, null, false));
-            }
+            s.append("\n").append(transactionData.getAllTransactionInfo(null, false));
         }
 
         return s.toString();
@@ -317,7 +312,7 @@ public class AddressData implements Serialization.SerializableToJSON {
             s.appendRich("\nDiscrepancies:");
 
             HashMap<Asset, AssetQuantity> priceHashMap = priceData == null ? null : priceData.priceHashMap;
-            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, isRich));
+            s.append(discrepancyData.getAssetQuantityInfo(priceHashMap, isRich));
 
             if(priceData != null) {
                 s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
@@ -329,13 +324,13 @@ public class AddressData implements Serialization.SerializableToJSON {
     }
 
     public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
-        // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
+        // Create the discrepancy map. Add net transactions and subtract balances.
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         if(transactionArrayList != null && currentBalanceArrayList != null) {
-            for(Asset asset : netTransactionsMap.keySet()) {
-                AssetAmount assetAmount = netTransactionsMap.get(asset);
+            for(Asset asset : transactionData.netTransactionsMap.keySet()) {
+                AssetAmount assetAmount = transactionData.netTransactionsMap.get(asset);
                 add(deltaMap, asset, assetAmount);
             }
 
@@ -358,15 +353,7 @@ public class AddressData implements Serialization.SerializableToJSON {
 
     public boolean hasDiscrepancy() {
         // Return true if there is at least one discrepancy.
-        HashMap<Asset, AssetAmount> delta = getDiscrepancyMap();
-        for(Asset asset : delta.keySet()) {
-            AssetAmount assetAmount = delta.get(asset);
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return !discrepancyData.deltaMap.isEmpty();
     }
 
     public static boolean hasDiscrepancy(ArrayList<AddressData> addressDataArrayList) {

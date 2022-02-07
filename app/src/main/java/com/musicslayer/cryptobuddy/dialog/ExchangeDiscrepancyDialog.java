@@ -69,7 +69,7 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
 
                 CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
-                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyMap;
+                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyData.deltaMap;
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();
@@ -102,7 +102,7 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
-                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyMap;
+                HashMap<Asset, AssetAmount> deltaMap = exchangeData.discrepancyData.deltaMap;
 
                 if(deltaMap.isEmpty()) {
                     ToastUtil.showToast(activity, "no_discrepancies_found");

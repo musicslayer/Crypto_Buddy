@@ -6,8 +6,10 @@ import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
@@ -23,8 +25,9 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_currentBalance;
     final public Timestamp timestamp_transactions;
 
-    HashMap<Asset, AssetAmount> netTransactionsMap;
-    final public HashMap<Asset, AssetAmount> discrepancyMap;
+    final public AssetQuantityData currentBalanceData;
+    final public TransactionData transactionData;
+    final public AssetQuantityData discrepancyData;
 
     public String serializeToJSON() throws org.json.JSONException {
         return new Serialization.JSONObjectWithNull()
@@ -59,8 +62,9 @@ public class ExchangeData implements Serialization.SerializableToJSON {
         this.timestamp_currentBalance = timestamp_currentBalance;
         this.timestamp_transactions = timestamp_transactions;
 
-        netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
-        discrepancyMap = getDiscrepancyMap();
+        currentBalanceData = new AssetQuantityData(currentBalanceArrayList);
+        transactionData = new TransactionData(transactionArrayList);
+        discrepancyData = new AssetQuantityData(getDiscrepancyMap());
     }
 
     public static ExchangeData getAllData(CryptoExchange cryptoExchange) {
@@ -207,7 +211,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
                 s.appendRich("\nCurrent Balances:");
 
                 HashMap<Asset, AssetQuantity> priceMap = priceData == null ? null : priceData.priceHashMap;
-                s.append(AssetQuantity.getAssetInfo(currentBalanceArrayList, priceMap, isRich));
+                s.append(currentBalanceData.getAssetQuantityInfo(priceMap, isRich));
 
                 if(priceData != null) {
                     s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
@@ -220,20 +224,11 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     }
 
     public String getRawFullInfoString() {
-        // Get regular info and also the complete set of transactions and net transaction sums.
+        // Get regular info and also the complete set of transactions and net transaction sums, and authorization info.
         StringBuilder s = new StringBuilder(getInfoString(null, false));
 
         if(exchangeAPI_transactions != null && transactionArrayList != null) {
-            if(transactionArrayList.isEmpty()) {
-                s.append("\nNo Transactions");
-            }
-            else {
-                s.append("\nTransactions:\n");
-                s.append(Serialization.serializeArrayList(transactionArrayList));
-
-                s.append("\n\nNet Transaction Sums:");
-                s.append(AssetQuantity.getAssetInfo(netTransactionsMap, null, false));
-            }
+            s.append("\n").append(transactionData.getAllTransactionInfo(null, false));
         }
 
         // Authorization
@@ -271,7 +266,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
             s.appendRich("\nDiscrepancies:");
 
             HashMap<Asset, AssetQuantity> priceHashMap = priceData == null ? null : priceData.priceHashMap;
-            s.append(AssetQuantity.getAssetInfo(discrepancyMap, priceHashMap, isRich));
+            s.append(discrepancyData.getAssetQuantityInfo(priceHashMap, isRich));
 
             if(priceData != null) {
                 s.appendRich("\n\nPrice Data Source = ").appendRich(priceData.priceAPI_price.getDisplayName());
@@ -283,29 +278,27 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     }
 
     public HashMap<Asset, AssetAmount> getDiscrepancyMap() {
-        if(transactionArrayList == null || currentBalanceArrayList == null) {
-            return new HashMap<>();
-        }
-
-        // Create the discrepancy map. Add anything in "netTransactionsMap", and subtract anything in "balancesMap".
+        // Create the discrepancy map. Add net transactions and subtract balances.
         // Note that all AssetAmounts have the correct signed value, so we don't need to check "isLoss".
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
-        for(Asset asset : netTransactionsMap.keySet()) {
-            AssetAmount assetAmount = netTransactionsMap.get(asset);
-            add(deltaMap, asset, assetAmount);
-        }
+        if(transactionArrayList != null && currentBalanceArrayList != null) {
+            for(Asset asset : transactionData.netTransactionsMap.keySet()) {
+                AssetAmount assetAmount = transactionData.netTransactionsMap.get(asset);
+                add(deltaMap, asset, assetAmount);
+            }
 
-        for(AssetQuantity assetQuantity : currentBalanceArrayList) {
-            subtract(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
-        }
+            for(AssetQuantity assetQuantity : currentBalanceArrayList) {
+                subtract(deltaMap, assetQuantity.asset, assetQuantity.assetAmount);
+            }
 
-        // If an amount is zero, we do not count that as a discrepancy, so let's remove it.
-        // This also means that if an asset appears in one place with an amount of zero, and is absent from another place, it does not count as a discrepancy.
-        for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
-            AssetAmount assetAmount = HashMapUtil.getValueFromMap(deltaMap, asset);
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) == 0) {
-                HashMapUtil.removeValueFromMap(deltaMap, asset);
+            // If an amount is zero, we do not count that as a discrepancy, so let's remove it.
+            // This also means that if an asset appears in one place with an amount of zero, and is absent from another place, it does not count as a discrepancy.
+            for(Asset asset : new ArrayList<>(deltaMap.keySet())) {
+                AssetAmount assetAmount = HashMapUtil.getValueFromMap(deltaMap, asset);
+                if(assetAmount.amount.compareTo(BigDecimal.ZERO) == 0) {
+                    HashMapUtil.removeValueFromMap(deltaMap, asset);
+                }
             }
         }
 
@@ -314,15 +307,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
 
     public boolean hasDiscrepancy() {
         // Return true if there is at least one discrepancy.
-        HashMap<Asset, AssetAmount> delta = getDiscrepancyMap();
-        for(Asset asset : delta.keySet()) {
-            AssetAmount assetAmount = delta.get(asset);
-            if(assetAmount.amount.compareTo(BigDecimal.ZERO) != 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return !discrepancyData.deltaMap.isEmpty();
     }
 
     public static boolean hasDiscrepancy(ArrayList<ExchangeData> exchangeDataArrayList) {
