@@ -207,7 +207,7 @@ public class PriceData implements Serialization.SerializableToJSON {
     }
 
     public boolean isComplete() {
-        return !(priceAPI_price instanceof UnknownPriceAPI) && !(priceAPI_marketCap instanceof UnknownPriceAPI) && priceHashMap != null && marketCapHashMap != null;
+        return isPriceComplete() && isMarketCapComplete();
     }
 
     public boolean isPriceComplete() {
@@ -220,7 +220,7 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     // Since we get the info for multiple assets, these functions check that a particular asset has complete information.
     public boolean isComplete(Asset asset) {
-        return isComplete() && HashMapUtil.getValueFromMap(priceHashMap, asset) != null && HashMapUtil.getValueFromMap(marketCapHashMap, asset) != null;
+        return isPriceComplete(asset) && isMarketCapComplete(asset);
     }
 
     public boolean isPriceComplete(Asset asset) {
@@ -233,14 +233,14 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     // Check that all assets have complete data.
     public boolean isFull() {
-        return priceHashMap.size() == cryptoPrice.assetArrayList.size() && marketCapHashMap.size() == cryptoPrice.assetArrayList.size();
+        return isPriceFull() && isMarketFull();
     }
 
     public boolean isPriceFull() {
-        return priceHashMap.size() == cryptoPrice.assetArrayList.size();
+        return priceHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
     }
 
     public boolean isMarketFull() {
-        return marketCapHashMap.size() == cryptoPrice.assetArrayList.size();
+        return marketCapHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
     }
 }

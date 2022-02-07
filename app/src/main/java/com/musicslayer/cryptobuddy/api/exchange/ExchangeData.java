@@ -145,7 +145,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     }
 
     public boolean isComplete() {
-        return !(exchangeAPI_currentBalance instanceof UnknownExchangeAPI) && !(exchangeAPI_transactions instanceof UnknownExchangeAPI) && currentBalanceArrayList != null && transactionArrayList != null;
+        return isCurrentBalanceComplete() && isTransactionsComplete();
     }
 
     public boolean isCurrentBalanceComplete() {

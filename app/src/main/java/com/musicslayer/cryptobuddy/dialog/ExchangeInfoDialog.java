@@ -64,7 +64,7 @@ public class ExchangeInfoDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                ProgressDialogFragment.updateProgressTitle("Calculating Total...");
+                ProgressDialogFragment.updateProgressTitle("Retrieving Fiat Values...");
 
                 CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(cryptoExchangeIdx);
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);

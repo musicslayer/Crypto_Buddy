@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO Unknown vs null values for complete.
-
 public class AddressData implements Serialization.SerializableToJSON {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
@@ -196,7 +194,7 @@ public class AddressData implements Serialization.SerializableToJSON {
     }
 
     public boolean isComplete() {
-        return !(addressAPI_currentBalance instanceof UnknownAddressAPI) && !(addressAPI_transactions instanceof UnknownAddressAPI) && currentBalanceArrayList != null && transactionArrayList != null;
+        return isCurrentBalanceComplete() && isTransactionsComplete();
     }
 
     public boolean isCurrentBalanceComplete() {

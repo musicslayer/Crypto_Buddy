@@ -60,8 +60,7 @@ public class TotalDialog extends BaseDialog {
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
-                // TODO "Calculating Prices..."?
-                ProgressDialogFragment.updateProgressTitle("Calculating Total...");
+                ProgressDialogFragment.updateProgressTitle("Retrieving Fiat Values...");
 
                 ArrayList<Asset> assetKeySet = new ArrayList<>(deltaMap.keySet());
                 Fiat priceFiat = (Fiat)fssv.getChosenAsset();

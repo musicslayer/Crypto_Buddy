@@ -37,7 +37,6 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
     }
 
     // Note that we could have cryptos or fiats in here.
-    // TODO this should really be a set.
     public ArrayList<Asset> assetArrayList;
     public Fiat fiat;
 
