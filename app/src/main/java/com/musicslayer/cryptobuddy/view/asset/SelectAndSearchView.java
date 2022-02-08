@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
@@ -35,14 +36,13 @@ import com.musicslayer.cryptobuddy.settings.setting.DefaultCoinSetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultFiatSetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-// TODO Search options should just select FIAT/COIN/TOKEN after a choice.
 
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
@@ -51,7 +51,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public String lastButtonKind;
     public String lastButtonType;
-    public Asset lastSearchAsset;
 
     public boolean includesFiat;
     public boolean includesCoin;
@@ -88,7 +87,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
     AppCompatButton B_FIAT;
     AppCompatButton B_COIN;
     AppCompatButton B_TOKEN;
-    AppCompatButton B_SEARCH;
+    AppCompatImageButton B_SEARCH;
 
     public SelectAndSearchView(Context context) {
         this(context, null);
@@ -399,11 +398,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 int idx = 0;
                 if(fiatsSorted != null) {
                     idx = fiatsSorted.indexOf(DefaultFiatSetting.value);
+                    if(idx == -1) {
+                        idx = 0;
+                    }
                 }
-                if(idx == -1) {
-                    idx = 0;
-                }
-                this.bsv.setSelection(idx);
+
+                bsv.setSelection(idx);
             }
         }
 
@@ -411,7 +411,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
     }
 
     public void chooseCoin(String coinType) {
@@ -433,18 +432,18 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 int idx = 0;
                 if(coinsSorted != null) {
                     idx = coinsSorted.indexOf(DefaultCoinSetting.value);
+                    if(idx == -1) {
+                        idx = 0;
+                    }
                 }
-                if(idx == -1) {
-                    idx = 0;
-                }
-                this.bsv.setSelection(idx);
+
+                bsv.setSelection(idx);
             }
         }
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
     }
 
     public void chooseToken(String tokenType) {
@@ -467,25 +466,34 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
-        B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
     }
 
     public void chooseSearch(Asset asset) {
-        lastButtonKind = "!SEARCH!";
-        lastSearchAsset = asset;
+        // When we choose "search", we immediately choose one of the other kinds.
+        // This should not be called with a null input.
+        ArrayList<? extends Asset> assetSorted = null;
+        String assetKind = asset.getAssetKind();
+        String assetType = asset.getAssetType();
 
-        // Remake layout to refresh button visibility and search options.
-        this.removeAllViews();
-        makeLayout();
-
-        if(asset != null) {
-            bsv.setOptions(asset.getSettingName());
+        if("!FIAT!".equals(assetKind)) {
+            chooseFiat(asset.getAssetType());
+            assetSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, assetType);
+        }
+        else if("!COIN!".equals(assetKind)) {
+            chooseCoin(asset.getAssetType());
+            assetSorted = HashMapUtil.getValueFromMap(options_coins_sorted, assetType);
+        }
+        else if("!TOKEN!".equals(assetKind)) {
+            chooseToken(asset.getAssetType());
+            assetSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, assetType);
         }
 
-        B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
-        B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
+        int idx = 0;
+        if(assetSorted != null) {
+            // All possible search selections exist in the ArrayList.
+            idx = assetSorted.indexOf(asset);
+        }
+        bsv.setSelection(idx);
     }
 
     public void makeLayout() {
@@ -647,14 +655,14 @@ public class SelectAndSearchView extends CrashLinearLayout {
         });
         searchAssetDialogFragment.restoreListeners(context, "search");
 
-        B_SEARCH = new AppCompatButton(context);
-        B_SEARCH.setText("");
-        B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
+        B_SEARCH = new AppCompatImageButton(context);
+        B_SEARCH.setImageResource(R.drawable.ic_baseline_search_24);
         B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 ArrayList<Asset> searchAssets = getSearchOptionsAssets();
                 if(searchAssets.isEmpty()) {
-                    chooseSearch(null);
+                    // We don't want to call "chooseSearch" with null, so just show a Toast.
+                    ToastUtil.showToast(context, "no_search_assets");
                 }
                 else {
                     StateObj.search_options_assets = searchAssets;
@@ -717,10 +725,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 isEmpty = tokensSorted == null || tokensSorted.isEmpty();
             }
         }
-        else if("!SEARCH!".equals(lastButtonKind)) {
-            text = "No Assets to Search";
-            isEmpty = lastSearchAsset == null;
-        }
 
         if(isEmpty) {
             T.setText(text);
@@ -762,14 +766,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 }
             }
         }
-        else if("!SEARCH!".equals(lastButtonKind)) {
-            return lastSearchAsset;
-        }
 
         return asset;
     }
 
-    public void restoreOptions(String lastButtonKind, String lastButtonType, Asset lastSearchAsset) {
+    public void restoreOptions(String lastButtonKind, String lastButtonType) {
         if("!FIAT!".equals(lastButtonKind)) {
             chooseFiat(lastButtonType);
         }
@@ -778,9 +779,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
         }
         else if("!TOKEN!".equals(lastButtonKind)) {
             chooseToken(lastButtonType);
-        }
-        else if("!SEARCH!".equals(lastButtonKind)) {
-            chooseSearch(lastSearchAsset);
         }
     }
 
@@ -878,13 +876,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
         String lastButtonKindB = ssvB.lastButtonKind;
         String lastButtonTypeA = ssvA.lastButtonType;
         String lastButtonTypeB = ssvB.lastButtonType;
-        Asset laseSearchAssetA = ssvA.lastSearchAsset;
-        Asset laseSearchAssetB = ssvB.lastSearchAsset;
         int idxA = ssvA.bsv.spinner.getSelectedItemPosition();
         int idxB = ssvB.bsv.spinner.getSelectedItemPosition();
 
-        ssvA.restoreOptions(lastButtonKindB, lastButtonTypeB, laseSearchAssetB);
-        ssvB.restoreOptions(lastButtonKindA, lastButtonTypeA, laseSearchAssetA);
+        ssvA.restoreOptions(lastButtonKindB, lastButtonTypeB);
+        ssvB.restoreOptions(lastButtonKindA, lastButtonTypeA);
 
         ssvA.bsv.setSelection(idxB);
         ssvB.bsv.setSelection(idxA);
@@ -898,7 +894,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
         bundle.putString("lastButtonKind", lastButtonKind);
         bundle.putString("lastButtonType", lastButtonType);
-        bundle.putParcelable("lastSearchAsset", lastSearchAsset);
 
         return bundle;
     }
@@ -912,9 +907,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
             state = bundle.getParcelable("superState");
             lastButtonKind = bundle.getString("lastButtonKind");
             lastButtonType = bundle.getString("lastButtonType");
-            lastSearchAsset = bundle.getParcelable("lastSearchAsset");
 
-            restoreOptions(lastButtonKind, lastButtonType, lastSearchAsset);
+            restoreOptions(lastButtonKind, lastButtonType);
             this.bsv.setSelection(bundle.getInt("selection"));
         }
         return state;

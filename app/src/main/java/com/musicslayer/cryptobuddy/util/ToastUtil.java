@@ -19,11 +19,12 @@ public class ToastUtil {
         // Use a dummy value for the duration. When the toast is shown, we will set it according to the setting.
         int duration = Toast.LENGTH_SHORT;
 
-        // Custom Assets
+        // Assets
         toastMap.put("custom_fiat_added", Toast.makeText(context, "Custom fiat added.", duration));
         toastMap.put("custom_coin_added", Toast.makeText(context, "Custom coin added.", duration));
         toastMap.put("custom_token_added", Toast.makeText(context, "Custom token added.", duration));
         toastMap.put("tokens_not_downloaded", Toast.makeText(context, "Could not download all tokens.", duration));
+        toastMap.put("no_search_assets", Toast.makeText(context, "No Assets to Search.", duration));
 
         // Address
         toastMap.put("address_data_downloaded", Toast.makeText(context, "Finished downloading address information.", duration));
