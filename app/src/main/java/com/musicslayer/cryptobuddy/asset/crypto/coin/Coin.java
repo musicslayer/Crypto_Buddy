@@ -51,8 +51,7 @@ abstract public class Coin extends Crypto {
         return coin;
     }
 
-    public String getAssetKindMarker() { return "!COIN!"; }
-    public String getAssetKind() { return "Coin"; }
+    public String getAssetKind() { return "!COIN!"; }
     public String getAssetType() { return "BASE"; } // Default hardcoded type.
 
     public boolean isComplete() {

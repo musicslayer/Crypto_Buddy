@@ -55,7 +55,7 @@ public class TokenView extends CrashLinearLayout {
         else {
             setVisibility(VISIBLE);
 
-            BaseDialogFragment confirmDeleteAssetDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAssetDialog.class, token.getAssetKind());
+            BaseDialogFragment confirmDeleteAssetDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAssetDialog.class, "Token");
             confirmDeleteAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {

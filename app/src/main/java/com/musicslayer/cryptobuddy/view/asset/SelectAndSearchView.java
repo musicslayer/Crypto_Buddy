@@ -472,18 +472,18 @@ public class SelectAndSearchView extends CrashLinearLayout {
         // When we choose "search", we immediately choose one of the other kinds.
         // This should not be called with a null input.
         ArrayList<? extends Asset> assetSorted = null;
-        String assetKindMarker = asset.getAssetKindMarker();
+        String assetKind = asset.getAssetKind();
         String assetType = asset.getAssetType();
 
-        if("!FIAT!".equals(assetKindMarker)) {
+        if("!FIAT!".equals(assetKind)) {
             chooseFiat(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, assetType);
         }
-        else if("!COIN!".equals(assetKindMarker)) {
+        else if("!COIN!".equals(assetKind)) {
             chooseCoin(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_coins_sorted, assetType);
         }
-        else if("!TOKEN!".equals(assetKindMarker)) {
+        else if("!TOKEN!".equals(assetKind)) {
             chooseToken(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, assetType);
         }
@@ -497,11 +497,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public void removeAsset(Asset asset) {
-        String assetKindMarker = asset.getAssetKindMarker();
+        String assetKind = asset.getAssetKind();
         String assetType = asset.getAssetType();
         int idx = 0;
 
-        if("!FIAT!".equals(assetKindMarker)) {
+        if("!FIAT!".equals(assetKind)) {
             ArrayList<Fiat> searchFiats = HashMapUtil.getValueFromMap(search_options_fiats, assetType);
             if(searchFiats != null) {
                 searchFiats.remove((Fiat)asset);
@@ -535,7 +535,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
             chooseFiat(lastButtonType);
         }
-        else if("!COIN!".equals(assetKindMarker)) {
+        else if("!COIN!".equals(assetKind)) {
             ArrayList<Coin> searchCoins = HashMapUtil.getValueFromMap(search_options_coins, assetType);
             if(searchCoins != null) {
                 searchCoins.remove((Coin)asset);
@@ -569,7 +569,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
             chooseCoin(lastButtonType);
         }
-        else if("!TOKEN!".equals(assetKindMarker)) {
+        else if("!TOKEN!".equals(assetKind)) {
             ArrayList<Token> searchTokens = HashMapUtil.getValueFromMap(search_options_tokens, assetType);
             if(searchTokens != null) {
                 searchTokens.remove((Token)asset);

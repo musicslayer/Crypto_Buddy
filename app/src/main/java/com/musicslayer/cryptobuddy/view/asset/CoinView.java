@@ -55,7 +55,7 @@ public class CoinView extends CrashLinearLayout {
         else {
             setVisibility(VISIBLE);
 
-            BaseDialogFragment confirmDeleteAssetDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAssetDialog.class, coin.getAssetKind());
+            BaseDialogFragment confirmDeleteAssetDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteAssetDialog.class, "Coin");
             confirmDeleteAssetDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
                 @Override
                 public void onDismissImpl(DialogInterface dialog) {
