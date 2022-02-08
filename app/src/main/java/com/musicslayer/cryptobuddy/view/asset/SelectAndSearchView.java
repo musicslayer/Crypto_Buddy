@@ -655,8 +655,17 @@ public class SelectAndSearchView extends CrashLinearLayout {
         });
         searchAssetDialogFragment.restoreListeners(context, "search");
 
-        B_SEARCH = new AppCompatImageButton(context);
+        B_SEARCH = new AppCompatImageButton(context) {
+            @Override
+            protected void onMeasure(int width, int height) {
+                // Change Width to match Height so we get a square.
+                super.onMeasure(width, height);
+                setMeasuredDimension(height, height);
+            }
+        };
         B_SEARCH.setImageResource(R.drawable.ic_baseline_search_24);
+        B_SEARCH.setPadding(0, 0, 0, 0);
+        B_SEARCH.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 ArrayList<Asset> searchAssets = getSearchOptionsAssets();
