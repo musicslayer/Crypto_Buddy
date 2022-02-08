@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
@@ -148,6 +149,37 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return fiat;
     }
 
+    // Hardcoded fiats are not normally deleted.
+    public void removeHardcodedFiat(Fiat fiat) {
+        String key = fiat.getKey();
+        if(hardcoded_fiat_map.get(key) != null) {
+            hardcoded_fiats.remove(fiat);
+            HashMapUtil.removeValueFromMap(hardcoded_fiat_map, key);
+            hardcoded_fiat_names.remove(fiat.getName());
+            hardcoded_fiat_display_names.remove(fiat.getDisplayName());
+        }
+    }
+
+    public void removeFoundFiat(Fiat fiat) {
+        String key = fiat.getKey();
+        if(found_fiat_map.get(key) != null) {
+            found_fiats.remove(fiat);
+            HashMapUtil.removeValueFromMap(found_fiat_map, key);
+            found_fiat_names.remove(fiat.getName());
+            found_fiat_display_names.remove(fiat.getDisplayName());
+        }
+    }
+
+    public void removeCustomFiat(Fiat fiat) {
+        String key = fiat.getKey();
+        if(custom_fiat_map.get(key) != null) {
+            custom_fiats.remove(fiat);
+            HashMapUtil.removeValueFromMap(custom_fiat_map, key);
+            custom_fiat_names.remove(fiat.getName());
+            custom_fiat_display_names.remove(fiat.getDisplayName());
+        }
+    }
+
     public void addHardcodedFiat(ArrayList<Fiat> fiatArrayList) {
         if(fiatArrayList == null) { return; }
 
@@ -238,7 +270,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         }
     }
 
-    // Hardcoded fiats are normally not reset.
+    // Hardcoded fiats are not normally deleted.
     public static void resetAllHardcodedFiats() {
         for(FiatManager fiatManager : fiatManagers) {
             fiatManager.resetHardcodedFiats();

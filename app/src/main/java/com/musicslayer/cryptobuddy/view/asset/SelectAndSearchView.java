@@ -472,18 +472,18 @@ public class SelectAndSearchView extends CrashLinearLayout {
         // When we choose "search", we immediately choose one of the other kinds.
         // This should not be called with a null input.
         ArrayList<? extends Asset> assetSorted = null;
-        String assetKind = asset.getAssetKind();
+        String assetKindMarker = asset.getAssetKindMarker();
         String assetType = asset.getAssetType();
 
-        if("!FIAT!".equals(assetKind)) {
+        if("!FIAT!".equals(assetKindMarker)) {
             chooseFiat(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, assetType);
         }
-        else if("!COIN!".equals(assetKind)) {
+        else if("!COIN!".equals(assetKindMarker)) {
             chooseCoin(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_coins_sorted, assetType);
         }
-        else if("!TOKEN!".equals(assetKind)) {
+        else if("!TOKEN!".equals(assetKindMarker)) {
             chooseToken(asset.getAssetType());
             assetSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, assetType);
         }
@@ -494,6 +494,113 @@ public class SelectAndSearchView extends CrashLinearLayout {
             idx = assetSorted.indexOf(asset);
         }
         bsv.setSelection(idx);
+    }
+
+    public void removeAsset(Asset asset) {
+        String assetKindMarker = asset.getAssetKindMarker();
+        String assetType = asset.getAssetType();
+        if("!FIAT!".equals(assetKindMarker)) {
+            ArrayList<Fiat> searchFiats = HashMapUtil.getValueFromMap(search_options_fiats, assetType);
+            if(searchFiats != null) {
+                searchFiats.remove((Fiat)asset);
+            }
+            HashMapUtil.putValueInMap(search_options_fiats, assetType, searchFiats);
+
+            ArrayList<String> searchFiatNames = HashMapUtil.getValueFromMap(search_options_fiat_names, assetType);
+            if(searchFiatNames != null) {
+                searchFiatNames.remove(asset.getName());
+            }
+            HashMapUtil.putValueInMap(search_options_fiat_names, assetType, searchFiatNames);
+
+            ArrayList<String> searchFiatDisplayNames = HashMapUtil.getValueFromMap(search_options_fiat_display_names, assetType);
+            if(searchFiatDisplayNames != null) {
+                searchFiatDisplayNames.remove(asset.getDisplayName());
+            }
+            HashMapUtil.putValueInMap(search_options_fiat_display_names, assetType, searchFiatDisplayNames);
+
+            ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, assetType);
+            if(fiatsSorted != null) {
+                fiatsSorted.remove((Fiat)asset);
+            }
+            HashMapUtil.putValueInMap(options_fiats_sorted, assetType, fiatsSorted);
+
+            ArrayList<String> fiatSettingNamesSorted = HashMapUtil.getValueFromMap(options_fiat_setting_names_sorted, assetType);
+            if(fiatSettingNamesSorted != null) {
+                fiatSettingNamesSorted.remove(asset.getSettingName());
+            }
+            HashMapUtil.putValueInMap(options_fiat_setting_names_sorted, assetType, fiatSettingNamesSorted);
+
+            chooseFiat(lastButtonType);
+        }
+        else if("!COIN!".equals(assetKindMarker)) {
+            ArrayList<Coin> searchCoins = HashMapUtil.getValueFromMap(search_options_coins, assetType);
+            if(searchCoins != null) {
+                searchCoins.remove((Coin)asset);
+            }
+            HashMapUtil.putValueInMap(search_options_coins, assetType, searchCoins);
+
+            ArrayList<String> searchCoinNames = HashMapUtil.getValueFromMap(search_options_coin_names, assetType);
+            if(searchCoinNames != null) {
+                searchCoinNames.remove(asset.getName());
+            }
+            HashMapUtil.putValueInMap(search_options_coin_names, assetType, searchCoinNames);
+
+            ArrayList<String> searchCoinDisplayNames = HashMapUtil.getValueFromMap(search_options_coin_display_names, assetType);
+            if(searchCoinDisplayNames != null) {
+                searchCoinDisplayNames.remove(asset.getDisplayName());
+            }
+            HashMapUtil.putValueInMap(search_options_coin_display_names, assetType, searchCoinDisplayNames);
+
+            ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, assetType);
+            if(coinsSorted != null) {
+                coinsSorted.remove((Coin)asset);
+            }
+            HashMapUtil.putValueInMap(options_coins_sorted, assetType, coinsSorted);
+
+            ArrayList<String> coinSettingNamesSorted = HashMapUtil.getValueFromMap(options_coin_setting_names_sorted, assetType);
+            if(coinSettingNamesSorted != null) {
+                coinSettingNamesSorted.remove(asset.getSettingName());
+            }
+            HashMapUtil.putValueInMap(options_coin_setting_names_sorted, assetType, coinSettingNamesSorted);
+
+            chooseCoin(lastButtonType);
+        }
+        else if("!TOKEN!".equals(assetKindMarker)) {
+            ArrayList<Token> searchTokens = HashMapUtil.getValueFromMap(search_options_tokens, assetType);
+            if(searchTokens != null) {
+                searchTokens.remove((Token)asset);
+            }
+            HashMapUtil.putValueInMap(search_options_tokens, assetType, searchTokens);
+
+            ArrayList<String> searchTokenNames = HashMapUtil.getValueFromMap(search_options_token_names, assetType);
+            if(searchTokenNames != null) {
+                searchTokenNames.remove(asset.getName());
+            }
+            HashMapUtil.putValueInMap(search_options_token_names, assetType, searchTokenNames);
+
+            ArrayList<String> searchTokenDisplayNames = HashMapUtil.getValueFromMap(search_options_token_display_names, assetType);
+            if(searchTokenDisplayNames != null) {
+                searchTokenDisplayNames.remove(asset.getDisplayName());
+            }
+            HashMapUtil.putValueInMap(search_options_token_display_names, assetType, searchTokenDisplayNames);
+
+            ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, assetType);
+            if(tokensSorted != null) {
+                tokensSorted.remove((Token)asset);
+            }
+            HashMapUtil.putValueInMap(options_tokens_sorted, assetType, tokensSorted);
+
+            ArrayList<String> tokenSettingNamesSorted = HashMapUtil.getValueFromMap(options_token_setting_names_sorted, assetType);
+            if(tokenSettingNamesSorted != null) {
+                tokenSettingNamesSorted.remove(asset.getSettingName());
+            }
+            HashMapUtil.putValueInMap(options_token_setting_names_sorted, assetType, tokenSettingNamesSorted);
+
+            chooseToken(lastButtonType);
+        }
+
+        // Whatever the index was, after this we want to be at zero.
+        bsv.setSelection(0);
     }
 
     public void makeLayout() {
@@ -751,27 +858,29 @@ public class SelectAndSearchView extends CrashLinearLayout {
         Asset asset = null;
         int idx = bsv.spinner.getSelectedItemPosition();
 
-        if("!FIAT!".equals(lastButtonKind)) {
-            if(lastButtonType != null) {
-                ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, lastButtonType);
-                if(fiatsSorted != null && !fiatsSorted.isEmpty()) {
-                    asset = fiatsSorted.get(idx);
+        if(idx != -1) {
+            if("!FIAT!".equals(lastButtonKind)) {
+                if(lastButtonType != null) {
+                    ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, lastButtonType);
+                    if(fiatsSorted != null && !fiatsSorted.isEmpty()) {
+                        asset = fiatsSorted.get(idx);
+                    }
                 }
             }
-        }
-        else if("!COIN!".equals(lastButtonKind)) {
-            if(lastButtonType != null) {
-                ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, lastButtonType);
-                if(coinsSorted != null && !coinsSorted.isEmpty()) {
-                    asset = coinsSorted.get(idx);
+            else if("!COIN!".equals(lastButtonKind)) {
+                if(lastButtonType != null) {
+                    ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, lastButtonType);
+                    if(coinsSorted != null && !coinsSorted.isEmpty()) {
+                        asset = coinsSorted.get(idx);
+                    }
                 }
             }
-        }
-        else if("!TOKEN!".equals(lastButtonKind)) {
-            if(lastButtonType != null) {
-                ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, lastButtonType);
-                if(tokensSorted != null && !tokensSorted.isEmpty()) {
-                    asset = tokensSorted.get(idx);
+            else if("!TOKEN!".equals(lastButtonKind)) {
+                if(lastButtonType != null) {
+                    ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, lastButtonType);
+                    if(tokensSorted != null && !tokensSorted.isEmpty()) {
+                        asset = tokensSorted.get(idx);
+                    }
                 }
             }
         }

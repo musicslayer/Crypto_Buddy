@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 import com.musicslayer.cryptobuddy.view.asset.TokenView;
 
@@ -86,7 +87,7 @@ public class ViewTokensDialog extends BaseDialog {
         ssv.setChooseAssetListener(new SelectAndSearchView.ChooseAssetListener() {
             @Override
             public void onAssetChosen(Asset asset) {
-                tokenView.setToken((Token)asset);
+                tokenView.setToken((Token)asset, true);
             }
         });
 
@@ -95,6 +96,25 @@ public class ViewTokensDialog extends BaseDialog {
         ssv.setIncludesToken(true);
 
         TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
+
+        tokenView.setOnDeleteListener(new TokenView.OnDeleteListener() {
+            @Override
+            public void onDelete(Asset asset) {
+                ssv.removeAsset(asset);
+
+                if(LAST_CHECK == 0) {
+                    tokenManager.removeDownloadedToken((Token)asset);
+                }
+                else if(LAST_CHECK == 1) {
+                    tokenManager.removeFoundToken((Token)asset);
+                }
+                else if(LAST_CHECK == 2) {
+                    tokenManager.removeCustomToken((Token)asset);
+                }
+
+                TokenManagerList.updateTokenManager(activity, tokenManager);
+            }
+        });
 
         if(LAST_CHECK == 0) {
             ssv.setTokenOptions(tokenManager.downloaded_tokens);

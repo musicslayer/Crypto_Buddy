@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
@@ -154,6 +155,36 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         }
 
         return token;
+    }
+
+    public void removeDownloadedToken(Token token) {
+        String key = token.getKey();
+        if(downloaded_token_map.get(key) != null) {
+            downloaded_tokens.remove(token);
+            HashMapUtil.removeValueFromMap(downloaded_token_map, key);
+            downloaded_token_names.remove(token.getName());
+            downloaded_token_display_names.remove(token.getDisplayName());
+        }
+    }
+
+    public void removeFoundToken(Token token) {
+        String key = token.getKey();
+        if(found_token_map.get(key) != null) {
+            found_tokens.remove(token);
+            HashMapUtil.removeValueFromMap(found_token_map, key);
+            found_token_names.remove(token.getName());
+            found_token_display_names.remove(token.getDisplayName());
+        }
+    }
+
+    public void removeCustomToken(Token token) {
+        String key = token.getKey();
+        if(custom_token_map.get(key) != null) {
+            custom_tokens.remove(token);
+            HashMapUtil.removeValueFromMap(custom_token_map, key);
+            custom_token_names.remove(token.getName());
+            custom_token_display_names.remove(token.getDisplayName());
+        }
     }
 
     public void addDownloadedToken(ArrayList<Token> tokenArrayList) {

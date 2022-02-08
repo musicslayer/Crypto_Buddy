@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
@@ -148,6 +149,37 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return coin;
     }
 
+    // Hardcoded coins are not normally deleted.
+    public void removeHardcodedCoin(Coin coin) {
+        String key = coin.getKey();
+        if(hardcoded_coin_map.get(key) != null) {
+            hardcoded_coins.remove(coin);
+            HashMapUtil.removeValueFromMap(hardcoded_coin_map, key);
+            hardcoded_coin_names.remove(coin.getName());
+            hardcoded_coin_display_names.remove(coin.getDisplayName());
+        }
+    }
+
+    public void removeFoundCoin(Coin coin) {
+        String key = coin.getKey();
+        if(found_coin_map.get(key) != null) {
+            found_coins.remove(coin);
+            HashMapUtil.removeValueFromMap(found_coin_map, key);
+            found_coin_names.remove(coin.getName());
+            found_coin_display_names.remove(coin.getDisplayName());
+        }
+    }
+
+    public void removeCustomCoin(Coin coin) {
+        String key = coin.getKey();
+        if(custom_coin_map.get(key) != null) {
+            custom_coins.remove(coin);
+            HashMapUtil.removeValueFromMap(custom_coin_map, key);
+            custom_coin_names.remove(coin.getName());
+            custom_coin_display_names.remove(coin.getDisplayName());
+        }
+    }
+
     public void addHardcodedCoin(ArrayList<Coin> coinArrayList) {
         if(coinArrayList == null) { return; }
 
@@ -238,7 +270,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         }
     }
 
-    // Hardcoded coins are normally not reset.
+    // Hardcoded coins are not normally deleted.
     public static void resetAllHardcodedCoins() {
         for(CoinManager coinManager : coinManagers) {
             coinManager.resetHardcodedCoins();

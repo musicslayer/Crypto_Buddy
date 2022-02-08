@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.view.asset.CoinView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
@@ -78,7 +79,7 @@ public class ViewCoinsDialog extends BaseDialog {
         ssv.setChooseAssetListener(new SelectAndSearchView.ChooseAssetListener() {
             @Override
             public void onAssetChosen(Asset asset) {
-                coinView.setCoin((Coin)asset);
+                coinView.setCoin((Coin)asset, LAST_CHECK != 0);
             }
         });
 
@@ -87,6 +88,25 @@ public class ViewCoinsDialog extends BaseDialog {
         ssv.setIncludesToken(false);
 
         CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
+
+        coinView.setOnDeleteListener(new CoinView.OnDeleteListener() {
+            @Override
+            public void onDelete(Asset asset) {
+                ssv.removeAsset(asset);
+
+                if(LAST_CHECK == 0) {
+                    coinManager.removeHardcodedCoin((Coin)asset);
+                }
+                else if(LAST_CHECK == 1) {
+                    coinManager.removeFoundCoin((Coin)asset);
+                }
+                else if(LAST_CHECK == 2) {
+                    coinManager.removeCustomCoin((Coin)asset);
+                }
+
+                CoinManagerList.updateCoinManager(activity, coinManager);
+            }
+        });
 
         if(LAST_CHECK == 0) {
             ssv.setCoinOptions(coinManager.hardcoded_coins);

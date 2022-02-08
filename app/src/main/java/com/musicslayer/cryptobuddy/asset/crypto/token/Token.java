@@ -35,7 +35,8 @@ public class Token extends Crypto {
     public String getID() { return id; }
     public String getBlockchainID() { return blockchain_id; }
 
-    public String getAssetKind() { return "!TOKEN!"; }
+    public String getAssetKindMarker() { return "!TOKEN!"; }
+    public String getAssetKind() { return "Token"; }
     public String getAssetType() { return token_type; }
 
     public String modify(String s) {

@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.view.asset.FiatView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
@@ -78,7 +79,7 @@ public class ViewFiatsDialog extends BaseDialog {
         ssv.setChooseAssetListener(new SelectAndSearchView.ChooseAssetListener() {
             @Override
             public void onAssetChosen(Asset asset) {
-                fiatView.setFiat((Fiat)asset);
+                fiatView.setFiat((Fiat)asset, LAST_CHECK != 0);
             }
         });
 
@@ -87,6 +88,28 @@ public class ViewFiatsDialog extends BaseDialog {
         ssv.setIncludesToken(false);
 
         FiatManager fiatManager = FiatManager.getFiatManagerFromFiatType(fiatType);
+
+        fiatView.setOnDeleteListener(new FiatView.OnDeleteListener() {
+            @Override
+            public void onDelete(Asset asset) {
+                ssv.removeAsset(asset);
+
+                if(LAST_CHECK == 0) {
+                    fiatManager.removeHardcodedFiat((Fiat)asset);
+                }
+                else if(LAST_CHECK == 1) {
+                    fiatManager.removeFoundFiat((Fiat)asset);
+                }
+                else if(LAST_CHECK == 2) {
+                    fiatManager.removeCustomFiat((Fiat)asset);
+                }
+
+                FiatManagerList.updateFiatManager(activity, fiatManager);
+
+                // TODO Update the FiatManagerActivity.
+                // TODO On this Dialog, show total number of each type of asset.
+            }
+        });
 
         if(LAST_CHECK == 0) {
             ssv.setFiatOptions(fiatManager.hardcoded_fiats);

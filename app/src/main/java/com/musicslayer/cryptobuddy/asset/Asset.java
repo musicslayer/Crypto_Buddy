@@ -44,6 +44,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     abstract public String getName(); // Usually same as key, but in some cases it could be different.
     abstract public String getDisplayName();
     abstract public int getScale(); // Number of decimal places
+    abstract public String getAssetKindMarker();
     abstract public String getAssetKind();
     abstract public String getAssetType();
 
@@ -111,7 +112,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
         return new Serialization.JSONObjectWithNull()
-            .put("assetKind", Serialization.string_serialize(getAssetKind()))
+            .put("assetKind", Serialization.string_serialize(getAssetKindMarker()))
             .put("assetType", Serialization.string_serialize(getAssetType()))
             .put("key", Serialization.string_serialize(getKey()))
             .toStringOrNull();
@@ -120,17 +121,17 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public static Asset deserializeFromJSON2(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
-        String assetKind = Serialization.string_deserialize(o.getString("assetKind"));
+        String assetKindMarker = Serialization.string_deserialize(o.getString("assetKindMarker"));
         String assetType = Serialization.string_deserialize(o.getString("assetType"));
         String key = Serialization.string_deserialize(o.getString("key"));
-        return Asset.getAsset2(assetKind, assetType, key);
+        return Asset.getAsset2(assetKindMarker, assetType, key);
     }
 
-    public static Asset getAsset2(String assetKind, String assetType, String key) {
-        if("!FIAT!".equals(assetKind)) {
+    public static Asset getAsset2(String assetKindMarker, String assetType, String key) {
+        if("!FIAT!".equals(assetKindMarker)) {
             return FiatManager.getFiatManagerFromFiatType(assetType).getFiat(key, null, null, 0);
         }
-        else if("!COIN!".equals(assetKind)) {
+        else if("!COIN!".equals(assetKindMarker)) {
             return CoinManager.getCoinManagerFromCoinType(assetType).getCoin(key, null, null, 0, null);
         }
         else {
