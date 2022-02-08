@@ -138,9 +138,10 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
                     token = UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
                 }
             }
+
+            addFoundToken(token);
         }
 
-        addFoundToken(token);
         return token;
     }
 

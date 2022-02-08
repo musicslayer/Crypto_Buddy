@@ -129,9 +129,10 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
                     fiat = UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType());
                 }
             }
+
+            addFoundFiat(fiat);
         }
 
-        addFoundFiat(fiat);
         return fiat;
     }
 

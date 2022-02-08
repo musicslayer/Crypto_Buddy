@@ -129,9 +129,10 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
                     coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, id, getCoinType());
                 }
             }
+
+            addFoundCoin(coin);
         }
 
-        addFoundCoin(coin);
         return coin;
     }
 
