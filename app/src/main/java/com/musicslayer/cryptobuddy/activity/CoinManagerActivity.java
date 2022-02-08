@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import androidx.annotation.NonNull;
 
@@ -49,21 +50,6 @@ public class CoinManagerActivity extends BaseActivity {
             }
         });
 
-        TableLayout tableLayout = findViewById(R.id.coin_manager_tableLayout);
-
-        ArrayList<String> coinTypes = CoinManager.coinManagers_coin_types;
-        Collections.sort(coinTypes, Comparator.comparing(String::toLowerCase));
-
-        coinManagerViewArrayList = new ArrayList<>();
-        for(String coinType : coinTypes) {
-            CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
-            CoinManagerView coinManagerView = new CoinManagerView(CoinManagerActivity.this, coinManager);
-            coinManagerView.updateLayout();
-
-            coinManagerViewArrayList.add(coinManagerView);
-            tableLayout.addView(coinManagerView);
-        }
-
         BaseDialogFragment addCustomCoinDialogFragment = BaseDialogFragment.newInstance(AddCustomCoinDialog.class);
         addCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
@@ -85,6 +71,29 @@ public class CoinManagerActivity extends BaseActivity {
                 addCustomCoinDialogFragment.show(CoinManagerActivity.this, "add_custom_coin");
             }
         });
+
+        updateLayout();
+    }
+
+    public void updateLayout() {
+        TableLayout tableLayout = findViewById(R.id.coin_manager_tableLayout);
+        TableRow firstRow = findViewById(R.id.coin_manager_tableRow1);
+
+        tableLayout.removeAllViews();
+        tableLayout.addView(firstRow);
+
+        ArrayList<String> coinTypes = CoinManager.coinManagers_coin_types;
+        Collections.sort(coinTypes, Comparator.comparing(String::toLowerCase));
+
+        coinManagerViewArrayList = new ArrayList<>();
+        for(String coinType : coinTypes) {
+            CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
+            CoinManagerView coinManagerView = new CoinManagerView(CoinManagerActivity.this, coinManager);
+            coinManagerView.updateLayout();
+
+            coinManagerViewArrayList.add(coinManagerView);
+            tableLayout.addView(coinManagerView);
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.FiatManagerActivity;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
@@ -106,8 +107,7 @@ public class ViewFiatsDialog extends BaseDialog {
 
                 FiatManagerList.updateFiatManager(activity, fiatManager);
 
-                // TODO Update the FiatManagerActivity.
-                // TODO On this Dialog, show total number of each type of asset.
+                ((FiatManagerActivity)activity).updateLayout();
             }
         });
 

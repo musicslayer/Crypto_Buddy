@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.CoinManagerActivity;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
@@ -105,6 +106,8 @@ public class ViewCoinsDialog extends BaseDialog {
                 }
 
                 CoinManagerList.updateCoinManager(activity, coinManager);
+
+                ((CoinManagerActivity)activity).updateLayout();
             }
         });
 

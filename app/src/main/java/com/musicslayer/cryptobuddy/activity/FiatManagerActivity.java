@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import androidx.annotation.NonNull;
 
@@ -49,21 +50,6 @@ public class FiatManagerActivity extends BaseActivity {
             }
         });
 
-        TableLayout tableLayout = findViewById(R.id.fiat_manager_tableLayout);
-
-        ArrayList<String> fiatTypes = FiatManager.fiatManagers_fiat_types;
-        Collections.sort(fiatTypes, Comparator.comparing(String::toLowerCase));
-
-        fiatManagerViewArrayList = new ArrayList<>();
-        for(String fiatType : fiatTypes) {
-            FiatManager fiatManager = FiatManager.getFiatManagerFromFiatType(fiatType);
-            FiatManagerView fiatManagerView = new FiatManagerView(FiatManagerActivity.this, fiatManager);
-            fiatManagerView.updateLayout();
-
-            fiatManagerViewArrayList.add(fiatManagerView);
-            tableLayout.addView(fiatManagerView);
-        }
-
         BaseDialogFragment addCustomFiatDialogFragment = BaseDialogFragment.newInstance(AddCustomFiatDialog.class);
         addCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
@@ -85,6 +71,29 @@ public class FiatManagerActivity extends BaseActivity {
                 addCustomFiatDialogFragment.show(FiatManagerActivity.this, "add_custom_fiat");
             }
         });
+
+        updateLayout();
+    }
+
+    public void updateLayout() {
+        TableLayout tableLayout = findViewById(R.id.fiat_manager_tableLayout);
+        TableRow firstRow = findViewById(R.id.fiat_manager_tableRow1);
+
+        tableLayout.removeAllViews();
+        tableLayout.addView(firstRow);
+
+        ArrayList<String> fiatTypes = FiatManager.fiatManagers_fiat_types;
+        Collections.sort(fiatTypes, Comparator.comparing(String::toLowerCase));
+
+        fiatManagerViewArrayList = new ArrayList<>();
+        for(String fiatType : fiatTypes) {
+            FiatManager fiatManager = FiatManager.getFiatManagerFromFiatType(fiatType);
+            FiatManagerView fiatManagerView = new FiatManagerView(FiatManagerActivity.this, fiatManager);
+            fiatManagerView.updateLayout();
+
+            fiatManagerViewArrayList.add(fiatManagerView);
+            tableLayout.addView(fiatManagerView);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import androidx.annotation.NonNull;
 
@@ -58,21 +59,6 @@ public class TokenManagerActivity extends BaseActivity {
                 HelpUtil.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
             }
         });
-
-        TableLayout tableLayout = findViewById(R.id.token_manager_tableLayout);
-
-        ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
-        Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
-
-        tokenManagerViewArrayList = new ArrayList<>();
-        for(String tokenType : tokenTypes) {
-            TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
-            TokenManagerView tokenManagerView = new TokenManagerView(TokenManagerActivity.this, tokenManager);
-            tokenManagerView.updateLayout();
-
-            tokenManagerViewArrayList.add(tokenManagerView);
-            tableLayout.addView(tokenManagerView);
-        }
 
         BaseDialogFragment addCustomTokenDialogFragment = BaseDialogFragment.newInstance(AddCustomTokenDialog.class);
         addCustomTokenDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -229,6 +215,29 @@ public class TokenManagerActivity extends BaseActivity {
                 downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");
             }
         });
+
+        updateLayout();
+    }
+
+    public void updateLayout() {
+        TableLayout tableLayout = findViewById(R.id.token_manager_tableLayout);
+        TableRow firstRow = findViewById(R.id.token_manager_tableRow1);
+
+        tableLayout.removeAllViews();
+        tableLayout.addView(firstRow);
+
+        ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
+        Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
+
+        tokenManagerViewArrayList = new ArrayList<>();
+        for(String tokenType : tokenTypes) {
+            TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
+            TokenManagerView tokenManagerView = new TokenManagerView(TokenManagerActivity.this, tokenManager);
+            tokenManagerView.updateLayout();
+
+            tokenManagerViewArrayList.add(tokenManagerView);
+            tableLayout.addView(tokenManagerView);
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.TokenManagerActivity;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -113,6 +114,8 @@ public class ViewTokensDialog extends BaseDialog {
                 }
 
                 TokenManagerList.updateTokenManager(activity, tokenManager);
+
+                ((TokenManagerActivity)activity).updateLayout();
             }
         });
 
