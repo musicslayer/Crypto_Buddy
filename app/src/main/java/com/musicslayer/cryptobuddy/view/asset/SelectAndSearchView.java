@@ -42,40 +42,47 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+// TODO Search options should just select FIAT/COIN/TOKEN after a choice.
+
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
     ChooseAssetListener chooseAssetListener;
 
-    public String lastButton;
+    public String lastButtonKind;
+    public String lastButtonType;
     public Asset lastSearchAsset;
 
     public boolean includesFiat;
     public boolean includesCoin;
     public boolean includesToken;
 
-    public ArrayList<String> options_fiat_setting_names_sorted = new ArrayList<>();
-    public ArrayList<Fiat> options_fiat_sorted = new ArrayList<>();
-    public ArrayList<String> options_coin_setting_names_sorted = new ArrayList<>();
-    public ArrayList<Coin> options_coin_sorted = new ArrayList<>();
-    public HashMap<String, ArrayList<String>> options_token_setting_names_sorted = new HashMap<>();
-    public HashMap<String, ArrayList<Token>> options_token_sorted = new HashMap<>();
+    public HashMap<String, ArrayList<Fiat>> options_fiats_sorted = new HashMap<>();
+    public HashMap<String, ArrayList<String>> options_fiat_setting_names_sorted = new HashMap<>();
+    public ArrayList<String> options_fiat_types = new ArrayList<>();
 
+    public HashMap<String, ArrayList<Coin>> options_coins_sorted = new HashMap<>();
+    public HashMap<String, ArrayList<String>> options_coin_setting_names_sorted = new HashMap<>();
+    public ArrayList<String> options_coin_types = new ArrayList<>();
+
+    public HashMap<String, ArrayList<Token>> options_tokens_sorted = new HashMap<>();
+    public HashMap<String, ArrayList<String>> options_token_setting_names_sorted = new HashMap<>();
     public ArrayList<String> options_token_types = new ArrayList<>();
 
     // Create separate set of arrays for SearchDialog
-    public ArrayList<Fiat> search_options_fiats = new ArrayList<>();
-    public ArrayList<String> search_options_fiat_names = new ArrayList<>();
-    public ArrayList<String> search_options_fiat_display_names = new ArrayList<>();
+    public HashMap<String, ArrayList<Fiat>> search_options_fiats = new HashMap<>();
+    public HashMap<String, ArrayList<String>> search_options_fiat_names = new HashMap<>();
+    public HashMap<String, ArrayList<String>> search_options_fiat_display_names = new HashMap<>();
+    public ArrayList<String> search_options_fiat_types = new ArrayList<>();
 
-    public ArrayList<Coin> search_options_coins = new ArrayList<>();
-    public ArrayList<String> search_options_coin_names = new ArrayList<>();
-    public ArrayList<String> search_options_coin_display_names = new ArrayList<>();
+    public HashMap<String, ArrayList<Coin>> search_options_coins = new HashMap<>();
+    public HashMap<String, ArrayList<String>> search_options_coin_names = new HashMap<>();
+    public HashMap<String, ArrayList<String>> search_options_coin_display_names = new HashMap<>();
+    public ArrayList<String> search_options_coin_types = new ArrayList<>();
 
     public HashMap<String, ArrayList<Token>> search_options_tokens = new HashMap<>();
-    public HashMap<String, ArrayList<String>> search_options_tokens_names = new HashMap<>();
-    public HashMap<String, ArrayList<String>> search_options_tokens_display_names = new HashMap<>();
-
+    public HashMap<String, ArrayList<String>> search_options_token_names = new HashMap<>();
+    public HashMap<String, ArrayList<String>> search_options_token_display_names = new HashMap<>();
     public ArrayList<String> search_options_token_types = new ArrayList<>();
 
     AppCompatButton B_FIAT;
@@ -132,64 +139,155 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void setCompleteOptions() {
         // All available assets will be shown as options.
         setFiatOptions(FiatManager.getAllFiats());
+        setFiatManagerOptions(FiatManager.fiatManagers);
         setCoinOptions(CoinManager.getAllCoins());
+        setCoinManagerOptions(CoinManager.coinManagers);
         setTokenOptions(TokenManager.getAllTokens());
         setTokenManagerOptions(TokenManager.tokenManagers);
     }
 
     public void setFiatOptions(ArrayList<Fiat> fiatArrayList) {
-        // Initialize the sorted lists for Fiats.
+        // Reset the maps for Fiats.
         search_options_fiats.clear();
         search_options_fiat_names.clear();
         search_options_fiat_display_names.clear();
+        options_fiats_sorted.clear();
         options_fiat_setting_names_sorted.clear();
-        options_fiat_sorted.clear();
 
+        // For each fiat, separate it by type.
+        // The user can only see one type of fiat at a time.
         for(Fiat fiat : fiatArrayList) {
-            search_options_fiats.add(fiat);
-            search_options_fiat_names.add(fiat.getName());
-            search_options_fiat_display_names.add(fiat.getDisplayName());
+            String fiatType = fiat.getAssetType();
 
-            options_fiat_setting_names_sorted.add(fiat.getSettingName());
-            options_fiat_sorted.add(fiat);
+            ArrayList<Fiat> searchFiats = HashMapUtil.getValueFromMap(search_options_fiats, fiatType);
+            if(searchFiats == null) {
+                searchFiats = new ArrayList<>();
+            }
+            searchFiats.add(fiat);
+            HashMapUtil.putValueInMap(search_options_fiats, fiatType, searchFiats);
+
+            ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_fiat_names, fiatType);
+            if(searchNames == null) {
+                searchNames = new ArrayList<>();
+            }
+            searchNames.add(fiat.getName());
+            HashMapUtil.putValueInMap(search_options_fiat_names, fiatType, searchNames);
+
+            ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_fiat_display_names, fiatType);
+            if(searchDisplayNames == null) {
+                searchDisplayNames = new ArrayList<>();
+            }
+            searchDisplayNames.add(fiat.getDisplayName());
+            HashMapUtil.putValueInMap(search_options_fiat_display_names, fiatType, searchDisplayNames);
+
+            ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, fiatType);
+            if(fiatsSorted == null) {
+                fiatsSorted = new ArrayList<>();
+            }
+            fiatsSorted.add(fiat);
+            HashMapUtil.putValueInMap(options_fiats_sorted, fiatType, fiatsSorted);
+
+            ArrayList<String> fiatSettingNamesSorted = HashMapUtil.getValueFromMap(options_fiat_setting_names_sorted, fiatType);
+            if(fiatSettingNamesSorted == null) {
+                fiatSettingNamesSorted = new ArrayList<>();
+            }
+            fiatSettingNamesSorted.add(fiat.getSettingName());
+            HashMapUtil.putValueInMap(options_fiat_setting_names_sorted, fiatType, fiatSettingNamesSorted);
         }
 
-        Collections.sort(options_fiat_setting_names_sorted, getComparatorString());
-        Collections.sort(options_fiat_sorted, getSettingComparatorAsset());
+        for(String fiatType : new ArrayList<>(options_fiats_sorted.keySet())) {
+            ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, fiatType);
+            if(fiatsSorted != null) {
+                Collections.sort(fiatsSorted, getSettingComparatorAsset());
+            }
+            HashMapUtil.putValueInMap(options_fiats_sorted, fiatType, fiatsSorted);
+        }
+
+        for(String fiatType : new ArrayList<>(options_fiat_setting_names_sorted.keySet())) {
+            ArrayList<String> fiatSettingNamesSorted = HashMapUtil.getValueFromMap(options_fiat_setting_names_sorted, fiatType);
+            if(fiatSettingNamesSorted != null) {
+                Collections.sort(fiatSettingNamesSorted, getComparatorString());
+            }
+            HashMapUtil.putValueInMap(options_fiat_setting_names_sorted, fiatType, fiatSettingNamesSorted);
+        }
     }
 
     public void setCoinOptions(ArrayList<Coin> coinArrayList) {
-        // Initialize the sorted lists for Coins.
+        // Reset the maps for Coins.
         search_options_coins.clear();
         search_options_coin_names.clear();
         search_options_coin_display_names.clear();
+        options_coins_sorted.clear();
         options_coin_setting_names_sorted.clear();
-        options_coin_sorted.clear();
 
+        // For each coin, separate it by type.
+        // The user can only see one type of coin at a time.
         for(Coin coin : coinArrayList) {
-            search_options_coins.add(coin);
-            search_options_coin_names.add(coin.getName());
-            search_options_coin_display_names.add(coin.getDisplayName());
+            String coinType = coin.getAssetType();
 
-            options_coin_setting_names_sorted.add(coin.getSettingName());
-            options_coin_sorted.add(coin);
+            ArrayList<Coin> searchCoins = HashMapUtil.getValueFromMap(search_options_coins, coinType);
+            if(searchCoins == null) {
+                searchCoins = new ArrayList<>();
+            }
+            searchCoins.add(coin);
+            HashMapUtil.putValueInMap(search_options_coins, coinType, searchCoins);
+
+            ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_coin_names, coinType);
+            if(searchNames == null) {
+                searchNames = new ArrayList<>();
+            }
+            searchNames.add(coin.getName());
+            HashMapUtil.putValueInMap(search_options_coin_names, coinType, searchNames);
+
+            ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_coin_display_names, coinType);
+            if(searchDisplayNames == null) {
+                searchDisplayNames = new ArrayList<>();
+            }
+            searchDisplayNames.add(coin.getDisplayName());
+            HashMapUtil.putValueInMap(search_options_coin_display_names, coinType, searchDisplayNames);
+
+            ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, coinType);
+            if(coinsSorted == null) {
+                coinsSorted = new ArrayList<>();
+            }
+            coinsSorted.add(coin);
+            HashMapUtil.putValueInMap(options_coins_sorted, coinType, coinsSorted);
+
+            ArrayList<String> coinSettingNamesSorted = HashMapUtil.getValueFromMap(options_coin_setting_names_sorted, coinType);
+            if(coinSettingNamesSorted == null) {
+                coinSettingNamesSorted = new ArrayList<>();
+            }
+            coinSettingNamesSorted.add(coin.getSettingName());
+            HashMapUtil.putValueInMap(options_coin_setting_names_sorted, coinType, coinSettingNamesSorted);
         }
 
-        Collections.sort(options_coin_setting_names_sorted, getComparatorString());
-        Collections.sort(options_coin_sorted, getSettingComparatorAsset());
+        for(String coinType : new ArrayList<>(options_coins_sorted.keySet())) {
+            ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, coinType);
+            if(coinsSorted != null) {
+                Collections.sort(coinsSorted, getSettingComparatorAsset());
+            }
+            HashMapUtil.putValueInMap(options_coins_sorted, coinType, coinsSorted);
+        }
+
+        for(String coinType : new ArrayList<>(options_coin_setting_names_sorted.keySet())) {
+            ArrayList<String> coinSettingNamesSorted = HashMapUtil.getValueFromMap(options_coin_setting_names_sorted, coinType);
+            if(coinSettingNamesSorted != null) {
+                Collections.sort(coinSettingNamesSorted, getComparatorString());
+            }
+            HashMapUtil.putValueInMap(options_coin_setting_names_sorted, coinType, coinSettingNamesSorted);
+        }
     }
 
     public void setTokenOptions(ArrayList<Token> tokenArrayList) {
+        // Reset the maps for Tokens.
+        search_options_tokens.clear();
+        search_options_token_names.clear();
+        search_options_token_display_names.clear();
+        options_tokens_sorted.clear();
+        options_token_setting_names_sorted.clear();
+
         // For each token, separate it by type.
         // The user can only see one type of token at a time.
-
-        // Initialize the maps for Tokens.
-        search_options_tokens.clear();
-        search_options_tokens_names.clear();
-        search_options_tokens_display_names.clear();
-        options_token_setting_names_sorted.clear();
-        options_token_sorted.clear();
-
         for(Token token : tokenArrayList) {
             String tokenType = token.getAssetType();
 
@@ -200,19 +298,26 @@ public class SelectAndSearchView extends CrashLinearLayout {
             searchTokens.add(token);
             HashMapUtil.putValueInMap(search_options_tokens, tokenType, searchTokens);
 
-            ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_tokens_names, tokenType);
+            ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_token_names, tokenType);
             if(searchNames == null) {
                 searchNames = new ArrayList<>();
             }
             searchNames.add(token.getName());
-            HashMapUtil.putValueInMap(search_options_tokens_names, tokenType, searchNames);
+            HashMapUtil.putValueInMap(search_options_token_names, tokenType, searchNames);
 
-            ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_tokens_display_names, tokenType);
+            ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_token_display_names, tokenType);
             if(searchDisplayNames == null) {
                 searchDisplayNames = new ArrayList<>();
             }
             searchDisplayNames.add(token.getDisplayName());
-            HashMapUtil.putValueInMap(search_options_tokens_display_names, tokenType, searchDisplayNames);
+            HashMapUtil.putValueInMap(search_options_token_display_names, tokenType, searchDisplayNames);
+
+            ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, tokenType);
+            if(tokensSorted == null) {
+                tokensSorted = new ArrayList<>();
+            }
+            tokensSorted.add(token);
+            HashMapUtil.putValueInMap(options_tokens_sorted, tokenType, tokensSorted);
 
             ArrayList<String> tokenSettingNamesSorted = HashMapUtil.getValueFromMap(options_token_setting_names_sorted, tokenType);
             if(tokenSettingNamesSorted == null) {
@@ -220,13 +325,14 @@ public class SelectAndSearchView extends CrashLinearLayout {
             }
             tokenSettingNamesSorted.add(token.getSettingName());
             HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
+        }
 
-            ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_token_sorted, tokenType);
-            if(tokensSorted == null) {
-                tokensSorted = new ArrayList<>();
+        for(String tokenType : new ArrayList<>(options_tokens_sorted.keySet())) {
+            ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, tokenType);
+            if(tokensSorted != null) {
+                Collections.sort(tokensSorted, getSettingComparatorAsset());
             }
-            tokensSorted.add(token);
-            HashMapUtil.putValueInMap(options_token_sorted, tokenType, tokensSorted);
+            HashMapUtil.putValueInMap(options_tokens_sorted, tokenType, tokensSorted);
         }
 
         for(String tokenType : new ArrayList<>(options_token_setting_names_sorted.keySet())) {
@@ -236,19 +342,33 @@ public class SelectAndSearchView extends CrashLinearLayout {
             }
             HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
         }
+    }
 
-        for(String tokenType : new ArrayList<>(options_token_sorted.keySet())) {
-            ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_token_sorted, tokenType);
-            if(tokensSorted != null) {
-                Collections.sort(tokensSorted, getSettingComparatorAsset());
-            }
-            HashMapUtil.putValueInMap(options_token_sorted, tokenType, tokensSorted);
+    public void setFiatManagerOptions(ArrayList<FiatManager> fiatManagerArrayList) {
+        search_options_fiat_types.clear();
+        options_fiat_types.clear();
+
+        for(FiatManager fiatManager : fiatManagerArrayList) {
+            search_options_fiat_types.add(fiatManager.getFiatType());
+            options_fiat_types.add(fiatManager.getFiatType());
         }
+
+        Collections.sort(options_fiat_types, getComparatorString());
+    }
+
+    public void setCoinManagerOptions(ArrayList<CoinManager> coinManagerArrayList) {
+        search_options_coin_types.clear();
+        options_coin_types.clear();
+
+        for(CoinManager coinManager : coinManagerArrayList) {
+            search_options_coin_types.add(coinManager.getCoinType());
+            options_coin_types.add(coinManager.getCoinType());
+        }
+
+        Collections.sort(options_coin_types, getComparatorString());
     }
 
     public void setTokenManagerOptions(ArrayList<TokenManager> tokenManagerArrayList) {
-        // For now, we only choose the token types.
-        // All tokens with a chosen token type are available.
         search_options_token_types.clear();
         options_token_types.clear();
 
@@ -260,22 +380,33 @@ public class SelectAndSearchView extends CrashLinearLayout {
         Collections.sort(options_token_types, getComparatorString());
     }
 
-    public void chooseFiat() {
-        lastButton = "!FIAT!";
+    public void chooseFiat(String fiatType) {
+        lastButtonKind = "!FIAT!";
+        lastButtonType = fiatType;
 
         // Remake layout to refresh button visibility and search options.
         this.removeAllViews();
         makeLayout();
 
-        bsv.setOptions(options_fiat_setting_names_sorted);
+        if(fiatType != null) {
+            ArrayList<String> settingNames = HashMapUtil.getValueFromMap(options_fiat_setting_names_sorted, fiatType);
+            if(settingNames != null) {
+                bsv.setOptions(settingNames);
 
-        // Choose the default, but if that is not an option then choose the first.
-        Fiat defaultFiat = DefaultFiatSetting.value;
-        int idx = options_fiat_sorted.indexOf(defaultFiat);
-        if(idx == -1) {
-            idx = 0;
+                // Choose the default, but if that is not an option then choose the first.
+                ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, fiatType);
+
+                int idx = 0;
+                if(fiatsSorted != null) {
+                    idx = fiatsSorted.indexOf(DefaultFiatSetting.value);
+                }
+                if(idx == -1) {
+                    idx = 0;
+                }
+                this.bsv.setSelection(idx);
+            }
         }
-        this.bsv.setSelection(idx);
+
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
@@ -283,22 +414,32 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
     }
 
-    public void chooseCoin() {
-        lastButton = "!COIN!";
+    public void chooseCoin(String coinType) {
+        lastButtonKind = "!COIN!";
+        lastButtonType = coinType;
 
         // Remake layout to refresh button visibility and search options.
         this.removeAllViews();
         makeLayout();
 
-        bsv.setOptions(options_coin_setting_names_sorted);
+        if(coinType != null) {
+            ArrayList<String> settingNames = HashMapUtil.getValueFromMap(options_coin_setting_names_sorted, coinType);
+            if(settingNames != null) {
+                bsv.setOptions(settingNames);
 
-        // Choose the default, but if that is not an option then choose the first.
-        Coin defaultCoin = DefaultCoinSetting.value;
-        int idx = options_coin_sorted.indexOf(defaultCoin);
-        if(idx == -1) {
-            idx = 0;
+                // Choose the default, but if that is not an option then choose the first.
+                ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, coinType);
+
+                int idx = 0;
+                if(coinsSorted != null) {
+                    idx = coinsSorted.indexOf(DefaultCoinSetting.value);
+                }
+                if(idx == -1) {
+                    idx = 0;
+                }
+                this.bsv.setSelection(idx);
+            }
         }
-        this.bsv.setSelection(idx);
 
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_checked_small_24, 0, 0, 0);
@@ -308,8 +449,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public void chooseToken(String tokenType) {
         // Initialize the sorted lists for this kind of token.
-        // There is no "DefaultTokenSetting" - the first token will always be chosen.
-        lastButton = tokenType;
+        lastButtonKind = "!TOKEN!";
+        lastButtonType = tokenType;
 
         // Remake layout to refresh button visibility and search options.
         this.removeAllViews();
@@ -318,6 +459,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         if(tokenType != null) {
             ArrayList<String> settingNames = HashMapUtil.getValueFromMap(options_token_setting_names_sorted, tokenType);
             if(settingNames != null) {
+                // There is no "DefaultTokenSetting" - the first token will always be chosen.
                 bsv.setOptions(settingNames);
             }
         }
@@ -329,7 +471,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public void chooseSearch(Asset asset) {
-        lastButton = "!SEARCH!";
+        lastButtonKind = "!SEARCH!";
         lastSearchAsset = asset;
 
         // Remake layout to refresh button visibility and search options.
@@ -358,7 +500,32 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_FIAT.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                chooseFiat();
+                if(options_fiat_types.isEmpty()) {
+                    // There are no fiat types to choose from.
+                    chooseFiat(null);
+                }
+                else if(options_fiat_types.size() == 1) {
+                    // There is only one fiat type, so just choose it.
+                    chooseFiat(options_fiat_types.get(0));
+                }
+                else {
+                    // Present a list of available fiat types to choose from.
+                    PopupMenu popup = new PopupMenu(context, B_FIAT);
+
+                    ArrayList<String> options = new ArrayList<>(options_coin_types);
+                    Collections.sort(options, getComparatorString());
+                    for(String o : options) {
+                        popup.getMenu().add(o);
+                    }
+
+                    popup.setOnMenuItemClickListener(new CrashPopupMenu.CrashOnMenuItemClickListener(context) {
+                        public boolean onMenuItemClickImpl(MenuItem item) {
+                            chooseFiat(item.toString());
+                            return true;
+                        }
+                    });
+                    popup.show();
+                }
             }
         });
 
@@ -374,7 +541,32 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                chooseCoin();
+                if(options_coin_types.isEmpty()) {
+                    // There are no coin types to choose from.
+                    chooseCoin(null);
+                }
+                else if(options_coin_types.size() == 1) {
+                    // There is only one coin type, so just choose it.
+                    chooseCoin(options_coin_types.get(0));
+                }
+                else {
+                    // Present a list of available coin types to choose from.
+                    PopupMenu popup = new PopupMenu(context, B_COIN);
+
+                    ArrayList<String> options = new ArrayList<>(options_coin_types);
+                    Collections.sort(options, getComparatorString());
+                    for(String o : options) {
+                        popup.getMenu().add(o);
+                    }
+
+                    popup.setOnMenuItemClickListener(new CrashPopupMenu.CrashOnMenuItemClickListener(context) {
+                        public boolean onMenuItemClickImpl(MenuItem item) {
+                            chooseCoin(item.toString());
+                            return true;
+                        }
+                    });
+                    popup.show();
+                }
             }
         });
 
@@ -460,11 +652,12 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_SEARCH.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, R.drawable.ic_baseline_search_24, 0);
         B_SEARCH.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                if(getSearchOptionsAssets().isEmpty()) {
+                ArrayList<Asset> searchAssets = getSearchOptionsAssets();
+                if(searchAssets.isEmpty()) {
                     chooseSearch(null);
                 }
                 else {
-                    StateObj.search_options_assets = getSearchOptionsAssets();
+                    StateObj.search_options_assets = searchAssets;
                     StateObj.search_options_asset_names = getSearchOptionsNames();
                     StateObj.search_options_asset_display_names = getSearchOptionsDisplayNames();
                     searchAssetDialogFragment.show(context, "search");
@@ -489,31 +682,44 @@ public class SelectAndSearchView extends CrashLinearLayout {
         L_B.setOrientation(HORIZONTAL);
         L_B.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-        boolean isEmpty;
-        String text;
-        if("!FIAT!".equals(lastButton)) {
-            text = "No Fiats Available";
-            isEmpty = options_fiat_sorted.isEmpty();
+        boolean isEmpty = true;
+        String text = "";
+        if("!FIAT!".equals(lastButtonKind)) {
+            if(lastButtonType == null) {
+                text = "No Fiats Available";
+                isEmpty = true;
+            }
+            else {
+                text = "No " + lastButtonType + " Fiats Available";
+                ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, lastButtonType);
+                isEmpty = fiatsSorted == null || fiatsSorted.isEmpty();
+            }
         }
-        else if("!COIN!".equals(lastButton)) {
-            text = "No Coins Available";
-            isEmpty = options_coin_sorted.isEmpty();
+        else if("!COIN!".equals(lastButtonKind)) {
+            if(lastButtonType == null) {
+                text = "No Coins Available";
+                isEmpty = true;
+            }
+            else {
+                text = "No " + lastButtonType + " Coins Available";
+                ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, lastButtonType);
+                isEmpty = coinsSorted == null || coinsSorted.isEmpty();
+            }
         }
-        else if("!SEARCH!".equals(lastButton)) {
-            // If "search" is selected, there must have been at least one option to choose from.
+        else if("!TOKEN!".equals(lastButtonKind)) {
+            if(lastButtonType == null) {
+                text = "No Tokens Available";
+                isEmpty = true;
+            }
+            else {
+                text = "No " + lastButtonType + " Tokens Available";
+                ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, lastButtonType);
+                isEmpty = tokensSorted == null || tokensSorted.isEmpty();
+            }
+        }
+        else if("!SEARCH!".equals(lastButtonKind)) {
             text = "No Assets to Search";
             isEmpty = lastSearchAsset == null;
-        }
-        else if(lastButton != null) {
-            // Token and token type were selected.
-            text = "No " + lastButton + " Tokens Available";
-            ArrayList<Token> tokens = HashMapUtil.getValueFromMap(options_token_sorted, lastButton);
-            isEmpty = tokens == null || tokens.isEmpty();
-        }
-        else {
-            // Token was selected, but there are no token types available.
-            text = "No Tokens Available";
-            isEmpty = true;
         }
 
         if(isEmpty) {
@@ -529,71 +735,76 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public Asset getChosenAsset() {
+        Asset asset = null;
         int idx = bsv.spinner.getSelectedItemPosition();
 
-        if("!FIAT!".equals(lastButton)) {
-            if(options_fiat_sorted.isEmpty()) {
-                return null;
-            }
-            else {
-                return options_fiat_sorted.get(idx);
-            }
-        }
-        else if("!COIN!".equals(lastButton)) {
-            if(options_coin_sorted.isEmpty()) {
-                return null;
-            }
-            else {
-                return options_coin_sorted.get(idx);
+        if("!FIAT!".equals(lastButtonKind)) {
+            if(lastButtonType != null) {
+                ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, lastButtonType);
+                if(fiatsSorted != null && !fiatsSorted.isEmpty()) {
+                    asset = fiatsSorted.get(idx);
+                }
             }
         }
-        else if("!SEARCH!".equals(lastButton)) {
+        else if("!COIN!".equals(lastButtonKind)) {
+            if(lastButtonType != null) {
+                ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, lastButtonType);
+                if(coinsSorted != null && !coinsSorted.isEmpty()) {
+                    asset = coinsSorted.get(idx);
+                }
+            }
+        }
+        else if("!TOKEN!".equals(lastButtonKind)) {
+            if(lastButtonType != null) {
+                ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, lastButtonType);
+                if(tokensSorted != null && !tokensSorted.isEmpty()) {
+                    asset = tokensSorted.get(idx);
+                }
+            }
+        }
+        else if("!SEARCH!".equals(lastButtonKind)) {
             return lastSearchAsset;
         }
-        else if(lastButton != null) {
-            // Token and token type were selected.
-            ArrayList<Token> tokens = HashMapUtil.getValueFromMap(options_token_sorted, lastButton);
-            if(tokens == null || tokens.isEmpty()) {
-                return null;
-            }
-            else {
-                return tokens.get(idx);
-            }
-        }
-        else {
-            // Token was selected, but there are no token types available.
-            return null;
-        }
+
+        return asset;
     }
 
-    public void restoreOptions(String lastButton, Asset lastSearchAsset) {
-        if("!FIAT!".equals(lastButton)) {
-            chooseFiat();
+    public void restoreOptions(String lastButtonKind, String lastButtonType, Asset lastSearchAsset) {
+        if("!FIAT!".equals(lastButtonKind)) {
+            chooseFiat(lastButtonType);
         }
-        else if("!COIN!".equals(lastButton)) {
-            chooseCoin();
+        else if("!COIN!".equals(lastButtonKind)) {
+            chooseCoin(lastButtonType);
         }
-        else if("!SEARCH!".equals(lastButton)) {
+        else if("!TOKEN!".equals(lastButtonKind)) {
+            chooseToken(lastButtonType);
+        }
+        else if("!SEARCH!".equals(lastButtonKind)) {
             chooseSearch(lastSearchAsset);
-        }
-        else {
-            // Token was selected.
-            // There may or may not be any token types available.
-            chooseToken(lastButton);
         }
     }
 
     private ArrayList<String> getSearchOptionsNames() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
-            options.addAll(search_options_fiat_names);
+            for(String fiatType : search_options_fiat_types) {
+                ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_fiat_names, fiatType);
+                if(searchNames != null) {
+                    options.addAll(searchNames);
+                }
+            }
         }
         if(includesCoin) {
-            options.addAll(search_options_coin_names);
+            for(String coinType : search_options_coin_types) {
+                ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_coin_names, coinType);
+                if(searchNames != null) {
+                    options.addAll(searchNames);
+                }
+            }
         }
         if(includesToken) {
             for(String tokenType : search_options_token_types) {
-                ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_tokens_names, tokenType);
+                ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_token_names, tokenType);
                 if(searchNames != null) {
                     options.addAll(searchNames);
                 }
@@ -605,14 +816,24 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private ArrayList<String> getSearchOptionsDisplayNames() {
         ArrayList<String> options = new ArrayList<>();
         if(includesFiat) {
-            options.addAll(search_options_fiat_display_names);
+            for(String fiatType : search_options_fiat_types) {
+                ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_fiat_display_names, fiatType);
+                if(searchDisplayNames != null) {
+                    options.addAll(searchDisplayNames);
+                }
+            }
         }
         if(includesCoin) {
-            options.addAll(search_options_coin_display_names);
+            for(String coinType : search_options_coin_types) {
+                ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_coin_display_names, coinType);
+                if(searchDisplayNames != null) {
+                    options.addAll(searchDisplayNames);
+                }
+            }
         }
         if(includesToken) {
             for(String tokenType : search_options_token_types) {
-                ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_tokens_display_names, tokenType);
+                ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_token_display_names, tokenType);
                 if(searchDisplayNames != null) {
                     options.addAll(searchDisplayNames);
                 }
@@ -624,10 +845,20 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private ArrayList<Asset> getSearchOptionsAssets() {
         ArrayList<Asset> assets = new ArrayList<>();
         if(includesFiat) {
-            assets.addAll(search_options_fiats);
+            for(String fiatType : search_options_fiat_types) {
+                ArrayList<Fiat> searchFiats = HashMapUtil.getValueFromMap(search_options_fiats, fiatType);
+                if(searchFiats != null) {
+                    assets.addAll(searchFiats);
+                }
+            }
         }
         if(includesCoin) {
-            assets.addAll(search_options_coins);
+            for(String coinType : search_options_coin_types) {
+                ArrayList<Coin> searchCoins = HashMapUtil.getValueFromMap(search_options_coins, coinType);
+                if(searchCoins != null) {
+                    assets.addAll(searchCoins);
+                }
+            }
         }
         if(includesToken) {
             for(String tokenType : search_options_token_types) {
@@ -643,15 +874,17 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public static void swap(SelectAndSearchView ssvA, SelectAndSearchView ssvB) {
         // Switch the states of 2 instances.
         // It is assumed that the two instances have the same available options.
-        String lastButtonA = ssvA.lastButton;
-        String lastButtonB = ssvB.lastButton;
+        String lastButtonKindA = ssvA.lastButtonKind;
+        String lastButtonKindB = ssvB.lastButtonKind;
+        String lastButtonTypeA = ssvA.lastButtonType;
+        String lastButtonTypeB = ssvB.lastButtonType;
         Asset laseSearchAssetA = ssvA.lastSearchAsset;
         Asset laseSearchAssetB = ssvB.lastSearchAsset;
         int idxA = ssvA.bsv.spinner.getSelectedItemPosition();
         int idxB = ssvB.bsv.spinner.getSelectedItemPosition();
 
-        ssvA.restoreOptions(lastButtonB, laseSearchAssetB);
-        ssvB.restoreOptions(lastButtonA, laseSearchAssetA);
+        ssvA.restoreOptions(lastButtonKindB, lastButtonTypeB, laseSearchAssetB);
+        ssvB.restoreOptions(lastButtonKindA, lastButtonTypeA, laseSearchAssetA);
 
         ssvA.bsv.setSelection(idxB);
         ssvB.bsv.setSelection(idxA);
@@ -663,7 +896,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
         bundle.putInt("selection", this.bsv.spinner.getSelectedItemPosition());
-        bundle.putString("lastButton", lastButton);
+        bundle.putString("lastButtonKind", lastButtonKind);
+        bundle.putString("lastButtonType", lastButtonType);
         bundle.putParcelable("lastSearchAsset", lastSearchAsset);
 
         return bundle;
@@ -676,10 +910,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
         {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
-            lastButton = bundle.getString("lastButton");
+            lastButtonKind = bundle.getString("lastButtonKind");
+            lastButtonType = bundle.getString("lastButtonType");
             lastSearchAsset = bundle.getParcelable("lastSearchAsset");
 
-            restoreOptions(lastButton, lastSearchAsset);
+            restoreOptions(lastButtonKind, lastButtonType, lastSearchAsset);
             this.bsv.setSelection(bundle.getInt("selection"));
         }
         return state;

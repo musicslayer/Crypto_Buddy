@@ -82,7 +82,7 @@ public class AddCustomCoinDialog extends BaseDialog {
                     String id = "?";
 
                     Coin oldCoin = chosenCoinManager.custom_coin_map.get(key);
-                    Coin newCoin = new Coin_Impl(key, name, display_name, scale, id);
+                    Coin newCoin = new Coin_Impl(key, name, display_name, scale, id, chosenCoinManager.getCoinType());
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);

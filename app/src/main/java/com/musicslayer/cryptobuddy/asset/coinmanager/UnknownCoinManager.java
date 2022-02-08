@@ -8,17 +8,20 @@ import java.util.HashMap;
 
 public class UnknownCoinManager extends CoinManager {
     String key;
+    String coinType;
 
     public String getKey() { return key; }
     public String getName() { return "UnknownCoinManager"; }
+    public String getCoinType() { return coinType; }
     public String getSettingsKey() { return "?"; }
 
-    public static UnknownCoinManager createUnknownCoinManager(String key) {
-        return new UnknownCoinManager(key);
+    public static UnknownCoinManager createUnknownCoinManager(String key, String coinType) {
+        return new UnknownCoinManager(key, coinType);
     }
 
-    private UnknownCoinManager(String key) {
+    private UnknownCoinManager(String key, String coinType) {
         this.key = key;
+        this.coinType = coinType;
 
         this.hardcoded_coins = new ArrayList<>();
         this.hardcoded_coin_map = new HashMap<>();

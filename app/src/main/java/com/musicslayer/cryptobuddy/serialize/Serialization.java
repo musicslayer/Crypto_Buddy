@@ -433,6 +433,7 @@ public class Serialization {
                     .put("name", string_serialize(obj.getName()))
                     .put("display_name", string_serialize(obj.getDisplayName()))
                     .put("scale", int_serialize(obj.getScale()))
+                    .put("fiat_type", string_serialize(obj.getAssetType()))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -450,8 +451,9 @@ public class Serialization {
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
             int scale = Serialization.int_deserialize(o.getString("scale"));
+            String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
 
-            return new Fiat_Impl(key, name, display_name, scale);
+            return new Fiat_Impl(key, name, display_name, scale, fiat_type);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -506,6 +508,7 @@ public class Serialization {
                     .put("display_name", string_serialize(obj.getDisplayName()))
                     .put("scale", int_serialize(obj.getScale()))
                     .put("id", string_serialize(obj.getID()))
+                    .put("coin_type", string_serialize(obj.getAssetType()))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -524,8 +527,9 @@ public class Serialization {
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
             int scale = Serialization.int_deserialize(o.getString("scale"));
             String id = Serialization.string_deserialize(o.getString("id"));
+            String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
 
-            return new Coin_Impl(key, name, display_name, scale, id);
+            return new Coin_Impl(key, name, display_name, scale, id, coin_type);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

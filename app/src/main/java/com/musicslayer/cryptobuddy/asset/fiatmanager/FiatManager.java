@@ -17,7 +17,9 @@ import java.util.HashMap;
 abstract public class FiatManager implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<FiatManager> fiatManagers;
     public static HashMap<String, FiatManager> fiatManagers_map;
+    public static HashMap<String, FiatManager> fiatManagers_fiat_type_map;
     public static ArrayList<String> fiatManagers_names;
+    public static ArrayList<String> fiatManagers_fiat_types;
 
     public ArrayList<Fiat> hardcoded_fiats;
     public HashMap<String, Fiat> hardcoded_fiat_map;
@@ -36,6 +38,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
     abstract public String getKey();
     abstract public String getName();
+    abstract public String getFiatType();
 
     // Used to store persistent state
     abstract public String getSettingsKey();
@@ -63,6 +66,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     public static void initialize(Context context) {
         fiatManagers = new ArrayList<>();
         fiatManagers_map = new HashMap<>();
+        fiatManagers_fiat_type_map = new HashMap<>();
+        fiatManagers_fiat_types = new ArrayList<>();
 
         FiatManagerList.initializeRawArray();
 
@@ -82,6 +87,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
             fiatManagers.add(fiatManager);
             fiatManagers_map.put(fiatManager.getKey(), fiatManager);
+            fiatManagers_fiat_type_map.put(fiatManager.getFiatType(), fiatManager);
+            fiatManagers_fiat_types.add(fiatManager.getFiatType());
         }
     }
 
@@ -92,7 +99,16 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     public static FiatManager getFiatManagerFromKey(String key) {
         FiatManager fiatManager = fiatManagers_map.get(key);
         if(fiatManager == null) {
-            fiatManager = UnknownFiatManager.createUnknownFiatManager(key);
+            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, "?");
+        }
+
+        return fiatManager;
+    }
+
+    public static FiatManager getFiatManagerFromFiatType(String fiatType) {
+        FiatManager fiatManager = fiatManagers_fiat_type_map.get(fiatType);
+        if(fiatManager == null) {
+            fiatManager = UnknownFiatManager.createUnknownFiatManager("?", fiatType);
         }
 
         return fiatManager;
@@ -107,7 +123,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiat = lookupFiat(key, name, display_name, scale);
 
             if(fiat == null || !fiat.isComplete()) {
-                fiat = new Fiat_Impl(key, name, display_name, scale);
+                fiat = new Fiat_Impl(key, name, display_name, scale, getFiatType());
 
                 if(!fiat.isComplete()) {
                     fiat = UnknownFiat.createUnknownFiat(key);
@@ -339,6 +355,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
         return new Serialization.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
+            .put("fiat_type", Serialization.string_serialize(getFiatType()))
             .put("hardcoded_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(hardcoded_fiats)))
             .put("found_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(found_fiats)))
             .put("custom_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(custom_fiats)))
@@ -348,13 +365,14 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     public static FiatManager deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
+        String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
         ArrayList<Fiat> hardcoded_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
         ArrayList<Fiat> found_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("found_fiats"));
         ArrayList<Fiat> custom_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("custom_fiats"));
 
         // This is a dummy object that only has to hold onto the fiat array lists.
         // We don't need to call the proper add* methods here.
-        FiatManager fiatManager = UnknownFiatManager.createUnknownFiatManager(key);
+        FiatManager fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
         fiatManager.hardcoded_fiats = hardcoded_fiats;
         fiatManager.found_fiats = found_fiats;
         fiatManager.custom_fiats = custom_fiats;

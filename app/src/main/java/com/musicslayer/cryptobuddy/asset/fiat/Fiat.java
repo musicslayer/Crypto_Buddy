@@ -49,9 +49,8 @@ abstract public class Fiat extends Asset {
         return fiat;
     }
 
-    public String getAssetType() {
-        return "!FIAT!";
-    }
+    public String getAssetKind() { return "!FIAT!"; }
+    public String getAssetType() { return "BASE"; } // Default hardcoded type.
 
     public String getID() {
         // For now, just use lowercase symbol.

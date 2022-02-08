@@ -17,7 +17,9 @@ import java.util.HashMap;
 abstract public class CoinManager implements Serialization.SerializableToJSON, Serialization.Versionable {
     public static ArrayList<CoinManager> coinManagers;
     public static HashMap<String, CoinManager> coinManagers_map;
+    public static HashMap<String, CoinManager> coinManagers_coin_type_map;
     public static ArrayList<String> coinManagers_names;
+    public static ArrayList<String> coinManagers_coin_types;
 
     public ArrayList<Coin> hardcoded_coins;
     public HashMap<String, Coin> hardcoded_coin_map;
@@ -36,6 +38,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
 
     abstract public String getKey();
     abstract public String getName();
+    abstract public String getCoinType();
 
     // Used to store persistent state
     abstract public String getSettingsKey();
@@ -63,6 +66,8 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     public static void initialize(Context context) {
         coinManagers = new ArrayList<>();
         coinManagers_map = new HashMap<>();
+        coinManagers_coin_type_map = new HashMap<>();
+        coinManagers_coin_types = new ArrayList<>();
 
         CoinManagerList.initializeRawArray();
 
@@ -82,6 +87,8 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
 
             coinManagers.add(coinManager);
             coinManagers_map.put(coinManager.getKey(), coinManager);
+            coinManagers_coin_type_map.put(coinManager.getCoinType(), coinManager);
+            coinManagers_coin_types.add(coinManager.getCoinType());
         }
     }
 
@@ -92,7 +99,16 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     public static CoinManager getCoinManagerFromKey(String key) {
         CoinManager coinManager = coinManagers_map.get(key);
         if(coinManager == null) {
-            coinManager = UnknownCoinManager.createUnknownCoinManager(key);
+            coinManager = UnknownCoinManager.createUnknownCoinManager(key, "?");
+        }
+
+        return coinManager;
+    }
+
+    public static CoinManager getCoinManagerFromCoinType(String coinType) {
+        CoinManager coinManager = coinManagers_coin_type_map.get(coinType);
+        if(coinManager == null) {
+            coinManager = UnknownCoinManager.createUnknownCoinManager("?", coinType);
         }
 
         return coinManager;
@@ -107,7 +123,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coin = lookupCoin(key, name, display_name, scale, id);
 
             if(coin == null || !coin.isComplete()) {
-                coin = new Coin_Impl(key, name, display_name, scale, id);
+                coin = new Coin_Impl(key, name, display_name, scale, id, getCoinType());
 
                 if(!coin.isComplete()) {
                     coin = UnknownCoin.createUnknownCoin(key);
@@ -339,6 +355,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
         return new Serialization.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
+            .put("coin_type", Serialization.string_serialize(getCoinType()))
             .put("hardcoded_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(hardcoded_coins)))
             .put("found_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(found_coins)))
             .put("custom_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(custom_coins)))
@@ -348,13 +365,14 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     public static CoinManager deserializeFromJSON1(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
+        String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
         ArrayList<Coin> hardcoded_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
         ArrayList<Coin> found_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("found_coins"));
         ArrayList<Coin> custom_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("custom_coins"));
 
         // This is a dummy object that only has to hold onto the coin array lists.
         // We don't need to call the proper add* methods here.
-        CoinManager coinManager = UnknownCoinManager.createUnknownCoinManager(key);
+        CoinManager coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
         coinManager.hardcoded_coins = hardcoded_coins;
         coinManager.found_coins = found_coins;
         coinManager.custom_coins = custom_coins;

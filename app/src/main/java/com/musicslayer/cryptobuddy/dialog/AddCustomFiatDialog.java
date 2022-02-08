@@ -79,7 +79,7 @@ public class AddCustomFiatDialog extends BaseDialog {
                     String key = name;
 
                     Fiat oldFiat = chosenFiatManager.custom_fiat_map.get(key);
-                    Fiat newFiat = new Fiat_Impl(key, name, display_name, scale);
+                    Fiat newFiat = new Fiat_Impl(key, name, display_name, scale, chosenFiatManager.getFiatType());
 
                     if(oldFiat == null) {
                         chosenFiatManager.addCustomFiat(newFiat);

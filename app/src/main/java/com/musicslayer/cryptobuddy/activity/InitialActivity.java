@@ -43,7 +43,7 @@ import java.util.Date;
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
-// TODO Make Coin/Fiat behave like tokens
+// TODO Make Coin/Fiat Dialogs/Activities behave like tokens
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

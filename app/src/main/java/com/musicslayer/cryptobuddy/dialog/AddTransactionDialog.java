@@ -149,7 +149,7 @@ public class AddTransactionDialog extends BaseDialog {
         ssvPrimary.setIncludesCoin(true);
         ssvPrimary.setIncludesToken(true);
         ssvPrimary.setCompleteOptions();
-        ssvPrimary.chooseCoin();
+        ssvPrimary.chooseCoin("BASE");
 
         final NumericEditText E_SECONDARYASSET = findViewById(R.id.add_transaction_dialog_secondaryEditText);
 
@@ -158,7 +158,7 @@ public class AddTransactionDialog extends BaseDialog {
         ssvSecondary.setIncludesCoin(true);
         ssvSecondary.setIncludesToken(true);
         ssvSecondary.setCompleteOptions();
-        ssvSecondary.chooseFiat();
+        ssvSecondary.chooseFiat("BASE");
 
         final TextView T = findViewById(R.id.add_transaction_dialog_forTextView);
 

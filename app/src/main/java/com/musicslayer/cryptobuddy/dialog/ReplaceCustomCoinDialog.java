@@ -7,14 +7,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class ReplaceCustomCoinDialog extends BaseDialog {
-    public Coin oldCoin;
-    public Coin newCoin;
+    public Coin_Impl oldCoin;
+    public Coin_Impl newCoin;
 
-    public ReplaceCustomCoinDialog(Activity activity, Coin oldCoin, Coin newCoin) {
+    public ReplaceCustomCoinDialog(Activity activity, Coin_Impl oldCoin, Coin_Impl newCoin) {
         super(activity);
         this.oldCoin = oldCoin;
         this.newCoin = newCoin;

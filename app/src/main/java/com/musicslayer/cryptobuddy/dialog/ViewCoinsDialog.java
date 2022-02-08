@@ -14,6 +14,8 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.asset.CoinView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
+import java.util.ArrayList;
+
 public class ViewCoinsDialog extends BaseDialog {
     int LAST_CHECK = 0;
 
@@ -88,7 +90,11 @@ public class ViewCoinsDialog extends BaseDialog {
             ssv.setCoinOptions(coinManager.custom_coins);
         }
 
-        ssv.chooseCoin();
+        ArrayList<CoinManager> coinManagerArrayList = new ArrayList<>();
+        coinManagerArrayList.add(coinManager);
+        ssv.setCoinManagerOptions(coinManagerArrayList);
+
+        ssv.chooseCoin("BASE");
     }
 
     @Override

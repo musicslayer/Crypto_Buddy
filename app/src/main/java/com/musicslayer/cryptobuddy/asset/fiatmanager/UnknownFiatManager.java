@@ -8,17 +8,20 @@ import java.util.HashMap;
 
 public class UnknownFiatManager extends FiatManager {
     String key;
+    String fiatType;
 
     public String getKey() { return key; }
     public String getName() { return "UnknownFiatManager"; }
+    public String getFiatType() { return fiatType; }
     public String getSettingsKey() { return "?"; }
 
-    public static UnknownFiatManager createUnknownFiatManager(String key) {
-        return new UnknownFiatManager(key);
+    public static UnknownFiatManager createUnknownFiatManager(String key, String fiatType) {
+        return new UnknownFiatManager(key, fiatType);
     }
 
-    private UnknownFiatManager(String key) {
+    private UnknownFiatManager(String key, String fiatType) {
         this.key = key;
+        this.fiatType = fiatType;
 
         this.hardcoded_fiats = new ArrayList<>();
         this.hardcoded_fiat_map = new HashMap<>();

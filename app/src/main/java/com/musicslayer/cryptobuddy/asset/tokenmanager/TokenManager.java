@@ -26,7 +26,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
     public static HashMap<String, TokenManager> tokenManagers_map;
     public static HashMap<String, TokenManager> tokenManagers_token_type_map;
     public static ArrayList<String> tokenManagers_names;
-    public static ArrayList<String> tokenManagers_blockchain_ids;
     public static ArrayList<String> tokenManagers_token_types;
 
     public ArrayList<Token> downloaded_tokens;
@@ -80,7 +79,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         tokenManagers = new ArrayList<>();
         tokenManagers_map = new HashMap<>();
         tokenManagers_token_type_map = new HashMap<>();
-        tokenManagers_blockchain_ids = new ArrayList<>();
         tokenManagers_token_types = new ArrayList<>();
 
         TokenManagerList.initializeRawArray();
@@ -102,7 +100,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
-            tokenManagers_blockchain_ids.add(tokenManager.getBlockchainID());
             tokenManagers_token_types.add(tokenManager.getTokenType());
         }
     }

@@ -46,7 +46,7 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
     abstract public boolean isMainnet();
     abstract public boolean isCaseSensitive();
     abstract public Crypto getCrypto();
-    abstract public ArrayList<TokenManager> getTokenManagers();
+    abstract public ArrayList<TokenManager> getTokenManagers(); // TODO Get associated Cryptos.
     abstract public String getName();
     abstract public String getDisplayName();
     abstract public boolean isValid(String address);

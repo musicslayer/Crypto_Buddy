@@ -42,14 +42,14 @@ public class CryptoPricesDialog extends BaseDialog {
         ssv.setIncludesCoin(true);
         ssv.setIncludesToken(true);
         ssv.setCompleteOptions();
-        ssv.chooseCoin();
+        ssv.chooseCoin("BASE");
 
         SelectAndSearchView fssv = findViewById(R.id.crypto_prices_dialog_fiatSelectAndSearchView);
         fssv.setIncludesFiat(true);
         fssv.setIncludesCoin(false);
         fssv.setIncludesToken(false);
         fssv.setCompleteOptions();
-        fssv.chooseFiat();
+        fssv.chooseFiat("BASE");
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {

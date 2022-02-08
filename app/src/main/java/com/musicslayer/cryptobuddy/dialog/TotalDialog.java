@@ -49,7 +49,7 @@ public class TotalDialog extends BaseDialog {
         fssv.setIncludesCoin(false);
         fssv.setIncludesToken(false);
         fssv.setCompleteOptions();
-        fssv.chooseFiat();
+        fssv.chooseFiat("BASE");
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {

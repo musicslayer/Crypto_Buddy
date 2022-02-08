@@ -138,6 +138,7 @@ public class SearchDialog extends BaseDialog {
         table.removeAllViews();
 
         // Make sure we don't accidentally return the entire list of options here.
+        // TODO If this is empty, just show all results (up to 100).
         if(searchText.trim().isEmpty()) { return; }
 
         ArrayList<String> search_options_SORTED;

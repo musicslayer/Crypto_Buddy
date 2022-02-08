@@ -58,21 +58,21 @@ public class CryptoConverterDialog extends BaseDialog {
         ssvPrimary.setIncludesCoin(true);
         ssvPrimary.setIncludesToken(true);
         ssvPrimary.setCompleteOptions();
-        ssvPrimary.chooseCoin();
+        ssvPrimary.chooseCoin("BASE");
 
         SelectAndSearchView ssvSecondary = findViewById(R.id.crypto_converter_dialog_secondarySelectAndSearchView);
         ssvSecondary.setIncludesFiat(false);
         ssvSecondary.setIncludesCoin(true);
         ssvSecondary.setIncludesToken(true);
         ssvSecondary.setCompleteOptions();
-        ssvSecondary.chooseCoin();
+        ssvSecondary.chooseCoin("BASE");
 
         SelectAndSearchView fssv = findViewById(R.id.crypto_converter_dialog_fiatSelectAndSearchView);
         fssv.setIncludesFiat(true);
         fssv.setIncludesCoin(false);
         fssv.setIncludesToken(false);
         fssv.setCompleteOptions();
-        fssv.chooseFiat();
+        fssv.chooseFiat("BASE");
 
         ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this.activity) {

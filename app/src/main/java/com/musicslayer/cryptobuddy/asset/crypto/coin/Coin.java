@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// TODO Merge Coin and Coin_Impl???
+
 abstract public class Coin extends Crypto {
     public static ArrayList<Coin> coins;
     public static HashMap<String, Coin> coin_map;
@@ -49,9 +51,8 @@ abstract public class Coin extends Crypto {
         return coin;
     }
 
-    public String getAssetType() {
-        return "!COIN!";
-    }
+    public String getAssetKind() { return "!COIN!"; }
+    public String getAssetType() { return "BASE"; } // Default hardcoded type.
 
     public boolean isComplete() {
         // Coins may be created from incomplete information, and while we may use the coin,

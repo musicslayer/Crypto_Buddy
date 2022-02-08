@@ -8,11 +8,14 @@ import android.widget.RadioGroup;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.asset.FiatView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
+
+import java.util.ArrayList;
 
 public class ViewFiatsDialog extends BaseDialog {
     int LAST_CHECK = 0;
@@ -88,7 +91,11 @@ public class ViewFiatsDialog extends BaseDialog {
             ssv.setFiatOptions(fiatManager.custom_fiats);
         }
 
-        ssv.chooseFiat();
+        ArrayList<FiatManager> fiatManagerArrayList = new ArrayList<>();
+        fiatManagerArrayList.add(fiatManager);
+        ssv.setFiatManagerOptions(fiatManagerArrayList);
+
+        ssv.chooseFiat("BASE");
     }
 
     @Override

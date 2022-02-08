@@ -3,8 +3,10 @@ package com.musicslayer.cryptobuddy.asset;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
@@ -42,6 +44,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     abstract public String getName(); // Usually same as key, but in some cases it could be different.
     abstract public String getDisplayName();
     abstract public int getScale(); // Number of decimal places
+    abstract public String getAssetKind();
     abstract public String getAssetType();
 
     @Override
@@ -103,15 +106,49 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         Collections.sort(assetArrayList, (a, b) -> compare(a, b));
     }
 
-    public String serializationVersion() { return "1"; }
+    public String serializationVersion() { return "2"; }
 
     public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
         return new Serialization.JSONObjectWithNull()
+            .put("assetKind", Serialization.string_serialize(getAssetKind()))
             .put("assetType", Serialization.string_serialize(getAssetType()))
             .put("key", Serialization.string_serialize(getKey()))
             .toStringOrNull();
     }
+
+    public static Asset deserializeFromJSON2(String s) throws org.json.JSONException {
+        // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String assetKind = Serialization.string_deserialize(o.getString("assetKind"));
+        String assetType = Serialization.string_deserialize(o.getString("assetType"));
+        String key = Serialization.string_deserialize(o.getString("key"));
+        return Asset.getAsset2(assetKind, assetType, key);
+    }
+
+    public static Asset getAsset2(String assetKind, String assetType, String key) {
+        if("!FIAT!".equals(assetKind)) {
+            return FiatManager.getFiatManagerFromFiatType(assetType).getFiat(key, null, null, 0);
+        }
+        else if("!COIN!".equals(assetKind)) {
+            return CoinManager.getCoinManagerFromCoinType(assetType).getCoin(key, null, null, 0, null);
+        }
+        else {
+            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
+        }
+    }
+
+    // TODO DEPRECATED START
+    /*
+    public String serializeToJSON() throws org.json.JSONException {
+        // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
+        return new Serialization.JSONObjectWithNull()
+                .put("assetType", Serialization.string_serialize(getAssetType()))
+                .put("key", Serialization.string_serialize(getKey()))
+                .toStringOrNull();
+    }
+
+     */
 
     public static Asset deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
@@ -132,4 +169,5 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
             return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
         }
     }
+    // TODO DEPRECATED END
 }

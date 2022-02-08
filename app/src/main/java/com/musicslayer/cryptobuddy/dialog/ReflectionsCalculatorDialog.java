@@ -15,8 +15,10 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -215,10 +217,19 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             coinArrayList.add((Coin)cryptoAddress.getCrypto());
             ssv.setCoinOptions(coinArrayList);
 
-            ArrayList<TokenManager> tokenManagerArrayList = new ArrayList<>(cryptoAddress.getTokenManagers());
-            ssv.setTokenManagerOptions(tokenManagerArrayList);
+            ArrayList<CoinManager> coinManagerArrayList = new ArrayList<>();
+            coinManagerArrayList.add(CoinManager.getDefaultCoinManager());
+            ssv.setCoinManagerOptions(coinManagerArrayList);
 
-            ssv.chooseCoin();
+            ArrayList<Token> tokenArrayList = new ArrayList<>();
+            for(TokenManager tokenManager : cryptoAddress.getTokenManagers()) {
+                tokenArrayList.addAll(tokenManager.getTokens());
+            }
+            ssv.setTokenOptions(tokenArrayList);
+
+            ssv.setTokenManagerOptions(cryptoAddress.getTokenManagers());
+
+            ssv.chooseCoin("BASE");
         }
     }
 
