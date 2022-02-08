@@ -56,7 +56,7 @@ public class BorderedSpinnerView extends CrashLinearLayout {
         this.spinner.setOnItemSelectedListener(onItemSelectedListener);
 
         // If there is at least one option, choose the first one by default.
-        if(this.spinner.getAdapter().getCount() > 0) {
+        if(this.spinner.getAdapter() != null && this.spinner.getAdapter().getCount() > 0) {
             setSelection(0);
         }
     }

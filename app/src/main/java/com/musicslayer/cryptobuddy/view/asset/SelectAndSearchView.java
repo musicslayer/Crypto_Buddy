@@ -499,6 +499,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
     public void removeAsset(Asset asset) {
         String assetKindMarker = asset.getAssetKindMarker();
         String assetType = asset.getAssetType();
+        int idx = 0;
+
         if("!FIAT!".equals(assetKindMarker)) {
             ArrayList<Fiat> searchFiats = HashMapUtil.getValueFromMap(search_options_fiats, assetType);
             if(searchFiats != null) {
@@ -520,6 +522,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
             ArrayList<Fiat> fiatsSorted = HashMapUtil.getValueFromMap(options_fiats_sorted, assetType);
             if(fiatsSorted != null) {
+                idx = fiatsSorted.indexOf((Fiat)asset) - 1;
                 fiatsSorted.remove((Fiat)asset);
             }
             HashMapUtil.putValueInMap(options_fiats_sorted, assetType, fiatsSorted);
@@ -553,6 +556,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
             ArrayList<Coin> coinsSorted = HashMapUtil.getValueFromMap(options_coins_sorted, assetType);
             if(coinsSorted != null) {
+                idx = coinsSorted.indexOf((Coin)asset) - 1;
                 coinsSorted.remove((Coin)asset);
             }
             HashMapUtil.putValueInMap(options_coins_sorted, assetType, coinsSorted);
@@ -586,6 +590,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
             ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, assetType);
             if(tokensSorted != null) {
+                idx = tokensSorted.indexOf((Token)asset) - 1;
                 tokensSorted.remove((Token)asset);
             }
             HashMapUtil.putValueInMap(options_tokens_sorted, assetType, tokensSorted);
@@ -599,8 +604,11 @@ public class SelectAndSearchView extends CrashLinearLayout {
             chooseToken(lastButtonType);
         }
 
-        // Whatever the index was, after this we want to be at zero.
-        bsv.setSelection(0);
+        // Whatever the index was, after this we want it to be one less, or zero if we can't determine a value.
+        if(idx < 0) {
+            idx = 0;
+        }
+        bsv.setSelection(idx);
     }
 
     public void makeLayout() {
@@ -740,7 +748,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
         }
 
         bsv = new BorderedSpinnerView(context);
-        bsv.setOptions(new ArrayList<>());
         bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
             public void onNothingSelectedImpl(AdapterView<?> parent) {}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
