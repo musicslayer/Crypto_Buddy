@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Bech32;
@@ -17,7 +18,7 @@ public class ATOM_Mainnet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("ATOM");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("ATOM");
     }
 
     public Coin getFeeCoin() {

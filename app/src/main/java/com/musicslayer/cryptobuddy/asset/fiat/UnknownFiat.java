@@ -1,35 +1,49 @@
 package com.musicslayer.cryptobuddy.asset.fiat;
 
 public class UnknownFiat extends Fiat {
-    String key;
-
-    public String getKey() { return key; }
-
-    public String getName() {
+    public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
+        // Fields are modified to show an unknown fiat to the user.
+        String unknownKey;
         if(key == null) {
-            return "?UNKNOWN_FIAT?";
+            unknownKey = "?";
         }
         else {
-            return "?UNKNOWN_FIAT (" + key + ")?";
+            unknownKey = key;
         }
-    }
 
-    public String getDisplayName() {
-        if(key == null) {
-            return "?Unknown Fiat?";
+        String unknownName;
+        if(name == null) {
+            unknownName = "?UNKNOWN_FIAT?";
         }
         else {
-            return "?Unknown Fiat (" + key + ")?";
+            unknownName = "?UNKNOWN_FIAT (" + name + ")?";
         }
+
+        String unknownDisplayName;
+        if(display_name == null) {
+            unknownDisplayName = "?Unknown Fiat?";
+        }
+        else {
+            unknownDisplayName = "?Unknown Fiat (" + display_name + ")?";
+        }
+
+        String unknownFiatType;
+        if(fiat_type == null) {
+            unknownFiatType = "?";
+        }
+        else {
+            unknownFiatType = fiat_type;
+        }
+
+        return new UnknownFiat(unknownKey, unknownName, unknownDisplayName, scale, unknownFiatType);
     }
 
-    public int getScale() { return 0; }
-
-    public static UnknownFiat createUnknownFiat(String key) {
-        return new UnknownFiat(key);
+    private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
+        super(key, name, display_name, scale, fiat_type);
     }
 
-    private UnknownFiat(String key) {
-        this.key = key;
+    public boolean isComplete() {
+        // UnknownFiats are never complete, since by definition they represent a Fiat where we do not know all the information.
+        return false;
     }
 }

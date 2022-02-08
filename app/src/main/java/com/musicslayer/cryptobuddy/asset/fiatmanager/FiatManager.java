@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -124,10 +123,10 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiat = lookupFiat(key, name, display_name, scale);
 
             if(fiat == null || !fiat.isComplete()) {
-                fiat = new Fiat_Impl(key, name, display_name, scale, getFiatType());
+                fiat = new Fiat(key, name, display_name, scale, getFiatType());
 
                 if(!fiat.isComplete()) {
-                    fiat = UnknownFiat.createUnknownFiat(key);
+                    fiat = UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType());
                 }
             }
         }
@@ -147,6 +146,11 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         }
 
         return fiat;
+    }
+
+    public Fiat getHardcodedFiat(String key) {
+        // Only allow the hardcoded fiat to be found.
+        return hardcoded_fiat_map.get(key);
     }
 
     // Hardcoded fiats are not normally deleted.

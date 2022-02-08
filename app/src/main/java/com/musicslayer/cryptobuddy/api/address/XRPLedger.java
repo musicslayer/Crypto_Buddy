@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.XRP;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.XRP_Devnet;
 import com.musicslayer.cryptobuddy.asset.network.XRP_Testnet;
@@ -78,7 +77,7 @@ public class XRPLedger extends AddressAPI {
             // Subtract the 20 used to create the account.
             //b = b.subtract(BigDecimal.valueOf(20));
 
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, new XRP()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

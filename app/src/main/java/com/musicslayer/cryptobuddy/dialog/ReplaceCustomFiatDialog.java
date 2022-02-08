@@ -7,14 +7,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class ReplaceCustomFiatDialog extends BaseDialog {
-    public Fiat_Impl oldFiat;
-    public Fiat_Impl newFiat;
+    public Fiat oldFiat;
+    public Fiat newFiat;
 
-    public ReplaceCustomFiatDialog(Activity activity, Fiat_Impl oldFiat, Fiat_Impl newFiat) {
+    public ReplaceCustomFiatDialog(Activity activity, Fiat oldFiat, Fiat newFiat) {
         super(activity);
         this.oldFiat = oldFiat;
         this.newFiat = newFiat;

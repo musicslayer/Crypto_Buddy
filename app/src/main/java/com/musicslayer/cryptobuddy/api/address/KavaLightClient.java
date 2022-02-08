@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.KAVA;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -64,7 +63,7 @@ public class KavaLightClient extends AddressAPI {
 
                 Crypto crypto;
                 if("UKAVA".equals(denom)) {
-                    crypto = new KAVA();
+                    crypto = cryptoAddress.getPrimaryCoin();
                     hasNativeCoin = true;
                 }
                 else {

@@ -1,10 +1,8 @@
 package com.musicslayer.cryptobuddy.serialize;
 
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -428,12 +426,13 @@ public class Serialization {
         if(obj == null) { return null; }
 
         try {
+            // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.getKey()))
-                    .put("name", string_serialize(obj.getName()))
-                    .put("display_name", string_serialize(obj.getDisplayName()))
-                    .put("scale", int_serialize(obj.getScale()))
-                    .put("fiat_type", string_serialize(obj.getAssetType()))
+                    .put("key", string_serialize(obj.key))
+                    .put("name", string_serialize(obj.original_name))
+                    .put("display_name", string_serialize(obj.original_display_name))
+                    .put("scale", int_serialize(obj.scale))
+                    .put("fiat_type", string_serialize(obj.fiat_type))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -453,7 +452,7 @@ public class Serialization {
             int scale = Serialization.int_deserialize(o.getString("scale"));
             String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
 
-            return new Fiat_Impl(key, name, display_name, scale, fiat_type);
+            return new Fiat(key, name, display_name, scale, fiat_type);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -502,13 +501,14 @@ public class Serialization {
         if(obj == null) { return null; }
 
         try {
+            // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.getKey()))
-                    .put("name", string_serialize(obj.getName()))
-                    .put("display_name", string_serialize(obj.getDisplayName()))
-                    .put("scale", int_serialize(obj.getScale()))
-                    .put("id", string_serialize(obj.getID()))
-                    .put("coin_type", string_serialize(obj.getAssetType()))
+                    .put("key", string_serialize(obj.key))
+                    .put("name", string_serialize(obj.original_name))
+                    .put("display_name", string_serialize(obj.original_display_name))
+                    .put("scale", int_serialize(obj.scale))
+                    .put("id", string_serialize(obj.id))
+                    .put("coin_type", string_serialize(obj.coin_type))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -529,7 +529,7 @@ public class Serialization {
             String id = Serialization.string_deserialize(o.getString("id"));
             String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
 
-            return new Coin_Impl(key, name, display_name, scale, id, coin_type);
+            return new Coin(key, name, display_name, scale, id, coin_type);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

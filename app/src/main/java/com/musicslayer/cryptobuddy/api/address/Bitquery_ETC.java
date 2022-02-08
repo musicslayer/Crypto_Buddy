@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.ETC;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -54,7 +53,7 @@ public class Bitquery_ETC extends AddressAPI {
         try {
             JSONObject json = new JSONObject(addressDataJSON);
             String currentBalance = json.getJSONObject("data").getJSONObject("ethereum").getJSONArray("address").getJSONObject(0).getString("balance");
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, new ETC()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

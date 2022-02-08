@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.crypto.coin.BTC;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -49,7 +48,7 @@ public class Blockstream extends AddressAPI {
             BigDecimal currentBalance = currentBalanceA.subtract(currentBalanceB);
             currentBalance = currentBalance.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance.toPlainString(), new BTC()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance.toPlainString(), cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

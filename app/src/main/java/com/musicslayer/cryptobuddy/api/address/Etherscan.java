@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.crypto.coin.ETH;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.ETH_Testnet_Goerli;
 import com.musicslayer.cryptobuddy.asset.network.ETH_Testnet_Kovan;
@@ -62,7 +61,7 @@ public class Etherscan extends AddressAPI {
             // ETH
             BigDecimal b = new BigDecimal(json.getJSONObject("ETH").getString("rawBalance"));
             b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
-            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new ETH()));
+            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), cryptoAddress.getPrimaryCoin()));
 
             if(shouldIncludeTokens(cryptoAddress)) {
                 // Tokens
@@ -127,7 +126,7 @@ public class Etherscan extends AddressAPI {
         try {
             JSONObject json = new JSONObject(addressDataJSON);
             String amount = new BigDecimal(json.getString("result")).movePointLeft(cryptoAddress.getPrimaryCoin().getScale()).toPlainString();
-            currentBalanceArrayList.add(new AssetQuantity(amount, new ETH()));
+            currentBalanceArrayList.add(new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

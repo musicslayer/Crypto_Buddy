@@ -13,9 +13,9 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -67,10 +67,12 @@ public class AboutActivity extends BaseActivity {
         T_EXCHANGES_TEXT.setText(exchangesText + "\n");
 
         // List of all hardcoded assets
-        ArrayList<String> sortedFiatDisplayNames = Fiat.fiat_display_names;
+        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
+        ArrayList<String> sortedFiatDisplayNames = fiatManager.hardcoded_fiat_display_names;
         Collections.sort(sortedFiatDisplayNames);
 
-        ArrayList<String> sortedCoinDisplayNames = Coin.coin_display_names;
+        CoinManager coinManager = CoinManager.getDefaultCoinManager();
+        ArrayList<String> sortedCoinDisplayNames = coinManager.hardcoded_coin_display_names;
         Collections.sort(sortedCoinDisplayNames);
 
         ArrayList<String> sortedTokenManagerDisplayNames = TokenManager.tokenManagers_token_types;

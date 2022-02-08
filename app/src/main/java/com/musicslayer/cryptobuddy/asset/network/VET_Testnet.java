@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Ethereum;
@@ -18,11 +19,11 @@ public class VET_Testnet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("VET");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("VET");
     }
 
     public Coin getFeeCoin() {
-        return Coin.getCoinFromKey("VTHO");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("VTHO");
     }
 
     public ArrayList<Coin> getCoins() {

@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.crypto.coin.XTZ;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.XTZ_Testnet_Florencenet;
 import com.musicslayer.cryptobuddy.asset.network.XTZ_Testnet_Granadanet;
@@ -72,7 +71,7 @@ public class TzStats extends AddressAPI {
         if(addressDataJSON == null) {
             // Account may not be active, so say 0 Tezos.
             // We really need a better way to check this case.
-            currentBalanceArrayList.add(new AssetQuantity("0", new XTZ()));
+            currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getPrimaryCoin()));
             return currentBalanceArrayList;
         }
 
@@ -80,7 +79,7 @@ public class TzStats extends AddressAPI {
             // XTZ
             JSONObject json = new JSONObject(addressDataJSON);
             String currentBalance = new BigDecimal(json.getString("spendable_balance")).toPlainString();
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, new XTZ()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

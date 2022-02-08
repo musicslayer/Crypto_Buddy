@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Bech32;
@@ -17,7 +18,7 @@ public class BTC_Mainnet_SegWit extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("BTC");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("BTC");
     }
 
     public Coin getFeeCoin() {

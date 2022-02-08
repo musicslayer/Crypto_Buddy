@@ -1,37 +1,50 @@
 package com.musicslayer.cryptobuddy.asset.crypto.coin;
 
 public class UnknownCoin extends Coin {
-    String key;
-
-    public String getKey() { return key; }
-
-    public String getName() {
+    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String id, String coin_type) {
+        // "id" is ? because we cannot lookup the price.
+        // Other fields are modified to show an unknown coin to the user.
+        String unknownKey;
         if(key == null) {
-            return "?UNKNOWN_COIN?";
+            unknownKey = "?";
         }
         else {
-            return "?UNKNOWN_COIN (" + key + ")?";
+            unknownKey = key;
         }
-    }
 
-    public String getDisplayName() {
-        if(key == null) {
-            return "?Unknown Coin?";
+        String unknownName;
+        if(name == null) {
+            unknownName = "?UNKNOWN_COIN?";
         }
         else {
-            return "?Unknown Coin (" + key + ")?";
+            unknownName = "?UNKNOWN_COIN (" + name + ")?";
         }
+
+        String unknownDisplayName;
+        if(display_name == null) {
+            unknownDisplayName = "?Unknown Coin?";
+        }
+        else {
+            unknownDisplayName = "?Unknown Coin (" + display_name + ")?";
+        }
+
+        String unknownCoinType;
+        if(coin_type == null) {
+            unknownCoinType = "?";
+        }
+        else {
+            unknownCoinType = coin_type;
+        }
+
+        return new UnknownCoin(unknownKey, unknownName, unknownDisplayName, scale, "?", unknownCoinType);
     }
 
-    public int getScale() { return 0; }
-
-    public String getID() { return "?"; }
-
-    public static UnknownCoin createUnknownCoin(String key) {
-        return new UnknownCoin(key);
+    private UnknownCoin(String key, String name, String display_name, int scale, String id, String coin_type) {
+        super(key, name, display_name, scale, id, coin_type);
     }
 
-    private UnknownCoin(String key) {
-        this.key = key;
+    public boolean isComplete() {
+        // UnknownCoins are never complete, since by definition they represent a Coin where we do not know all the information.
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
@@ -16,7 +17,7 @@ public class BCH_Mainnet_CashAddr_P2PKH extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("BCH");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("BCH");
     }
 
     public Coin getFeeCoin() {

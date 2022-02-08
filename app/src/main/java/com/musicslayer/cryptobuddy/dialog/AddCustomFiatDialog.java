@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -95,7 +94,7 @@ public class AddCustomFiatDialog extends BaseDialog {
                     String key = name;
 
                     Fiat oldFiat = chosenFiatManager.custom_fiat_map.get(key);
-                    Fiat newFiat = new Fiat_Impl(key, name, display_name, scale, chosenFiatManager.getFiatType());
+                    Fiat newFiat = new Fiat(key, name, display_name, scale, chosenFiatManager.getFiatType());
 
                     if(oldFiat == null) {
                         chosenFiatManager.addCustomFiat(newFiat);

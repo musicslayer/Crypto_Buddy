@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.SOL;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.SOL_Devnet;
 import com.musicslayer.cryptobuddy.asset.network.SOL_Testnet;
@@ -87,7 +86,7 @@ public class Solana extends AddressAPI {
             balance = balance.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
             String currentBalance = balance.toPlainString();
 
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, new SOL()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

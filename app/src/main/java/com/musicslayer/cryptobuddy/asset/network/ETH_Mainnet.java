@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Ethereum;
@@ -17,7 +18,7 @@ public class ETH_Mainnet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("ETH");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("ETH");
     }
 
     public Coin getFeeCoin() {

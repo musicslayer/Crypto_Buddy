@@ -1,13 +1,12 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base58;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-// The address of a normal account in Solana is a Base58-encoded string of a 256-bit ed25519 public key.
 
 public class SOL_Mainnet extends Network {
     public boolean isMainnet() {
@@ -19,7 +18,7 @@ public class SOL_Mainnet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("SOL");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("SOL");
     }
 
     public Coin getFeeCoin() {

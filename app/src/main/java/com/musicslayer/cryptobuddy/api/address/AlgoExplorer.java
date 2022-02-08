@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.ALGO;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.ALGO_Betanet;
 import com.musicslayer.cryptobuddy.asset.network.ALGO_Testnet;
@@ -59,7 +58,7 @@ public class AlgoExplorer extends AddressAPI {
             // Subtract the account minimum.
             //b = b.subtract(BigDecimal.valueOf(0.1));
 
-            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new ALGO()));
+            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), cryptoAddress.getPrimaryCoin()));
 
             if(shouldIncludeTokens(cryptoAddress)) {
                 // Tokens

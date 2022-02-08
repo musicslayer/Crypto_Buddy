@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -124,10 +123,10 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coin = lookupCoin(key, name, display_name, scale, id);
 
             if(coin == null || !coin.isComplete()) {
-                coin = new Coin_Impl(key, name, display_name, scale, id, getCoinType());
+                coin = new Coin(key, name, display_name, scale, id, getCoinType());
 
                 if(!coin.isComplete()) {
-                    coin = UnknownCoin.createUnknownCoin(key);
+                    coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, id, getCoinType());
                 }
             }
         }
@@ -147,6 +146,11 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         }
 
         return coin;
+    }
+
+    public Coin getHardcodedCoin(String key) {
+        // Only allow the hardcoded coin to be found.
+        return hardcoded_coin_map.get(key);
     }
 
     // Hardcoded coins are not normally deleted.

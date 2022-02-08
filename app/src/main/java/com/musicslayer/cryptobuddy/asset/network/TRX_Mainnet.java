@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base58;
@@ -18,7 +19,7 @@ public class TRX_Mainnet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("TRX");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("TRX");
     }
 
     public Coin getFeeCoin() {

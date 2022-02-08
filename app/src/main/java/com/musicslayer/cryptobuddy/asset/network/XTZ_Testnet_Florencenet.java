@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
@@ -16,7 +17,7 @@ public class XTZ_Testnet_Florencenet extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return Coin.getCoinFromKey("XTZ");
+        return CoinManager.getDefaultCoinManager().getHardcodedCoin("XTZ");
     }
 
     public Coin getFeeCoin() {

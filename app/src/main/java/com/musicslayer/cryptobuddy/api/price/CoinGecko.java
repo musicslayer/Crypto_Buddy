@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.BTC;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -179,7 +179,7 @@ public class CoinGecko extends PriceAPI {
             }
             fiatString.append(priceFiatName);
 
-            Crypto conversionCrypto = new BTC();
+            Crypto conversionCrypto = CoinManager.getDefaultCoinManager().getHardcodedCoin("BTC");
 
             ProgressDialogFragment.updateProgressSubtitle("Processing Fiats...");
             String priceDataFiatJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + conversionCrypto.getID() + "&vs_currencies=" + fiatString + "&include_market_cap=false&include_last_updated_at=true");

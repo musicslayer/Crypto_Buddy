@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -98,7 +97,7 @@ public class AddCustomCoinDialog extends BaseDialog {
                     String id = "?";
 
                     Coin oldCoin = chosenCoinManager.custom_coin_map.get(key);
-                    Coin newCoin = new Coin_Impl(key, name, display_name, scale, id, chosenCoinManager.getCoinType());
+                    Coin newCoin = new Coin(key, name, display_name, scale, id, chosenCoinManager.getCoinType());
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);

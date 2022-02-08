@@ -1,58 +1,44 @@
 package com.musicslayer.cryptobuddy.asset.crypto.coin;
 
-import android.content.Context;
-
-import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+public class Coin extends Crypto {
+    public String original_name;
+    public String original_display_name;
 
-// TODO Merge Coin and Coin_Impl???
+    public String key;
+    public String name;
+    public String display_name;
+    public int scale;
+    public String id;
+    public String coin_type;
 
-abstract public class Coin extends Crypto {
-    public static ArrayList<Coin> coins;
-    public static HashMap<String, Coin> coin_map;
-    public static ArrayList<String> coin_names;
-    public static ArrayList<String> coin_display_names;
+    public Coin(String key, String name, String display_name, int scale, String id, String coin_type) {
+        this.original_name = name;
+        this.original_display_name = display_name;
 
-    public static void initialize(Context context) {
-        coin_names = FileUtil.readFileIntoLines(context, R.raw.asset_coin);
+        this.key = key;
+        this.scale = scale;
+        this.id = id;
+        this.coin_type = coin_type;
 
-        coins = new ArrayList<>();
-        coin_map = new HashMap<>();
-        coin_display_names = new ArrayList<>();
-
-        for(String coinName : coin_names) {
-            Coin coin = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.crypto.coin." + coinName);
-            coins.add(coin);
-            coin_map.put(coinName, coin);
-            coin_display_names.add(coin.getDisplayName());
-        }
+        this.name = modify(name);
+        this.display_name = modify(display_name);
     }
 
-    public static Coin getCoinFromKey(String key) {
-        CoinManager coinManager = CoinManager.getDefaultCoinManager();
-
-        Coin coin = coinManager.hardcoded_coin_map.get(key);
-        if(coin == null) {
-            coin = coinManager.found_coin_map.get(key);
-        }
-        if(coin == null) {
-            coin = coinManager.custom_coin_map.get(key);
-        }
-        if(coin == null) {
-            coin = UnknownCoin.createUnknownCoin(key);
-        }
-
-        return coin;
-    }
-
+    public String getKey() { return key; }
+    public String getName() { return name; }
+    public String getDisplayName() { return display_name; }
+    public int getScale() { return scale; }
+    public String getID() { return id; }
+    public String getAssetType() { return coin_type; }
     public String getAssetKind() { return "!COIN!"; }
-    public String getAssetType() { return "BASE"; } // Default hardcoded type.
+
+    public String modify(String s) {
+        // For now, do nothing since all Coins have the same type.
+        // In the future, we would add on the type like we do for tokens.
+        return s;
+    }
 
     public boolean isComplete() {
         // Coins may be created from incomplete information, and while we may use the coin,

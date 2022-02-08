@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.WAVES;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Stagenet;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Testnet;
@@ -57,7 +56,7 @@ public class WavesNodes extends AddressAPI {
             JSONObject json = new JSONObject(addressDataJSON);
             BigDecimal b = new BigDecimal(json.getString("balance"));
             b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
-            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new WAVES()));
+            currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

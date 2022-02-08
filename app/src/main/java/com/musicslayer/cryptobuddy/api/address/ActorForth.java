@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import com.musicslayer.cryptobuddy.asset.crypto.coin.BCH;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -42,7 +41,7 @@ public class ActorForth extends AddressAPI {
 
         try {
             JSONObject json = new JSONObject(addressDataJSON);
-            currentBalanceArrayList.add(new AssetQuantity(json.getString("balance"), new BCH()));
+            currentBalanceArrayList.add(new AssetQuantity(json.getString("balance"), cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

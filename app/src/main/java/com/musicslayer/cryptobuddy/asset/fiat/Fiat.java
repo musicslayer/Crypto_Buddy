@@ -1,60 +1,45 @@
 package com.musicslayer.cryptobuddy.asset.fiat;
 
-import android.content.Context;
-
-import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+public class Fiat extends Asset {
+    public String original_name;
+    public String original_display_name;
 
-abstract public class Fiat extends Asset {
-    public static ArrayList<Fiat> fiats;
-    public static HashMap<String, Fiat> fiat_map;
-    public static ArrayList<String> fiat_names;
-    public static ArrayList<String> fiat_display_names;
+    public String key;
+    public String name;
+    public String display_name;
+    public int scale;
+    public String fiat_type;
 
-    public static void initialize(Context context) {
-        fiat_names = FileUtil.readFileIntoLines(context, R.raw.asset_fiat);
+    public Fiat(String key, String name, String display_name, int scale, String fiat_type) {
+        this.original_name = name;
+        this.original_display_name = display_name;
 
-        fiats = new ArrayList<>();
-        fiat_map = new HashMap<>();
-        fiat_display_names = new ArrayList<>();
+        this.key = key;
+        this.scale = scale;
+        this.fiat_type = fiat_type;
 
-        for(String fiatName : fiat_names) {
-            Fiat fiat = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiat." + fiatName);
-            fiats.add(fiat);
-            fiat_map.put(fiatName, fiat);
-            fiat_display_names.add(fiat.getDisplayName());
-        }
+        this.name = modify(name);
+        this.display_name = modify(display_name);
     }
 
-    public static Fiat getFiatFromKey(String key) {
-        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
-
-        Fiat fiat = fiatManager.hardcoded_fiat_map.get(key);
-        if(fiat == null) {
-            fiat = fiatManager.found_fiat_map.get(key);
-        }
-        if(fiat == null) {
-            fiat = fiatManager.custom_fiat_map.get(key);
-        }
-        if(fiat == null) {
-            fiat = UnknownFiat.createUnknownFiat(key);
-        }
-
-        return fiat;
-    }
-
+    public String getKey() { return key; }
+    public String getName() { return name; }
+    public String getDisplayName() { return display_name; }
+    public int getScale() { return scale; }
+    public String getAssetType() { return fiat_type; }
     public String getAssetKind() { return "!FIAT!"; }
-    public String getAssetType() { return "BASE"; } // Default hardcoded type.
 
     public String getID() {
         // For now, just use lowercase symbol.
         return getName().toLowerCase();
+    }
+
+    public String modify(String s) {
+        // For now, do nothing since all Fiats have the same type.
+        // In the future, we would add on the type like we do for tokens.
+        return s;
     }
 
     public boolean isComplete() {

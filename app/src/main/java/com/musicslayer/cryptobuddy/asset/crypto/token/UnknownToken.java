@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.asset.crypto.token;
 
 public class UnknownToken extends Token {
     public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String id, String blockchain_id, String token_type) {
-        // "id" and "blockchain_id" is ? because we cannot lookup the price.
-        // Other fields are modified to attempt to show an unknown token to the user.
+        // "id" and "blockchain_id" are ? because we cannot lookup the price.
+        // Other fields are modified to show an unknown token to the user.
         String unknownKey;
         if(key == null) {
             unknownKey = "?";
