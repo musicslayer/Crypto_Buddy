@@ -38,8 +38,13 @@ public class FiatView extends CrashLinearLayout {
         else {
             setVisibility(VISIBLE);
 
+            String text = "Fiat Info:\n" +
+                "  Name = " + fiat.getDisplayName() + "\n" +
+                "  Symbol = " + fiat.getName() + "\n" +
+                "  Decimals = " + fiat.getScale();
+
             AppCompatTextView T = new AppCompatTextView(context);
-            T.setText(fiat.toString());
+            T.setText(text);
 
             this.addView(T);
         }

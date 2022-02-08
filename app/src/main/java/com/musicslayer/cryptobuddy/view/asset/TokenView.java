@@ -38,8 +38,14 @@ public class TokenView extends CrashLinearLayout {
         else {
             setVisibility(VISIBLE);
 
+            String text = "Token Info:\n" +
+                "  ID = " + token.getID() + "\n" +
+                "  Name = " + token.getDisplayName() + "\n" +
+                "  Symbol = " + token.getName() + "\n" +
+                "  Decimals = " + token.getScale();
+
             AppCompatTextView T = new AppCompatTextView(context);
-            T.setText(token.toString());
+            T.setText(text);
 
             this.addView(T);
         }

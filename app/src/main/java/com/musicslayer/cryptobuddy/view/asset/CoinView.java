@@ -38,8 +38,13 @@ public class CoinView extends CrashLinearLayout {
         else {
             setVisibility(VISIBLE);
 
+            String text = "Coin Info:\n" +
+                "  Name = " + coin.getDisplayName() + "\n" +
+                "  Symbol = " + coin.getName() + "\n" +
+                "  Decimals = " + coin.getScale();
+
             AppCompatTextView T = new AppCompatTextView(context);
-            T.setText(coin.toString());
+            T.setText(text);
 
             this.addView(T);
         }

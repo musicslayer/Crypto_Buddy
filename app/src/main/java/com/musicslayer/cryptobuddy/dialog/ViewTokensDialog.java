@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class ViewTokensDialog extends BaseDialog {
     public String tokenType;
-    public boolean hasDownloaded; // TODO
+    public boolean hasDownloaded;
 
     int LAST_CHECK;
 
