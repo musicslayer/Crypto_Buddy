@@ -137,10 +137,6 @@ public class SearchDialog extends BaseDialog {
     public void updateList() {
         table.removeAllViews();
 
-        // Make sure we don't accidentally return the entire list of options here.
-        // TODO If this is empty, just show all results (up to 100).
-        if(searchText.trim().isEmpty()) { return; }
-
         ArrayList<String> search_options_SORTED;
         ArrayList<String> search_options_LC_SORTED;
         if(isDisplayNames) {
@@ -154,6 +150,7 @@ public class SearchDialog extends BaseDialog {
 
         // For performance reasons, we have to limit the number of results we show.
         int numResults = 0;
+        int maxResults = 100;
         boolean maxReached = false;
 
         String[] searchTextWords = searchText.trim().toLowerCase().split(" ");
@@ -221,18 +218,18 @@ public class SearchDialog extends BaseDialog {
                 TR.addView(B, TRP);
                 table.addView(TR);
 
-                if(numResults == 100) {
+                if(numResults == maxResults) {
                     maxReached = true;
                 }
             }
 
             if(maxReached) {
-                // Add something to the table indicating there would have been more results, and then stop looking.
+                // Add something to the table indicating that we reached the max, and then stop looking.
                 TableRow TR = new TableRow(this.activity);
                 TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
                 TextView T = new TextView(this.activity);
-                T.setText("(100 Results Max)");
+                T.setText("(" + maxResults + " Results Max)");
 
                 TR.addView(T, TRP);
                 table.addView(TR);
