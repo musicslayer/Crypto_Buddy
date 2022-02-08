@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
@@ -51,8 +52,19 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
         this.includeTokens = includeTokens;
     }
 
-    public Crypto getCrypto() {
-        return network.getCrypto();
+    public Coin getPrimaryCoin() {
+        // Get the main coin that the network is known for.
+        return network.getPrimaryCoin();
+    }
+
+    public Coin getFeeCoin() {
+        // Get the main coin that the network is known for.
+        return network.getFeeCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        // Get all coins associated with the network.
+        return network.getCoins();
     }
 
     public ArrayList<TokenManager> getTokenManagers() {

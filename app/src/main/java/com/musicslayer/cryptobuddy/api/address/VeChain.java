@@ -1,8 +1,6 @@
 package com.musicslayer.cryptobuddy.api.address;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.VET;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.VTHO;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.transaction.Action;
@@ -31,7 +29,7 @@ public class VeChain extends AddressAPI {
     public String getDisplayName() { return "VeChain Explorer API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "VET".equals(cryptoAddress.getCrypto().getName());
+        return "VET".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -57,13 +55,13 @@ public class VeChain extends AddressAPI {
             // Values are in HEX and in WEI and need to be converted.
 
             // VET and VTHO
-            Crypto crypto_main = new VET();
+            Crypto crypto_main = cryptoAddress.getPrimaryCoin();
             String vetHexBalance = account.getString("balance");
             BigDecimal b = new BigDecimal(new BigInteger(vetHexBalance.substring(2), 16).toString());
             b = b.movePointLeft(crypto_main.getScale());
             currentBalanceArrayList.add(new AssetQuantity(b.toString(), crypto_main));
 
-            Crypto crypto_energy = new VTHO();
+            Crypto crypto_energy = cryptoAddress.getFeeCoin();
             String vethorHexBalance = account.getString("energy");
             BigDecimal b2 = new BigDecimal(new BigInteger(vethorHexBalance.substring(2), 16).toString());
             b2 = b2.movePointLeft(crypto_energy.getScale());
@@ -165,9 +163,9 @@ public class VeChain extends AddressAPI {
                     JSONObject transactionData = new JSONObject(transactionJSON);
 
                     BigDecimal fee = new BigDecimal(new BigInteger(transactionData.getJSONObject("receipt").getString("paid").substring(2), 16).toString());
-                    fee = fee.movePointLeft(new VTHO().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
                     if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), new VTHO()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
@@ -186,11 +184,11 @@ public class VeChain extends AddressAPI {
 
                 String symbol = o.getString("symbol");
                 if("VET".equals(symbol)) {
-                    crypto = new VET();
+                    crypto = cryptoAddress.getPrimaryCoin();
                 }
                 else if("VTHO".equals(symbol)) {
                     // Treat VeThor like a coin.
-                    crypto = new VTHO();
+                    crypto = cryptoAddress.getFeeCoin();
                 }
                 else {
                     if(!shouldIncludeTokens(cryptoAddress)) {

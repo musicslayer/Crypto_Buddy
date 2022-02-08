@@ -36,7 +36,7 @@ public class AtomScan extends AddressAPI {
     public String getDisplayName() { return "AtomScan & Cosmostation REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ATOM".equals(cryptoAddress.getCrypto().getName());
+        return "ATOM".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -59,7 +59,7 @@ public class AtomScan extends AddressAPI {
 
                 String name = balance.getString("denom");
                 if("uatom".equals(name)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                     hasNativeCoin = true;
                 }
                 else {
@@ -70,7 +70,7 @@ public class AtomScan extends AddressAPI {
                     // Take the *ibc/ off the name.
                     int slashIdx = name.indexOf("/");
                     name = name.substring(slashIdx + 1);
-                    crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
+                    crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                 }
 
                 BigDecimal b = new BigDecimal(balance.getString("amount"));
@@ -81,7 +81,7 @@ public class AtomScan extends AddressAPI {
 
             if(!hasNativeCoin) {
                 // Always show a zero balance of the native coin.
-                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getCrypto()));
+                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getPrimaryCoin()));
             }
         }
         catch(Exception e) {
@@ -162,7 +162,7 @@ public class AtomScan extends AddressAPI {
                     }
                 }
 
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 boolean fee_enabled = false;
                 String fee_string = "";
@@ -217,7 +217,7 @@ public class AtomScan extends AddressAPI {
                             String name = amount.getString("denom");
                             Crypto crypto;
                             if("uatom".equalsIgnoreCase(name)) {
-                                crypto = cryptoAddress.getCrypto();
+                                crypto = cryptoAddress.getPrimaryCoin();
                             }
                             else {
                                 if(!shouldIncludeTokens(cryptoAddress)) {
@@ -227,7 +227,7 @@ public class AtomScan extends AddressAPI {
                                 // Take the *ibc/ off the name.
                                 int slashIdx = name.indexOf("/");
                                 name = name.substring(slashIdx + 1);
-                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                             }
 
                             BigDecimal value = new BigDecimal(amount.getString("amount"));
@@ -251,7 +251,7 @@ public class AtomScan extends AddressAPI {
                             String name2 = amount2.getString("denom");
                             Crypto crypto2;
                             if("uatom".equalsIgnoreCase(name2)) {
-                                crypto2 = cryptoAddress.getCrypto();
+                                crypto2 = cryptoAddress.getPrimaryCoin();
                             }
                             else {
                                 if(!shouldIncludeTokens(cryptoAddress)) {
@@ -261,7 +261,7 @@ public class AtomScan extends AddressAPI {
                                 // Take the *ibc/ off the name.
                                 int slashIdx = name2.indexOf("/");
                                 name2 = name2.substring(slashIdx + 1);
-                                crypto2 = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                crypto2 = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                             }
 
                             BigDecimal value2 = new BigDecimal(amount2.getString("amount"));
@@ -380,7 +380,7 @@ public class AtomScan extends AddressAPI {
                                             // In the future, there may be other COSMOS tokens.
                                             String name = amountS.substring(idx);
                                             if("uatom".equalsIgnoreCase(name)) {
-                                                crypto = cryptoAddress.getCrypto();
+                                                crypto = cryptoAddress.getPrimaryCoin();
                                             }
                                             else {
                                                 if(!shouldIncludeTokens(cryptoAddress)) {
@@ -390,7 +390,7 @@ public class AtomScan extends AddressAPI {
                                                 // Take the *ibc/ off the name.
                                                 int slashIdx = name.indexOf("/");
                                                 name = name.substring(slashIdx + 1);
-                                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                                crypto = TokenManager.getTokenManagerFromKey("ATOMTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                                             }
 
                                             BigDecimal value = new BigDecimal(amountS.substring(0, idx));
@@ -454,7 +454,7 @@ public class AtomScan extends AddressAPI {
                     }
                 }
                 if(fee_enabled & fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }

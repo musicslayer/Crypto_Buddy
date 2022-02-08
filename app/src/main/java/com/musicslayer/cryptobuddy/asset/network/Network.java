@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -45,8 +45,10 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
 
     abstract public boolean isMainnet();
     abstract public boolean isCaseSensitive();
-    abstract public Crypto getCrypto();
-    abstract public ArrayList<TokenManager> getTokenManagers(); // TODO Get associated Cryptos.
+    abstract public Coin getPrimaryCoin();
+    abstract public Coin getFeeCoin();
+    abstract public ArrayList<Coin> getCoins();
+    abstract public ArrayList<TokenManager> getTokenManagers();
     abstract public String getName();
     abstract public String getDisplayName();
     abstract public boolean isValid(String address);

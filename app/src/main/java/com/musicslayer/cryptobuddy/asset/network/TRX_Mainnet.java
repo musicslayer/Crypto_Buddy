@@ -1,12 +1,12 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base58;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class TRX_Mainnet extends Network {
     public boolean isMainnet() {
@@ -17,8 +17,16 @@ public class TRX_Mainnet extends Network {
         return true;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("TRX");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -30,7 +38,7 @@ public class TRX_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Mainnet";
+        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
     }
 
     public boolean isValid(String address) {

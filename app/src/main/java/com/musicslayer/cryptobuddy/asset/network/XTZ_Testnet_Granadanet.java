@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
@@ -16,8 +15,16 @@ public class XTZ_Testnet_Granadanet extends Network {
         return true;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("XTZ");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -29,7 +36,7 @@ public class XTZ_Testnet_Granadanet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Testnet Granadanet";
+        return this.getPrimaryCoin().getDisplayName() + " Testnet Granadanet";
     }
 
     public boolean isValid(String address) {

@@ -34,7 +34,7 @@ public class TzStats extends AddressAPI {
     public String getDisplayName() { return "TzStats & Better Call Dev REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XTZ".equals(cryptoAddress.getCrypto().getName());
+        return "XTZ".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -278,7 +278,7 @@ public class TzStats extends AddressAPI {
 
                 if(isSuccess && value.compareTo(BigDecimal.ZERO) > 0) {
                     String balance_diff_s = value.toPlainString();
-                    transactionReceiveArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
+                    transactionReceiveArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Transaction"));
                     if(transactionReceiveArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
@@ -371,19 +371,19 @@ public class TzStats extends AddressAPI {
 
                 if(isSuccess && value.compareTo(BigDecimal.ZERO) > 0) {
                     String balance_diff_s = value.toPlainString();
-                    transactionSendArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),transactionName));
+                    transactionSendArrayList.add(new Transaction(new Action("Send"), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),transactionName));
                     if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     String fee_s = fee.toPlainString();
-                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),feeName));
+                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),feeName));
                     if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(burned.compareTo(BigDecimal.ZERO) > 0) {
                     String burned_s = burned.toPlainString();
-                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),burnName));
+                    transactionSendArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),burnName));
                     if(transactionSendArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
@@ -420,13 +420,13 @@ public class TzStats extends AddressAPI {
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     String fee_s = fee.toPlainString();
-                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Storage Fee"));
+                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Storage Fee"));
                     if(transactionCreateArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(burned.compareTo(BigDecimal.ZERO) > 0) {
                     String burned_s = burned.toPlainString();
-                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Burned For Storage"));
+                    transactionCreateArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(burned_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Burned For Storage"));
                     if(transactionCreateArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }

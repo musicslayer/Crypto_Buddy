@@ -54,7 +54,7 @@ public class Horizon extends AddressAPI {
     public String getDisplayName() { return "Horizon API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XLM".equals(cryptoAddress.getCrypto().getName());
+        return "XLM".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -87,7 +87,7 @@ public class Horizon extends AddressAPI {
 
                         currentBalance = balance;
 
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
                     }
                     else {
                         if(!shouldIncludeTokens(cryptoAddress)) {
@@ -98,7 +98,7 @@ public class Horizon extends AddressAPI {
 
                         String name = balanceData.getString("asset_code");
                         String display_name = name;
-                        int scale = cryptoAddress.getCrypto().getScale();
+                        int scale = cryptoAddress.getPrimaryCoin().getScale();
                         String id = name + "-" + balanceData.getString("asset_issuer");
 
                         crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
@@ -115,7 +115,7 @@ public class Horizon extends AddressAPI {
         else {
             // For XLM, if addressDataJSON is null, it could be that the account used to exist but is now closed.
             // Users still may want transaction history, so let's just say that the balance is zero.
-            currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getCrypto()));
+            currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getPrimaryCoin()));
         }
 
         return currentBalanceArrayList;
@@ -273,11 +273,11 @@ public class Horizon extends AddressAPI {
 
                 if(cryptoAddress.matchesAddress(jsonTransaction.getString("fee_account"))) {
                     fee = new BigDecimal(jsonTransaction.getString("fee_charged"));
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }
@@ -366,7 +366,7 @@ public class Horizon extends AddressAPI {
                         String info = "This Account Created";
 
                         amount = jsonTransaction.getString("starting_balance");
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
                         transactionEffectsArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, crypto), null, new Timestamp(block_time_date),info));
                         if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         break;
@@ -376,7 +376,7 @@ public class Horizon extends AddressAPI {
                         amount = jsonTransaction.getString("amount");
 
                         if("native".equals(jsonTransaction.getString("asset_type"))) {
-                            crypto = cryptoAddress.getCrypto();
+                            crypto = cryptoAddress.getPrimaryCoin();
                         }
                         else {
                             if(!shouldIncludeTokens(cryptoAddress)) {
@@ -386,7 +386,7 @@ public class Horizon extends AddressAPI {
                             // Tokens
                             String name = jsonTransaction.getString("asset_code");
                             String display_name = name;
-                            int scale = cryptoAddress.getCrypto().getScale();
+                            int scale = cryptoAddress.getPrimaryCoin().getScale();
                             String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
                             crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
@@ -401,7 +401,7 @@ public class Horizon extends AddressAPI {
                         amount = jsonTransaction.getString("amount");
 
                         if("native".equals(jsonTransaction.getString("asset_type"))) {
-                            crypto = cryptoAddress.getCrypto();
+                            crypto = cryptoAddress.getPrimaryCoin();
                         }
                         else {
                             if(!shouldIncludeTokens(cryptoAddress)) {
@@ -411,7 +411,7 @@ public class Horizon extends AddressAPI {
                             // Tokens
                             String name = jsonTransaction.getString("asset_code");
                             String display_name = name;
-                            int scale = cryptoAddress.getCrypto().getScale();
+                            int scale = cryptoAddress.getPrimaryCoin().getScale();
                             String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
                             crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
@@ -456,7 +456,7 @@ public class Horizon extends AddressAPI {
                         String bought_amount = jsonTransaction.getString("bought_amount");
 
                         if("native".equals(jsonTransaction.getString("bought_asset_type"))) {
-                            bought_crypto = cryptoAddress.getCrypto();
+                            bought_crypto = cryptoAddress.getPrimaryCoin();
                             transactionEffectsArrayList.add(new Transaction(new Action(thisAction), new AssetQuantity(bought_amount, bought_crypto), null, new Timestamp(block_time_date),"Transaction"));
                             if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
@@ -465,7 +465,7 @@ public class Horizon extends AddressAPI {
                                 // Tokens
                                 String name = jsonTransaction.getString("bought_asset_code");
                                 String display_name = name;
-                                int scale = cryptoAddress.getCrypto().getScale();
+                                int scale = cryptoAddress.getPrimaryCoin().getScale();
                                 String id = name + "-" + jsonTransaction.getString("bought_asset_issuer");
 
                                 bought_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
@@ -480,7 +480,7 @@ public class Horizon extends AddressAPI {
                         String sold_amount = jsonTransaction.getString("sold_amount");
 
                         if("native".equals(jsonTransaction.getString("sold_asset_type"))) {
-                            sold_crypto = cryptoAddress.getCrypto();
+                            sold_crypto = cryptoAddress.getPrimaryCoin();
                             transactionEffectsArrayList.add(new Transaction(new Action(otherAction), new AssetQuantity(sold_amount, sold_crypto), null, new Timestamp(block_time_date),"Transaction"));
                             if(transactionEffectsArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
@@ -489,7 +489,7 @@ public class Horizon extends AddressAPI {
                                 // Tokens
                                 String name = jsonTransaction.getString("sold_asset_code");
                                 String display_name = name;
-                                int scale = cryptoAddress.getCrypto().getScale();
+                                int scale = cryptoAddress.getPrimaryCoin().getScale();
                                 String id = name + "-" + jsonTransaction.getString("sold_asset_issuer");
 
                                 sold_crypto = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);
@@ -556,7 +556,7 @@ public class Horizon extends AddressAPI {
                 // The asset here should never be XLM.
                 String name = jsonTransaction.getString("asset_code");
                 String display_name = name;
-                int scale = cryptoAddress.getCrypto().getScale();
+                int scale = cryptoAddress.getPrimaryCoin().getScale();
                 String id = name + "-" + jsonTransaction.getString("asset_issuer");
 
                 Token token = TokenManager.getTokenManagerFromKey("StellarTokenManager").getToken(cryptoAddress, name, name, display_name, scale, id);

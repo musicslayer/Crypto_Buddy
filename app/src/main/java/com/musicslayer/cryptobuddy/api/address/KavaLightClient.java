@@ -30,7 +30,7 @@ public class KavaLightClient extends AddressAPI {
     public String getDisplayName() { return "Kava Light Client RPC & Cosmostation REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "KAVA".equals(cryptoAddress.getCrypto().getName());
+        return "KAVA".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -59,7 +59,7 @@ public class KavaLightClient extends AddressAPI {
                 String denom = result.getString("denom").toUpperCase();
 
                 BigDecimal b = new BigDecimal(result.getString("amount"));
-                b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String currentBalance = b.toPlainString();
 
                 Crypto crypto;
@@ -80,7 +80,7 @@ public class KavaLightClient extends AddressAPI {
 
             if(!hasNativeCoin) {
                 // Always show a zero balance of the native coin.
-                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getCrypto()));
+                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getPrimaryCoin()));
             }
         }
         catch(Exception e) {
@@ -161,7 +161,7 @@ public class KavaLightClient extends AddressAPI {
                     }
                 }
 
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 boolean fee_enabled = false;
                 String fee_string = "";
@@ -216,14 +216,14 @@ public class KavaLightClient extends AddressAPI {
                             String name = amount.getString("denom").toUpperCase();
                             Crypto crypto;
                             if("ukava".equalsIgnoreCase(name)) {
-                                crypto = cryptoAddress.getCrypto();
+                                crypto = cryptoAddress.getPrimaryCoin();
                             }
                             else {
                                 if(!shouldIncludeTokens(cryptoAddress)) {
                                     break;
                                 }
 
-                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                             }
 
                             BigDecimal value2 = new BigDecimal(amount.getString("amount"));
@@ -247,14 +247,14 @@ public class KavaLightClient extends AddressAPI {
                             String name2 = amount2.getString("denom").toUpperCase();
                             Crypto crypto2;
                             if("ukava".equalsIgnoreCase(name2)) {
-                                crypto2 = cryptoAddress.getCrypto();
+                                crypto2 = cryptoAddress.getPrimaryCoin();
                             }
                             else {
                                 if(!shouldIncludeTokens(cryptoAddress)) {
                                     break;
                                 }
 
-                                crypto2 = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                crypto2 = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name2, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                             }
 
                             BigDecimal value3 = new BigDecimal(amount2.getString("amount"));
@@ -373,14 +373,14 @@ public class KavaLightClient extends AddressAPI {
                                             // In the future, there may be other COSMOS tokens.
                                             String name = amountS.substring(idx).toUpperCase();
                                             if("ukava".equalsIgnoreCase(name)) {
-                                                crypto = cryptoAddress.getCrypto();
+                                                crypto = cryptoAddress.getPrimaryCoin();
                                             }
                                             else {
                                                 if(!shouldIncludeTokens(cryptoAddress)) {
                                                     continue;
                                                 }
 
-                                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getCrypto().getScale(), null);
+                                                crypto = TokenManager.getTokenManagerFromKey("KavaTokenManager").getToken(cryptoAddress, name, null, null, cryptoAddress.getPrimaryCoin().getScale(), null);
                                             }
 
                                             BigDecimal value = new BigDecimal(amountS.substring(0, idx));
@@ -444,7 +444,7 @@ public class KavaLightClient extends AddressAPI {
                     }
                 }
                 if(fee_enabled & fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), fee_string + chain_id_string));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
             }

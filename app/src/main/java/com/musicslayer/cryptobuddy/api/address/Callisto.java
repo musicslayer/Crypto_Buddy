@@ -30,7 +30,7 @@ public class Callisto extends AddressAPI {
     public String getDisplayName() { return "Callisto RPC API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "CLO".equals(cryptoAddress.getCrypto().getName());
+        return "CLO".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -52,7 +52,7 @@ public class Callisto extends AddressAPI {
         try {
             // CLO
             JSONObject json = new JSONObject(addressDataJSON);
-            String currentBalance = new BigDecimal(json.getString("result")).movePointLeft(cryptoAddress.getCrypto().getScale()).toPlainString();
+            String currentBalance = new BigDecimal(json.getString("result")).movePointLeft(cryptoAddress.getPrimaryCoin().getScale()).toPlainString();
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new CLO()));
         }
         catch(Exception e) {
@@ -160,10 +160,10 @@ public class Callisto extends AddressAPI {
                     continue;
                 }
 
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), "Transaction Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
@@ -177,10 +177,10 @@ public class Callisto extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(o.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
@@ -224,10 +224,10 @@ public class Callisto extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(oI.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Internal Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
             }
         }

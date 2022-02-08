@@ -28,7 +28,7 @@ public class CardanoExplorer extends AddressAPI {
     public String getDisplayName() { return "Cardano Explorer API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ADA".equals(cryptoAddress.getCrypto().getName());
+        return "ADA".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -65,7 +65,7 @@ public class CardanoExplorer extends AddressAPI {
 
                 String policyID = asset.getString("policyId");
                 if("ada".equals(policyID)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                     hasNativeCoin = true;
                 }
                 else {
@@ -99,7 +99,7 @@ public class CardanoExplorer extends AddressAPI {
 
             if(!hasNativeCoin) {
                 // Always show a zero balance of the native coin.
-                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getCrypto()));
+                currentBalanceArrayList.add(new AssetQuantity("0", cryptoAddress.getPrimaryCoin()));
             }
         }
         catch(Exception e) {
@@ -168,10 +168,10 @@ public class CardanoExplorer extends AddressAPI {
 
                 boolean fee_enabled = false;
                 BigDecimal fee = new BigDecimal(tx.getString("fee"));
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 HashMap<Crypto, BigDecimal> amountMap = new HashMap<>();
-                amountMap.put(cryptoAddress.getCrypto(), BigDecimal.ZERO);
+                amountMap.put(cryptoAddress.getPrimaryCoin(), BigDecimal.ZERO);
 
                 // Add all output amounts for our address (this includes withdrawn staking rewards)
                 JSONArray outputs = tx.getJSONArray("outputs");
@@ -184,9 +184,9 @@ public class CardanoExplorer extends AddressAPI {
 
                     // First part is always ADA.
                     BigDecimal amount = new BigDecimal(output.getString("value"));
-                    amount = amount.movePointLeft(cryptoAddress.getCrypto().getScale());
-                    BigDecimal newAmount = amountMap.get(cryptoAddress.getCrypto()).add(amount);
-                    amountMap.put(cryptoAddress.getCrypto(), newAmount);
+                    amount = amount.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
+                    BigDecimal newAmount = amountMap.get(cryptoAddress.getPrimaryCoin()).add(amount);
+                    amountMap.put(cryptoAddress.getPrimaryCoin(), newAmount);
 
                     if(shouldIncludeTokens(cryptoAddress)) {
                         // Tokens
@@ -236,10 +236,10 @@ public class CardanoExplorer extends AddressAPI {
 
                     // First part is always ADA.
                     BigDecimal amount = new BigDecimal(input.getString("value"));
-                    amount = amount.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    amount = amount.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
-                    BigDecimal newAmount = amountMap.get(cryptoAddress.getCrypto()).subtract(amount);
-                    amountMap.put(cryptoAddress.getCrypto(), newAmount);
+                    BigDecimal newAmount = amountMap.get(cryptoAddress.getPrimaryCoin()).subtract(amount);
+                    amountMap.put(cryptoAddress.getPrimaryCoin(), newAmount);
 
                     if(shouldIncludeTokens(cryptoAddress)) {
                         // Tokens
@@ -279,11 +279,11 @@ public class CardanoExplorer extends AddressAPI {
                 // Add in fee. We need to subtract this from the amount if we sent something.
                 if(fee_enabled && fee.compareTo(BigDecimal.ZERO) > 0) {
                     // The amount of ADA includes the fee, but we wish to count that separately.
-                    BigDecimal amount = amountMap.get(cryptoAddress.getCrypto());
+                    BigDecimal amount = amountMap.get(cryptoAddress.getPrimaryCoin());
                     amount = amount.add(fee);
-                    amountMap.put(cryptoAddress.getCrypto(), amount);
+                    amountMap.put(cryptoAddress.getPrimaryCoin(), amount);
 
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), "Transaction Fee"));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 

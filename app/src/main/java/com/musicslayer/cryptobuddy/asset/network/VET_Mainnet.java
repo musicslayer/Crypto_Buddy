@@ -1,11 +1,11 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Ethereum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class VET_Mainnet extends Network {
@@ -17,8 +17,17 @@ public class VET_Mainnet extends Network {
         return false;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("VET");
+    }
+
+    public Coin getFeeCoin() {
+        return Coin.getCoinFromKey("VTHO");
+    }
+
+    public ArrayList<Coin> getCoins() {
+        // VET has two main coins on its blockchain.
+        return new ArrayList<>(Arrays.asList(getPrimaryCoin(), getFeeCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -30,7 +39,7 @@ public class VET_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Mainnet";
+        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
     }
 
     public boolean isValid(String address) {

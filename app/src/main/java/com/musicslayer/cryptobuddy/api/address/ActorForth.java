@@ -21,7 +21,7 @@ public class ActorForth extends AddressAPI {
     public String getDisplayName() { return "ActorForth BCH REST API V2"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BCH".equals(cryptoAddress.getCrypto().getName());
+        return "BCH".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -147,7 +147,7 @@ public class ActorForth extends AddressAPI {
                 block_time = block_time.multiply(new BigInteger("1000"));
                 Date block_time_date = new Date(block_time.longValue());
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction"));
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance.toPlainString(), cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

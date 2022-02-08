@@ -29,7 +29,7 @@ public class Bitquery extends AddressAPI {
     public String getDisplayName() { return "Binance Chain & Bitquery HTTP APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BNBc".equals(cryptoAddress.getCrypto().getName());
+        return "BNBc".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -56,7 +56,7 @@ public class Bitquery extends AddressAPI {
                     String cryptoName = o.getString("symbol");
                     Crypto crypto;
                     if("BNB".equals(cryptoName)) {
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
                     }
                     else {
                         if(!shouldIncludeTokens(cryptoAddress)) {
@@ -191,7 +191,7 @@ public class Bitquery extends AddressAPI {
                 String cryptoName = o.getJSONObject("currency").getString("tokenId");
                 Crypto crypto;
                 if("BNB".equals(cryptoName)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                 }
                 else {
                     if(!shouldIncludeTokens(cryptoAddress)) {
@@ -251,8 +251,10 @@ public class Bitquery extends AddressAPI {
 
                 String cryptoName = o.getJSONObject("currency").getString("tokenId");
                 Crypto crypto;
+                Crypto cryptoFee;
                 if("BNB".equals(cryptoName)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
+                    cryptoFee = cryptoAddress.getFeeCoin();
                 }
                 else {
                     if(!shouldIncludeTokens(cryptoAddress)) {
@@ -268,13 +270,14 @@ public class Bitquery extends AddressAPI {
                         // new UnknownToken type.
                         crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
                     }
+                    cryptoFee = crypto;
                 }
 
                 transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), "Transaction (" + txType + ")"));
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { return transactionNormalArrayList; }
 
                 if(network_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee_s, crypto), null, new Timestamp(block_time_date),  "Binance Cross-Chain Network Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee_s, cryptoFee), null, new Timestamp(block_time_date),  "Binance Cross-Chain Network Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { return transactionNormalArrayList; }
                 }
             }
@@ -355,7 +358,7 @@ public class Bitquery extends AddressAPI {
 
                 String validatorName = oRewards.getString("valName");
 
-                transactionRewardsArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
+                transactionRewardsArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Staking Reward (" + validatorName + ")"));
                 if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

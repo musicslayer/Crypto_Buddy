@@ -1,11 +1,11 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Bech32;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class LTC_Testnet_SegWit extends Network {
     public boolean isMainnet() {
@@ -16,8 +16,16 @@ public class LTC_Testnet_SegWit extends Network {
         return false;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("LTC");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -29,7 +37,7 @@ public class LTC_Testnet_SegWit extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Testnet Segwit (p2wphk)";
+        return this.getPrimaryCoin().getDisplayName() + " Testnet Segwit (p2wphk)";
     }
 
     public boolean isValid(String address) {

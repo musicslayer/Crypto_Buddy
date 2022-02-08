@@ -30,7 +30,7 @@ public class Bitquery_ETC extends AddressAPI {
     public String getDisplayName() { return "Bitquery HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ETC".equals(cryptoAddress.getCrypto().getName());
+        return "ETC".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -142,7 +142,7 @@ public class Bitquery_ETC extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                Crypto crypto = cryptoAddress.getCrypto();
+                Crypto crypto = cryptoAddress.getPrimaryCoin();
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
@@ -176,13 +176,14 @@ public class Bitquery_ETC extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                Crypto crypto = cryptoAddress.getCrypto();
+                Crypto crypto = cryptoAddress.getPrimaryCoin();
+                Crypto cryptoFee = cryptoAddress.getFeeCoin();
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date),"Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, crypto), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoFee), null, new Timestamp(block_time_date),"Transaction Fee"));
                     if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
                 }
             }

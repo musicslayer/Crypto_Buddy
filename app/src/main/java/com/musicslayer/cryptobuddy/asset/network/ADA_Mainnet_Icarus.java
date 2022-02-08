@@ -16,8 +16,16 @@ public class ADA_Mainnet_Icarus extends Network {
         return true;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("ADA");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -29,7 +37,7 @@ public class ADA_Mainnet_Icarus extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Mainnet Icarus (Byron Era)";
+        return this.getPrimaryCoin().getDisplayName() + " Mainnet Icarus (Byron Era)";
     }
 
     public boolean isValid(String address) {

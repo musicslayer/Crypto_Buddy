@@ -29,7 +29,7 @@ public class SoChain extends AddressAPI {
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
         // SoChain supports Bitcoin, Dash, Zcash, Dogecoin, and Litecoin.
-        return "BTC".equals(cryptoAddress.getCrypto().getName()) || "DASH".equals(cryptoAddress.getCrypto().getName()) || "ZEC".equals(cryptoAddress.getCrypto().getName()) || "DOGE".equals(cryptoAddress.getCrypto().getName()) || "LTC".equals(cryptoAddress.getCrypto().getName());
+        return "BTC".equals(cryptoAddress.getPrimaryCoin().getName()) || "DASH".equals(cryptoAddress.getPrimaryCoin().getName()) || "ZEC".equals(cryptoAddress.getPrimaryCoin().getName()) || "DOGE".equals(cryptoAddress.getPrimaryCoin().getName()) || "LTC".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -43,7 +43,7 @@ public class SoChain extends AddressAPI {
             urlPart = "test/";
         }
 
-        String addressDataJSON = WebUtil.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address);
+        String addressDataJSON = WebUtil.get("https://chain.so/api/v2/get_address_balance/" + cryptoAddress.getPrimaryCoin().getName() + urlPart + cryptoAddress.address);
         if(addressDataJSON == null) {
             return null;
         }
@@ -53,7 +53,7 @@ public class SoChain extends AddressAPI {
             JSONObject jsonAddress0_2 = jsonAddress0.getJSONObject("data");
             String currentBalance = jsonAddress0_2.getString("confirmed_balance");
 
-            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getCrypto()));
+            currentBalanceArrayList.add(new AssetQuantity(currentBalance, cryptoAddress.getPrimaryCoin()));
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -80,7 +80,7 @@ public class SoChain extends AddressAPI {
         // Process all received. Only check "max transactions", regardless of how large txnToValue/txnToDate grow.
         String lastReceivedID = "";
         for(int i = 100; i <= getMaxTransactions(); i += 100) {
-            String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
+            String url = "https://chain.so/api/v2/get_tx_received/" + cryptoAddress.getPrimaryCoin().getName() + urlPart + cryptoAddress.address + "/" + lastReceivedID;
             lastReceivedID = processReceived(url, cryptoAddress, txnToValue, txnToDate);
 
             if(ERROR.equals(lastReceivedID)) {
@@ -94,7 +94,7 @@ public class SoChain extends AddressAPI {
         // Process all spent. Only check "max transactions", regardless of how large txnToValue/txnToDate grow.
         String lastSpentID = "";
         for(int i = 100; i <= getMaxTransactions(); i += 100) {
-            String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getCrypto().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
+            String url = "https://chain.so/api/v2/get_tx_spent/" + cryptoAddress.getPrimaryCoin().getName() + urlPart + cryptoAddress.address + "/" + lastSpentID;
             lastSpentID = processSpent(url, cryptoAddress, txnToValue, txnToDate);
 
             if(ERROR.equals(lastSpentID)) {
@@ -120,7 +120,7 @@ public class SoChain extends AddressAPI {
 
             Date date = txnToDate.get(key);
 
-            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(sumValue_D.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(date), "Transaction"));
+            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(sumValue_D.toPlainString(), cryptoAddress.getPrimaryCoin()), null, new Timestamp(date), "Transaction"));
             if(transactionArrayList.size() == getMaxTransactions()) { return transactionArrayList; }
         }
 

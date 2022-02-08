@@ -26,7 +26,7 @@ public class AlgoExplorer extends AddressAPI {
     public String getDisplayName() { return "AlgoExplorer REST API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ALGO".equals(cryptoAddress.getCrypto().getName());
+        return "ALGO".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -54,7 +54,7 @@ public class AlgoExplorer extends AddressAPI {
         try {
             JSONObject json = new JSONObject(addressDataJSON);
             BigDecimal b = new BigDecimal(json.getString("amount-without-pending-rewards"));
-            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+            b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
             // Subtract the account minimum.
             //b = b.subtract(BigDecimal.valueOf(0.1));
@@ -78,7 +78,7 @@ public class AlgoExplorer extends AddressAPI {
                     Token token = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                     BigDecimal value = new BigDecimal(asset.getString("amount"));
-                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    value = value.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
                     currentBalanceArrayList.add(new AssetQuantity(value.toPlainString(), token));
                 }
@@ -196,7 +196,7 @@ public class AlgoExplorer extends AddressAPI {
                 if(cryptoAddress.matchesAddress(from)) {
                     action = "Send";
                     fee = new BigDecimal(jsonTransaction.getString("fee"));
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
                 else {
                     action = "Receive";
@@ -204,7 +204,7 @@ public class AlgoExplorer extends AddressAPI {
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
@@ -213,9 +213,9 @@ public class AlgoExplorer extends AddressAPI {
                 if(jsonTransaction.has("payment-transaction")) {
                     // ALGO
                     value = new BigDecimal(jsonTransaction.getJSONObject("payment-transaction").getString("amount"));
-                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    value = value.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
 
                     // Also add staking rewards here. Any kind of ALGO transaction triggers reward collection.
                     BigDecimal reward = BigDecimal.ZERO;
@@ -226,11 +226,11 @@ public class AlgoExplorer extends AddressAPI {
                         reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
                     }
 
-                    reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    reward = reward.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String reward_diff_s = reward.toString();
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Staking Reward"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
@@ -244,11 +244,11 @@ public class AlgoExplorer extends AddressAPI {
                         reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
                     }
 
-                    reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    reward = reward.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String reward_diff_s = reward.toString();
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Staking Reward"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
 
@@ -268,12 +268,12 @@ public class AlgoExplorer extends AddressAPI {
                     crypto = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                     value = new BigDecimal(jsonTransaction.getJSONObject("asset-transfer-transaction").getString("amount"));
-                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    value = value.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 }
                 else { // application-transaction ?
                     // No transaction, but there could still be a fee and reward.
                     value = BigDecimal.ZERO;
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
 
                     BigDecimal reward = BigDecimal.ZERO;
                     if(isFrom) {
@@ -283,11 +283,11 @@ public class AlgoExplorer extends AddressAPI {
                         reward = reward.add(new BigDecimal(jsonTransaction.getString("receiver-rewards")));
                     }
 
-                    reward = reward.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    reward = reward.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String reward_diff_s = reward.toString();
 
                     if(reward.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Staking Reward"));
+                        transactionArrayList.add(new Transaction(new Action("Receive"), new AssetQuantity(reward_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Staking Reward"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }

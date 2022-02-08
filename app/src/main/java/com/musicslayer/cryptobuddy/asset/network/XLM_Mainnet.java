@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Base32;
@@ -17,8 +16,16 @@ public class XLM_Mainnet extends Network {
         return true;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("XLM");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -30,7 +37,7 @@ public class XLM_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Mainnet (Public Network)";
+        return this.getPrimaryCoin().getDisplayName() + " Mainnet (Public Network)";
     }
 
     public boolean isValid(String address) {

@@ -36,7 +36,7 @@ public class AddressProblemDialog extends BaseDialog {
         boolean isFirst = true;
 
         for(CryptoAddress cryptoAddress : cryptoAddressArrayList) {
-            if(seenNames.contains(cryptoAddress.getCrypto().getName())) { continue; }
+            if(seenNames.contains(cryptoAddress.getPrimaryCoin().getName())) { continue; }
 
             AddressData addressData = addressDataMap.get(cryptoAddress);
 
@@ -51,7 +51,7 @@ public class AddressProblemDialog extends BaseDialog {
                 infoText.append(info);
             }
 
-            seenNames.add(cryptoAddress.getCrypto().getName());
+            seenNames.add(cryptoAddress.getPrimaryCoin().getName());
         }
 
         TextView T = findViewById(R.id.address_problem_dialog_textView);

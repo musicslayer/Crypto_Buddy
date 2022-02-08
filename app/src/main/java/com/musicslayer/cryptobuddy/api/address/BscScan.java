@@ -30,7 +30,7 @@ public class BscScan extends AddressAPI {
     public String getDisplayName() { return "BscScan & Covalent APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BNBs".equals(cryptoAddress.getCrypto().getName());
+        return "BNBs".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -80,9 +80,9 @@ public class BscScan extends AddressAPI {
                 if(!tokenData.has("supports_erc") || "null".equals(tokenData.getString("supports_erc"))) {
                     // BNBs
                     BigDecimal value = new BigDecimal(tokenData.getString("balance"));
-                    value = value.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    value = value.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String amount = value.toPlainString();
-                    currentBalanceArrayList.add(new AssetQuantity(amount, cryptoAddress.getCrypto()));
+                    currentBalanceArrayList.add(new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()));
                 }
                 else {
                     if(!shouldIncludeTokens(cryptoAddress)) {
@@ -228,10 +228,10 @@ public class BscScan extends AddressAPI {
                     continue;
                 }
 
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), "Transaction Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
@@ -245,10 +245,10 @@ public class BscScan extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(o.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
@@ -291,10 +291,10 @@ public class BscScan extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(oI.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Internal Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
             }
         }
@@ -319,7 +319,7 @@ public class BscScan extends AddressAPI {
                 for(int j = 0; j < jsonTokenArray.length(); j++) {
                     JSONObject oT = jsonTokenArray.getJSONObject(j);
 
-                    // Token transactions don't have an error flag.
+                    // Token transactions don't have an error flag or a fee.
 
                     BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
 
@@ -335,7 +335,7 @@ public class BscScan extends AddressAPI {
                         action = "Send";
                     }
                     else if(cryptoAddress.matchesAddress(to)) {
-                        // We are receiving crypto. No fee.
+                        // We are receiving crypto.
                         action = "Receive";
                     }
                     else {
@@ -477,10 +477,10 @@ public class BscScan extends AddressAPI {
                         continue;
                     }
 
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                     if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                        transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), "Transaction Fee"));
                         if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                     }
 
@@ -494,10 +494,10 @@ public class BscScan extends AddressAPI {
 
                     BigInteger balance_diff = new BigInteger(o.getString("value"));
                     BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                    balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String balance_diff_s = balance_diff_d.toPlainString();
 
-                    transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                    transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
@@ -540,10 +540,10 @@ public class BscScan extends AddressAPI {
 
                     BigInteger balance_diff = new BigInteger(oI.getString("value"));
                     BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                    balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String balance_diff_s = balance_diff_d.toPlainString();
 
-                    transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                    transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Internal Transaction"));
                     if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
                 }
             }
@@ -596,7 +596,7 @@ public class BscScan extends AddressAPI {
                 for(int j = 0; j < jsonTokenArray.length(); j++) {
                     JSONObject oT = jsonTokenArray.getJSONObject(j);
 
-                    // Token transactions don't have an error flag.
+                    // Token transactions don't have an error flag or a fee.
 
                     BigDecimal balance_diff = new BigDecimal(oT.getString("value"));
 
@@ -612,7 +612,7 @@ public class BscScan extends AddressAPI {
                         action = "Send";
                     }
                     else if(cryptoAddress.matchesAddress(to)) {
-                        // We are receiving crypto. No fee.
+                        // We are receiving crypto.
                         action = "Receive";
                     }
                     else {

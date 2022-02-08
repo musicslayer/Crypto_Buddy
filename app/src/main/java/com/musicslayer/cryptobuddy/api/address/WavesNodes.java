@@ -27,7 +27,7 @@ public class WavesNodes extends AddressAPI {
     public String getDisplayName() { return "WavesNodes HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "WAVES".equals(cryptoAddress.getCrypto().getName());
+        return "WAVES".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -56,7 +56,7 @@ public class WavesNodes extends AddressAPI {
             // WAVES
             JSONObject json = new JSONObject(addressDataJSON);
             BigDecimal b = new BigDecimal(json.getString("balance"));
-            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+            b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
             currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new WAVES()));
         }
         catch(Exception e) {
@@ -173,7 +173,7 @@ public class WavesNodes extends AddressAPI {
 
                 Crypto fee_crypto;
                 if("null".equals(feeAssetId)) {
-                    fee_crypto = cryptoAddress.getCrypto();
+                    fee_crypto = cryptoAddress.getFeeCoin();
                 }
                 else {
                     fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, feeAssetId, null, null, 0, feeAssetId);
@@ -211,7 +211,7 @@ public class WavesNodes extends AddressAPI {
 
                         Crypto crypto;
                         if("null".equals(assetId)) {
-                            crypto = cryptoAddress.getCrypto();
+                            crypto = cryptoAddress.getPrimaryCoin();
                         }
                         else {
                             crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
@@ -235,7 +235,7 @@ public class WavesNodes extends AddressAPI {
 
                     Crypto crypto;
                     if("null".equals(assetId)) {
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
                     }
                     else {
                         crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
@@ -284,7 +284,7 @@ public class WavesNodes extends AddressAPI {
 
                         Crypto crypto;
                         if("null".equals(assetId)) {
-                            crypto = cryptoAddress.getCrypto();
+                            crypto = cryptoAddress.getPrimaryCoin();
                         }
                         else {
                             crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, assetId, null, null, 0, assetId);
@@ -319,7 +319,7 @@ public class WavesNodes extends AddressAPI {
                     String amount_assetId = assetPair.getString("amountAsset");
                     Crypto amount_crypto;
                     if("null".equals(amount_assetId)) {
-                        amount_crypto = cryptoAddress.getCrypto();
+                        amount_crypto = cryptoAddress.getPrimaryCoin();
                     }
                     else {
                         amount_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, amount_assetId, null, null, 0, amount_assetId);
@@ -328,7 +328,7 @@ public class WavesNodes extends AddressAPI {
                     String price_assetId = assetPair.getString("priceAsset");
                     Crypto price_crypto;
                     if("null".equals(price_assetId)) {
-                        price_crypto = cryptoAddress.getCrypto();
+                        price_crypto = cryptoAddress.getPrimaryCoin();
                     }
                     else {
                         price_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, price_assetId, null, null, 0, price_assetId);
@@ -378,7 +378,7 @@ public class WavesNodes extends AddressAPI {
                     String matcher_fee_assetId = orderJSON.getString("matcherFeeAssetId");
                     Crypto matcher_fee_crypto;
                     if("null".equals(matcher_fee_assetId)) {
-                        matcher_fee_crypto = cryptoAddress.getCrypto();
+                        matcher_fee_crypto = cryptoAddress.getFeeCoin();
                     }
                     else {
                         matcher_fee_crypto = TokenManager.getTokenManagerFromKey("WavesTokenManager").getToken(cryptoAddress, matcher_fee_assetId, null, null, 0, matcher_fee_assetId);

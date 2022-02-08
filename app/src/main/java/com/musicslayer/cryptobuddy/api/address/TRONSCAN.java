@@ -24,7 +24,7 @@ public class TRONSCAN extends AddressAPI {
     public String getDisplayName() { return "TRONSCAN REST API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "TRX".equals(cryptoAddress.getCrypto().getName());
+        return "TRX".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -61,7 +61,7 @@ public class TRONSCAN extends AddressAPI {
 
                 Crypto crypto;
                 if(type == 0) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                 }
                 else if(type == 10){
                     if(!shouldIncludeTokens(cryptoAddress)) {
@@ -263,21 +263,21 @@ public class TRONSCAN extends AddressAPI {
 
                 BigDecimal energy_fee = BigDecimal.ZERO;
                 if(isFee && cost.has("energy_fee")) {
-                    energy_fee = new BigDecimal(cost.getString("energy_fee")).movePointLeft(cryptoAddress.getCrypto().getScale());
+                    energy_fee = new BigDecimal(cost.getString("energy_fee")).movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
 
                 BigDecimal network_fee = BigDecimal.ZERO;
                 if(isFee && cost.has("net_fee")) {
-                    network_fee = new BigDecimal(cost.getString("net_fee")).movePointLeft(cryptoAddress.getCrypto().getScale());
+                    network_fee = new BigDecimal(cost.getString("net_fee")).movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
 
                 if(energy_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(energy_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Energy Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(energy_fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Energy Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
                 if(network_fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Network Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(network_fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Network Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
@@ -308,7 +308,7 @@ public class TRONSCAN extends AddressAPI {
 
                     Crypto crypto;
                     if("_".equals(id)) {
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
 
                         transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount.toPlainString(), crypto), null, new Timestamp(block_time_date),"Transaction"));
                         if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -401,7 +401,7 @@ public class TRONSCAN extends AddressAPI {
 
                 Crypto crypto;
                 if("_".equals(id)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                 }
                 else if("trc10".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");
@@ -489,7 +489,7 @@ public class TRONSCAN extends AddressAPI {
 
                 Crypto crypto;
                 if("_".equals(id)) {
-                    crypto = cryptoAddress.getCrypto();
+                    crypto = cryptoAddress.getPrimaryCoin();
                 }
                 else if("trc10".equals(tokenType)) {
                     String name = tokenInfo.getString("tokenAbbr");

@@ -21,7 +21,7 @@ public class Blockstream extends AddressAPI {
     public String getDisplayName() { return "Blockstream Esplora HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BTC".equals(cryptoAddress.getCrypto().getName());
+        return "BTC".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -47,7 +47,7 @@ public class Blockstream extends AddressAPI {
             BigDecimal currentBalanceA = new BigDecimal(json10.getString("funded_txo_sum"));
             BigDecimal currentBalanceB = new BigDecimal(json10.getString("spent_txo_sum"));
             BigDecimal currentBalance = currentBalanceA.subtract(currentBalanceB);
-            currentBalance = currentBalance.movePointLeft(cryptoAddress.getCrypto().getScale());
+            currentBalance = currentBalance.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
             currentBalanceArrayList.add(new AssetQuantity(currentBalance.toPlainString(), new BTC()));
         }
@@ -167,9 +167,9 @@ public class Blockstream extends AddressAPI {
                     action = "Send";
                 }
 
-                balance_diff = balance_diff.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff = balance_diff.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff.toPlainString(), cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

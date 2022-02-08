@@ -1,10 +1,10 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class BCH_Testnet_CashAddr_P2PKH extends Network {
     public boolean isMainnet() {
@@ -15,8 +15,16 @@ public class BCH_Testnet_CashAddr_P2PKH extends Network {
         return false;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("BCH");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -28,7 +36,7 @@ public class BCH_Testnet_CashAddr_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Testnet CashAddr Pubkey (p2pkh)";
+        return this.getPrimaryCoin().getDisplayName() + " Testnet CashAddr Pubkey (p2pkh)";
     }
 
     public String getPrefix() {

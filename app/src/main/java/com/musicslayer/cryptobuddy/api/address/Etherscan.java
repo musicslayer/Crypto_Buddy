@@ -35,7 +35,7 @@ public class Etherscan extends AddressAPI {
     public String getDisplayName() { return "Etherscan & Ethplorer REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ETH".equals(cryptoAddress.getCrypto().getName());
+        return "ETH".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -61,7 +61,7 @@ public class Etherscan extends AddressAPI {
 
             // ETH
             BigDecimal b = new BigDecimal(json.getJSONObject("ETH").getString("rawBalance"));
-            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+            b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
             currentBalanceArrayList.add(new AssetQuantity(b.toPlainString(), new ETH()));
 
             if(shouldIncludeTokens(cryptoAddress)) {
@@ -126,7 +126,7 @@ public class Etherscan extends AddressAPI {
 
         try {
             JSONObject json = new JSONObject(addressDataJSON);
-            String amount = new BigDecimal(json.getString("result")).movePointLeft(cryptoAddress.getCrypto().getScale()).toPlainString();
+            String amount = new BigDecimal(json.getString("result")).movePointLeft(cryptoAddress.getPrimaryCoin().getScale()).toPlainString();
             currentBalanceArrayList.add(new AssetQuantity(amount, new ETH()));
         }
         catch(Exception e) {
@@ -214,10 +214,10 @@ public class Etherscan extends AddressAPI {
                     continue;
                 }
 
-                fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date), "Transaction Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
                 }
 
@@ -231,10 +231,10 @@ public class Etherscan extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(o.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { break; }
             }
 
@@ -278,10 +278,10 @@ public class Etherscan extends AddressAPI {
 
                 BigInteger balance_diff = new BigInteger(oI.getString("value"));
                 BigDecimal balance_diff_d = new BigDecimal(balance_diff);
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Internal Transaction"));
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Internal Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { break; }
             }
         }
@@ -306,7 +306,7 @@ public class Etherscan extends AddressAPI {
                 for(int j = 0; j < jsonTokenArray.length(); j++) {
                     JSONObject oT = jsonTokenArray.getJSONObject(j);
 
-                    // Token transactions don't have an error flag.
+                    // Token transactions don't have an error flag or a fee.
 
                     BigInteger balance_diff = new BigInteger(oT.getString("value"));
 

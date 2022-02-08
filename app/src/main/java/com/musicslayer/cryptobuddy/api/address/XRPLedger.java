@@ -26,7 +26,7 @@ public class XRPLedger extends AddressAPI {
     public String getDisplayName() { return "XRPLedger HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XRP".equals(cryptoAddress.getCrypto().getName());
+        return "XRP".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -68,7 +68,7 @@ public class XRPLedger extends AddressAPI {
             String currentBalance;
             if(result.has("account_data")) {
                 BigDecimal b = new BigDecimal(result.getJSONObject("account_data").getString("Balance"));
-                b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 currentBalance = b.toPlainString();
             }
             else {
@@ -253,11 +253,11 @@ public class XRPLedger extends AddressAPI {
                 }
                 else {
                     fee = new BigDecimal(tx.getString("Fee"));
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                     if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
@@ -301,7 +301,7 @@ public class XRPLedger extends AddressAPI {
                         }
                     }
                     catch(org.json.JSONException ignored) {
-                        crypto = cryptoAddress.getCrypto();
+                        crypto = cryptoAddress.getPrimaryCoin();
                         amount = new BigDecimal(amountData).movePointLeft(crypto.getScale()).toPlainString();
                     }
 

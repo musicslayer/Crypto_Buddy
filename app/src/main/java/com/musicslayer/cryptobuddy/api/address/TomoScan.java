@@ -30,7 +30,7 @@ public class TomoScan extends AddressAPI {
     public String getDisplayName() { return "TomoScan API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "TOMO".equals(cryptoAddress.getCrypto().getName());
+        return "TOMO".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -52,7 +52,7 @@ public class TomoScan extends AddressAPI {
         try {
             // TOMO
             JSONObject json = new JSONObject(addressDataJSON);
-            String currentBalance = new BigDecimal(json.getString("balance")).movePointLeft(cryptoAddress.getCrypto().getScale()).toPlainString();
+            String currentBalance = new BigDecimal(json.getString("balance")).movePointLeft(cryptoAddress.getPrimaryCoin().getScale()).toPlainString();
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new TOMO()));
         }
         catch(Exception e) {
@@ -363,7 +363,7 @@ public class TomoScan extends AddressAPI {
                     BigDecimal gasPrice = new BigDecimal(o.getString("gasPrice"));
                     BigDecimal gasUsed = new BigDecimal(o.getString("gasUsed"));
                     fee = gasPrice.multiply(gasUsed);
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
                 }
                 else if(cryptoAddress.matchesAddress(to)) {
                     action = "Receive";
@@ -374,7 +374,7 @@ public class TomoScan extends AddressAPI {
                 }
 
                 BigDecimal balance_diff = new BigDecimal(o.getString("value"));
-                balance_diff = balance_diff.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff = balance_diff.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff.toPlainString();
 
                 String fee_s = fee.toPlainString();
@@ -387,7 +387,7 @@ public class TomoScan extends AddressAPI {
                 Date block_time_date = format.parse(block_time);
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                    transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                     if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
                 }
 
@@ -403,7 +403,7 @@ public class TomoScan extends AddressAPI {
                     continue;
                 }
 
-                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionNormalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionNormalArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
@@ -459,7 +459,7 @@ public class TomoScan extends AddressAPI {
                 }
 
                 BigDecimal balance_diff = new BigDecimal(oI.getString("value"));
-                balance_diff = balance_diff.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff = balance_diff.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff.toPlainString();
 
                 String block_time = oI.getString("timestamp");
@@ -469,7 +469,7 @@ public class TomoScan extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
@@ -512,7 +512,7 @@ public class TomoScan extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Reward"));
+                transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Reward"));
                 if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
@@ -561,7 +561,7 @@ public class TomoScan extends AddressAPI {
                 }
 
                 BigDecimal balance_diff_d = new BigDecimal(oV.getString("capacity"));
-                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getCrypto().getScale());
+                balance_diff_d = balance_diff_d.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                 String balance_diff_s = balance_diff_d.toPlainString();
 
                 String block_time = oV.getString("createdAt");
@@ -571,7 +571,7 @@ public class TomoScan extends AddressAPI {
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 Date block_time_date = format.parse(block_time);
 
-                transactionVotesArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), event));
+                transactionVotesArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), event));
                 if(transactionVotesArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

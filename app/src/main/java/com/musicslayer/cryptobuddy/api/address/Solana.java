@@ -44,7 +44,7 @@ public class Solana extends AddressAPI {
     public String getDisplayName() { return "Solana JSON RPC & Bitquery HTTP APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "SOL".equals(cryptoAddress.getCrypto().getName());
+        return "SOL".equals(cryptoAddress.getPrimaryCoin().getName());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
@@ -84,7 +84,7 @@ public class Solana extends AddressAPI {
             JSONObject json = new JSONObject(addressDataJSON);
 
             BigDecimal balance = new BigDecimal(json.getJSONObject("result").getString("value"));
-            balance = balance.movePointLeft(cryptoAddress.getCrypto().getScale());
+            balance = balance.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
             String currentBalance = balance.toPlainString();
 
             currentBalanceArrayList.add(new AssetQuantity(currentBalance, new SOL()));
@@ -309,7 +309,7 @@ public class Solana extends AddressAPI {
                 block_time = block_time.multiply(new BigInteger("1000"));
                 Date block_time_date = new Date(block_time.longValue());
 
-                Crypto crypto = cryptoAddress.getCrypto();
+                Crypto crypto = cryptoAddress.getPrimaryCoin();
                 String info = o.getString("rewardType") + " (Block Level)";
 
                 transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, crypto), null, new Timestamp(block_time_date), info));
@@ -408,10 +408,10 @@ public class Solana extends AddressAPI {
                 String feePayer = transactionObj.getJSONObject("result").getJSONObject("transaction").getJSONObject("message").getJSONArray("accountKeys").getJSONObject(0).getString("pubkey");
                 if(cryptoAddress.matchesAddress(feePayer)) {
                     BigDecimal fee = new BigDecimal(transactionObj.getJSONObject("result").getJSONObject("meta").getString("fee"));
-                    fee = fee.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    fee = fee.movePointLeft(cryptoAddress.getFeeCoin().getScale());
 
                     if(fee.compareTo(BigDecimal.ZERO) > 0) {
-                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getCrypto()), null, new Timestamp(block_time_date),"Transaction Fee"));
+                        transactionArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee.toPlainString(), cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
@@ -431,7 +431,7 @@ public class Solana extends AddressAPI {
 
                 for(int j = 0; j < preBalances.length(); j++) {
                     BigDecimal preBalance = new BigDecimal(preBalances.getString(j));
-                    preBalance = preBalance.movePointLeft(cryptoAddress.getCrypto().getScale());
+                    preBalance = preBalance.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                     String account = accountKeys.getJSONObject(j).getString("pubkey");
                     map.put(account, preBalance);
                 }
@@ -445,7 +445,7 @@ public class Solana extends AddressAPI {
                         String rewardType = reward.getString("rewardType");
 
                         BigDecimal b = new BigDecimal(reward.getString("lamports"));
-                        b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                        b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
 
                         String action;
                         if(b.compareTo(BigDecimal.ZERO) > 0) {
@@ -462,7 +462,7 @@ public class Solana extends AddressAPI {
 
                         String amount = b.toPlainString();
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), rewardType));
+                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), rewardType));
                         if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }
@@ -519,7 +519,7 @@ public class Solana extends AddressAPI {
                                 }
 
                                 BigDecimal b = new BigDecimal(info.getString("lamports"));
-                                b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                                b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                                 String amount = b.toPlainString();
 
                                 String action;
@@ -537,7 +537,7 @@ public class Solana extends AddressAPI {
                                     continue;
                                 }
 
-                                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                                 if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                             }
                         }
@@ -586,7 +586,7 @@ public class Solana extends AddressAPI {
                             }
 
                             BigDecimal b = new BigDecimal(info.getString("lamports"));
-                            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                            b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                             String amount = b.toPlainString();
 
                             String action;
@@ -604,7 +604,7 @@ public class Solana extends AddressAPI {
                                 continue;
                             }
 
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Create Other Account"));
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Create Other Account"));
                             if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                         else if("closeAccount".equals(type)) {
@@ -638,7 +638,7 @@ public class Solana extends AddressAPI {
                                 continue;
                             }
 
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Close Other Account"));
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Close Other Account"));
                             if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
@@ -697,7 +697,7 @@ public class Solana extends AddressAPI {
                         }
                         else {
                             BigDecimal b = new BigDecimal(info.getString("lamports"));
-                            b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                            b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                             String amount = b.toPlainString();
 
                             String action;
@@ -715,7 +715,7 @@ public class Solana extends AddressAPI {
                                 continue;
                             }
 
-                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Transaction"));
+                            transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                             if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                         }
                     }
@@ -759,7 +759,7 @@ public class Solana extends AddressAPI {
                         String to = info.getString("newAccount");
 
                         BigDecimal b = new BigDecimal(info.getString("lamports"));
-                        b = b.movePointLeft(cryptoAddress.getCrypto().getScale());
+                        b = b.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
                         String amount = b.toPlainString();
 
                         // If I send something to myself, just reject it!
@@ -782,7 +782,7 @@ public class Solana extends AddressAPI {
                             continue;
                         }
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Create Other Account"));
+                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Create Other Account"));
                         if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                     else if("closeAccount".equals(type)) {
@@ -816,7 +816,7 @@ public class Solana extends AddressAPI {
                             continue;
                         }
 
-                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getCrypto()), null, new Timestamp(block_time_date), "Close Other Account"));
+                        transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(amount, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Close Other Account"));
                         if (transactionArrayList.size() == getMaxTransactions()) { return DONE; }
                     }
                 }

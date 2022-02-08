@@ -1,12 +1,12 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.decode.Ethereum;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class TOMO_Testnet extends Network {
     public boolean isMainnet() {
@@ -17,8 +17,16 @@ public class TOMO_Testnet extends Network {
         return false;
     }
 
-    public Crypto getCrypto() {
+    public Coin getPrimaryCoin() {
         return Coin.getCoinFromKey("TOMO");
+    }
+
+    public Coin getFeeCoin() {
+        return getPrimaryCoin();
+    }
+
+    public ArrayList<Coin> getCoins() {
+        return new ArrayList<>(Collections.singletonList(getPrimaryCoin()));
     }
 
     public ArrayList<TokenManager> getTokenManagers() {
@@ -30,7 +38,7 @@ public class TOMO_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getCrypto().getDisplayName() + " Testnet";
+        return this.getPrimaryCoin().getDisplayName() + " Testnet";
     }
 
     public boolean isValid(String address) {
