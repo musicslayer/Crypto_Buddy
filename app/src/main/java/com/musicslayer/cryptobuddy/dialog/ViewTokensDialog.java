@@ -20,14 +20,17 @@ import java.util.ArrayList;
 
 public class ViewTokensDialog extends BaseDialog {
     public String tokenType;
-    public boolean canGetJSON;
+    public boolean hasDownloaded; // TODO
 
-    int LAST_CHECK = 0;
+    int LAST_CHECK;
 
-    public ViewTokensDialog(Activity activity, String tokenType, Boolean canGetJSON) {
+    public ViewTokensDialog(Activity activity, String tokenType, Boolean hasDownloaded) {
         super(activity);
         this.tokenType = tokenType;
-        this.canGetJSON = canGetJSON;
+        this.hasDownloaded = hasDownloaded;
+
+        // Index 0 may not be added, so manually initialize here.
+        this.LAST_CHECK = hasDownloaded ? 0 : 1;
     }
 
     public int getBaseViewID() {
@@ -69,6 +72,9 @@ public class ViewTokensDialog extends BaseDialog {
 
         radioGroup.check(rb[LAST_CHECK].getId());
         rb[LAST_CHECK].callOnClick();
+
+        // Some token types can't be downloaded, so don't offer this view option.
+        if(!hasDownloaded) { radioGroup.removeView(rb[0]); }
 
         updateLayout();
     }

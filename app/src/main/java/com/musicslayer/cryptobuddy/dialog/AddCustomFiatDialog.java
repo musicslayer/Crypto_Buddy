@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -11,18 +12,20 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat_Impl;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
 
 public class AddCustomFiatDialog extends BaseDialog {
-    public FiatManager chosenFiatManager = FiatManager.getDefaultFiatManager();
+    public FiatManager chosenFiatManager;
 
     public AddCustomFiatDialog(Activity activity) {
         super(activity);
@@ -42,6 +45,19 @@ public class AddCustomFiatDialog extends BaseDialog {
                 HelpUtil.showHelp(AddCustomFiatDialog.this.activity, R.raw.help_add_custom_fiat);
             }
         });
+
+        BorderedSpinnerView bsv = findViewById(R.id.add_custom_fiat_dialog_fiatTypeSpinner);
+        bsv.setOptions(FiatManager.fiatManagers_fiat_types);
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
+                chosenFiatManager = FiatManager.getFiatManagerFromFiatType(FiatManager.fiatManagers_fiat_types.get(pos));
+            }
+        });
+
+        if(FiatManager.fiatManagers_fiat_types.size() == 1) {
+            bsv.setVisibility(View.GONE);
+        }
 
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_fiat_dialog_nameEditText);
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_fiat_dialog_symbolEditText);

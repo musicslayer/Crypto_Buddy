@@ -51,12 +51,12 @@ public class CoinManagerView extends CrashTableRow {
 
         T = new TextView(context);
 
-        // The user cannot delete hardcoded coins.
-        BaseDialogFragment confirmDeleteCoinsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteCoinsDialog.class);
+        BaseDialogFragment confirmDeleteCoinsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteCoinsDialog.class, coinManager.getCoinType());
         confirmDeleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteCoinsDialog)dialog).isComplete) {
+                    // The user cannot delete hardcoded coins.
                     if(choices.contains("found")) {
                         coinManager.resetFoundCoins();
                     }
@@ -76,7 +76,7 @@ public class CoinManagerView extends CrashTableRow {
         });
         confirmDeleteCoinsDialogFragment.restoreListeners(context, "confirm_delete_coins_" + coinManager.getSettingsKey());
 
-        BaseDialogFragment deleteCoinsDialogFragment = BaseDialogFragment.newInstance(DeleteCoinsDialog.class);
+        BaseDialogFragment deleteCoinsDialogFragment = BaseDialogFragment.newInstance(DeleteCoinsDialog.class, coinManager.getCoinType());
         deleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -100,7 +100,7 @@ public class CoinManagerView extends CrashTableRow {
         B_VIEW.setImageResource(R.drawable.ic_baseline_pageview_24);
         B_VIEW.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                BaseDialogFragment.newInstance(ViewCoinsDialog.class).show(context, "view_coins_" + coinManager.getSettingsKey());
+                BaseDialogFragment.newInstance(ViewCoinsDialog.class, coinManager.getCoinType()).show(context, "view_coins_" + coinManager.getSettingsKey());
             }
         });
 
@@ -112,7 +112,7 @@ public class CoinManagerView extends CrashTableRow {
     }
 
     public void updateLayout() {
-        T.setText("Coins:\n(" + coinManager.hardcoded_coins.size() + ", " + coinManager.found_coins.size() + ", " + coinManager.custom_coins.size() + ")");
+        T.setText(coinManager.getCoinType() + ":\n(" + coinManager.hardcoded_coins.size() + ", " + coinManager.found_coins.size() + ", " + coinManager.custom_coins.size() + ")");
     }
 
     @Override

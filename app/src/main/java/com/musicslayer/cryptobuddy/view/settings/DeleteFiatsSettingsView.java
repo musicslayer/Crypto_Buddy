@@ -43,7 +43,7 @@ public class DeleteFiatsSettingsView extends SettingsView {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all fiats from the app's database.");
 
-        BaseDialogFragment confirmDeleteFiatsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteFiatsDialog.class);
+        BaseDialogFragment confirmDeleteFiatsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteFiatsDialog.class, "All");
         confirmDeleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -67,7 +67,7 @@ public class DeleteFiatsSettingsView extends SettingsView {
         });
         confirmDeleteFiatsDialogFragment.restoreListeners(context, "reset_confirm_delete_fiats_settings_view");
 
-        BaseDialogFragment deleteFiatsDialogFragment = BaseDialogFragment.newInstance(DeleteFiatsDialog.class);
+        BaseDialogFragment deleteFiatsDialogFragment = BaseDialogFragment.newInstance(DeleteFiatsDialog.class, "All");
         deleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {

@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteCoinsDialog extends BaseDialog {
-    public ConfirmDeleteCoinsDialog(Activity activity) {
+    String coinType;
+
+    public ConfirmDeleteCoinsDialog(Activity activity, String coinType) {
         super(activity);
+        this.coinType = coinType;
     }
 
     public int getBaseViewID() {
@@ -32,6 +37,9 @@ public class ConfirmDeleteCoinsDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_confirm_delete_coins);
+
+        Toolbar toolbar = findViewById(R.id.confirm_delete_coins_dialog_toolbar);
+        toolbar.setTitle("Delete " + coinType + " Coins?");
 
         ConfirmationView C = findViewById(R.id.confirm_delete_coins_dialog_confirmationView);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {

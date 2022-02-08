@@ -54,6 +54,10 @@ public class AddCustomTokenDialog extends BaseDialog {
             }
         });
 
+        if(TokenManager.tokenManagers_token_types.size() == 1) {
+            bsv.setVisibility(View.GONE);
+        }
+
         PlainTextEditText E_ID = findViewById(R.id.add_custom_token_dialog_idEditText); // i.e. the contract address
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_token_dialog_nameEditText);
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_token_dialog_symbolEditText);

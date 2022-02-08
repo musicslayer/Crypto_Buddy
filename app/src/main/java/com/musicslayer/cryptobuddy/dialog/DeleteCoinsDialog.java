@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -17,10 +19,13 @@ public class DeleteCoinsDialog extends BaseDialog {
     CheckBox[] C;
     ArrayList<Boolean> state = new ArrayList<>();
 
+    String coinType;
+
     public ArrayList<String> user_CHOICES;
 
-    public DeleteCoinsDialog(Activity activity) {
+    public DeleteCoinsDialog(Activity activity, String coinType) {
         super(activity);
+        this.coinType = coinType;
 
         // Checkboxes always start as unselected.
         for(int i = 0; i < 2; i++) {
@@ -34,6 +39,9 @@ public class DeleteCoinsDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_delete_coins);
+
+        Toolbar toolbar = findViewById(R.id.delete_coins_dialog_toolbar);
+        toolbar.setTitle("Delete " + coinType + " Coins");
 
         Button B_DELETE = findViewById(R.id.delete_coins_dialog_deleteButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

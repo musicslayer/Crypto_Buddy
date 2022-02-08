@@ -20,14 +20,14 @@ public class DeleteTokensDialog extends BaseDialog {
     ArrayList<Boolean> state = new ArrayList<>();
 
     public String tokenType;
-    public boolean canGetJSON;
+    public boolean hasDownloaded;
 
     public ArrayList<String> user_CHOICES;
 
-    public DeleteTokensDialog(Activity activity, String tokenType, Boolean canGetJSON) {
+    public DeleteTokensDialog(Activity activity, String tokenType, Boolean hasDownloaded) {
         super(activity);
         this.tokenType = tokenType;
-        this.canGetJSON = canGetJSON;
+        this.hasDownloaded = hasDownloaded;
 
         // Checkboxes always start as unselected.
         for(int i = 0; i < 3; i++) {
@@ -98,7 +98,7 @@ public class DeleteTokensDialog extends BaseDialog {
         C[2].setLayoutParams(LP);
 
         // Some token types can't be downloaded, so don't offer this deletion option.
-        if(canGetJSON) { L.addView(C[0]); }
+        if(hasDownloaded) { L.addView(C[0]); }
         L.addView(C[1]);
         L.addView(C[2]);
     }

@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
@@ -17,10 +19,13 @@ import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 import java.util.ArrayList;
 
 public class ViewCoinsDialog extends BaseDialog {
+    public String coinType;
+
     int LAST_CHECK = 0;
 
-    public ViewCoinsDialog(Activity activity) {
+    public ViewCoinsDialog(Activity activity, String coinType) {
         super(activity);
+        this.coinType = coinType;
     }
 
     public int getBaseViewID() {
@@ -29,6 +34,9 @@ public class ViewCoinsDialog extends BaseDialog {
 
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_view_coins);
+
+        Toolbar toolbar = findViewById(R.id.view_coins_dialog_toolbar);
+        toolbar.setTitle("View " + coinType + " Coins");
 
         RadioGroup radioGroup = findViewById(R.id.view_coins_dialog_radioGroup);
         RadioButton[] rb = new RadioButton[3];
@@ -78,7 +86,7 @@ public class ViewCoinsDialog extends BaseDialog {
         ssv.setIncludesCoin(true);
         ssv.setIncludesToken(false);
 
-        CoinManager coinManager = CoinManager.getDefaultCoinManager();
+        CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
 
         if(LAST_CHECK == 0) {
             ssv.setCoinOptions(coinManager.hardcoded_coins);
@@ -94,7 +102,7 @@ public class ViewCoinsDialog extends BaseDialog {
         coinManagerArrayList.add(coinManager);
         ssv.setCoinManagerOptions(coinManagerArrayList);
 
-        ssv.chooseCoin("BASE");
+        ssv.chooseCoin(coinType);
     }
 
     @Override

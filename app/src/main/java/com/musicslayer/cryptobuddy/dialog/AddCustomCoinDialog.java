@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -11,18 +12,20 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin_Impl;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
 
 public class AddCustomCoinDialog extends BaseDialog {
-    public CoinManager chosenCoinManager = CoinManager.getDefaultCoinManager();
+    public CoinManager chosenCoinManager;
 
     public AddCustomCoinDialog(Activity activity) {
         super(activity);
@@ -42,6 +45,19 @@ public class AddCustomCoinDialog extends BaseDialog {
                 HelpUtil.showHelp(AddCustomCoinDialog.this.activity, R.raw.help_add_custom_coin);
             }
         });
+
+        BorderedSpinnerView bsv = findViewById(R.id.add_custom_coin_dialog_coinTypeSpinner);
+        bsv.setOptions(CoinManager.coinManagers_coin_types);
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent){}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
+                chosenCoinManager = CoinManager.getCoinManagerFromCoinType(CoinManager.coinManagers_coin_types.get(pos));
+            }
+        });
+
+        if(CoinManager.coinManagers_coin_types.size() == 1) {
+            bsv.setVisibility(View.GONE);
+        }
 
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_coin_dialog_nameEditText);
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_coin_dialog_symbolEditText);

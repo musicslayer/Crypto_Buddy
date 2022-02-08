@@ -20,6 +20,8 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.asset.FiatManagerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class FiatManagerActivity extends BaseActivity {
     ArrayList<FiatManagerView> fiatManagerViewArrayList;
@@ -49,14 +51,18 @@ public class FiatManagerActivity extends BaseActivity {
 
         TableLayout tableLayout = findViewById(R.id.fiat_manager_tableLayout);
 
-        // For now, there is only one type of Fiat.
-        fiatManagerViewArrayList = new ArrayList<>();
-        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
-        FiatManagerView fiatManagerView = new FiatManagerView(FiatManagerActivity.this, fiatManager);
-        fiatManagerView.updateLayout();
+        ArrayList<String> fiatTypes = FiatManager.fiatManagers_fiat_types;
+        Collections.sort(fiatTypes, Comparator.comparing(String::toLowerCase));
 
-        fiatManagerViewArrayList.add(fiatManagerView);
-        tableLayout.addView(fiatManagerView);
+        fiatManagerViewArrayList = new ArrayList<>();
+        for(String fiatType : fiatTypes) {
+            FiatManager fiatManager = FiatManager.getFiatManagerFromFiatType(fiatType);
+            FiatManagerView fiatManagerView = new FiatManagerView(FiatManagerActivity.this, fiatManager);
+            fiatManagerView.updateLayout();
+
+            fiatManagerViewArrayList.add(fiatManagerView);
+            tableLayout.addView(fiatManagerView);
+        }
 
         BaseDialogFragment addCustomFiatDialogFragment = BaseDialogFragment.newInstance(AddCustomFiatDialog.class);
         addCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -83,13 +89,17 @@ public class FiatManagerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putParcelable("fiatManagerView", fiatManagerViewArrayList.get(0).onSaveInstanceState());
+        for(FiatManagerView fiatManagerView : fiatManagerViewArrayList) {
+            bundle.putParcelable("fiatManagerView_" + fiatManagerView.fiatManager.getFiatType(), fiatManagerView.onSaveInstanceState());
+        }
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            fiatManagerViewArrayList.get(0).onRestoreInstanceState(bundle.getParcelable("fiatManagerView"));
+            for(FiatManagerView fiatManagerView : fiatManagerViewArrayList) {
+                fiatManagerView.onRestoreInstanceState(bundle.getParcelable("fiatManagerView_" + fiatManagerView.fiatManager.getFiatType()));
+            }
         }
     }
 }

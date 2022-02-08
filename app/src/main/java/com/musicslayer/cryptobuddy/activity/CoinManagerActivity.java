@@ -20,6 +20,8 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.view.asset.CoinManagerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CoinManagerActivity extends BaseActivity {
     ArrayList<CoinManagerView> coinManagerViewArrayList;
@@ -49,14 +51,18 @@ public class CoinManagerActivity extends BaseActivity {
 
         TableLayout tableLayout = findViewById(R.id.coin_manager_tableLayout);
 
-        // For now, there is only one type of Coin.
-        coinManagerViewArrayList = new ArrayList<>();
-        CoinManager coinManager = CoinManager.getDefaultCoinManager();
-        CoinManagerView coinManagerView = new CoinManagerView(CoinManagerActivity.this, coinManager);
-        coinManagerView.updateLayout();
+        ArrayList<String> coinTypes = CoinManager.coinManagers_coin_types;
+        Collections.sort(coinTypes, Comparator.comparing(String::toLowerCase));
 
-        coinManagerViewArrayList.add(coinManagerView);
-        tableLayout.addView(coinManagerView);
+        coinManagerViewArrayList = new ArrayList<>();
+        for(String coinType : coinTypes) {
+            CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
+            CoinManagerView coinManagerView = new CoinManagerView(CoinManagerActivity.this, coinManager);
+            coinManagerView.updateLayout();
+
+            coinManagerViewArrayList.add(coinManagerView);
+            tableLayout.addView(coinManagerView);
+        }
 
         BaseDialogFragment addCustomCoinDialogFragment = BaseDialogFragment.newInstance(AddCustomCoinDialog.class);
         addCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -83,13 +89,17 @@ public class CoinManagerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putParcelable("coinManagerView", coinManagerViewArrayList.get(0).onSaveInstanceState());
+        for(CoinManagerView coinManagerView : coinManagerViewArrayList) {
+            bundle.putParcelable("coinManagerView_" + coinManagerView.coinManager.getCoinType(), coinManagerView.onSaveInstanceState());
+        }
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            coinManagerViewArrayList.get(0).onRestoreInstanceState(bundle.getParcelable("coinManagerView"));
+            for(CoinManagerView coinManagerView : coinManagerViewArrayList) {
+                coinManagerView.onRestoreInstanceState(bundle.getParcelable("coinManagerView_" + coinManagerView.coinManager.getCoinType()));
+            }
         }
     }
 }

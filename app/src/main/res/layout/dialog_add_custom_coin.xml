@@ -29,6 +29,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/add_custom_coin_dialog_coinTypeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_custom_coin_dialog_toolbar">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_coin_dialog_nameEditText"
         android:layout_width="wrap_content"
@@ -37,7 +46,7 @@
         android:hint="Name"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_custom_coin_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/add_custom_coin_dialog_coinTypeSpinner" />
 
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_coin_dialog_symbolEditText"

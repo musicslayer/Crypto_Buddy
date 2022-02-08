@@ -43,7 +43,7 @@ public class DeleteCoinsSettingsView extends SettingsView {
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         T_Reset.setText("Delete all coins from the app's database.");
 
-        BaseDialogFragment confirmDeleteCoinsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteCoinsDialog.class);
+        BaseDialogFragment confirmDeleteCoinsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteCoinsDialog.class, "All");
         confirmDeleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -67,7 +67,7 @@ public class DeleteCoinsSettingsView extends SettingsView {
         });
         confirmDeleteCoinsDialogFragment.restoreListeners(context, "reset_confirm_delete_coins_settings_view");
 
-        BaseDialogFragment deleteCoinsDialogFragment = BaseDialogFragment.newInstance(DeleteCoinsDialog.class);
+        BaseDialogFragment deleteCoinsDialogFragment = BaseDialogFragment.newInstance(DeleteCoinsDialog.class, "All");
         deleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {

@@ -51,12 +51,12 @@ public class FiatManagerView extends CrashTableRow {
 
         T = new TextView(context);
 
-        // The user cannot delete hardcoded fiats.
-        BaseDialogFragment confirmDeleteFiatsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteFiatsDialog.class);
+        BaseDialogFragment confirmDeleteFiatsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteFiatsDialog.class, fiatManager.getFiatType());
         confirmDeleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteFiatsDialog)dialog).isComplete) {
+                    // The user cannot delete hardcoded fiats.
                     if(choices.contains("found")) {
                         fiatManager.resetFoundFiats();
                     }
@@ -76,7 +76,7 @@ public class FiatManagerView extends CrashTableRow {
         });
         confirmDeleteFiatsDialogFragment.restoreListeners(context, "confirm_delete_fiats_" + fiatManager.getSettingsKey());
 
-        BaseDialogFragment deleteFiatsDialogFragment = BaseDialogFragment.newInstance(DeleteFiatsDialog.class);
+        BaseDialogFragment deleteFiatsDialogFragment = BaseDialogFragment.newInstance(DeleteFiatsDialog.class, fiatManager.getFiatType());
         deleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -100,7 +100,7 @@ public class FiatManagerView extends CrashTableRow {
         B_VIEW.setImageResource(R.drawable.ic_baseline_pageview_24);
         B_VIEW.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                BaseDialogFragment.newInstance(ViewFiatsDialog.class).show(context, "view_fiats_" + fiatManager.getSettingsKey());
+                BaseDialogFragment.newInstance(ViewFiatsDialog.class, fiatManager.getFiatType()).show(context, "view_fiats_" + fiatManager.getSettingsKey());
             }
         });
 
@@ -112,7 +112,7 @@ public class FiatManagerView extends CrashTableRow {
     }
 
     public void updateLayout() {
-        T.setText("Fiats:\n(" + fiatManager.hardcoded_fiats.size() + ", " + fiatManager.found_fiats.size() + ", " + fiatManager.custom_fiats.size() + ")");
+        T.setText(fiatManager.getFiatType() + ":\n(" + fiatManager.hardcoded_fiats.size() + ", " + fiatManager.found_fiats.size() + ", " + fiatManager.custom_fiats.size() + ")");
     }
 
     @Override
