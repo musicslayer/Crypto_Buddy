@@ -17,9 +17,7 @@ import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
-import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
@@ -43,7 +41,7 @@ import java.util.Date;
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
-// TODO SerDer the entire token all the time.
+// TODO When will portfolios be deserialized.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -76,7 +74,7 @@ public class InitialActivity extends BaseActivity {
         }
 
         Exchange.initialize(applicationContext);
-        Network.initialize(applicationContext); // Requires CoinManagers to have loaded the coins first.
+        Network.initialize(applicationContext); // Requires CoinManagers and TokenManagers to have loaded first.
         AddressAPI.initialize(applicationContext);
         ExchangeAPI.initialize(applicationContext);
         PriceAPI.initialize(applicationContext);

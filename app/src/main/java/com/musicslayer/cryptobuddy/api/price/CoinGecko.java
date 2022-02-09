@@ -49,8 +49,6 @@ import java.util.HashMap;
   },
   */
 
-// TODO Allow unknown assets if they have the right info.
-
 public class CoinGecko extends PriceAPI {
     public String getName() { return "CoinGecko"; }
     public String getDisplayName() { return "CoinGecko API V3"; }
@@ -74,20 +72,20 @@ public class CoinGecko extends PriceAPI {
             if(asset instanceof Fiat) {
                 // All Fiats can be looked up.
                 Fiat fiat = (Fiat)asset;
-                if(fiat.isComplete() && !"?".equals(fiat.getCoinGeckoID())) {
+                if(!"?".equals(fiat.getCoinGeckoID())) {
                     fiatArrayList.add(fiat);
                 }
             }
             else if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(coin.isComplete() && !"?".equals(coin.getCoinGeckoID())) {
+                if(!"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(token.isComplete() && !"?".equals(token.getCoinGeckoID())) {
+                if(!"?".equals(token.getCoinGeckoID())) {
                     ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();
@@ -231,14 +229,14 @@ public class CoinGecko extends PriceAPI {
         for(Asset asset : cryptoPrice.assetArrayList) {
             if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(coin.isComplete() && !"?".equals(coin.getCoinGeckoID())) {
+                if(!"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(token.isComplete() && !"?".equals(token.getCoinGeckoID())) {
+                if(!"?".equals(token.getCoinGeckoID())) {
                     ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();
