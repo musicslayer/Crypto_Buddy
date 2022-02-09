@@ -13,7 +13,7 @@ public class UnknownTokenManager extends TokenManager {
 
     public String getKey() { return key; }
     public String getName() { return "UnknownTokenManager"; }
-    public String getBlockchainID() { return "?"; }
+    public String getCoinGeckoBlockchainID() { return "?"; }
     public String getTokenType() { return tokenType; }
     public String getSettingsKey() { return "?"; }
 
@@ -44,6 +44,6 @@ public class UnknownTokenManager extends TokenManager {
     @Override
     // Always return unknown tokens, regardless of if the information is complete.
     public Token getToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
-        return UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+        return UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType());
     }
 }

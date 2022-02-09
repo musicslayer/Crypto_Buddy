@@ -77,21 +77,21 @@ public class CoinGecko extends PriceAPI {
             }
             else if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(!"?".equals(coin.getID())) {
+                if(!"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(!"?".equals(token.getID())) {
-                    ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getBlockchainID());
+                if(!"?".equals(token.getCoinGeckoID())) {
+                    ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();
                     }
 
                     tokenArrayList.add(token);
-                    blockchainHashMap.put(token.getBlockchainID(), tokenArrayList);
+                    blockchainHashMap.put(token.getCoinGeckoBlockchainID(), tokenArrayList);
                 }
             }
         }
@@ -106,7 +106,7 @@ public class CoinGecko extends PriceAPI {
             if(!tokenArrayList.isEmpty()) {
                 StringBuilder tokenString = new StringBuilder();
                 for(int i = 0; i < tokenArrayList.size(); i++) {
-                    tokenString.append(tokenArrayList.get(i).getID());
+                    tokenString.append(tokenArrayList.get(i).getCoinGeckoID());
                     if(i < tokenArrayList.size() - 1) {
                         tokenString.append(",");
                     }
@@ -119,9 +119,9 @@ public class CoinGecko extends PriceAPI {
                         JSONObject json = new JSONObject(priceDataTokenJSON);
 
                         for(Token token : tokenArrayList) {
-                            if(!json.has(token.getID())) { continue; }
+                            if(!json.has(token.getCoinGeckoID())) { continue; }
 
-                            JSONObject json2 = json.getJSONObject(token.getID());
+                            JSONObject json2 = json.getJSONObject(token.getCoinGeckoID());
                             BigDecimal d = new BigDecimal(json2.getString(priceFiatName));
                             priceHashMap.put(token, new AssetQuantity(d.toPlainString(), priceFiat));
                         }
@@ -140,7 +140,7 @@ public class CoinGecko extends PriceAPI {
         if(!coinArrayList.isEmpty()) {
             StringBuilder coinString = new StringBuilder();
             for(int i = 0; i < coinArrayList.size(); i++) {
-                coinString.append(coinArrayList.get(i).getID());
+                coinString.append(coinArrayList.get(i).getCoinGeckoID());
                 if(i < coinArrayList.size() - 1) {
                     coinString.append(",");
                 }
@@ -153,9 +153,9 @@ public class CoinGecko extends PriceAPI {
                     JSONObject json = new JSONObject(priceDataCoinJSON);
 
                     for(Coin coin : coinArrayList) {
-                        if(!json.has(coin.getID())) { continue; }
+                        if(!json.has(coin.getCoinGeckoID())) { continue; }
 
-                        JSONObject json2 = json.getJSONObject(coin.getID());
+                        JSONObject json2 = json.getJSONObject(coin.getCoinGeckoID());
                         BigDecimal d = new BigDecimal(json2.getString(priceFiatName));
                         priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), priceFiat));
                     }
@@ -182,11 +182,11 @@ public class CoinGecko extends PriceAPI {
             Crypto conversionCrypto = CoinManager.getDefaultCoinManager().getHardcodedCoin("BTC");
 
             ProgressDialogFragment.updateProgressSubtitle("Processing Fiats...");
-            String priceDataFiatJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + conversionCrypto.getID() + "&vs_currencies=" + fiatString + "&include_market_cap=false&include_last_updated_at=true");
+            String priceDataFiatJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + conversionCrypto.getCoinGeckoID() + "&vs_currencies=" + fiatString + "&include_market_cap=false&include_last_updated_at=true");
             if(priceDataFiatJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataFiatJSON);
-                    JSONObject json2 = json.getJSONObject(conversionCrypto.getID());
+                    JSONObject json2 = json.getJSONObject(conversionCrypto.getCoinGeckoID());
 
                     BigDecimal dPrice = new BigDecimal(json2.getString(priceFiatName));
 
@@ -225,21 +225,21 @@ public class CoinGecko extends PriceAPI {
         for(Asset asset : cryptoPrice.assetArrayList) {
             if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(!"?".equals(coin.getID())) {
+                if(!"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(!"?".equals(token.getID())) {
-                    ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getBlockchainID());
+                if(!"?".equals(token.getCoinGeckoID())) {
+                    ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();
                     }
 
                     tokenArrayList.add(token);
-                    blockchainHashMap.put(token.getBlockchainID(), tokenArrayList);
+                    blockchainHashMap.put(token.getCoinGeckoBlockchainID(), tokenArrayList);
                 }
             }
         }
@@ -254,7 +254,7 @@ public class CoinGecko extends PriceAPI {
             if(!tokenArrayList.isEmpty()) {
                 StringBuilder tokenString = new StringBuilder();
                 for(int i = 0; i < tokenArrayList.size(); i++) {
-                    tokenString.append(tokenArrayList.get(i).getID());
+                    tokenString.append(tokenArrayList.get(i).getCoinGeckoID());
                     if(i < tokenArrayList.size() - 1) {
                         tokenString.append(",");
                     }
@@ -267,9 +267,9 @@ public class CoinGecko extends PriceAPI {
                         JSONObject json = new JSONObject(priceDataTokenJSON);
 
                         for(Token token : tokenArrayList) {
-                            if(!json.has(token.getID())) { continue; }
+                            if(!json.has(token.getCoinGeckoID())) { continue; }
 
-                            JSONObject json2 = json.getJSONObject(token.getID());
+                            JSONObject json2 = json.getJSONObject(token.getCoinGeckoID());
                             BigDecimal d = new BigDecimal(json2.getString(priceFiatName + "_market_cap"));
                             priceHashMap.put(token, new AssetQuantity(d.toPlainString(), priceFiat));
                         }
@@ -288,7 +288,7 @@ public class CoinGecko extends PriceAPI {
         if(!coinArrayList.isEmpty()) {
             StringBuilder coinString = new StringBuilder();
             for(int i = 0; i < coinArrayList.size(); i++) {
-                coinString.append(coinArrayList.get(i).getID());
+                coinString.append(coinArrayList.get(i).getCoinGeckoID());
                 if(i < coinArrayList.size() - 1) {
                     coinString.append(",");
                 }
@@ -301,9 +301,9 @@ public class CoinGecko extends PriceAPI {
                     JSONObject json = new JSONObject(priceDataCoinJSON);
 
                     for(Coin coin : coinArrayList) {
-                        if(!json.has(coin.getID())) { continue; }
+                        if(!json.has(coin.getCoinGeckoID())) { continue; }
 
-                        JSONObject json2 = json.getJSONObject(coin.getID());
+                        JSONObject json2 = json.getJSONObject(coin.getCoinGeckoID());
                         BigDecimal d = new BigDecimal(json2.getString(priceFiatName + "_market_cap"));
                         priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), priceFiat));
                     }

@@ -1,9 +1,10 @@
 package com.musicslayer.cryptobuddy.asset.crypto.token;
 
+import java.util.HashMap;
+
 public class UnknownToken extends Token {
-    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String id, String blockchain_id, String token_type) {
-        // "id" and "blockchain_id" are ? because we cannot lookup the price.
-        // Other fields are modified to show an unknown token to the user.
+    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type) {
+        // Fields are modified to show an unknown token to the user.
         String unknownKey;
         if(key == null) {
             unknownKey = "?";
@@ -36,11 +37,11 @@ public class UnknownToken extends Token {
             unknownTokenType = token_type;
         }
 
-        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, "?", "?", unknownTokenType);
+        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, unknownTokenType);
     }
 
-    private UnknownToken(String key, String name, String display_name, int scale, String id, String blockchain_id, String token_type) {
-        super(key, name, display_name, scale, id, blockchain_id, token_type);
+    private UnknownToken(String key, String name, String display_name, int scale, String token_type) {
+        super(key, name, display_name, scale, token_type, new HashMap<>());
     }
 
     public boolean isComplete() {

@@ -2,16 +2,19 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class ATOMTokenManager extends TokenManager {
     public String getKey() { return "ATOMTokenManager"; }
     public String getName() { return "ATOMTokenManager"; }
-    public String getBlockchainID() { return "cosmos"; }
+    public String getCoinGeckoBlockchainID() { return "cosmos"; }
     public String getTokenType() { return "ATOM"; }
     public String getSettingsKey() { return "atom"; }
 
@@ -38,11 +41,14 @@ public class ATOMTokenManager extends TokenManager {
                 String display_name = name;
                 int scale = tokenInfo.getInt("decimal");
                 String id = tokenInfo.getString("hash");
-                String blockchain_id = "cosmos";
-                String token_type = "ATOM";
                 String key = id;
 
-                Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 

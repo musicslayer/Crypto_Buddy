@@ -225,6 +225,54 @@ public class Serialization {
         }
     }
 
+    public static String string_serializeHashMap(HashMap<String, String> hashMap) {
+        if(hashMap == null) { return null; }
+
+        // Serialize a hashmap as an array of keys and an array of values, in the same order.
+        ArrayList<String> keyArrayList = new ArrayList<>(hashMap.keySet());
+        ArrayList<String> valueArrayList = new ArrayList<>();
+        for(String key : keyArrayList) {
+            valueArrayList.add(hashMap.get(key));
+        }
+
+        try {
+            return new JSONObjectWithNull()
+                    .put("keys", new JSONArrayWithNull(Serialization.string_serializeArrayList(keyArrayList)))
+                    .put("values", new JSONArrayWithNull(Serialization.string_serializeArrayList(valueArrayList)))
+                    .toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static HashMap<String, String> string_deserializeHashMap(String s) {
+        if(s == null) { return null; }
+
+        try {
+            JSONObjectWithNull o = new JSONObjectWithNull(s);
+
+            ArrayList<String> arrayListT = Serialization.string_deserializeArrayList(o.getJSONArray("keys").toStringOrNull());
+            ArrayList<String> arrayListU = Serialization.string_deserializeArrayList(o.getJSONArray("values").toStringOrNull());
+
+            if(arrayListT == null || arrayListU == null || arrayListT.size() != arrayListU.size()) {
+                return null;
+            }
+
+            HashMap<String, String> hashMap = new HashMap<>();
+            for(int i = 0; i < arrayListT.size(); i++) {
+                hashMap.put(arrayListT.get(i), arrayListU.get(i));
+            }
+
+            return hashMap;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static String boolean_serialize(boolean b) {
         return string_serialize(Boolean.toString(b));
     }
@@ -433,6 +481,7 @@ public class Serialization {
                     .put("display_name", string_serialize(obj.original_display_name))
                     .put("scale", int_serialize(obj.scale))
                     .put("fiat_type", string_serialize(obj.fiat_type))
+                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -451,8 +500,9 @@ public class Serialization {
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
             int scale = Serialization.int_deserialize(o.getString("scale"));
             String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
 
-            return new Fiat(key, name, display_name, scale, fiat_type);
+            return new Fiat(key, name, display_name, scale, fiat_type, additional_info);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -507,8 +557,8 @@ public class Serialization {
                     .put("name", string_serialize(obj.original_name))
                     .put("display_name", string_serialize(obj.original_display_name))
                     .put("scale", int_serialize(obj.scale))
-                    .put("id", string_serialize(obj.id))
                     .put("coin_type", string_serialize(obj.coin_type))
+                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -526,10 +576,10 @@ public class Serialization {
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
             int scale = Serialization.int_deserialize(o.getString("scale"));
-            String id = Serialization.string_deserialize(o.getString("id"));
             String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
+            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
 
-            return new Coin(key, name, display_name, scale, id, coin_type);
+            return new Coin(key, name, display_name, scale, coin_type, additional_info);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -580,14 +630,13 @@ public class Serialization {
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                .put("key", string_serialize(obj.key))
-                .put("name", string_serialize(obj.original_name))
-                .put("display_name", string_serialize(obj.original_display_name))
-                .put("scale", int_serialize(obj.scale))
-                .put("id", string_serialize(obj.id))
-                .put("blockchain_id", string_serialize(obj.blockchain_id))
-                .put("token_type", string_serialize(obj.token_type))
-                .toStringOrNull();
+                    .put("key", string_serialize(obj.key))
+                    .put("name", string_serialize(obj.original_name))
+                    .put("display_name", string_serialize(obj.original_display_name))
+                    .put("scale", int_serialize(obj.scale))
+                    .put("token_type", string_serialize(obj.token_type))
+                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
+                    .toStringOrNull();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -604,10 +653,10 @@ public class Serialization {
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
             int scale = Serialization.int_deserialize(o.getString("scale"));
-            String id = Serialization.string_deserialize(o.getString("id"));
-            String blockchain_id = Serialization.string_deserialize(o.getString("blockchain_id"));
             String token_type = Serialization.string_deserialize(o.getString("token_type"));
-            return new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
+
+            return new Token(key, name, display_name, scale, token_type, additional_info);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

@@ -69,7 +69,10 @@ public class Bitquery extends AddressAPI {
                         }
                         if(crypto instanceof UnknownToken) {
                             // new UnknownToken type.
-                            crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+                            //crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+
+                            // TODO Use UnknownTokenManager with tokenType "BNBc"
+                            crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null);
                         }
                     }
 
@@ -204,7 +207,10 @@ public class Bitquery extends AddressAPI {
                     }
                     if(crypto instanceof UnknownToken) {
                         // new UnknownToken type.
-                        crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+                        //crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+
+                        // TODO Use UnknownTokenManager with tokenType "BNBc"
+                        crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null);
                     }
                 }
 
@@ -267,7 +273,10 @@ public class Bitquery extends AddressAPI {
                     }
                     if(crypto instanceof UnknownToken) {
                         // new UnknownToken type.
-                        crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+                        //crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null, null, "BNBc");
+
+                        // TODO Use UnknownTokenManager with tokenType "BNBc"
+                        crypto = UnknownToken.createUnknownToken(cryptoName, cryptoName, cryptoName, 0, null);
                     }
                     cryptoFee = crypto;
                 }

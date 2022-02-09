@@ -3,16 +3,19 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class TomoChainZTokenManager extends TokenManager {
     public String getKey() { return "TomoChainZTokenManager"; }
     public String getName() { return "TomoChainZTokenManager"; }
-    public String getBlockchainID() { return "tomochain"; }
+    public String getCoinGeckoBlockchainID() { return "tomochain"; }
     public String getTokenType() { return "TOMO - TRC21"; }
     public String getSettingsKey() { return "tomo_trc21"; }
 
@@ -38,7 +41,12 @@ public class TomoChainZTokenManager extends TokenManager {
             String display_name2 = tokenObj.getString("name");
             int scale2 = tokenObj.getInt("decimals");
 
-            Token token = new Token(key2, name2, display_name2, scale2, id, getBlockchainID(), getTokenType());
+            HashMap<String, String> additionalInfo = new HashMap<>();
+            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+            Token token = new Token(key2, name2, display_name2, scale2, getTokenType(), additionalInfo);
             return token;
         }
         catch(Exception ignored) {
@@ -112,10 +120,13 @@ public class TomoChainZTokenManager extends TokenManager {
                     String id = json.getString("hash"); // Contract
                     //String key = json.getString("_id").toLowerCase();
                     String key = id;
-                    String blockchain_id = "tomochain";
-                    String token_type = "TOMO - TRC21";
 
-                    Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+                    HashMap<String, String> additionalInfo = new HashMap<>();
+                    HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                    Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                     addDownloadedToken(token);
                 }
             }

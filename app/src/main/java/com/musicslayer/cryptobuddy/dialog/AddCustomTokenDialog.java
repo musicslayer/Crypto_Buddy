@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -22,6 +23,7 @@ import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 public class AddCustomTokenDialog extends BaseDialog {
     public TokenManager chosenTokenManager;
@@ -95,7 +97,13 @@ public class AddCustomTokenDialog extends BaseDialog {
                     String id = key;
 
                     Token oldToken = chosenTokenManager.custom_token_map.get(key);
-                    Token newToken = new Token(key, name, display_name, scale, id, chosenTokenManager.getBlockchainID(), chosenTokenManager.getTokenType());
+
+                    HashMap<String, String> additionalInfo = new HashMap<>();
+                    HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", chosenTokenManager.getCoinGeckoBlockchainID());
+                    Token newToken = new Token(key, name, display_name, scale, chosenTokenManager.getTokenType(), additionalInfo);
+
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
                         TokenManagerList.updateTokenManager(activity, chosenTokenManager);

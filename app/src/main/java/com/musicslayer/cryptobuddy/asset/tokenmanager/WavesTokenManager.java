@@ -4,15 +4,18 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Stagenet;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Testnet;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class WavesTokenManager extends TokenManager {
     public String getKey() { return "WavesTokenManager"; }
     public String getName() { return "WavesTokenManager"; }
-    public String getBlockchainID() { return "waves"; }
+    public String getCoinGeckoBlockchainID() { return "waves"; }
     public String getTokenType() { return "WAVES"; }
     public String getSettingsKey() { return "waves"; }
 
@@ -42,7 +45,12 @@ public class WavesTokenManager extends TokenManager {
             String display_name2 = name2;
             int scale2 = tokenInfoObject.getInt("decimals");
 
-            Token token = new Token(id, name2, display_name2, scale2, id, getBlockchainID(), getTokenType());
+            HashMap<String, String> additionalInfo = new HashMap<>();
+            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+            Token token = new Token(id, name2, display_name2, scale2, getTokenType(), additionalInfo);
             return token;
         }
         catch(Exception ignored) {

@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -9,12 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 // The "key" of a TRC10 token is a unique number. The regular name may not be unique.
 public class TronTokenManager extends TokenManager {
     public String getKey() { return "TronTokenManager"; }
     public String getName() { return "TronTokenManager"; }
-    public String getBlockchainID() { return "tron"; }
+    public String getCoinGeckoBlockchainID() { return "tron"; }
     public String getTokenType() { return "TRX - TRC10"; }
     public String getSettingsKey() { return "trx_trc10"; }
 
@@ -53,12 +55,14 @@ public class TronTokenManager extends TokenManager {
                 }
 
                 String id = json.getString("id"); // Instead of the contract address, use the token ID
-                String blockchain_id = "tron";
-                String token_type = "TRX - TRC10";
-
                 String key = id;
 
-                Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 

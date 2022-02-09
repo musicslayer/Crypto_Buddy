@@ -22,7 +22,7 @@ public class UnknownNetwork extends Network {
     }
 
     public Coin getPrimaryCoin() {
-        return UnknownCoin.createUnknownCoin(null, null, null, 0, null, "?");
+        return UnknownCoin.createUnknownCoin(null, null, null, 0, null);
     }
 
     public Coin getFeeCoin() {

@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     abstract public void initializeHardcodedCoins(Context context);
 
     // Most times we cannot do lookup, but subclasses can override if they can.
-    public Coin lookupCoin(String key, String name, String display_name, int scale, String id) { return null; }
+    public Coin lookupCoin(String key, String name, String display_name, int scale) { return null; }
 
     public CoinManager() {
         this.hardcoded_coins = new ArrayList<>();
@@ -124,13 +125,16 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         Coin coin = getCoinWithPrecedence(key);
 
         if(coin == null) {
-            coin = lookupCoin(key, name, display_name, scale, id);
+            coin = lookupCoin(key, name, display_name, scale);
 
             if(coin == null || !coin.isComplete()) {
-                coin = new Coin(key, name, display_name, scale, id, getCoinType());
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+
+                coin = new Coin(key, name, display_name, scale, getCoinType(), additionalInfo);
 
                 if(!coin.isComplete()) {
-                    coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, id, getCoinType());
+                    coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType());
                 }
             }
 
@@ -390,7 +394,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String serializationVersion() { return "1"; }
+    public String serializationVersion() { return "2"; }
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
@@ -404,6 +408,67 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     }
 
     public static CoinManager deserializeFromJSON1(String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String key = Serialization.string_deserialize(o.getString("key"));
+        String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
+        ArrayList<Coin> hardcoded_coins = coin_deserializeArrayList1(o.getJSONArrayString("hardcoded_coins"));
+        ArrayList<Coin> found_coins = coin_deserializeArrayList1(o.getJSONArrayString("found_coins"));
+        ArrayList<Coin> custom_coins = coin_deserializeArrayList1(o.getJSONArrayString("custom_coins"));
+
+        // This is a dummy object that only has to hold onto the coin array lists.
+        // We don't need to call the proper add* methods here.
+        CoinManager coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
+        coinManager.hardcoded_coins = hardcoded_coins;
+        coinManager.found_coins = found_coins;
+        coinManager.custom_coins = custom_coins;
+
+        return coinManager;
+    }
+
+    public static Coin coin_deserialize1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+            String id = Serialization.string_deserialize(o.getString("id"));
+            String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
+
+            HashMap<String, String> additionalInfo = new HashMap<>();
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+
+            return new Coin(key, name, display_name, scale, coin_type, additionalInfo);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Coin> coin_deserializeArrayList1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Coin> arrayList = new ArrayList<>();
+
+            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(coin_deserialize1(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static CoinManager deserializeFromJSON2(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String coin_type = Serialization.string_deserialize(o.getString("coin_type"));

@@ -1,6 +1,9 @@
 package com.musicslayer.cryptobuddy.asset.crypto.coin;
 
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+
+import java.util.HashMap;
 
 public class Coin extends Crypto {
     public String original_name;
@@ -12,18 +15,18 @@ public class Coin extends Crypto {
     public String display_name;
     public String combo_name;
     public int scale;
-    public String id;
     public String coin_type;
+    public HashMap<String, String> additionalInfo;
 
-    public Coin(String key, String name, String display_name, int scale, String id, String coin_type) {
+    public Coin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additionalInfo) {
         this.original_name = name;
         this.original_display_name = display_name;
         this.original_combo_name = display_name + " (" + name + ")";
 
         this.key = key;
         this.scale = scale;
-        this.id = id;
         this.coin_type = coin_type;
+        this.additionalInfo = additionalInfo;
 
         this.name = modify(name);
         this.display_name = modify(display_name);
@@ -35,9 +38,17 @@ public class Coin extends Crypto {
     public String getDisplayName() { return display_name; }
     public String getComboName() { return combo_name; }
     public int getScale() { return scale; }
-    public String getID() { return id; }
     public String getAssetType() { return coin_type; }
     public String getAssetKind() { return "!COIN!"; }
+    public HashMap<String, String> getAdditionalInfo() { return additionalInfo; }
+
+    public String getCoinGeckoID() {
+        String s = HashMapUtil.getValueFromMap(getAdditionalInfo(), "coin_gecko_id");
+        if(s == null) {
+            s = "?";
+        }
+        return s;
+    }
 
     public String modify(String s) {
         // For now, do nothing since all Coins have the same type.
@@ -50,6 +61,6 @@ public class Coin extends Crypto {
         // we do not want to store it long term and have it prevent the complete version from being used later.
 
         // Note that all scales are "complete".
-        return getKey() != null && getName() != null && getDisplayName() != null && getID() != null;
+        return key != null && original_name != null && original_display_name != null && coin_type != null;
     }
 }

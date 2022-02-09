@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -22,6 +23,7 @@ import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 public class AddCustomCoinDialog extends BaseDialog {
     public CoinManager chosenCoinManager;
@@ -97,7 +99,10 @@ public class AddCustomCoinDialog extends BaseDialog {
                     String id = "?";
 
                     Coin oldCoin = chosenCoinManager.custom_coin_map.get(key);
-                    Coin newCoin = new Coin(key, name, display_name, scale, id, chosenCoinManager.getCoinType());
+
+                    HashMap<String, String> additionalInfo = new HashMap<>();
+                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                    Coin newCoin = new Coin(key, name, display_name, scale, chosenCoinManager.getCoinType(), additionalInfo);
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);

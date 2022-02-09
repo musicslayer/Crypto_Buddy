@@ -2,18 +2,21 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 // Token Program ID: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA
 
 public class SPLTokenManager extends TokenManager {
     public String getKey() { return "SPLTokenManager"; }
     public String getName() { return "SPLTokenManager"; }
-    public String getBlockchainID() { return "solana"; }
+    public String getCoinGeckoBlockchainID() { return "solana"; }
     public String getTokenType() { return "SOL - SPL"; }
     public String getSettingsKey() { return "sol_spl"; }
 
@@ -35,11 +38,14 @@ public class SPLTokenManager extends TokenManager {
                 String display_name = json.getString("name");
                 int scale = json.getInt("decimals");
                 String id = json.getString("address");
-                String blockchain_id = "solana";
-                String token_type = "SOL - SPL";
                 String key = id;
 
-                Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 

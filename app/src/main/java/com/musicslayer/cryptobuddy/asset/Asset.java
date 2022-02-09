@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 abstract public class Asset implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
@@ -49,6 +50,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     abstract public int getScale(); // Number of decimal places
     abstract public String getAssetKind();
     abstract public String getAssetType();
+    abstract public HashMap<String, String> getAdditionalInfo(); // All other additional info. Varies based on asset kind.
 
     @Override
     public boolean equals(Object other) {

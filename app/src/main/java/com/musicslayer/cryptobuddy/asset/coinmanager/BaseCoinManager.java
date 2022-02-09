@@ -6,10 +6,13 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class BaseCoinManager extends CoinManager {
     public String getKey() { return "BaseCoinManager"; }
@@ -33,7 +36,10 @@ public class BaseCoinManager extends CoinManager {
                 int scale = json.getInt("scale");
                 String id = json.getString("id");
 
-                Coin coin = new Coin(key, name, display_name, scale, id, getCoinType());
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+
+                Coin coin = new Coin(key, name, display_name, scale, getCoinType(), additionalInfo);
                 addHardcodedCoin(coin);
             }
         }

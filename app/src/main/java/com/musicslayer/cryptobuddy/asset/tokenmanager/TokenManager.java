@@ -46,7 +46,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
 
     abstract public String getKey();
     abstract public String getName();
-    abstract public String getBlockchainID();
+    abstract public String getCoinGeckoBlockchainID();
     abstract public String getTokenType();
 
     // Used to store persistent state
@@ -129,13 +129,20 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         Token token = getTokenWithPrecedence(key);
 
         if(token == null) {
+            // TODO Add in additional info.
+            // TODO ID -> CONTRACT_ADDRESS
             token = lookupToken(cryptoAddress, key, name, display_name, scale, id);
 
             if(token == null || !token.isComplete()) {
-                token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
 
                 if(!token.isComplete()) {
-                    token = UnknownToken.createUnknownToken(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+                    token = UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType());
                 }
             }
 
@@ -412,7 +419,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
                 int scale = json.getInt("scale");
                 String id = json.getString("id");
 
-                Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 
@@ -424,7 +436,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         }
     }
 
-    public String serializationVersion() { return "1"; }
+    public String serializationVersion() { return "2"; }
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
@@ -438,6 +450,70 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
     }
 
     public static TokenManager deserializeFromJSON1(String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String key = Serialization.string_deserialize(o.getString("key"));
+        String token_type = Serialization.string_deserialize(o.getString("token_type"));
+        ArrayList<Token> downloaded_tokens = token_deserializeArrayList1(o.getJSONArrayString("downloaded_tokens"));
+        ArrayList<Token> found_tokens = token_deserializeArrayList1(o.getJSONArrayString("found_tokens"));
+        ArrayList<Token> custom_tokens = token_deserializeArrayList1(o.getJSONArrayString("custom_tokens"));
+
+        // This is a dummy object that only has to hold onto the token array lists.
+        // We don't need to call the proper add* methods here.
+        TokenManager tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+        tokenManager.downloaded_tokens = downloaded_tokens;
+        tokenManager.found_tokens = found_tokens;
+        tokenManager.custom_tokens = custom_tokens;
+
+        return tokenManager;
+    }
+
+    public static Token token_deserialize1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+            String id = Serialization.string_deserialize(o.getString("id"));
+            String blockchain_id = Serialization.string_deserialize(o.getString("blockchain_id"));
+            String token_type = Serialization.string_deserialize(o.getString("token_type"));
+
+            HashMap<String, String> additionalInfo = new HashMap<>();
+            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", blockchain_id);
+
+            return new Token(key, name, display_name, scale, token_type, additionalInfo);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Token> token_deserializeArrayList1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Token> arrayList = new ArrayList<>();
+
+            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(token_deserialize1(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static TokenManager deserializeFromJSON2(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String token_type = Serialization.string_deserialize(o.getString("token_type"));

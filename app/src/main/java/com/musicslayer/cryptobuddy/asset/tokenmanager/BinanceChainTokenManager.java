@@ -2,11 +2,14 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 // mainnet: https://dex.binance.org/api/v1/tokens
 // testnet: https://testnet-dex.binance.org/api/v1/tokens (We don't support testnet tokens currently)
@@ -14,7 +17,7 @@ import org.json.JSONObject;
 public class BinanceChainTokenManager extends TokenManager {
     public String getKey() { return "BinanceChainTokenManager"; }
     public String getName() { return "BinanceChainTokenManager"; }
-    public String getBlockchainID() { return "binancecoin"; }
+    public String getCoinGeckoBlockchainID() { return "binance-smart-chain"; } // We use smart chain to get these prices.
     public String getTokenType() { return "BNBc - BEP2"; }
     public String getSettingsKey() { return "bnbc_bep2"; }
 
@@ -52,10 +55,12 @@ public class BinanceChainTokenManager extends TokenManager {
                     id = "?";
                 }
 
-                String blockchain_id = "binance-smart-chain"; // We use smart chain to get these prices.
-                String token_type = "BNBc - BEP2";
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
 
-                Token token = new Token(name, name, display_name, scale, id, blockchain_id, token_type);
+                Token token = new Token(name, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 

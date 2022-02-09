@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,7 +128,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiat = lookupFiat(key, name, display_name, scale);
 
             if(fiat == null || !fiat.isComplete()) {
-                fiat = new Fiat(key, name, display_name, scale, getFiatType());
+                fiat = new Fiat(key, name, display_name, scale, getFiatType(), new HashMap<>());
 
                 if(!fiat.isComplete()) {
                     fiat = UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType());
@@ -390,7 +391,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String serializationVersion() { return "1"; }
+    public String serializationVersion() { return "2"; }
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
@@ -404,6 +405,63 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     }
 
     public static FiatManager deserializeFromJSON1(String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String key = Serialization.string_deserialize(o.getString("key"));
+        String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+        ArrayList<Fiat> hardcoded_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("hardcoded_fiats"));
+        ArrayList<Fiat> found_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("found_fiats"));
+        ArrayList<Fiat> custom_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("custom_fiats"));
+
+        // This is a dummy object that only has to hold onto the fiat array lists.
+        // We don't need to call the proper add* methods here.
+        FiatManager fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
+        fiatManager.hardcoded_fiats = hardcoded_fiats;
+        fiatManager.found_fiats = found_fiats;
+        fiatManager.custom_fiats = custom_fiats;
+
+        return fiatManager;
+    }
+
+    public static Fiat fiat_deserialize1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String key = Serialization.string_deserialize(o.getString("key"));
+            String name = Serialization.string_deserialize(o.getString("name"));
+            String display_name = Serialization.string_deserialize(o.getString("display_name"));
+            int scale = Serialization.int_deserialize(o.getString("scale"));
+            String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+
+            return new Fiat(key, name, display_name, scale, fiat_type, new HashMap<>());
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static ArrayList<Fiat> fiat_deserializeArrayList1(String s) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<Fiat> arrayList = new ArrayList<>();
+
+            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                arrayList.add(fiat_deserialize1(o));
+            }
+
+            return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static FiatManager deserializeFromJSON2(String s) throws org.json.JSONException {
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));

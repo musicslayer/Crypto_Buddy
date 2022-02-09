@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class BaseFiatManager extends FiatManager {
     public String getKey() { return "BaseFiatManager"; }
     public String getName() { return "BaseFiatManager"; }
@@ -32,7 +34,7 @@ public class BaseFiatManager extends FiatManager {
                 String display_name = json.getString("display_name");
                 int scale = json.getInt("scale");
 
-                Fiat fiat = new Fiat(key, name, display_name, scale, getFiatType());
+                Fiat fiat = new Fiat(key, name, display_name, scale, getFiatType(), new HashMap<>());
                 addHardcodedFiat(fiat);
             }
         }

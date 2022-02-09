@@ -138,7 +138,7 @@ public class BscScan extends AddressAPI {
             addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=balance&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
         }
         else if(crypto instanceof Token && shouldIncludeTokens(cryptoAddress)) {
-            addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=tokenbalance&contractaddress=" + ((Token)crypto).getID() + "&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+            addressDataJSON = WebUtil.get(baseURL + "/api?module=account&action=tokenbalance&contractaddress=" + ((Token)crypto).getCoinGeckoID() + "&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
         }
         else {
             return null;
@@ -582,7 +582,7 @@ public class BscScan extends AddressAPI {
         }
         else if(crypto instanceof Token && shouldIncludeTokens(cryptoAddress)) {
             // BEP-20 Transactions - Various Tokens
-            String addressDataTokenJSON = WebUtil.get(baseURL + "/api?module=account&action=tokentx&contractaddress=" + ((Token)crypto).getID() + "&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
+            String addressDataTokenJSON = WebUtil.get(baseURL + "/api?module=account&action=tokentx&contractaddress=" + ((Token)crypto).getCoinGeckoID() + "&address=" + cryptoAddress.address + "&startblock=1&endblock=99999999&sort=asc&apikey=" + APIKEY);
 
             if(addressDataTokenJSON == null) {
                 return null;

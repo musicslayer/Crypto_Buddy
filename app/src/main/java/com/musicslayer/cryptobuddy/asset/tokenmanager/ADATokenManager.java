@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.StreamUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -22,7 +24,7 @@ import java.util.zip.ZipInputStream;
 public class ADATokenManager extends TokenManager {
     public String getKey() { return "ADATokenManager"; }
     public String getName() { return "ADATokenManager"; }
-    public String getBlockchainID() { return "cardano"; }
+    public String getCoinGeckoBlockchainID() { return "cardano"; }
     public String getTokenType() { return "ADA"; }
     public String getSettingsKey() { return "ada"; }
 
@@ -113,11 +115,14 @@ public class ADATokenManager extends TokenManager {
                 }
 
                 String id = tokenInfo.getString("subject");
-                String blockchain_id = "cardano";
-                String token_type = "ADA";
                 String key = id;
 
-                Token token = new Token(key, name, display_name, scale, id, blockchain_id, token_type);
+                HashMap<String, String> additionalInfo = new HashMap<>();
+                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
+
+                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
                 addDownloadedToken(token);
             }
 

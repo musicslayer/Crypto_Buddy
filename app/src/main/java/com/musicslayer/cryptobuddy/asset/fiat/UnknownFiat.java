@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.fiat;
 
+import java.util.HashMap;
+
 public class UnknownFiat extends Fiat {
     public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
         // Fields are modified to show an unknown fiat to the user.
@@ -39,7 +41,7 @@ public class UnknownFiat extends Fiat {
     }
 
     private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
-        super(key, name, display_name, scale, fiat_type);
+        super(key, name, display_name, scale, fiat_type, new HashMap<>());
     }
 
     public boolean isComplete() {

@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -22,6 +23,7 @@ import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 public class AddCustomFiatDialog extends BaseDialog {
     public FiatManager chosenFiatManager;
@@ -94,7 +96,7 @@ public class AddCustomFiatDialog extends BaseDialog {
                     String key = name;
 
                     Fiat oldFiat = chosenFiatManager.custom_fiat_map.get(key);
-                    Fiat newFiat = new Fiat(key, name, display_name, scale, chosenFiatManager.getFiatType());
+                    Fiat newFiat = new Fiat(key, name, display_name, scale, chosenFiatManager.getFiatType(), new HashMap<>());
 
                     if(oldFiat == null) {
                         chosenFiatManager.addCustomFiat(newFiat);
