@@ -90,12 +90,12 @@ public class Coin extends Crypto {
         this.combo_name = displayName + " (" + name + ")";
     }
 
-    public boolean isComplete() { // TODO original values or modified values?
+    public boolean isComplete() {
         // Coins may be created from incomplete information, and while we may use the coin,
         // we do not want to store it long term and have it prevent the complete version from being used later.
 
         // Note that all scales are "complete".
-        return key != null && original_name != null && original_display_name != null && coin_type != null;
+        return original_key != null && original_name != null && original_display_name != null && original_coin_type != null && original_additional_info != null;
     }
 
     public String getCoinGeckoID() {

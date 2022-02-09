@@ -24,6 +24,7 @@ public class UnknownFiat extends Fiat {
         this.combo_name = "?UNKNOWN_FIAT? <" + displayName + " (" + name + ")>";
     }
 
+    @Override
     public boolean isComplete() {
         // UnknownFiats are never complete, since by definition they represent a Fiat where we do not know all the information.
         return false;

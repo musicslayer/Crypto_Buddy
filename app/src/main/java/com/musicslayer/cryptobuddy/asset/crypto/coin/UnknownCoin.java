@@ -28,6 +28,7 @@ public class UnknownCoin extends Coin {
         this.combo_name = "?UNKNOWN_COIN? <" + displayName + " (" + name + ")>";
     }
 
+    @Override
     public boolean isComplete() {
         // UnknownCoins are never complete, since by definition they represent a Coin where we do not know all the information.
         return false;

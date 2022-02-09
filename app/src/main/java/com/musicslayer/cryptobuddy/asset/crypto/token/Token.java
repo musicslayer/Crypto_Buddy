@@ -98,7 +98,7 @@ public class Token extends Crypto {
         // we do not want to store it long term and have it prevent the complete version from being used later.
 
         // Note that all scales are "complete".
-        return key != null && original_name != null && original_display_name != null && token_type != null;
+        return original_key != null && original_name != null && original_display_name != null && original_token_type != null && original_additional_info != null;
     }
 
     public String getContractAddress() {
