@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ProgressDisplaySetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "ProgressDisplaySetting"; }
     public String getName() { return "ProgressDisplaySetting"; }

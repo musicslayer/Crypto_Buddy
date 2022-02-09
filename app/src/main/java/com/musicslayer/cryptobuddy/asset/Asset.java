@@ -45,6 +45,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
     abstract public String getName(); // Usually same as key, but in some cases it could be different.
     abstract public String getDisplayName();
+    abstract public String getComboName();
     abstract public int getScale(); // Number of decimal places
     abstract public String getAssetKind();
     abstract public String getAssetType();
@@ -60,17 +61,15 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     }
 
     public String getSettingName() {
-        if("full".equals(AssetDisplaySetting.value)) {
+        if("combo".equals(AssetDisplaySetting.value)) {
+            return getComboName();
+        }
+        else if("full".equals(AssetDisplaySetting.value)) {
             return getDisplayName();
         }
         else {
             return getName();
         }
-    }
-
-    public String getRawName() {
-        // When creating data dumps, combine names.
-        return getDisplayName() + " (" + getName() + ")";
     }
 
     private int compare(Asset other) {

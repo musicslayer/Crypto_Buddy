@@ -41,7 +41,8 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
     }
 
     public String toRawString() {
-        return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getRawName();
+        // For raw data, use asset combo name so all information is present.
+        return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getComboName();
     }
 
     private int compare(AssetQuantity other) {

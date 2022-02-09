@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class TimeoutSetting extends Setting {
     public static Long value;
-    public void updateValue() { value = (Long)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "TimeoutSetting"; }
     public String getName() { return "TimeoutSetting"; }

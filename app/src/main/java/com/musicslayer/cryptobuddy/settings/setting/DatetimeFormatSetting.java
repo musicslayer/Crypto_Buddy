@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class DatetimeFormatSetting extends Setting {
     public static FormatStyle value;
-    public void updateValue() { value = (FormatStyle)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "DatetimeFormatSetting"; }
     public String getName() { return "DatetimeFormatSetting"; }

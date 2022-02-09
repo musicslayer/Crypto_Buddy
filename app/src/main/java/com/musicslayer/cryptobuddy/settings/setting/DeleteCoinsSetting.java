@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class DeleteCoinsSetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "DeleteCoinsSetting"; }
     public String getName() { return "DeleteCoinsSetting"; }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class DefaultFiatSetting extends Setting {
     public static Fiat value;
-    public void updateValue() { value = (Fiat)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "DefaultFiatSetting"; }
     public String getName() { return "DefaultFiatSetting"; }

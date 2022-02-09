@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class UnknownSetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     String key;
     String settingsKey;

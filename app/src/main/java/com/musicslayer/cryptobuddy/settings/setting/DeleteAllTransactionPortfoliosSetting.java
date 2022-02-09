@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class DeleteAllTransactionPortfoliosSetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "DeleteAllTransactionPortfoliosSetting"; }
     public String getName() { return "DeleteAllTransactionPortfoliosSetting"; }

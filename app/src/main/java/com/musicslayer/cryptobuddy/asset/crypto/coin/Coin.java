@@ -5,10 +5,12 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 public class Coin extends Crypto {
     public String original_name;
     public String original_display_name;
+    public String original_combo_name;
 
     public String key;
     public String name;
     public String display_name;
+    public String combo_name;
     public int scale;
     public String id;
     public String coin_type;
@@ -16,6 +18,7 @@ public class Coin extends Crypto {
     public Coin(String key, String name, String display_name, int scale, String id, String coin_type) {
         this.original_name = name;
         this.original_display_name = display_name;
+        this.original_combo_name = display_name + " (" + name + ")";
 
         this.key = key;
         this.scale = scale;
@@ -24,11 +27,13 @@ public class Coin extends Crypto {
 
         this.name = modify(name);
         this.display_name = modify(display_name);
+        this.combo_name = modify(original_combo_name);
     }
 
     public String getKey() { return key; }
     public String getName() { return name; }
     public String getDisplayName() { return display_name; }
+    public String getComboName() { return combo_name; }
     public int getScale() { return scale; }
     public String getID() { return id; }
     public String getAssetType() { return coin_type; }

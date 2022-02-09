@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class DefaultCoinSetting extends Setting {
     public static Coin value;
-    public void updateValue() { value = (Coin)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "DefaultCoinSetting"; }
     public String getName() { return "DefaultCoinSetting"; }

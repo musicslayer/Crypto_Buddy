@@ -412,7 +412,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
                 int scale = json.getInt("scale");
                 String id = json.getString("id");
 
-
                 Token token = new Token(key, name, display_name, scale, id, getBlockchainID(), getTokenType());
                 addDownloadedToken(token);
             }

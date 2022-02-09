@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class PriceDisplaySetting extends Setting {
     public static String value;
-    public void updateValue() { value = (String)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "PriceDisplaySetting"; }
     public String getName() { return "PriceDisplaySetting"; }

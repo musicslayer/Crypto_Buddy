@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class OrientationSetting extends Setting {
     public static Integer value;
-    public void updateValue() { value = (Integer)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "OrientationSetting"; }
     public String getName() { return "OrientationSetting"; }

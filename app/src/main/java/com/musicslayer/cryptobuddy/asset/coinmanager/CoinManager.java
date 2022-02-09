@@ -10,6 +10,10 @@ import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -384,6 +388,33 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         }
 
         return displayNames;
+    }
+
+    public String getHardcodedJSON(Context context) {
+        return FileUtil.readFile(context, R.raw.asset_coin_hardcoded);
+    }
+
+    public void parseHardcoded(String coinJSON) {
+        try {
+            JSONObject jsonObject = new JSONObject(coinJSON);
+            JSONArray jsonArray = jsonObject.getJSONArray("coins");
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                String key = json.getString("key");
+                String name = json.getString("name");
+                String display_name = json.getString("display_name");
+                int scale = json.getInt("scale");
+                String id = json.getString("id");
+
+                Coin coin = new Coin(key, name, display_name, scale, id, getCoinType());
+                addHardcodedCoin(coin);
+            }
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
     }
 
     public String serializationVersion() { return "1"; }

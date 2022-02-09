@@ -107,7 +107,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
     }
 
     public Comparator<Asset> getSettingComparatorAsset() {
-        if("full".equals(AssetDisplaySetting.value)) {
+        if("combo".equals(AssetDisplaySetting.value)) {
+            return getComboNameComparatorAsset();
+        }
+        else if("full".equals(AssetDisplaySetting.value)) {
             return getDisplayNameComparatorAsset();
         }
         else {
@@ -121,6 +124,10 @@ public class SelectAndSearchView extends CrashLinearLayout {
 
     public Comparator<Asset> getDisplayNameComparatorAsset() {
         return Comparator.comparing(a -> a.getDisplayName().toLowerCase());
+    }
+
+    public Comparator<Asset> getComboNameComparatorAsset() {
+        return Comparator.comparing(a -> a.getComboName().toLowerCase());
     }
 
     public void setIncludesFiat(boolean includesFiat) {
@@ -623,6 +630,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_FIAT.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_FIAT.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
+                // No-op if this is already selected.
+                if("!FIAT!".equals(lastButtonKind)) { return; }
+
                 if(options_fiat_types.isEmpty()) {
                     // There are no fiat types to choose from.
                     chooseFiat(null);
@@ -664,6 +674,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_COIN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_COIN.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
+                // No-op if this is already selected.
+                if("!COIN!".equals(lastButtonKind)) { return; }
+
                 if(options_coin_types.isEmpty()) {
                     // There are no coin types to choose from.
                     chooseCoin(null);
@@ -705,6 +718,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
         B_TOKEN.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_radio_button_unchecked_small_24, 0, 0, 0);
         B_TOKEN.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
+                // No-op if this is already selected.
+                if("!TOKEN!".equals(lastButtonKind)) { return; }
+
                 if(options_token_types.isEmpty()) {
                     // There are no token types to choose from.
                     chooseToken(null);

@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class NumericLocaleSetting extends Setting {
     public static Locale value;
-    public void updateValue() { value = (Locale)getSettingValue(); }
+    public void updateValue() { value = getSettingValue(); }
 
     public String getKey() { return "NumericLocaleSetting"; }
     public String getName() { return "NumericLocaleSetting"; }
