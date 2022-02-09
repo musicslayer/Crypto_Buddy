@@ -6,55 +6,30 @@ import java.util.HashMap;
 
 public class UnknownToken extends Token {
     public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type, String id, String coin_gecko_blockchain_id) {
-        HashMap<String, String> additionalInfo = new HashMap<>();
-        HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", coin_gecko_blockchain_id);
+        HashMap<String, String> additional_info = new HashMap<>();
+        HashMapUtil.putValueInMap(additional_info, "contract_address", id);
+        HashMapUtil.putValueInMap(additional_info, "coin_gecko_id", id);
+        HashMapUtil.putValueInMap(additional_info, "coin_gecko_blockchain_id", coin_gecko_blockchain_id);
 
-        return createUnknownToken(key, name, display_name, scale, token_type, additionalInfo);
+        return createUnknownToken(key, name, display_name, scale, token_type, additional_info);
     }
 
-    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additionalInfo) {
-        // Fields are modified to show an unknown token to the user.
-        String unknownKey;
-        if(key == null) {
-            unknownKey = "?";
-        }
-        else {
-            unknownKey = key;
-        }
-
-        String unknownName;
-        if(name == null) {
-            unknownName = "?UNKNOWN_TOKEN?";
-        }
-        else {
-            unknownName = "?UNKNOWN_TOKEN (" + name + ")?";
-        }
-
-        String unknownDisplayName;
-        if(display_name == null) {
-            unknownDisplayName = "?Unknown Token?";
-        }
-        else {
-            unknownDisplayName = "?Unknown Token (" + display_name + ")?";
-        }
-
-        String unknownTokenType;
-        if(token_type == null) {
-            unknownTokenType = "?";
-        }
-        else {
-            unknownTokenType = token_type;
-        }
-
-        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, unknownTokenType, additionalInfo);
+    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additional_info) {
+        return new UnknownToken(key, name, display_name, scale, token_type, additional_info);
     }
 
-    private UnknownToken(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additionalInfo) {
-        super(key, name, display_name, scale, token_type, additionalInfo);
+    private UnknownToken(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additional_info) {
+        super(key, name, display_name, scale, token_type, additional_info);
     }
 
+    @Override
+    public void modifyNames(String name, String displayName) {
+        this.name = "?UNKNOWN_TOKEN? <" + name + " (" + token_type + ")>";
+        this.display_name = "?UNKNOWN_TOKEN? <" + displayName + " (" + token_type + ")>";
+        this.combo_name = "?UNKNOWN_TOKEN? <" + displayName + " (" + name + ") (" + token_type + ")>";
+    }
+
+    @Override
     public boolean isComplete() {
         // UnknownTokens are never complete, since by definition they represent a Token where we do not know all the information.
         return false;

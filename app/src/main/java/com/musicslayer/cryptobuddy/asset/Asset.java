@@ -45,14 +45,23 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         return 0;
     }
 
+    // Used for serialization.
+    abstract public String getOriginalKey();
+    abstract public String getOriginalName();
+    abstract public String getOriginalDisplayName();
+    abstract public int getOriginalScale();
+    abstract public String getOriginalAssetType();
+    abstract public HashMap<String, String> getOriginalAdditionalInfo();
+
     abstract public String getKey(); // Matches class name for coins, dynamically determined for tokens.
     abstract public String getName(); // Usually same as key, but in some cases it could be different.
-    abstract public String getDisplayName();
+    abstract public String getDisplayName(); // Usually same as key, but in some cases it could be different.
     abstract public String getComboName();
     abstract public int getScale(); // Number of decimal places
-    abstract public String getAssetKind();
     abstract public String getAssetType();
     abstract public HashMap<String, String> getAdditionalInfo(); // All other additional info. Varies based on asset kind.
+
+    abstract public String getAssetKind();
 
     @Override
     public boolean equals(Object other) {
@@ -115,14 +124,15 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
     public String serializeToJSON() throws org.json.JSONException {
         // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
+        // Use original properties directly, not the potentially modified ones from getter functions.
         return new Serialization.JSONObjectWithNull()
                 .put("assetKind", Serialization.string_serialize(getAssetKind()))
-                .put("key", Serialization.string_serialize(getKey()))
-                .put("name", Serialization.string_serialize(getName()))
-                .put("displayName", Serialization.string_serialize(getDisplayName()))
-                .put("scale", Serialization.int_serialize(getScale()))
-                .put("assetType", Serialization.string_serialize(getAssetType()))
-                .put("additionalInfo", Serialization.string_serializeHashMap(getAdditionalInfo()))
+                .put("key", Serialization.string_serialize(getOriginalKey()))
+                .put("name", Serialization.string_serialize(getOriginalName()))
+                .put("displayName", Serialization.string_serialize(getOriginalDisplayName()))
+                .put("scale", Serialization.int_serialize(getOriginalScale()))
+                .put("assetType", Serialization.string_serialize(getOriginalAssetType()))
+                .put("additionalInfo", Serialization.string_serializeHashMap(getOriginalAdditionalInfo()))
                 .toStringOrNull();
     }
 

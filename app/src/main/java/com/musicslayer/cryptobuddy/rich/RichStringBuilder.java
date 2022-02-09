@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.rich;
 
+import android.text.Html;
+
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.settings.setting.LossValuesSetting;
@@ -64,7 +66,10 @@ public class RichStringBuilder {
     }
 
     public String enrich(String str) {
-        // Just deal with spaces and newlines for now.
+        // Escape most characters.
+        str = Html.escapeHtml(str);
+
+        // Handle certain whitespace characters.
         str = str.replace("\n", "<br/>"); // Don't bother with \r here.
         str = str.replace(" ", "&nbsp;");
         return str;

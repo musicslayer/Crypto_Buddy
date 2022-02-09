@@ -476,12 +476,12 @@ public class Serialization {
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.key))
-                    .put("name", string_serialize(obj.original_name))
-                    .put("display_name", string_serialize(obj.original_display_name))
-                    .put("scale", int_serialize(obj.scale))
-                    .put("fiat_type", string_serialize(obj.fiat_type))
-                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
+                    .put("key", string_serialize(obj.getOriginalKey()))
+                    .put("name", string_serialize(obj.getOriginalName()))
+                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
+                    .put("scale", int_serialize(obj.getOriginalScale()))
+                    .put("fiat_type", string_serialize(obj.getOriginalAssetType()))
+                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -553,12 +553,12 @@ public class Serialization {
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.key))
-                    .put("name", string_serialize(obj.original_name))
-                    .put("display_name", string_serialize(obj.original_display_name))
-                    .put("scale", int_serialize(obj.scale))
-                    .put("coin_type", string_serialize(obj.coin_type))
-                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
+                    .put("key", string_serialize(obj.getOriginalKey()))
+                    .put("name", string_serialize(obj.getOriginalName()))
+                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
+                    .put("scale", int_serialize(obj.getOriginalScale()))
+                    .put("coin_type", string_serialize(obj.getOriginalAssetType()))
+                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -630,12 +630,12 @@ public class Serialization {
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
             return new Serialization.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.key))
-                    .put("name", string_serialize(obj.original_name))
-                    .put("display_name", string_serialize(obj.original_display_name))
-                    .put("scale", int_serialize(obj.scale))
-                    .put("token_type", string_serialize(obj.token_type))
-                    .put("additional_info", string_serializeHashMap(obj.additionalInfo))
+                    .put("key", string_serialize(obj.getOriginalKey()))
+                    .put("name", string_serialize(obj.getOriginalName()))
+                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
+                    .put("scale", int_serialize(obj.getOriginalScale()))
+                    .put("token_type", string_serialize(obj.getOriginalAssetType()))
+                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
                     .toStringOrNull();
         }
         catch(Exception e) {

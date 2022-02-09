@@ -4,49 +4,24 @@ import java.util.HashMap;
 
 public class UnknownFiat extends Fiat {
     public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
-        HashMap<String, String> additionalInfo = new HashMap<>();
-        return createUnknownFiat(key, name, display_name, scale, fiat_type, additionalInfo);
+        HashMap<String, String> additional_info = new HashMap<>();
+        return createUnknownFiat(key, name, display_name, scale, fiat_type, additional_info);
     }
 
-    public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additionalInfo) {
-        // Fields are modified to show an unknown fiat to the user.
-        String unknownKey;
-        if(key == null) {
-            unknownKey = "?";
-        }
-        else {
-            unknownKey = key;
-        }
-
-        String unknownName;
-        if(name == null) {
-            unknownName = "?UNKNOWN_FIAT?";
-        }
-        else {
-            unknownName = "?UNKNOWN_FIAT (" + name + ")?";
-        }
-
-        String unknownDisplayName;
-        if(display_name == null) {
-            unknownDisplayName = "?Unknown Fiat?";
-        }
-        else {
-            unknownDisplayName = "?Unknown Fiat (" + display_name + ")?";
-        }
-
-        String unknownFiatType;
-        if(fiat_type == null) {
-            unknownFiatType = "?";
-        }
-        else {
-            unknownFiatType = fiat_type;
-        }
-
-        return new UnknownFiat(unknownKey, unknownName, unknownDisplayName, scale, unknownFiatType, additionalInfo);
+    public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additional_info) {
+        return new UnknownFiat(key, name, display_name, scale, fiat_type, additional_info);
     }
 
-    private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additionalInfo) {
-        super(key, name, display_name, scale, fiat_type, additionalInfo);
+    private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additional_info) {
+        super(key, name, display_name, scale, fiat_type, additional_info);
+    }
+
+    @Override
+    public void modifyNames(String name, String displayName) {
+        // For now, don't add types.
+        this.name = "?UNKNOWN_FIAT? <" + name + ">";
+        this.display_name = "?UNKNOWN_FIAT? <" + displayName + ">";
+        this.combo_name = "?UNKNOWN_FIAT? <" + displayName + " (" + name + ")>";
     }
 
     public boolean isComplete() {

@@ -6,51 +6,26 @@ import java.util.HashMap;
 
 public class UnknownCoin extends Coin {
     public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, String id) {
-        HashMap<String, String> additionalInfo = new HashMap<>();
-        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+        HashMap<String, String> additional_info = new HashMap<>();
+        HashMapUtil.putValueInMap(additional_info, "coin_gecko_id", id);
 
-        return createUnknownCoin(key, name, display_name, scale, coin_type, additionalInfo);
+        return createUnknownCoin(key, name, display_name, scale, coin_type, additional_info);
     }
 
-    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additionalInfo) {
-        // Fields are modified to show an unknown coin to the user.
-        String unknownKey;
-        if(key == null) {
-            unknownKey = "?";
-        }
-        else {
-            unknownKey = key;
-        }
-
-        String unknownName;
-        if(name == null) {
-            unknownName = "?UNKNOWN_COIN?";
-        }
-        else {
-            unknownName = "?UNKNOWN_COIN (" + name + ")?";
-        }
-
-        String unknownDisplayName;
-        if(display_name == null) {
-            unknownDisplayName = "?Unknown Coin?";
-        }
-        else {
-            unknownDisplayName = "?Unknown Coin (" + display_name + ")?";
-        }
-
-        String unknownCoinType;
-        if(coin_type == null) {
-            unknownCoinType = "?";
-        }
-        else {
-            unknownCoinType = coin_type;
-        }
-
-        return new UnknownCoin(unknownKey, unknownName, unknownDisplayName, scale, unknownCoinType, additionalInfo);
+    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additional_info) {
+        return new UnknownCoin(key, name, display_name, scale, coin_type, additional_info);
     }
 
-    private UnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additionalInfo) {
-        super(key, name, display_name, scale, coin_type, additionalInfo);
+    private UnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additional_info) {
+        super(key, name, display_name, scale, coin_type, additional_info);
+    }
+
+    @Override
+    public void modifyNames(String name, String displayName) {
+        // For now, don't add types.
+        this.name = "?UNKNOWN_COIN? <" + name + ">";
+        this.display_name = "?UNKNOWN_COIN? <" + displayName + ">";
+        this.combo_name = "?UNKNOWN_COIN? <" + displayName + " (" + name + ")>";
     }
 
     public boolean isComplete() {
