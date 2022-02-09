@@ -48,12 +48,7 @@ public class KavaTokenManager extends TokenManager {
 
                 String id = "?";
 
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                Token token = new Token(name, name, name, scale, getTokenType(), additionalInfo);
+                Token token = Token.buildToken(name, name, name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                 addDownloadedToken(token);
             }
 

@@ -18,6 +18,15 @@ public class Token extends Crypto {
     public String token_type;
     public HashMap<String, String> additionalInfo;
 
+    public static Token buildToken(String key, String name, String display_name, int scale, String token_type, String id, String coin_gecko_blockchain_id) {
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", coin_gecko_blockchain_id);
+
+        return new Token(key, name, display_name, scale, token_type, additionalInfo);
+    }
+
     public Token(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additionalInfo) {
         this.original_name = name;
         this.original_display_name = display_name;

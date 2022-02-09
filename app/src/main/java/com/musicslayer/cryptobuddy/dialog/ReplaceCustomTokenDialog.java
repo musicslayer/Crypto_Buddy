@@ -30,12 +30,12 @@ public class ReplaceCustomTokenDialog extends BaseDialog {
         TextView T = findViewById(R.id.replace_custom_token_dialog_textView);
         String text = "A custom token with this ID already exists. Would you like to replace it?\n\n" +
             "Existing Token:\n" +
-            "  ID = " + oldToken.getCoinGeckoID() + "\n" + // TODO ID?
+            "  ID / Contract Address = " + oldToken.getContractAddress() + "\n" +
             "  Name = " + oldToken.getDisplayName() + "\n" +
             "  Symbol = " + oldToken.getName() + "\n" +
             "  Decimals = " + oldToken.getScale() + "\n" +
             "\nNew Token:\n" +
-            "  ID = " + newToken.getCoinGeckoID() + "\n" +
+            "  ID / Contract Address = " + newToken.getContractAddress() + "\n" +
             "  Name = " + newToken.getDisplayName() + "\n" +
             "  Symbol = " + newToken.getName() + "\n" +
             "  Decimals = " + newToken.getScale();

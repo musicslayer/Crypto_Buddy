@@ -129,20 +129,13 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         Token token = getTokenWithPrecedence(key);
 
         if(token == null) {
-            // TODO Add in additional info.
-            // TODO ID -> CONTRACT_ADDRESS
             token = lookupToken(cryptoAddress, key, name, display_name, scale, id);
 
             if(token == null || !token.isComplete()) {
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
+                token = Token.buildToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
 
                 if(!token.isComplete()) {
-                    token = UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType());
+                    token = UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                 }
             }
 
@@ -419,12 +412,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
                 int scale = json.getInt("scale");
                 String id = json.getString("id");
 
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
+                Token token = Token.buildToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                 addDownloadedToken(token);
             }
 
@@ -480,12 +468,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             String blockchain_id = Serialization.string_deserialize(o.getString("blockchain_id"));
             String token_type = Serialization.string_deserialize(o.getString("token_type"));
 
-            HashMap<String, String> additionalInfo = new HashMap<>();
-            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", blockchain_id);
-
-            return new Token(key, name, display_name, scale, token_type, additionalInfo);
+            return Token.buildToken(key, name, display_name, scale, token_type, id, blockchain_id);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

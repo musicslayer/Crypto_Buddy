@@ -99,10 +99,7 @@ public class AddCustomCoinDialog extends BaseDialog {
                     String id = "?";
 
                     Coin oldCoin = chosenCoinManager.custom_coin_map.get(key);
-
-                    HashMap<String, String> additionalInfo = new HashMap<>();
-                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                    Coin newCoin = new Coin(key, name, display_name, scale, chosenCoinManager.getCoinType(), additionalInfo);
+                    Coin newCoin = Coin.buildCoin(key, name, display_name, scale, chosenCoinManager.getCoinType(), id);
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);

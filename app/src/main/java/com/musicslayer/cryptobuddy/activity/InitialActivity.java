@@ -44,8 +44,6 @@ import java.util.Date;
 // TODO Finish the getSingleAllData Implementations.
 
 // TODO SerDer the entire token all the time.
-// TODO Merge info for Fiat/Coin/Token.
-// TODO HashMap for additional information (CoinGecko ID, BlockChainID)
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

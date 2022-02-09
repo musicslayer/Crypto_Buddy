@@ -45,12 +45,7 @@ public class WavesTokenManager extends TokenManager {
             String display_name2 = name2;
             int scale2 = tokenInfoObject.getInt("decimals");
 
-            HashMap<String, String> additionalInfo = new HashMap<>();
-            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-            Token token = new Token(id, name2, display_name2, scale2, getTokenType(), additionalInfo);
+            Token token = Token.buildToken(id, name2, display_name2, scale2, getTokenType(), id, getCoinGeckoBlockchainID());
             return token;
         }
         catch(Exception ignored) {

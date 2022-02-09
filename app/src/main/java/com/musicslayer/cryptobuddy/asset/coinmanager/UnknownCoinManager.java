@@ -43,8 +43,8 @@ public class UnknownCoinManager extends CoinManager {
     }
 
     @Override
-    // Always return unknown coins, regardless of if the information is complete.
     public Coin getCoin(String key, String name, String display_name, int scale, String id) {
-        return UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType());
+        // Always return unknown coins, regardless of if the information is complete.
+        return UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType(), id);
     }
 }

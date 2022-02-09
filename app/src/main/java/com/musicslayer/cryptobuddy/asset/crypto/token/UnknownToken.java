@@ -1,9 +1,11 @@
 package com.musicslayer.cryptobuddy.asset.crypto.token;
 
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+
 import java.util.HashMap;
 
 public class UnknownToken extends Token {
-    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type) {
+    public static UnknownToken createUnknownToken(String key, String name, String display_name, int scale, String token_type, String id, String coin_gecko_blockchain_id) {
         // Fields are modified to show an unknown token to the user.
         String unknownKey;
         if(key == null) {
@@ -37,11 +39,16 @@ public class UnknownToken extends Token {
             unknownTokenType = token_type;
         }
 
-        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, unknownTokenType);
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", coin_gecko_blockchain_id);
+
+        return new UnknownToken(unknownKey, unknownName, unknownDisplayName, scale, unknownTokenType, additionalInfo);
     }
 
-    private UnknownToken(String key, String name, String display_name, int scale, String token_type) {
-        super(key, name, display_name, scale, token_type, new HashMap<>());
+    private UnknownToken(String key, String name, String display_name, int scale, String token_type, HashMap<String, String> additionalInfo) {
+        super(key, name, display_name, scale, token_type, additionalInfo);
     }
 
     public boolean isComplete() {

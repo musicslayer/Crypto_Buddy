@@ -128,7 +128,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiat = lookupFiat(key, name, display_name, scale);
 
             if(fiat == null || !fiat.isComplete()) {
-                fiat = new Fiat(key, name, display_name, scale, getFiatType(), new HashMap<>());
+                fiat = Fiat.buildFiat(key, name, display_name, scale, getFiatType());
 
                 if(!fiat.isComplete()) {
                     fiat = UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType());
@@ -433,7 +433,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             int scale = Serialization.int_deserialize(o.getString("scale"));
             String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
 
-            return new Fiat(key, name, display_name, scale, fiat_type, new HashMap<>());
+            return Fiat.buildFiat(key, name, display_name, scale, fiat_type);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

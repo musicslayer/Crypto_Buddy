@@ -17,6 +17,11 @@ public class Fiat extends Asset {
     public String fiat_type;
     public HashMap<String, String> additionalInfo;
 
+    public static Fiat buildFiat(String key, String name, String display_name, int scale, String fiat_type) {
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        return new Fiat(key, name, display_name, scale, fiat_type, additionalInfo);
+    }
+
     public Fiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additionalInfo) {
         this.original_name = name;
         this.original_display_name = display_name;
@@ -41,8 +46,9 @@ public class Fiat extends Asset {
     public String getAssetKind() { return "!FIAT!"; }
     public HashMap<String, String> getAdditionalInfo() { return additionalInfo; }
 
-    public String getID() {
+    public String getCoinGeckoID() {
         // For now, just use lowercase symbol.
+        // We do not need to store this as additional info.
         return getName().toLowerCase();
     }
 

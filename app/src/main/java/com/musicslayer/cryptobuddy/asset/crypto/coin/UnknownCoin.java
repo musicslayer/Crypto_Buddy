@@ -1,9 +1,11 @@
 package com.musicslayer.cryptobuddy.asset.crypto.coin;
 
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+
 import java.util.HashMap;
 
 public class UnknownCoin extends Coin {
-    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type) {
+    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, String id) {
         // Fields are modified to show an unknown coin to the user.
         String unknownKey;
         if(key == null) {
@@ -37,11 +39,14 @@ public class UnknownCoin extends Coin {
             unknownCoinType = coin_type;
         }
 
-        return new UnknownCoin(unknownKey, unknownName, unknownDisplayName, scale, unknownCoinType);
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+
+        return new UnknownCoin(unknownKey, unknownName, unknownDisplayName, scale, unknownCoinType, additionalInfo);
     }
 
-    private UnknownCoin(String key, String name, String display_name, int scale, String coin_type) {
-        super(key, name, display_name, scale, coin_type, new HashMap<>());
+    private UnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additionalInfo) {
+        super(key, name, display_name, scale, coin_type, additionalInfo);
     }
 
     public boolean isComplete() {

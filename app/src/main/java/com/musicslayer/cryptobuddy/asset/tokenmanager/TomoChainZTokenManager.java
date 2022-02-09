@@ -41,12 +41,7 @@ public class TomoChainZTokenManager extends TokenManager {
             String display_name2 = tokenObj.getString("name");
             int scale2 = tokenObj.getInt("decimals");
 
-            HashMap<String, String> additionalInfo = new HashMap<>();
-            HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-            Token token = new Token(key2, name2, display_name2, scale2, getTokenType(), additionalInfo);
+            Token token = Token.buildToken(key2, name2, display_name2, scale2, getTokenType(), id, getCoinGeckoBlockchainID());
             return token;
         }
         catch(Exception ignored) {
@@ -121,12 +116,7 @@ public class TomoChainZTokenManager extends TokenManager {
                     //String key = json.getString("_id").toLowerCase();
                     String key = id;
 
-                    HashMap<String, String> additionalInfo = new HashMap<>();
-                    HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                    Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
+                    Token token = Token.buildToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                     addDownloadedToken(token);
                 }
             }

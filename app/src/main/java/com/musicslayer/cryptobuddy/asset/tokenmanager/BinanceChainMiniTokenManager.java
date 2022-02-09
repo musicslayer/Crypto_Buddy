@@ -40,12 +40,7 @@ public class BinanceChainMiniTokenManager extends TokenManager {
                 int scale = 8; // All mini tokens have scale of 8.
                 String id = "?"; // All mini tokens have no ID.
 
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                Token token = new Token(name, name, display_name, scale, getTokenType(), additionalInfo);
+                Token token = Token.buildToken(name, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                 addDownloadedToken(token);
             }
 

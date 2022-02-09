@@ -237,10 +237,10 @@ public class PriceData implements Serialization.SerializableToJSON {
     }
 
     public boolean isPriceFull() {
-        return priceHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
+        return isPriceComplete() && priceHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
     }
 
     public boolean isMarketFull() {
-        return marketCapHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
+        return isMarketCapComplete() && marketCapHashMap.keySet().containsAll(cryptoPrice.assetArrayList);
     }
 }

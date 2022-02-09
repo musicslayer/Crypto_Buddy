@@ -36,10 +36,7 @@ public class BaseCoinManager extends CoinManager {
                 int scale = json.getInt("scale");
                 String id = json.getString("id");
 
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-
-                Coin coin = new Coin(key, name, display_name, scale, getCoinType(), additionalInfo);
+                Coin coin = Coin.buildCoin(key, name, display_name, scale, getCoinType(), id);
                 addHardcodedCoin(coin);
             }
         }

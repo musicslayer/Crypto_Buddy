@@ -128,13 +128,10 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coin = lookupCoin(key, name, display_name, scale);
 
             if(coin == null || !coin.isComplete()) {
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-
-                coin = new Coin(key, name, display_name, scale, getCoinType(), additionalInfo);
+                coin = Coin.buildCoin(key, name, display_name, scale, getCoinType(), id);
 
                 if(!coin.isComplete()) {
-                    coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType());
+                    coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType(), id);
                 }
             }
 
@@ -437,10 +434,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             String id = Serialization.string_deserialize(o.getString("id"));
             String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
 
-            HashMap<String, String> additionalInfo = new HashMap<>();
-            HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-
-            return new Coin(key, name, display_name, scale, coin_type, additionalInfo);
+            return Coin.buildCoin(key, name, display_name, scale, coin_type, id);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

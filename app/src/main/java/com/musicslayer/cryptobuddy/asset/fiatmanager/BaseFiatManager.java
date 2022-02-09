@@ -34,7 +34,7 @@ public class BaseFiatManager extends FiatManager {
                 String display_name = json.getString("display_name");
                 int scale = json.getInt("scale");
 
-                Fiat fiat = new Fiat(key, name, display_name, scale, getFiatType(), new HashMap<>());
+                Fiat fiat = Fiat.buildFiat(key, name, display_name, scale, getFiatType());
                 addHardcodedFiat(fiat);
             }
         }

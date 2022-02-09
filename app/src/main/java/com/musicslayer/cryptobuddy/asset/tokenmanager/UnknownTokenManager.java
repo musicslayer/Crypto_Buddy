@@ -42,8 +42,8 @@ public class UnknownTokenManager extends TokenManager {
     }
 
     @Override
-    // Always return unknown tokens, regardless of if the information is complete.
     public Token getToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
-        return UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType());
+        // Always return unknown tokens, regardless of if the information is complete.
+        return UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
     }
 }

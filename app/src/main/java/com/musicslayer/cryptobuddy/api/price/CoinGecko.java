@@ -49,6 +49,7 @@ import java.util.HashMap;
   },
   */
 
+// TODO Allow unknown assets if they have the right info.
 
 public class CoinGecko extends PriceAPI {
     public String getName() { return "CoinGecko"; }
@@ -61,7 +62,7 @@ public class CoinGecko extends PriceAPI {
 
     public HashMap<Asset, AssetQuantity> getPrice(CryptoPrice cryptoPrice) {
         Fiat priceFiat = cryptoPrice.fiat;
-        String priceFiatName = priceFiat.getID();
+        String priceFiatName = priceFiat.getCoinGeckoID();
 
         // Separate assetArrayList into fiat, coins, and tokens.
         // Further separate tokens by blockchain.
@@ -73,18 +74,20 @@ public class CoinGecko extends PriceAPI {
             if(asset instanceof Fiat) {
                 // All Fiats can be looked up.
                 Fiat fiat = (Fiat)asset;
-                fiatArrayList.add(fiat);
+                if(fiat.isComplete() && !"?".equals(fiat.getCoinGeckoID())) {
+                    fiatArrayList.add(fiat);
+                }
             }
             else if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(!"?".equals(coin.getCoinGeckoID())) {
+                if(coin.isComplete() && !"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(!"?".equals(token.getCoinGeckoID())) {
+                if(token.isComplete() && !"?".equals(token.getCoinGeckoID())) {
                     ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();
@@ -174,7 +177,7 @@ public class CoinGecko extends PriceAPI {
         if(!fiatArrayList.isEmpty()) {
             StringBuilder fiatString = new StringBuilder();
             for(int i = 0; i < fiatArrayList.size(); i++) {
-                fiatString.append(fiatArrayList.get(i).getID());
+                fiatString.append(fiatArrayList.get(i).getCoinGeckoID());
                 fiatString.append(",");
             }
             fiatString.append(priceFiatName);
@@ -186,19 +189,22 @@ public class CoinGecko extends PriceAPI {
             if(priceDataFiatJSON != null) {
                 try {
                     JSONObject json = new JSONObject(priceDataFiatJSON);
-                    JSONObject json2 = json.getJSONObject(conversionCrypto.getCoinGeckoID());
 
-                    BigDecimal dPrice = new BigDecimal(json2.getString(priceFiatName));
+                    if(json.has(conversionCrypto.getCoinGeckoID())) {
+                        JSONObject json2 = json.getJSONObject(conversionCrypto.getCoinGeckoID());
+                        BigDecimal dPrice = new BigDecimal(json2.getString(priceFiatName));
 
-                    for(Fiat fiat : fiatArrayList) {
-                        BigDecimal dFiat = new BigDecimal(json2.getString(fiat.getID()));
+                        for(Fiat fiat : fiatArrayList) {
+                            if(!json2.has(fiat.getCoinGeckoID())) { continue; }
+                            BigDecimal dFiat = new BigDecimal(json2.getString(fiat.getCoinGeckoID()));
 
-                        AssetQuantity fiatAssetQuantity = new AssetQuantity("1", fiat);
-                        AssetPrice fiatAssetPrice = new AssetPrice(new AssetQuantity(dFiat.toPlainString(), fiat), new AssetQuantity("1", conversionCrypto));
-                        AssetPrice priceAssetPrice = new AssetPrice(new AssetQuantity(dPrice.toPlainString(), priceFiat), new AssetQuantity("1", conversionCrypto));
-                        AssetQuantity priceAssetQuantity = fiatAssetQuantity.convert(fiatAssetPrice).convert(priceAssetPrice.reverseAssetPrice());
+                            AssetQuantity fiatAssetQuantity = new AssetQuantity("1", fiat);
+                            AssetPrice fiatAssetPrice = new AssetPrice(new AssetQuantity(dFiat.toPlainString(), fiat), new AssetQuantity("1", conversionCrypto));
+                            AssetPrice priceAssetPrice = new AssetPrice(new AssetQuantity(dPrice.toPlainString(), priceFiat), new AssetQuantity("1", conversionCrypto));
+                            AssetQuantity priceAssetQuantity = fiatAssetQuantity.convert(fiatAssetPrice).convert(priceAssetPrice.reverseAssetPrice());
 
-                        priceHashMap.put(fiat, priceAssetQuantity);
+                            priceHashMap.put(fiat, priceAssetQuantity);
+                        }
                     }
                 }
                 catch(Exception e) {
@@ -216,7 +222,7 @@ public class CoinGecko extends PriceAPI {
     public HashMap<Asset, AssetQuantity> getMarketCap(CryptoPrice cryptoPrice) {
         // Note that only cryptos have a market cap. This should never be called with fiats.
         Fiat priceFiat = cryptoPrice.fiat;
-        String priceFiatName = priceFiat.getID();
+        String priceFiatName = priceFiat.getCoinGeckoID();
 
         // Separate assetArrayList into coins and tokens (there should be no fiats).
         // Further separate tokens by blockchain.
@@ -225,14 +231,14 @@ public class CoinGecko extends PriceAPI {
         for(Asset asset : cryptoPrice.assetArrayList) {
             if(asset instanceof Coin) {
                 Coin coin = (Coin)asset;
-                if(!"?".equals(coin.getCoinGeckoID())) {
+                if(coin.isComplete() && !"?".equals(coin.getCoinGeckoID())) {
                     coinArrayList.add(coin);
                 }
             }
             else if(asset instanceof Token) {
                 Token token = (Token)asset;
 
-                if(!"?".equals(token.getCoinGeckoID())) {
+                if(token.isComplete() && !"?".equals(token.getCoinGeckoID())) {
                     ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
                     if(tokenArrayList == null) {
                         tokenArrayList = new ArrayList<>();

@@ -43,12 +43,7 @@ public class ATOMTokenManager extends TokenManager {
                 String id = tokenInfo.getString("hash");
                 String key = id;
 
-                HashMap<String, String> additionalInfo = new HashMap<>();
-                HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", getCoinGeckoBlockchainID());
-
-                Token token = new Token(key, name, display_name, scale, getTokenType(), additionalInfo);
+                Token token = Token.buildToken(key, name, display_name, scale, getTokenType(), id, getCoinGeckoBlockchainID());
                 addDownloadedToken(token);
             }
 

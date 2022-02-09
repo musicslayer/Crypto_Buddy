@@ -97,12 +97,7 @@ public class AddCustomTokenDialog extends BaseDialog {
                     String id = key;
 
                     Token oldToken = chosenTokenManager.custom_token_map.get(key);
-
-                    HashMap<String, String> additionalInfo = new HashMap<>();
-                    HashMapUtil.putValueInMap(additionalInfo, "contract_address", id);
-                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
-                    HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_blockchain_id", chosenTokenManager.getCoinGeckoBlockchainID());
-                    Token newToken = new Token(key, name, display_name, scale, chosenTokenManager.getTokenType(), additionalInfo);
+                    Token newToken = Token.buildToken(key, name, display_name, scale, chosenTokenManager.getTokenType(), id, chosenTokenManager.getCoinGeckoBlockchainID());
 
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
