@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.asset.fiatmanager;
 
+import android.content.Context;
+
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 
@@ -14,6 +16,7 @@ public class UnknownFiatManager extends FiatManager {
     public String getName() { return "UnknownFiatManager"; }
     public String getFiatType() { return fiatType; }
     public String getSettingsKey() { return "?"; }
+    public void initializeHardcodedFiats(Context context) {}
 
     public static UnknownFiatManager createUnknownFiatManager(String key, String fiatType) {
         return new UnknownFiatManager(key, fiatType);

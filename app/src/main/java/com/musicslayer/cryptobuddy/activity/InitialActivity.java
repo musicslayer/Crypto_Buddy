@@ -45,6 +45,7 @@ import java.util.Date;
 
 // TODO SerDer the entire token all the time.
 // TODO Merge info for Fiat/Coin/Token.
+// TODO HashMap for additional information (CoinGecko ID, BlockChainID)
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -65,12 +66,9 @@ public class InitialActivity extends BaseActivity {
         // Purchases should be initialized first, as others may depend on this.
         Purchases.loadAllPurchases(applicationContext);
 
-        // Initialize assets here. We overwrite hardcoded assets that were loaded from before.
+        // Initialize assets here. This will also overwrite hardcoded assets that were loaded from before.
         FiatManager.initialize(applicationContext);
-        FiatManager.getDefaultFiatManager().initializeAllHardcodedFiats(applicationContext);
-
         CoinManager.initialize(applicationContext);
-        CoinManager.getDefaultCoinManager().initializeAllHardcodedCoins(applicationContext);
 
         // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
         TokenManager.initialize(applicationContext);

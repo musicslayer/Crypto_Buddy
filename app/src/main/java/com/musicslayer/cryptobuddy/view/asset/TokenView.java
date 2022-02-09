@@ -79,7 +79,7 @@ public class TokenView extends CrashLinearLayout {
             });
 
             String text = "Token Info:\n" +
-                "  ID = " + token.getID() + "\n" +
+                "  ID / Contract Address = " + token.getID() + "\n" +
                 "  Name = " + token.getDisplayName() + "\n" +
                 "  Symbol = " + token.getName() + "\n" +
                 "  Decimals = " + token.getScale();
