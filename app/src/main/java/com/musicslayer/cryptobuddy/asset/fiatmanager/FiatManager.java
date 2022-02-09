@@ -390,11 +390,10 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String getHardcodedJSON(Context context) {
-        return FileUtil.readFile(context, R.raw.asset_fiat_hardcoded);
-    }
+    public void initializeAllHardcodedFiats(Context context) {
+        resetHardcodedFiats();
+        String fiatJSON = FileUtil.readFile(context, R.raw.asset_fiat_hardcoded);
 
-    public void parseHardcoded(String fiatJSON) {
         try {
             JSONObject jsonObject = new JSONObject(fiatJSON);
             JSONArray jsonArray = jsonObject.getJSONArray("fiats");
@@ -414,6 +413,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+
+        FiatManagerList.updateFiatManager(context, this);
     }
 
     public String serializationVersion() { return "1"; }

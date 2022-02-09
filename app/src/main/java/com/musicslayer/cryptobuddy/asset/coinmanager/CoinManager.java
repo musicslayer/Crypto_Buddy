@@ -390,11 +390,10 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String getHardcodedJSON(Context context) {
-        return FileUtil.readFile(context, R.raw.asset_coin_hardcoded);
-    }
+    public void initializeAllHardcodedCoins(Context context) {
+        resetHardcodedCoins();
+        String coinJSON = FileUtil.readFile(context, R.raw.asset_coin_hardcoded);
 
-    public void parseHardcoded(String coinJSON) {
         try {
             JSONObject jsonObject = new JSONObject(coinJSON);
             JSONArray jsonArray = jsonObject.getJSONArray("coins");
@@ -415,6 +414,8 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+
+        CoinManagerList.updateCoinManager(context, this);
     }
 
     public String serializationVersion() { return "1"; }

@@ -67,18 +67,10 @@ public class InitialActivity extends BaseActivity {
 
         // Initialize assets here. We overwrite hardcoded assets that were loaded from before.
         FiatManager.initialize(applicationContext);
-        FiatManager fiatManager = FiatManager.getDefaultFiatManager();
-        fiatManager.resetHardcodedFiats();
-        String fiatJSON = fiatManager.getHardcodedJSON(applicationContext);
-        fiatManager.parseHardcoded(fiatJSON);
-        FiatManagerList.updateFiatManager(applicationContext, fiatManager);
+        FiatManager.getDefaultFiatManager().initializeAllHardcodedFiats(applicationContext);
 
         CoinManager.initialize(applicationContext);
-        CoinManager coinManager = CoinManager.getDefaultCoinManager();
-        coinManager.resetHardcodedCoins();
-        String coinJSON = coinManager.getHardcodedJSON(applicationContext);
-        coinManager.parseHardcoded(coinJSON);
-        CoinManagerList.updateCoinManager(applicationContext, coinManager);
+        CoinManager.getDefaultCoinManager().initializeAllHardcodedCoins(applicationContext);
 
         // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
         TokenManager.initialize(applicationContext);
