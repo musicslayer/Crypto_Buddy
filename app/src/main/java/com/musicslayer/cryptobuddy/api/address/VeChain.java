@@ -29,7 +29,7 @@ public class VeChain extends AddressAPI {
     public String getDisplayName() { return "VeChain Explorer API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "VET".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "VET".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

@@ -25,7 +25,7 @@ public class AlgoExplorer extends AddressAPI {
     public String getDisplayName() { return "AlgoExplorer REST API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ALGO".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "ALGO".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

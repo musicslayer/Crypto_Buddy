@@ -24,7 +24,7 @@ public class TRONSCAN extends AddressAPI {
     public String getDisplayName() { return "TRONSCAN REST API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "TRX".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "TRX".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

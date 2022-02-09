@@ -384,7 +384,7 @@ public class AddressData implements Serialization.SerializableToJSON {
 
     public String getProblem() {
         // TODO Add back in Solana Rent?
-        String cryptoName = cryptoAddress.getPrimaryCoin().getName();
+        String cryptoName = cryptoAddress.getPrimaryCoin().getKey();
         boolean isMainnet = cryptoAddress.network.isMainnet();
         String cryptoDisplayName = cryptoAddress.getPrimaryCoin().getDisplayName();
 

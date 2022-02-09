@@ -36,7 +36,7 @@ public class ExchangeProblemDialog extends BaseDialog {
         boolean isFirst = true;
 
         for(CryptoExchange cryptoExchange : cryptoExchangeArrayList) {
-            if(seenNames.contains(cryptoExchange.exchange.getName())) { continue; }
+            if(seenNames.contains(cryptoExchange.exchange.getKey())) { continue; }
 
             ExchangeData exchangeData = exchangeDataMap.get(cryptoExchange);
 
@@ -51,7 +51,7 @@ public class ExchangeProblemDialog extends BaseDialog {
                 infoText.append(info);
             }
 
-            seenNames.add(cryptoExchange.exchange.getName());
+            seenNames.add(cryptoExchange.exchange.getKey());
         }
 
         TextView T = findViewById(R.id.exchange_problem_dialog_textView);

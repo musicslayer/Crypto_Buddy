@@ -26,7 +26,7 @@ public class WavesNodes extends AddressAPI {
     public String getDisplayName() { return "WavesNodes HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "WAVES".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "WAVES".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

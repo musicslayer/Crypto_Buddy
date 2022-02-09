@@ -30,7 +30,7 @@ public class BscScan extends AddressAPI {
     public String getDisplayName() { return "BscScan & Covalent APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BNBs".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "BNBs".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

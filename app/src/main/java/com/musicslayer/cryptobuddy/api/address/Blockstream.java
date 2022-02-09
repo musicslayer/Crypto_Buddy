@@ -20,7 +20,7 @@ public class Blockstream extends AddressAPI {
     public String getDisplayName() { return "Blockstream Esplora HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BTC".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "BTC".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

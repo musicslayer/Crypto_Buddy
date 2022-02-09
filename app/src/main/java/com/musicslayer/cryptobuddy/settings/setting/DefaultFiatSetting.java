@@ -19,7 +19,7 @@ public class DefaultFiatSetting extends Setting {
 
         FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         for(Fiat fiat : fiatManager.getFiats()) {
-            optionNames.add(fiat.getDisplayName() + " (" + fiat.getName() + ")");
+            optionNames.add(fiat.getComboName());
         }
 
         return optionNames;
@@ -28,7 +28,7 @@ public class DefaultFiatSetting extends Setting {
     public String getDefaultOptionName() {
         // Assume that USD is always available.
         Fiat fiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
-        return fiat.getDisplayName() + " (" + fiat.getName() + ")";
+        return fiat.getComboName();
     }
 
     public ArrayList<String> getOptionDisplays() {
@@ -36,7 +36,7 @@ public class DefaultFiatSetting extends Setting {
 
         FiatManager fiatManager = FiatManager.getDefaultFiatManager();
         for(Fiat fiat : fiatManager.getFiats()) {
-            optionDisplays.add("Use " + fiat.getDisplayName() + " (" + fiat.getName() + ") by default.");
+            optionDisplays.add("Use " + fiat.getComboName() + " by default.");
         }
 
         return optionDisplays;

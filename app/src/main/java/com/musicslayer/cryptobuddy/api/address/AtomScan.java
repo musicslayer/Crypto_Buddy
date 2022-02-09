@@ -36,7 +36,7 @@ public class AtomScan extends AddressAPI {
     public String getDisplayName() { return "AtomScan & Cosmostation REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ATOM".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "ATOM".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

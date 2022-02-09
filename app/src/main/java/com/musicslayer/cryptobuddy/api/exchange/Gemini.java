@@ -19,7 +19,7 @@ public class Gemini extends ExchangeAPI {
     public AuthUtil.OAuthToken oAuthToken;
 
     public boolean isSupported(Exchange exchange) {
-        return "Gemini".equals(exchange.getName());
+        return "Gemini".equals(exchange.getKey());
     }
 
     private AuthUtil.OAuthInfo getOAuthInfo() {

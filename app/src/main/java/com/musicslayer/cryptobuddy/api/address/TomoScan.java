@@ -29,7 +29,7 @@ public class TomoScan extends AddressAPI {
     public String getDisplayName() { return "TomoScan API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "TOMO".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "TOMO".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

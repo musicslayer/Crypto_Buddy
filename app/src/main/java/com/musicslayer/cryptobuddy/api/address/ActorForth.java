@@ -20,7 +20,7 @@ public class ActorForth extends AddressAPI {
     public String getDisplayName() { return "ActorForth BCH REST API V2"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BCH".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "BCH".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

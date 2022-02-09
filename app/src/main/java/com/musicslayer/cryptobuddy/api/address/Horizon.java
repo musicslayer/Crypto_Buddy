@@ -54,7 +54,7 @@ public class Horizon extends AddressAPI {
     public String getDisplayName() { return "Horizon API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XLM".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "XLM".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

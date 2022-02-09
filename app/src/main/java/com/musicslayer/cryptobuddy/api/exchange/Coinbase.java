@@ -19,7 +19,7 @@ public class Coinbase extends ExchangeAPI {
     public AuthUtil.OAuthToken oAuthToken;
 
     public boolean isSupported(Exchange exchange) {
-        return "Coinbase".equals(exchange.getName());
+        return "Coinbase".equals(exchange.getKey());
     }
 
     private AuthUtil.OAuthInfo getOAuthInfo() {

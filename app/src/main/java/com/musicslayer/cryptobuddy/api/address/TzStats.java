@@ -33,7 +33,7 @@ public class TzStats extends AddressAPI {
     public String getDisplayName() { return "TzStats & Better Call Dev REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XTZ".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "XTZ".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

@@ -28,7 +28,7 @@ public class CardanoExplorer extends AddressAPI {
     public String getDisplayName() { return "Cardano Explorer API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ADA".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "ADA".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

@@ -43,7 +43,7 @@ public class Solana extends AddressAPI {
     public String getDisplayName() { return "Solana JSON RPC & Bitquery HTTP APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "SOL".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "SOL".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

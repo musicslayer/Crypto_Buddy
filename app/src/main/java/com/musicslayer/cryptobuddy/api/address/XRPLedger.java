@@ -25,7 +25,7 @@ public class XRPLedger extends AddressAPI {
     public String getDisplayName() { return "XRPLedger HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "XRP".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "XRP".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

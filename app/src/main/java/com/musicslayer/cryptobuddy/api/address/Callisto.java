@@ -29,7 +29,7 @@ public class Callisto extends AddressAPI {
     public String getDisplayName() { return "Callisto RPC API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "CLO".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "CLO".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

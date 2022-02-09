@@ -29,7 +29,7 @@ public class KavaLightClient extends AddressAPI {
     public String getDisplayName() { return "Kava Light Client RPC & Cosmostation REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "KAVA".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "KAVA".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

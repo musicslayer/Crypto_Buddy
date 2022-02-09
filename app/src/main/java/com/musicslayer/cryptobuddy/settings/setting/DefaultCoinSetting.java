@@ -19,7 +19,7 @@ public class DefaultCoinSetting extends Setting {
 
         CoinManager coinManager = CoinManager.getDefaultCoinManager();
         for(Coin coin : coinManager.getCoins()) {
-            optionNames.add(coin.getDisplayName() + " (" + coin.getName() + ")");
+            optionNames.add(coin.getComboName());
         }
 
         return optionNames;
@@ -28,7 +28,7 @@ public class DefaultCoinSetting extends Setting {
     public String getDefaultOptionName() {
         // Assume that BTC is always available.
         Coin coin = CoinManager.getDefaultCoinManager().getHardcodedCoin("BTC");
-        return coin.getDisplayName() + " (" + coin.getName() + ")";
+        return coin.getComboName();
     }
 
     public ArrayList<String> getOptionDisplays() {
@@ -36,7 +36,7 @@ public class DefaultCoinSetting extends Setting {
 
         CoinManager coinManager = CoinManager.getDefaultCoinManager();
         for(Coin coin : coinManager.getCoins()) {
-            optionDisplays.add("Use " + coin.getDisplayName() + " (" + coin.getName() + ") by default.");
+            optionDisplays.add("Use " + coin.getComboName() + " by default.");
         }
 
         return optionDisplays;

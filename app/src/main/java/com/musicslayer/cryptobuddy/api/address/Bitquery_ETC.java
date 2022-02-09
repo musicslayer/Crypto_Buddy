@@ -29,7 +29,7 @@ public class Bitquery_ETC extends AddressAPI {
     public String getDisplayName() { return "Bitquery HTTP API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ETC".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "ETC".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

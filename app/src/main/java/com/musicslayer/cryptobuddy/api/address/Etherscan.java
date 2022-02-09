@@ -34,7 +34,7 @@ public class Etherscan extends AddressAPI {
     public String getDisplayName() { return "Etherscan & Ethplorer REST APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "ETH".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "ETH".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

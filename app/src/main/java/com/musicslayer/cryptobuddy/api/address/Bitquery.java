@@ -28,7 +28,7 @@ public class Bitquery extends AddressAPI {
     public String getDisplayName() { return "Binance Chain & Bitquery HTTP APIs"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "BNBc".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "BNBc".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {

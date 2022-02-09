@@ -26,7 +26,7 @@ public class PolygonScan extends AddressAPI {
     public String getDisplayName() { return "PolygonScan REST API"; }
 
     public boolean isSupported(CryptoAddress cryptoAddress) {
-        return "MATIC".equals(cryptoAddress.getPrimaryCoin().getName());
+        return "MATIC".equals(cryptoAddress.getPrimaryCoin().getKey());
     }
 
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress) {
