@@ -123,9 +123,9 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         return tokenManager;
     }
 
-    // Try to get the token from storage, then try to look it up, then try to create it from the input information.
-    // If all of that fails, then return an UnknownToken instance.
     public Token getToken(CryptoAddress cryptoAddress, String key, String name, String display_name, int scale, String id) {
+        // Try to get the token from storage, then try to look it up, then try to create it from the input information.
+        // If all of that fails, then return an UnknownToken instance.
         Token token = getTokenWithPrecedence(key);
 
         if(token == null) {
@@ -140,6 +140,16 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             }
 
             addFoundToken(token);
+        }
+
+        return token;
+    }
+
+    public Token getExistingToken(String key, String name, String display_name, int scale, HashMap<String, String> additionalInfo) {
+        // Only return a stored token. Do not build or lookup one.
+        Token token = getTokenWithPrecedence(key);
+        if(token == null) {
+            token = UnknownToken.createUnknownToken(key, name, display_name, scale, getTokenType(), additionalInfo);
         }
 
         return token;

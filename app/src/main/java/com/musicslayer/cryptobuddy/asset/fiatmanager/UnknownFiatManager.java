@@ -47,4 +47,10 @@ public class UnknownFiatManager extends FiatManager {
         // Always return unknown fiats, regardless of if the information is complete.
         return UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType());
     }
+
+    @Override
+    public Fiat getExistingFiat(String key, String name, String display_name, int scale, HashMap<String, String> additionalInfo) {
+        // Always return unknown fiats, regardless of if the information is complete.
+        return UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType(), additionalInfo);
+    }
 }

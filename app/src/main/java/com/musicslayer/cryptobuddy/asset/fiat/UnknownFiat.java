@@ -4,6 +4,11 @@ import java.util.HashMap;
 
 public class UnknownFiat extends Fiat {
     public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        return createUnknownFiat(key, name, display_name, scale, fiat_type, additionalInfo);
+    }
+
+    public static UnknownFiat createUnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additionalInfo) {
         // Fields are modified to show an unknown fiat to the user.
         String unknownKey;
         if(key == null) {
@@ -37,11 +42,11 @@ public class UnknownFiat extends Fiat {
             unknownFiatType = fiat_type;
         }
 
-        return new UnknownFiat(unknownKey, unknownName, unknownDisplayName, scale, unknownFiatType);
+        return new UnknownFiat(unknownKey, unknownName, unknownDisplayName, scale, unknownFiatType, additionalInfo);
     }
 
-    private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type) {
-        super(key, name, display_name, scale, fiat_type, new HashMap<>());
+    private UnknownFiat(String key, String name, String display_name, int scale, String fiat_type, HashMap<String, String> additionalInfo) {
+        super(key, name, display_name, scale, fiat_type, additionalInfo);
     }
 
     public boolean isComplete() {

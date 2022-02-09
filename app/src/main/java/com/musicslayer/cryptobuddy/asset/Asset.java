@@ -18,6 +18,8 @@ import java.util.HashMap;
 abstract public class Asset implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        // Within the app, we can just store the key so we can lookup the asset.
+        // We don't need to write full info.
         out.writeString(getAssetKind());
         out.writeString(getAssetType());
         out.writeString(getKey());
@@ -109,15 +111,19 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         Collections.sort(assetArrayList, (a, b) -> compare(a, b));
     }
 
-    public String serializationVersion() { return "2"; }
+    public String serializationVersion() { return "3"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
+        // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
         return new Serialization.JSONObjectWithNull()
-            .put("assetKind", Serialization.string_serialize(getAssetKind()))
-            .put("assetType", Serialization.string_serialize(getAssetType()))
-            .put("key", Serialization.string_serialize(getKey()))
-            .toStringOrNull();
+                .put("assetKind", Serialization.string_serialize(getAssetKind()))
+                .put("key", Serialization.string_serialize(getKey()))
+                .put("name", Serialization.string_serialize(getName()))
+                .put("displayName", Serialization.string_serialize(getDisplayName()))
+                .put("scale", Serialization.int_serialize(getScale()))
+                .put("assetType", Serialization.string_serialize(getAssetType()))
+                .put("additionalInfo", Serialization.string_serializeHashMap(getAdditionalInfo()))
+                .toStringOrNull();
     }
 
     public static Asset deserializeFromJSON1(String s) throws org.json.JSONException {
@@ -163,5 +169,31 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         }
     }
 
+    public static Asset deserializeFromJSON3(String s) throws org.json.JSONException {
+        // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        String assetKind = Serialization.string_deserialize(o.getString("assetKind"));
+        String key = Serialization.string_deserialize(o.getString("key"));
+        String name = Serialization.string_deserialize(o.getString("name"));
+        String displayName = Serialization.string_deserialize(o.getString("displayName"));
+        int scale = Serialization.int_deserialize(o.getString("scale"));
+        String assetType = Serialization.string_deserialize(o.getString("assetType"));
+        HashMap<String, String> additionalInfo = Serialization.string_deserializeHashMap(o.getString("additionalInfo"));
+        return getAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
+    }
 
+    public static Asset getAsset(String assetKind, String key, String name, String displayName, int scale, String assetType, HashMap<String, String> additionalInfo) {
+        if("!FIAT!".equals(assetKind)) {
+            return FiatManager.getFiatManagerFromFiatType(assetType).getExistingFiat(key, name, displayName, scale, additionalInfo);
+        }
+        else if("!COIN!".equals(assetKind)) {
+            return CoinManager.getCoinManagerFromCoinType(assetType).getExistingCoin(key, name, displayName, scale, additionalInfo);
+        }
+        else if("!TOKEN!".equals(assetKind)) {
+            return TokenManager.getTokenManagerFromTokenType(assetType).getExistingToken(key, name, displayName, scale, additionalInfo);
+        }
+        else {
+            return null;
+        }
+    }
 }

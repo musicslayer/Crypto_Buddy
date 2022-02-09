@@ -119,9 +119,9 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return coinManager;
     }
 
-    // Try to get the coin from storage, then try to look it up, then try to create it from the input information.
-    // If all of that fails, then return an UnknownCoin instance.
     public Coin getCoin(String key, String name, String display_name, int scale, String id) {
+        // Try to get the coin from storage, then try to look it up, then try to create it from the input information.
+        // If all of that fails, then return an UnknownCoin instance.
         Coin coin = getCoinWithPrecedence(key);
 
         if(coin == null) {
@@ -136,6 +136,16 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             }
 
             addFoundCoin(coin);
+        }
+
+        return coin;
+    }
+
+    public Coin getExistingCoin(String key, String name, String display_name, int scale, HashMap<String, String> additionalInfo) {
+        // Only return a stored coin. Do not build or lookup one.
+        Coin coin = getCoinWithPrecedence(key);
+        if(coin == null) {
+            coin = UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType(), additionalInfo);
         }
 
         return coin;

@@ -6,6 +6,13 @@ import java.util.HashMap;
 
 public class UnknownCoin extends Coin {
     public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, String id) {
+        HashMap<String, String> additionalInfo = new HashMap<>();
+        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
+
+        return createUnknownCoin(key, name, display_name, scale, coin_type, additionalInfo);
+    }
+
+    public static UnknownCoin createUnknownCoin(String key, String name, String display_name, int scale, String coin_type, HashMap<String, String> additionalInfo) {
         // Fields are modified to show an unknown coin to the user.
         String unknownKey;
         if(key == null) {
@@ -38,9 +45,6 @@ public class UnknownCoin extends Coin {
         else {
             unknownCoinType = coin_type;
         }
-
-        HashMap<String, String> additionalInfo = new HashMap<>();
-        HashMapUtil.putValueInMap(additionalInfo, "coin_gecko_id", id);
 
         return new UnknownCoin(unknownKey, unknownName, unknownDisplayName, scale, unknownCoinType, additionalInfo);
     }

@@ -119,9 +119,9 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return fiatManager;
     }
 
-    // Try to get the fiat from storage, then try to look it up, then try to create it from the input information.
-    // If all of that fails, then return an UnknownFiat instance.
     public Fiat getFiat(String key, String name, String display_name, int scale) {
+        // Try to get the fiat from storage, then try to look it up, then try to create it from the input information.
+        // If all of that fails, then return an UnknownFiat instance.
         Fiat fiat = getFiatWithPrecedence(key);
 
         if(fiat == null) {
@@ -136,6 +136,16 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             }
 
             addFoundFiat(fiat);
+        }
+
+        return fiat;
+    }
+
+    public Fiat getExistingFiat(String key, String name, String display_name, int scale, HashMap<String, String> additionalInfo) {
+        // Only return a stored fiat. Do not build or lookup one.
+        Fiat fiat = getFiatWithPrecedence(key);
+        if(fiat == null) {
+            fiat = UnknownFiat.createUnknownFiat(key, name, display_name, scale, getFiatType(), additionalInfo);
         }
 
         return fiat;

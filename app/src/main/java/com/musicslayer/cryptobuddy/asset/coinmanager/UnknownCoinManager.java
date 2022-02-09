@@ -47,4 +47,10 @@ public class UnknownCoinManager extends CoinManager {
         // Always return unknown coins, regardless of if the information is complete.
         return UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType(), id);
     }
+
+    @Override
+    public Coin getExistingCoin(String key, String name, String display_name, int scale, HashMap<String, String> additionalInfo) {
+        // Always return unknown coins, regardless of if the information is complete.
+        return UnknownCoin.createUnknownCoin(key, name, display_name, scale, getCoinType(), additionalInfo);
+    }
 }
