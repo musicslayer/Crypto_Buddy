@@ -7,7 +7,6 @@ import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
 public class ConfirmDeleteAllExchangePortfoliosDialog extends BaseDialog {
@@ -19,21 +18,12 @@ public class ConfirmDeleteAllExchangePortfoliosDialog extends BaseDialog {
         return R.id.confirm_delete_all_exchange_portfolios_dialog;
     }
 
-    @Override
-    public void showImpl() {
-        super.showImpl();
-
-        // Early return if confirmations are off.
-        if("None".equals(ConfirmationSetting.value)) {
-            isComplete = true;
-            dismiss();
-        }
-    }
-
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_confirm_delete_all_exchange_portfolios);
 
         ConfirmationView C = findViewById(R.id.confirm_delete_all_exchange_portfolios_dialog_confirmationView);
+        C.setNumDigits(8);
+        C.setStrict(true);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {

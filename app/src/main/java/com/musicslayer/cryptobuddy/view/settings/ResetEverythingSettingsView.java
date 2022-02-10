@@ -32,7 +32,7 @@ public class ResetEverythingSettingsView extends SettingsView {
 
         final TextView T_Reset=new TextView(context);
         T_Reset.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        T_Reset.setText("RESET EVERYTHING!\nApp will be like a new install. Purchase data will be temporarily reset, but will restore itself automatically shortly after restarting the app.\n(This always requires a confirmation code.)");
+        T_Reset.setText("RESET EVERYTHING!\nApp will be like a new install. Purchase data will be temporarily reset, but will restore itself automatically shortly after restarting the app.");
 
         BaseDialogFragment confirmResetEverythingDialogFragment = BaseDialogFragment.newInstance(ConfirmResetEverythingDialog.class);
         confirmResetEverythingDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {

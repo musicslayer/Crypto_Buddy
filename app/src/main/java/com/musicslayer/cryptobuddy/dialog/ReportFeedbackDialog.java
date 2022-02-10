@@ -89,7 +89,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
                 if(checkBox_install.isChecked()) {
                     try {
-                        fileArrayList.add(FileUtil.writeFile(activity, DataDumpUtil.getAllData(activity)));
+                        fileArrayList.add(FileUtil.writeTempFile(activity, DataDumpUtil.getAllData(activity)));
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);
@@ -99,7 +99,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
                 if(checkBox_info.isChecked()) {
                     try {
-                        fileArrayList.add(FileUtil.writeFile(activity, getInfo()));
+                        fileArrayList.add(FileUtil.writeTempFile(activity, getInfo()));
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);

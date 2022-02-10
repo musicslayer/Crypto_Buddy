@@ -29,9 +29,11 @@ public class ConfirmDeleteCoinsDialog extends BaseDialog {
         super.showImpl();
 
         // Early return if confirmations are off.
-        if("None".equals(ConfirmationSetting.value)) {
-            isComplete = true;
-            dismiss();
+        if(!"All".equals(coinType)) {
+            if("None".equals(ConfirmationSetting.value)) {
+                isComplete = true;
+                dismiss();
+            }
         }
     }
 
@@ -42,6 +44,10 @@ public class ConfirmDeleteCoinsDialog extends BaseDialog {
         toolbar.setTitle("Delete " + coinType + " Coins?");
 
         ConfirmationView C = findViewById(R.id.confirm_delete_coins_dialog_confirmationView);
+        if("All".equals(coinType)) {
+            C.setNumDigits(8);
+            C.setStrict(true);
+        }
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {

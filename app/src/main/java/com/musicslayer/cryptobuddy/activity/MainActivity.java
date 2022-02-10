@@ -227,6 +227,20 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        Button bDataManagement = findViewById(R.id.main_dataManagementButton);
+        bDataManagement.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                if(Purchases.isUnlockDataManagementPurchased()) {
+                    startActivity(new Intent(MainActivity.this, DataManagementActivity.class));
+                    finish();
+                }
+                else {
+                    ToastUtil.showToast(MainActivity.this,"unlock_data_management_required");
+                }
+            }
+        });
+
         Button B_FiatManager = findViewById(R.id.main_fiatManagerButton);
         B_FiatManager.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
@@ -334,18 +348,21 @@ public class MainActivity extends BaseActivity {
         Button B_EXCHANGE_EXPLORER = findViewById(R.id.main_exchangeExplorerButton);
         Button B_EXCHANGE_PORTFOLIO = findViewById(R.id.main_exchangePortfolioViewerButton);
         Button B_ReflectionsCalculator = findViewById(R.id.main_reflectionsCalculatorButton);
+        Button bDataManagement = findViewById(R.id.main_dataManagementButton);
 
         if(Purchases.isUnlockPremiumFeaturesPurchased()) {
             B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_api_24, 0, 0, 0);
             B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_forward_24, 0, 0, 0);
             B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B_ReflectionsCalculator.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_price_change_24, 0, 0, 0);
+            bDataManagement.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_data_object_24, 0, 0, 0);
         }
         else {
             B_TokenManager.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
             B_EXCHANGE_EXPLORER.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
             B_EXCHANGE_PORTFOLIO.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
             B_ReflectionsCalculator.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
+            bDataManagement.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_lock_24, 0, 0, 0);
         }
     }
 

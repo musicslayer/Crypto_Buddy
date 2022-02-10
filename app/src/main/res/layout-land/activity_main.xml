@@ -136,6 +136,13 @@
                 android:text="In-app\nPurchases"
                 app:drawableLeftCompat="@drawable/ic_baseline_key_24" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_dataManagementButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data\nManagement"
+                app:drawableLeftCompat="@drawable/ic_baseline_data_object_24" />
+
         </TableRow>
 
         <TableRow

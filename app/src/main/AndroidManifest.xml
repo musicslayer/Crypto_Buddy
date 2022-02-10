@@ -56,6 +56,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CoinManagerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.DataManagementActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangeExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangePortfolioExplorerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangePortfolioViewerActivity" android:screenOrientation="locked"/>

@@ -29,9 +29,11 @@ public class ConfirmDeleteFiatsDialog extends BaseDialog {
         super.showImpl();
 
         // Early return if confirmations are off.
-        if("None".equals(ConfirmationSetting.value)) {
-            isComplete = true;
-            dismiss();
+        if(!"All".equals(fiatType)) {
+            if("None".equals(ConfirmationSetting.value)) {
+                isComplete = true;
+                dismiss();
+            }
         }
     }
 
@@ -42,6 +44,10 @@ public class ConfirmDeleteFiatsDialog extends BaseDialog {
         toolbar.setTitle("Delete " + fiatType + " Fiats?");
 
         ConfirmationView C = findViewById(R.id.confirm_delete_fiats_dialog_confirmationView);
+        if("All".equals(fiatType)) {
+            C.setNumDigits(8);
+            C.setStrict(true);
+        }
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
             @Override
             public void onConfirmation(ConfirmationView confirmationView) {

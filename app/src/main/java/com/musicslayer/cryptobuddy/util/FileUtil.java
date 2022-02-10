@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
+import android.os.Environment;
 
 import com.musicslayer.cryptobuddy.app.App;
 
@@ -64,10 +65,29 @@ public class FileUtil {
         return stringArrayList;
     }
 
-    public static File writeFile(Context context, String s) {
+    public static File writeTempFile(Context context, String s) {
         // Returns a tempfile with the String written to it.
         File file;
         try {
+            file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", new File(App.cacheDir));
+            FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
+        }
+        catch(Exception e) { // Catch everything!
+            ThrowableUtil.processThrowable(e);
+
+            // This class may be used by CrashReporterDialog, so just return null instead of throwing something.
+            file = null;
+        }
+
+        return file;
+    }
+
+    public static File writeExternalFile(Context context, String name, String s) {
+        // TODO Unfinished
+        // Returns an external file with the String written to it.
+        File file;
+        try {
+            String externalFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
             file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", new File(App.cacheDir));
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }

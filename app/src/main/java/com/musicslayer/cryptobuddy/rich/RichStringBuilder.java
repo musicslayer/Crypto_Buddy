@@ -34,7 +34,7 @@ public class RichStringBuilder {
                 String lossSetting = LossValuesSetting.value;
                 if((assetQuantity.assetAmount.isLoss || assetQuantity.assetAmount.amount.compareTo(BigDecimal.ZERO) < 0) && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
                     // Make the string red.
-                    str = "<font color=#ff0000>" + str + "</font>";
+                    str = redText(str);
                 }
                 // else, just use the default color, so that it matches the theme.
             }
@@ -73,6 +73,10 @@ public class RichStringBuilder {
         str = str.replace("\n", "<br/>"); // Don't bother with \r here.
         str = str.replace(" ", "&nbsp;");
         return str;
+    }
+
+    public static String redText(String str) {
+        return "<font color=#ff0000>" + str + "</font>";
     }
 
     @NonNull

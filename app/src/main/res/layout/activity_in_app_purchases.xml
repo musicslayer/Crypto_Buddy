@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Unlock all premium features. Currently includes:\n  Tokens\n  Exchange Integration\n  Reflections Calculator" />
+                android:text="Unlock all premium features. Currently includes:\n  Tokens\n  Exchange Integration\n  Reflections Calculator\n  Data Management" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/in_app_purchases_unlockPremiumFeaturesButton"

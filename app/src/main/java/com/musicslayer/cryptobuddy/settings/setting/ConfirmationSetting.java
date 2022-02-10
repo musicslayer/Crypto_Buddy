@@ -26,8 +26,8 @@ public class ConfirmationSetting extends Setting {
     public ArrayList<String> getOptionDisplays() {
         ArrayList<String> optionDisplays = new ArrayList<>();
         optionDisplays.add("Confirm deletes and resets with a small input code to help prevent accidental removals.");
-        optionDisplays.add("Confirm deletes and resets with a dialog to help prevent accidental removals.");
-        optionDisplays.add("Do not use any additional confirmations for deletes and resets.\n** Not Recommended **");
+        optionDisplays.add("Confirm deletes and resets with a dialog to help prevent accidental removals.\n(\"Reset Data\" always requires confirmation.)");
+        optionDisplays.add("Do not use any additional confirmations for deletes and resets.\n(\"Reset Data\" always requires confirmation.)\n** Not Recommended **");
         return optionDisplays;
     }
 
