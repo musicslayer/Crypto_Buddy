@@ -92,7 +92,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, TransactionPortfolio.getFromName(TransactionPortfolioViewerActivity.this, currentDeletePortfolioName));
+                    TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, currentDeletePortfolioName);
                     updateLayout();
                 }
             }

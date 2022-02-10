@@ -64,10 +64,9 @@ public class TransactionPortfolio {
         editor.apply();
     }
 
-    // TODO Can we just pass in the name?
-    public static void removePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
+    public static void removePortfolio(Context context, String transactionPortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
-        int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObj.name);
+        int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObjName);
         settings_transaction_portfolio_names.remove(idx);
 
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);

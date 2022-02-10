@@ -92,7 +92,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    ExchangePortfolio.removePortfolio(ExchangePortfolioViewerActivity.this, ExchangePortfolio.getFromName(ExchangePortfolioViewerActivity.this, currentDeletePortfolioName));
+                    ExchangePortfolio.removePortfolio(ExchangePortfolioViewerActivity.this, currentDeletePortfolioName);
                     updateLayout();
                 }
             }

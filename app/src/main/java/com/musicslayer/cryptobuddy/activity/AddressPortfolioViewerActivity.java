@@ -92,7 +92,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, AddressPortfolio.getFromName(AddressPortfolioViewerActivity.this, currentDeletePortfolioName));
+                    AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, currentDeletePortfolioName);
                     updateLayout();
                 }
             }
