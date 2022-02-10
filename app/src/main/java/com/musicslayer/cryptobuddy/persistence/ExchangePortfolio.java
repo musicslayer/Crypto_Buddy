@@ -37,14 +37,28 @@ public class ExchangePortfolio {
 
     public static void loadAllData(Context context) {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
-        // TODO People who used the app before won't have names saved.
         settings_exchange_portfolio_names = new ArrayList<>();
 
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         int size = settings.getInt("exchange_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
-            String name = settings.getString("exchange_portfolio_names" + i, DEFAULT);
+            String name;
+            if(settings.contains("exchange_portfolio_names" + i)) {
+                name = settings.getString("exchange_portfolio_names" + i, DEFAULT);
+            }
+            else {
+                // Older installations won't have the name saved.
+                // TODO To Remove!
+                String serialString = settings.getString("exchange_portfolio" + i, DEFAULT);
+                ExchangePortfolioObj exchangePortfolioObj = Serialization.deserialize(serialString, ExchangePortfolioObj.class);
+                name = exchangePortfolioObj.name;
+
+                // Save the name now so this never has to be done again.
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("exchange_portfolio_names" + i, name);
+                editor.apply();
+            }
             settings_exchange_portfolio_names.add(name);
         }
     }

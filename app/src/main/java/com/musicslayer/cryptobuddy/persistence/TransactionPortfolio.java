@@ -37,14 +37,28 @@ public class TransactionPortfolio {
 
     public static void loadAllData(Context context) {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
-        // TODO People who used the app before won't have names saved.
         settings_transaction_portfolio_names = new ArrayList<>();
 
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         int size = settings.getInt("transaction_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
-            String name = settings.getString("transaction_portfolio_names" + i, DEFAULT);
+            String name;
+            if(settings.contains("transaction_portfolio_names" + i)) {
+                name = settings.getString("transaction_portfolio_names" + i, DEFAULT);
+            }
+            else {
+                // Older installations won't have the name saved.
+                // TODO To Remove!
+                String serialString = settings.getString("transaction_portfolio" + i, DEFAULT);
+                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
+                name = transactionPortfolioObj.name;
+
+                // Save the name now so this never has to be done again.
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("transaction_portfolio_names" + i, name);
+                editor.apply();
+            }
             settings_transaction_portfolio_names.add(name);
         }
     }
