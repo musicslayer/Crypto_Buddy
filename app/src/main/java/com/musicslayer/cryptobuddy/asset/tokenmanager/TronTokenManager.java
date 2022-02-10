@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -10,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 
 // The "key" of a TRC10 token is a unique number. The regular name may not be unique.
 public class TronTokenManager extends TokenManager {

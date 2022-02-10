@@ -82,8 +82,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         tokenManagers_token_type_map = new HashMap<>();
         tokenManagers_token_types = new ArrayList<>();
 
-        TokenManagerList.initializeRawArray();
-
         tokenManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);

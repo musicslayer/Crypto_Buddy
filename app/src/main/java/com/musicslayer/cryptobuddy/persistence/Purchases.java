@@ -7,8 +7,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 
-import java.util.HashMap;
-
 public class Purchases {
     private final static boolean DEFAULT_isRemoveAdsPurchased = false;
     private static boolean isRemoveAdsPurchased;
@@ -18,6 +16,10 @@ public class Purchases {
 
     private final static int DEFAULT_totalSupportAmount = 0;
     private static int totalSupportAmount; // In Cents
+
+    public static String getSharedPreferencesKey() {
+        return "purchases_data";
+    }
 
     public static boolean isRemoveAdsPurchased() {
         return isRemoveAdsPurchased;
@@ -48,7 +50,7 @@ public class Purchases {
     }
 
     public static void updatePurchase(Context context, String sku, boolean isPurchased) {
-        SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         switch(sku) {
@@ -98,18 +100,10 @@ public class Purchases {
     }
 
     public static void loadAllPurchases(Context context) {
-        SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         isRemoveAdsPurchased = settings.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
         isUnlockPremiumFeaturesPurchased = settings.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);
         totalSupportAmount = settings.getInt("purchases_total_support_amount", DEFAULT_totalSupportAmount);
-    }
-
-    public static HashMap<String, String> getAllData() {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("isRemoveAdsPurchased", Boolean.toString(isRemoveAdsPurchased));
-        hashMap.put("isUnlockPremiumFeaturesPurchased", Boolean.toString(isUnlockPremiumFeaturesPurchased));
-        hashMap.put("totalSupportAmount", Integer.toString(totalSupportAmount));
-        return hashMap;
     }
 
     public static void resetAllData(Context context) {
@@ -117,7 +111,7 @@ public class Purchases {
         isUnlockPremiumFeaturesPurchased = DEFAULT_isUnlockPremiumFeaturesPurchased;
         totalSupportAmount = DEFAULT_totalSupportAmount;
 
-        SharedPreferences settings = context.getSharedPreferences("purchases_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();

@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class AddressPortfolio {
@@ -16,6 +14,10 @@ public class AddressPortfolio {
     public final static String DEFAULT = "null";
 
     public static ArrayList<String> settings_address_portfolio_names = new ArrayList<>();
+
+    public static String getSharedPreferencesKey() {
+        return "address_portfolio_data";
+    }
 
     public static boolean isSaved(String name) {
         return settings_address_portfolio_names.contains(name);
@@ -28,7 +30,7 @@ public class AddressPortfolio {
 
         int idx = settings_address_portfolio_names.indexOf(name);
 
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         String serialString = settings.getString("address_portfolio" + idx, DEFAULT);
         return Serialization.deserialize(serialString, AddressPortfolioObj.class);
     }
@@ -38,7 +40,7 @@ public class AddressPortfolio {
         // TODO People who used the app before won't have names saved.
         settings_address_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         int size = settings.getInt("address_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
@@ -51,7 +53,7 @@ public class AddressPortfolio {
         // Add this portfolio to the end and save data.
         settings_address_portfolio_names.add(addressPortfolioObj.name);
 
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         int size = settings_address_portfolio_names.size();
@@ -68,7 +70,7 @@ public class AddressPortfolio {
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
         settings_address_portfolio_names.remove(idx);
 
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         int size = settings.getInt("address_portfolio_size", 0);
@@ -92,7 +94,7 @@ public class AddressPortfolio {
     }
 
     public static void updatePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         // We only need to update the portfolio object because the name can never change.
@@ -102,40 +104,10 @@ public class AddressPortfolio {
         editor.apply();
     }
 
-    public static HashMap<String, String> getAllData() {
-        HashMap<String, String> hashMap = new HashMap<>();
-
-        // TODO
-        /*
-        for(int key : settings_address_portfolio_raw.keySet()) {
-            if(key == -1) {
-                hashMap.put("SIZE", settings_address_portfolio_raw.get(key));
-            }
-            else {
-                hashMap.put("RAW" + key, settings_address_portfolio_raw.get(key));
-            }
-        }
-
-        // We want the raw data even if this next piece errors.
-        try {
-            for(int i = 0; i < settings_address_portfolio.size(); i++) {
-                AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
-                hashMap.put("OBJ" + i, Serialization.serialize(addressPortfolioObj));
-            }
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-        }
-
-         */
-
-        return hashMap;
-    }
-
     public static void resetAllData(Context context) {
         settings_address_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();

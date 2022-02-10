@@ -2,14 +2,11 @@ package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 // mainnet: https://dex.binance.org/api/v1/tokens
 // testnet: https://testnet-dex.binance.org/api/v1/tokens (We don't support testnet tokens currently)

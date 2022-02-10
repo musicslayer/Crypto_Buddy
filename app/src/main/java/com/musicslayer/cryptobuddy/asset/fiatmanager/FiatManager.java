@@ -72,8 +72,6 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         fiatManagers_fiat_type_map = new HashMap<>();
         fiatManagers_fiat_types = new ArrayList<>();
 
-        FiatManagerList.initializeRawArray();
-
         fiatManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_fiatmanager);
         for(String fiatManagerName : fiatManagers_names) {
             FiatManager fiatManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiatmanager." + fiatManagerName);

@@ -19,7 +19,6 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;

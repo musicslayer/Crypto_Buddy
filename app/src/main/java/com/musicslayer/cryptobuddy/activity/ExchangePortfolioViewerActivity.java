@@ -108,8 +108,8 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(ExchangePortfolioViewerActivity.this, ExchangePortfolioExplorerActivity.class);
                     intent.putExtra("ExchangePortfolioName",  exchangePortfolioObjName);
-                    startActivity(intent);
 
+                    startActivity(intent);
                     finish();
                 }
             });

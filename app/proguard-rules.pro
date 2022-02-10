@@ -21,9 +21,6 @@
     public static *** deserializeFromJSON*(...);
 }
 -keepclassmembers class * {
-    public static *** getAllData(...);
-}
--keepclassmembers class * {
     public static *** resetAllData(...);
 }
 

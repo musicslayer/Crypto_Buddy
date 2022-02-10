@@ -31,7 +31,6 @@ import com.musicslayer.cryptobuddy.dialog.RemoveAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;

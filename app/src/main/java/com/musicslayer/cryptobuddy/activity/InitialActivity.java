@@ -41,8 +41,6 @@ import java.util.Date;
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
-// TODO When will portfolios be deserialized.
-
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {

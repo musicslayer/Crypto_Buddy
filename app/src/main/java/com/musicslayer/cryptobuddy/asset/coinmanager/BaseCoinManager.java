@@ -6,13 +6,10 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 public class BaseCoinManager extends CoinManager {
     public String getKey() { return "BaseCoinManager"; }

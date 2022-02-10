@@ -1,12 +1,16 @@
 package com.musicslayer.cryptobuddy.persistence;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 // Methods to quickly manipulate all persistent app data on a user's device.
 public class Persistence {
@@ -27,18 +31,20 @@ public class Persistence {
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }
 
-    public static HashMap<String, HashMap<String, String>> getAllData() {
+    public static HashMap<String, HashMap<String, String>> getAllData(Context context) {
         // Return a representation of all the persistent data stored in the app.
         HashMap<String, HashMap<String, String>> allDataMap = new HashMap<>();
 
         // Individually, try to add each piece of data.
-        ArrayList<String> keys = new ArrayList<>(persistentClassMap.keySet());
-        for(String key : keys) {
+        for(String clazzString : new ArrayList<>(persistentClassMap.keySet())) {
             try {
-                Class<?> value = persistentClassMap.get(key);
-                if(value == null) { throw new NullPointerException(); }
+                Class<?> clazz = persistentClassMap.get(clazzString);
+                if(clazz == null) { throw new NullPointerException(); }
 
-                allDataMap.put(key, ReflectUtil.callStaticMethod(value, "getAllData"));
+                String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
+                HashMap<String, String> value = getDataMap(context, key);
+
+                allDataMap.put(key, value);
             }
             catch(Exception e) {
                 try {
@@ -46,13 +52,13 @@ public class Persistence {
                     // If this code errors, then just give up!
                     HashMap<String, String> noInfoMap = new HashMap<>();
                     noInfoMap.put("!ERROR!", "!NO_INFO!");
-                    allDataMap.put(key, noInfoMap);
+                    allDataMap.put(clazzString, noInfoMap);
 
                     ThrowableUtil.processThrowable(e);
 
                     HashMap<String, String> errorMap = new HashMap<>();
                     errorMap.put("!ERROR!", ThrowableUtil.getThrowableText(e));
-                    allDataMap.put(key, errorMap);
+                    allDataMap.put(clazzString, errorMap);
                 }
                 catch(Exception ignored) {
                 }
@@ -60,6 +66,21 @@ public class Persistence {
         }
 
         return allDataMap;
+    }
+
+    public static HashMap<String, String> getDataMap(Context context, String name) {
+        // Get all data inside a SharedPreferences instance.
+        HashMap<String, String> hashMap = new HashMap<>();
+
+        SharedPreferences settings = context.getSharedPreferences(name, MODE_PRIVATE);
+        Map<String, ?> settingsMap = settings.getAll();
+        for(String key : settingsMap.keySet()) {
+            Object value = settingsMap.get(key);
+            String valueString = value == null ? "null" : value.toString();
+            hashMap.put(key, valueString);
+        }
+
+        return hashMap;
     }
 
     public static boolean resetAllData(Context context) {

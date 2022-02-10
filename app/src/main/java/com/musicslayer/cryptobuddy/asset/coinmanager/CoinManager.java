@@ -72,8 +72,6 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         coinManagers_coin_type_map = new HashMap<>();
         coinManagers_coin_types = new ArrayList<>();
 
-        CoinManagerList.initializeRawArray();
-
         coinManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_coinmanager);
         for(String coinManagerName : coinManagers_names) {
             CoinManager coinManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.coinmanager." + coinManagerName);

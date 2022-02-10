@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -15,6 +14,10 @@ public class TransactionPortfolio {
     public final static String DEFAULT = "null";
 
     public static ArrayList<String> settings_transaction_portfolio_names = new ArrayList<>();
+
+    public static String getSharedPreferencesKey() {
+        return "transaction_portfolio_data";
+    }
 
     public static boolean isSaved(String name) {
         return settings_transaction_portfolio_names.contains(name);
@@ -27,7 +30,7 @@ public class TransactionPortfolio {
 
         int idx = settings_transaction_portfolio_names.indexOf(name);
 
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         String serialString = settings.getString("transaction_portfolio" + idx, DEFAULT);
         return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
     }
@@ -37,7 +40,7 @@ public class TransactionPortfolio {
         // TODO People who used the app before won't have names saved.
         settings_transaction_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         int size = settings.getInt("transaction_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
@@ -50,7 +53,7 @@ public class TransactionPortfolio {
         // Add this portfolio to the end and save data.
         settings_transaction_portfolio_names.add(transactionPortfolioObj.name);
 
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         int size = settings_transaction_portfolio_names.size();
@@ -67,7 +70,7 @@ public class TransactionPortfolio {
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObj.name);
         settings_transaction_portfolio_names.remove(idx);
 
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         int size = settings.getInt("transaction_portfolio_size", 0);
@@ -91,7 +94,7 @@ public class TransactionPortfolio {
     }
 
     public static void updatePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         // We only need to update the portfolio object because the name can never change.
@@ -101,42 +104,10 @@ public class TransactionPortfolio {
         editor.apply();
     }
 
-    public static HashMap<String, String> getAllData() {
-        HashMap<String, String> hashMap = new HashMap<>();
-
-        // TODO
-        /*
-        for(int key : settings_transaction_portfolio_raw.keySet()) {
-            if(key == -1) {
-                hashMap.put("SIZE", settings_transaction_portfolio_raw.get(key));
-            }
-            else {
-                hashMap.put("RAW" + key, settings_transaction_portfolio_raw.get(key));
-            }
-        }
-
-        hashMap.put("SIZE", settings_transaction_portfolio_raw.get(key));
-
-        // We want the raw data even if this next piece errors.
-        try {
-            for(int i = 0; i < settings_transaction_portfolio.size(); i++) {
-                TransactionPortfolioObj transactionPortfolioObj = settings_transaction_portfolio.get(i);
-                hashMap.put("OBJ" + i, Serialization.serialize(transactionPortfolioObj));
-            }
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-        }
-
-         */
-
-        return hashMap;
-    }
-
     public static void resetAllData(Context context) {
         settings_transaction_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences("transaction_portfolio_data", MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.clear();

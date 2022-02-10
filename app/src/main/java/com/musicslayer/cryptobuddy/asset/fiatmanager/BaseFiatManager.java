@@ -11,8 +11,6 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
 public class BaseFiatManager extends FiatManager {
     public String getKey() { return "BaseFiatManager"; }
     public String getName() { return "BaseFiatManager"; }

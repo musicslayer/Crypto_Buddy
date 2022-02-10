@@ -108,8 +108,8 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
                     intent.putExtra("AddressPortfolioName",  addressPortfolioObjName);
-                    startActivity(intent);
 
+                    startActivity(intent);
                     finish();
                 }
             });

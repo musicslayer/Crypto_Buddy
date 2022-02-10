@@ -4,13 +4,10 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Stagenet;
 import com.musicslayer.cryptobuddy.asset.network.WAVES_Testnet;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 public class WavesTokenManager extends TokenManager {
     public String getKey() { return "WavesTokenManager"; }

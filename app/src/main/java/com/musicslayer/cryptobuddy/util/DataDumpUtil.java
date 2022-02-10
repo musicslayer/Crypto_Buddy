@@ -13,11 +13,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
-// TODO Can we get all the SharedPreferences Data.
-
 // Methods to dump all app data in a user's installation.
+// This includes persistent data stored in SharedPreferences.
 public class DataDumpUtil {
-    // Pass in null if we do not have access to the activity object.
     public static String getAllData(Activity activity) {
         long timestamp = new Date().getTime();
 
@@ -33,7 +31,7 @@ public class DataDumpUtil {
         // Add all persistent data.
         s.append("\n\nPersistent Data:");
 
-        HashMap<String, HashMap<String, String>> allDataMap = Persistence.getAllData();
+        HashMap<String, HashMap<String, String>> allDataMap = Persistence.getAllData(activity);
         ArrayList<String> allDataKeys = new ArrayList<>(allDataMap.keySet());
         for(String allDataKey : allDataKeys) {
             s.append("\n\n");
@@ -76,13 +74,11 @@ public class DataDumpUtil {
                 .append("\n Other TAGS: ").append(android.os.Build.TAGS)
                 .append("\n SD Card state: ").append(Environment.getExternalStorageState());
 
-        if(activity != null) {
-            sb.append("\n activity: ").append(activity)
-                    .append("\n screenWidth: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getWidth())
-                    .append("\n screenHeight: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getHeight())
-                    .append("\n Keyboard available: ").append(activity.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)
-                    .append("\n Trackball available: ").append(activity.getResources().getConfiguration().navigation == Configuration.NAVIGATION_TRACKBALL);
-        }
+        sb.append("\n activity: ").append(activity)
+                .append("\n screenWidth: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getWidth())
+                .append("\n screenHeight: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getHeight())
+                .append("\n Keyboard available: ").append(activity.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)
+                .append("\n Trackball available: ").append(activity.getResources().getConfiguration().navigation == Configuration.NAVIGATION_TRACKBALL);
 
         Properties p = System.getProperties();
         Enumeration<Object> keys = p.keys();

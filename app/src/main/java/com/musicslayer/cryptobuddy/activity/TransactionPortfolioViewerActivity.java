@@ -110,11 +110,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                     Intent intent = new Intent(TransactionPortfolioViewerActivity.this, TransactionPortfolioExplorerActivity.class);
                     intent.putExtra("TransactionPortfolioName", transactionPortfolioObjName);
 
-                    // TODO
-                    // At this point, reload portfolios to take into account any changes in stored assets.
-                    TransactionPortfolio.loadAllData(TransactionPortfolioViewerActivity.this);
-
-                    TransactionPortfolioViewerActivity.this.startActivity(intent);
+                    startActivity(intent);
                     finish();
                 }
             });
