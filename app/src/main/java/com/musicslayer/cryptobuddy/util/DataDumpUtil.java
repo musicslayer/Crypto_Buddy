@@ -13,10 +13,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
+// TODO Can we get all the SharedPreferences Data.
+
 // Methods to dump all app data in a user's installation.
 public class DataDumpUtil {
     // Pass in null if we do not have access to the activity object.
-    public static String getAllData(Activity a) {
+    public static String getAllData(Activity activity) {
         long timestamp = new Date().getTime();
 
         StringBuilder s = new StringBuilder();
@@ -26,7 +28,7 @@ public class DataDumpUtil {
 
         // Add all user device data.
         s.append("\n\nDevice Data:");
-        s.append(getInfoAboutDevice(a));
+        s.append(getInfoAboutDevice(activity));
 
         // Add all persistent data.
         s.append("\n\nPersistent Data:");
@@ -54,7 +56,7 @@ public class DataDumpUtil {
         return s.toString();
     }
 
-    private static String getInfoAboutDevice(Activity a) {
+    private static String getInfoAboutDevice(Activity activity) {
         StringBuilder sb = new StringBuilder();
 
         // application info
@@ -74,12 +76,12 @@ public class DataDumpUtil {
                 .append("\n Other TAGS: ").append(android.os.Build.TAGS)
                 .append("\n SD Card state: ").append(Environment.getExternalStorageState());
 
-        if(a != null) {
-            sb.append("\n activity: ").append(a)
-                    .append("\n screenWidth: ").append(a.getWindow().getWindowManager().getDefaultDisplay().getWidth())
-                    .append("\n screenHeight: ").append(a.getWindow().getWindowManager().getDefaultDisplay().getHeight())
-                    .append("\n Keyboard available: ").append(a.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)
-                    .append("\n Trackball available: ").append(a.getResources().getConfiguration().navigation == Configuration.NAVIGATION_TRACKBALL);
+        if(activity != null) {
+            sb.append("\n activity: ").append(activity)
+                    .append("\n screenWidth: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getWidth())
+                    .append("\n screenHeight: ").append(activity.getWindow().getWindowManager().getDefaultDisplay().getHeight())
+                    .append("\n Keyboard available: ").append(activity.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)
+                    .append("\n Trackball available: ").append(activity.getResources().getConfiguration().navigation == Configuration.NAVIGATION_TRACKBALL);
         }
 
         Properties p = System.getProperties();

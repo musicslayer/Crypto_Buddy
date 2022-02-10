@@ -92,25 +92,29 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, TransactionPortfolio.getFromName(currentDeletePortfolioName));
+                    TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, TransactionPortfolio.getFromName(TransactionPortfolioViewerActivity.this, currentDeletePortfolioName));
                     updateLayout();
                 }
             }
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        for(TransactionPortfolioObj transactionPortfolioObj : TransactionPortfolio.settings_transaction_portfolio) {
+        for(String transactionPortfolioObjName : TransactionPortfolio.settings_transaction_portfolio_names) {
             TableRow TR = new TableRow(TransactionPortfolioViewerActivity.this);
             AppCompatButton B = new AppCompatButton(TransactionPortfolioViewerActivity.this);
-            B.setText(transactionPortfolioObj.name);
+            B.setText(transactionPortfolioObjName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(TransactionPortfolioViewerActivity.this, TransactionPortfolioExplorerActivity.class);
-                    intent.putExtra("TransactionPortfolioName",  transactionPortfolioObj.name);
-                    TransactionPortfolioViewerActivity.this.startActivity(intent);
+                    intent.putExtra("TransactionPortfolioName", transactionPortfolioObjName);
 
+                    // TODO
+                    // At this point, reload portfolios to take into account any changes in stored assets.
+                    TransactionPortfolio.loadAllData(TransactionPortfolioViewerActivity.this);
+
+                    TransactionPortfolioViewerActivity.this.startActivity(intent);
                     finish();
                 }
             });
@@ -121,7 +125,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = transactionPortfolioObj.name;
+                    currentDeletePortfolioName = transactionPortfolioObjName;
                     confirmDeletePortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "delete");
                 }
             });

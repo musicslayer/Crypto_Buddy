@@ -15,88 +15,98 @@ public class AddressPortfolio {
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
-    // Store the raw strings too in case we need them in a data dump.
-    // Once everything has successfully loaded we stop updating these.
-    public static HashMap<Integer, String> settings_address_portfolio_raw = new HashMap<>();
-
-    public static ArrayList<AddressPortfolioObj> settings_address_portfolio = new ArrayList<>();
+    public static ArrayList<String> settings_address_portfolio_names = new ArrayList<>();
 
     public static boolean isSaved(String name) {
-        for(AddressPortfolioObj p : settings_address_portfolio) {
-            if(name.equals(p.name)) {
-                return true;
-            }
-        }
-        return false;
+        return settings_address_portfolio_names.contains(name);
     }
 
-    public static void saveAllData(Context context) {
-        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-
-        editor.clear();
-
-        int size = settings_address_portfolio.size();
-        editor.putInt("address_portfolio_size", size);
-
-        for(int i = 0; i < size; i++) {
-            AddressPortfolioObj addressPortfolioObj = settings_address_portfolio.get(i);
-            editor.putString("address_portfolio" + i, Serialization.serialize(addressPortfolioObj));
+    public static AddressPortfolioObj getFromName(Context context, String name) {
+        if(!isSaved(name)) {
+            return null;
         }
 
-        editor.apply();
+        int idx = settings_address_portfolio_names.indexOf(name);
+
+        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        String serialString = settings.getString("address_portfolio" + idx, DEFAULT);
+        return Serialization.deserialize(serialString, AddressPortfolioObj.class);
     }
 
     public static void loadAllData(Context context) {
-        settings_address_portfolio_raw = new HashMap<>();
-        settings_address_portfolio = new ArrayList<>();
+        // Only load portfolio names. Portfolios themselves are loaded when needed.
+        // TODO People who used the app before won't have names saved.
+        settings_address_portfolio_names = new ArrayList<>();
 
         SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
         int size = settings.getInt("address_portfolio_size", 0);
 
-        settings_address_portfolio_raw.put(-1, Integer.toString(size));
-
         for(int i = 0; i < size; i++) {
-            String serialString = settings.getString("address_portfolio" + i, DEFAULT);
-            settings_address_portfolio_raw.put(i, serialString == null ? "null" : serialString);
-
-            AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
-            settings_address_portfolio.add(addressPortfolioObj);
+            String name = settings.getString("address_portfolio_names" + i, DEFAULT);
+            settings_address_portfolio_names.add(name);
         }
     }
 
     public static void addPortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
-        settings_address_portfolio.add(addressPortfolioObj);
-        AddressPortfolio.saveAllData(context);
+        // Add this portfolio to the end and save data.
+        settings_address_portfolio_names.add(addressPortfolioObj.name);
+
+        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        int size = settings_address_portfolio_names.size();
+        editor.putInt("address_portfolio_size", size);
+        editor.putString("address_portfolio" + (size - 1), Serialization.serialize(addressPortfolioObj));
+        editor.putString("address_portfolio_names" + (size - 1), addressPortfolioObj.name);
+
+        editor.apply();
     }
 
+    // TODO Can we just pass in the name?
     public static void removePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
-        settings_address_portfolio.remove(addressPortfolioObj);
-        AddressPortfolio.saveAllData(context);
+        // Remove this portfolio, and then shift others to condense.
+        int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
+        settings_address_portfolio_names.remove(idx);
+
+        SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        int size = settings.getInt("address_portfolio_size", 0);
+
+        for(int i = idx; i < size - 1; i++) {
+            String serialString = settings.getString("address_portfolio" + (i + 1), DEFAULT);
+            String name = settings.getString("address_portfolio_names" + (i + 1), DEFAULT);
+
+            editor.putString("address_portfolio" + i, serialString);
+            editor.putString("address_portfolio_names" + i, name);
+        }
+
+        // Delete last element.
+        editor.remove("address_portfolio_names" + (size - 1));
+        editor.remove("address_portfolio" + (size - 1));
+
+        // Update size.
+        editor.putInt("address_portfolio_size", size - 1);
+
+        editor.apply();
     }
 
     public static void updatePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
         SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        int idx = settings_address_portfolio.indexOf(addressPortfolioObj);
+        // We only need to update the portfolio object because the name can never change.
+        int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
         editor.putString("address_portfolio" + idx, Serialization.serialize(addressPortfolioObj));
 
         editor.apply();
     }
 
-    public static AddressPortfolioObj getFromName(String name) {
-        for(AddressPortfolioObj p : settings_address_portfolio) {
-            if(name.equals(p.name)) {
-                return p;
-            }
-        }
-        return null;
-    }
-
     public static HashMap<String, String> getAllData() {
         HashMap<String, String> hashMap = new HashMap<>();
 
+        // TODO
+        /*
         for(int key : settings_address_portfolio_raw.keySet()) {
             if(key == -1) {
                 hashMap.put("SIZE", settings_address_portfolio_raw.get(key));
@@ -117,11 +127,13 @@ public class AddressPortfolio {
             ThrowableUtil.processThrowable(e);
         }
 
+         */
+
         return hashMap;
     }
 
     public static void resetAllData(Context context) {
-        settings_address_portfolio = new ArrayList<>();
+        settings_address_portfolio_names = new ArrayList<>();
 
         SharedPreferences settings = context.getSharedPreferences("address_portfolio_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();

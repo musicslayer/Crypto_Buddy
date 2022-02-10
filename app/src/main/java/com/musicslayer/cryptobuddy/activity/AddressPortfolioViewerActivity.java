@@ -92,22 +92,22 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, AddressPortfolio.getFromName(currentDeletePortfolioName));
+                    AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, AddressPortfolio.getFromName(AddressPortfolioViewerActivity.this, currentDeletePortfolioName));
                     updateLayout();
                 }
             }
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        for(AddressPortfolioObj addressPortfolioObj : AddressPortfolio.settings_address_portfolio) {
+        for(String addressPortfolioObjName : AddressPortfolio.settings_address_portfolio_names) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
-            B.setText(addressPortfolioObj.name);
+            B.setText(addressPortfolioObjName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
-                    intent.putExtra("AddressPortfolioName",  addressPortfolioObj.name);
+                    intent.putExtra("AddressPortfolioName",  addressPortfolioObjName);
                     startActivity(intent);
 
                     finish();
@@ -120,7 +120,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = addressPortfolioObj.name;
+                    currentDeletePortfolioName = addressPortfolioObjName;
                     confirmDeletePortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "delete");
                 }
             });

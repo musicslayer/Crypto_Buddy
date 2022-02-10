@@ -53,8 +53,6 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     ExchangeTable table;
 
-    ExchangePortfolioObj exchangePortfolioObj;
-
     DiscreteFilter exchangeFilter = new DiscreteFilter();
 
     public ArrayList<Boolean> includeBalances;
@@ -89,15 +87,13 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        exchangePortfolioObj = ExchangePortfolio.getFromName(getIntent().getStringExtra("ExchangePortfolioName"));
-
         if(savedInstanceState == null) {
-            StateObj.exchangePortfolioObj = exchangePortfolioObj;
+            StateObj.exchangePortfolioObj = ExchangePortfolio.getFromName(ExchangePortfolioExplorerActivity.this, getIntent().getStringExtra("ExchangePortfolioName"));
         }
 
         updateFilter();
 
-        for(CryptoExchange cryptoExchange : exchangePortfolioObj.cryptoExchangeArrayList) {
+        for(CryptoExchange cryptoExchange : StateObj.exchangePortfolioObj.cryptoExchangeArrayList) {
             if(savedInstanceState == null) {
                 HashMapUtil.putValueInMap(StateObj.exchangeDataMap, cryptoExchange, ExchangeData.getNoData(cryptoExchange));
                 HashMapUtil.putValueInMap(StateObj.exchangeDataFilterMap, cryptoExchange, ExchangeData.getNoData(cryptoExchange));
@@ -105,7 +101,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         }
 
         TextView T_INFO = findViewById(R.id.exchange_portfolio_explorer_infoTextView);
-        T_INFO.setText("Portfolio = " + exchangePortfolioObj.name);
+        T_INFO.setText("Portfolio = " + StateObj.exchangePortfolioObj.name);
 
         Toolbar toolbar = findViewById(R.id.exchange_portfolio_explorer_toolbar);
         setSupportActionBar(toolbar);
@@ -116,7 +112,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
             public void onClickImpl(View view) {
                 // Only pass in cryptoExchanges that have discrepancies.
                 ArrayList<CryptoExchange> cryptoExchangeDiscrepancyArrayList = new ArrayList<>();
-                for(CryptoExchange cryptoExchange : exchangePortfolioObj.cryptoExchangeArrayList) {
+                for(CryptoExchange cryptoExchange : StateObj.exchangePortfolioObj.cryptoExchangeArrayList) {
                     ExchangeData exchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, cryptoExchange);
                     if(exchangeData.hasDiscrepancy()) {
                         cryptoExchangeDiscrepancyArrayList.add(cryptoExchange);
@@ -132,7 +128,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, exchangePortfolioObj.cryptoExchangeArrayList);
+                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(ExchangeProblemDialog.class, StateObj.exchangePortfolioObj.cryptoExchangeArrayList);
                 infoDialogFragment.show(ExchangePortfolioExplorerActivity.this, "problem");
             }
         });
@@ -164,12 +160,12 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     // Save new exchange to the portfolio.
                     CryptoExchange newCryptoExchange = ((ChooseExchangeDialog)dialog).user_CRYPTOEXCHANGE;
 
-                    if(exchangePortfolioObj.isSaved(newCryptoExchange)) {
+                    if(StateObj.exchangePortfolioObj.isSaved(newCryptoExchange)) {
                         ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"exchange_in_portfolio");
                     }
                     else {
-                        exchangePortfolioObj.addData(newCryptoExchange);
-                        ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, exchangePortfolioObj);
+                        StateObj.exchangePortfolioObj.addData(newCryptoExchange);
+                        ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, StateObj.exchangePortfolioObj);
 
                         updateFilter();
 
@@ -193,7 +189,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment removeExchangeDialogFragment = BaseDialogFragment.newInstance(RemoveExchangeDialog.class, exchangePortfolioObj.cryptoExchangeArrayList);
+        BaseDialogFragment removeExchangeDialogFragment = BaseDialogFragment.newInstance(RemoveExchangeDialog.class, StateObj.exchangePortfolioObj.cryptoExchangeArrayList);
         removeExchangeDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -201,12 +197,12 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     // Remove exchanges from portfolio and then remove their data from the table.
                     ArrayList<CryptoExchange> toRemove = ((RemoveExchangeDialog)dialog).user_cryptoExchangeArrayList;
                     for(CryptoExchange exchange : toRemove) {
-                        exchangePortfolioObj.removeData(exchange);
+                        StateObj.exchangePortfolioObj.removeData(exchange);
                         HashMapUtil.removeValueFromMap(StateObj.exchangeDataMap, exchange);
                         HashMapUtil.removeValueFromMap(StateObj.exchangeDataFilterMap, exchange);
                     }
 
-                    ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, exchangePortfolioObj);
+                    ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, StateObj.exchangePortfolioObj);
 
                     hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
                     hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
@@ -231,7 +227,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ExchangeInfoDialog.class, exchangePortfolioObj.cryptoExchangeArrayList).show(ExchangePortfolioExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(ExchangeInfoDialog.class, StateObj.exchangePortfolioObj.cryptoExchangeArrayList).show(ExchangePortfolioExplorerActivity.this, "info");
             }
         });
 
@@ -248,7 +244,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         fab_authorize.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, exchangePortfolioObj.cryptoExchangeArrayList).show(ExchangePortfolioExplorerActivity.this, "authorize_exchange");
+                BaseDialogFragment.newInstance(AuthorizeExchangeDialog.class, StateObj.exchangePortfolioObj.cryptoExchangeArrayList).show(ExchangePortfolioExplorerActivity.this, "authorize_exchange");
             }
         });
 
@@ -258,7 +254,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Downloading Exchange Data...");
 
-                ArrayList<CryptoExchange> exchangeArrayList = exchangePortfolioObj.cryptoExchangeArrayList;
+                ArrayList<CryptoExchange> exchangeArrayList = StateObj.exchangePortfolioObj.cryptoExchangeArrayList;
 
                 ArrayList<ExchangeData> newExchangeDataArrayList = new ArrayList<>();
                 for(int i = 0; i < exchangeArrayList.size(); i++) {
@@ -322,8 +318,8 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
-                for(int i = 0; i < exchangePortfolioObj.cryptoExchangeArrayList.size(); i++) {
-                    CryptoExchange cryptoExchange = exchangePortfolioObj.cryptoExchangeArrayList.get(i);
+                for(int i = 0; i < StateObj.exchangePortfolioObj.cryptoExchangeArrayList.size(); i++) {
+                    CryptoExchange cryptoExchange = StateObj.exchangePortfolioObj.cryptoExchangeArrayList.get(i);
                     ExchangeData newExchangeData = newExchangeDataArrayList.get(i);
                     ExchangeData oldExchangeData = HashMapUtil.getValueFromMap(StateObj.exchangeDataMap, cryptoExchange);
                     ExchangeData mergedExchangeData = ExchangeData.merge(oldExchangeData, newExchangeData);
@@ -352,7 +348,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class, exchangePortfolioObj.cryptoExchangeArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadExchangeDataDialog.class, StateObj.exchangePortfolioObj.cryptoExchangeArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -421,7 +417,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     public void updateFilter() {
         ArrayList<String> data = new ArrayList<>();
-        for(CryptoExchange cryptoExchange : exchangePortfolioObj.cryptoExchangeArrayList) {
+        for(CryptoExchange cryptoExchange : StateObj.exchangePortfolioObj.cryptoExchangeArrayList) {
             data.add(cryptoExchange.toString());
         }
 

@@ -54,8 +54,6 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     AddressTable table;
 
-    AddressPortfolioObj addressPortfolioObj;
-
     DiscreteFilter addressFilter = new DiscreteFilter();
 
     public ArrayList<Boolean> includeBalances;
@@ -90,16 +88,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
-
         if(savedInstanceState == null) {
-            StateObj.addressPortfolioObj = addressPortfolioObj;
+            StateObj.addressPortfolioObj = AddressPortfolio.getFromName(AddressPortfolioExplorerActivity.this, getIntent().getStringExtra("AddressPortfolioName"));
         }
 
         updateFilter();
 
         boolean includeTokens = false;
-        for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+        for(CryptoAddress cryptoAddress : StateObj.addressPortfolioObj.cryptoAddressArrayList) {
             if(savedInstanceState == null) {
                 HashMapUtil.putValueInMap(StateObj.addressDataMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
                 HashMapUtil.putValueInMap(StateObj.addressDataFilterMap, cryptoAddress, AddressData.getNoData(cryptoAddress));
@@ -111,7 +107,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         }
 
         TextView T_INFO = findViewById(R.id.address_portfolio_explorer_infoTextView);
-        T_INFO.setText("Portfolio = " + addressPortfolioObj.name);
+        T_INFO.setText("Portfolio = " + StateObj.addressPortfolioObj.name);
 
         TextView T_MESSAGE = findViewById(R.id.address_portfolio_explorer_messageTextView);
         if(!Purchases.isUnlockTokensPurchased() && includeTokens) {
@@ -130,7 +126,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             public void onClickImpl(View view) {
                 // Only pass in cryptoAddresses that have discrepancies.
                 ArrayList<CryptoAddress> cryptoAddressDiscrepancyArrayList = new ArrayList<>();
-                for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+                for(CryptoAddress cryptoAddress : StateObj.addressPortfolioObj.cryptoAddressArrayList) {
                     AddressData addressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
                     if(addressData.hasDiscrepancy()) {
                         cryptoAddressDiscrepancyArrayList.add(cryptoAddress);
@@ -146,7 +142,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         problemButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(AddressProblemDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+                BaseDialogFragment infoDialogFragment = BaseDialogFragment.newInstance(AddressProblemDialog.class, StateObj.addressPortfolioObj.cryptoAddressArrayList);
                 infoDialogFragment.show(AddressPortfolioExplorerActivity.this, "problem");
             }
         });
@@ -178,12 +174,12 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     // Save new address to the portfolio.
                     CryptoAddress newCryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
-                    if(addressPortfolioObj.isSaved(newCryptoAddress)) {
+                    if(StateObj.addressPortfolioObj.isSaved(newCryptoAddress)) {
                         ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
                     }
                     else {
-                        addressPortfolioObj.addData(newCryptoAddress);
-                        AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
+                        StateObj.addressPortfolioObj.addData(newCryptoAddress);
+                        AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, StateObj.addressPortfolioObj);
 
                         updateFilter();
 
@@ -207,7 +203,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment removeAddressDialogFragment = BaseDialogFragment.newInstance(RemoveAddressDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+        BaseDialogFragment removeAddressDialogFragment = BaseDialogFragment.newInstance(RemoveAddressDialog.class, StateObj.addressPortfolioObj.cryptoAddressArrayList);
         removeAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -215,12 +211,12 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     // Remove addresses from portfolio and then remove their data from the table.
                     ArrayList<CryptoAddress> toRemove = ((RemoveAddressDialog)dialog).user_cryptoAddressArrayList;
                     for(CryptoAddress cryptoAddress : toRemove) {
-                        addressPortfolioObj.removeData(cryptoAddress);
+                        StateObj.addressPortfolioObj.removeData(cryptoAddress);
                         HashMapUtil.removeValueFromMap(StateObj.addressDataMap, cryptoAddress);
                         HashMapUtil.removeValueFromMap(StateObj.addressDataFilterMap, cryptoAddress);
                     }
 
-                    AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, addressPortfolioObj);
+                    AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, StateObj.addressPortfolioObj);
 
                     hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
                     hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
@@ -245,7 +241,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressInfoDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "info");
+                BaseDialogFragment.newInstance(AddressInfoDialog.class, StateObj.addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "info");
             }
         });
 
@@ -262,7 +258,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         fab_qrcode.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "qrcode");
+                BaseDialogFragment.newInstance(AddressQRCodeDialog.class, StateObj.addressPortfolioObj.cryptoAddressArrayList).show(AddressPortfolioExplorerActivity.this, "qrcode");
             }
         });
 
@@ -272,7 +268,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Downloading Address Data...");
 
-                ArrayList<CryptoAddress> cryptoAddressArrayList = addressPortfolioObj.cryptoAddressArrayList;
+                ArrayList<CryptoAddress> cryptoAddressArrayList = StateObj.addressPortfolioObj.cryptoAddressArrayList;
 
                 ArrayList<AddressData> newAddressDataArrayList = new ArrayList<>();
                 for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
@@ -336,8 +332,8 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
-                for(int i = 0; i < addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
-                    CryptoAddress cryptoAddress = addressPortfolioObj.cryptoAddressArrayList.get(i);
+                for(int i = 0; i < StateObj.addressPortfolioObj.cryptoAddressArrayList.size(); i++) {
+                    CryptoAddress cryptoAddress = StateObj.addressPortfolioObj.cryptoAddressArrayList.get(i);
                     AddressData newAddressData = newAddressDataArrayList.get(i);
                     AddressData oldAddressData = HashMapUtil.getValueFromMap(StateObj.addressDataMap, cryptoAddress);
                     AddressData mergedAddressData = AddressData.merge(oldAddressData, newAddressData);
@@ -366,7 +362,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
 
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadAddressDataDialog.class, addressPortfolioObj.cryptoAddressArrayList);
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadAddressDataDialog.class, StateObj.addressPortfolioObj.cryptoAddressArrayList);
         downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -435,7 +431,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
     public void updateFilter() {
         ArrayList<String> data = new ArrayList<>();
-        for(CryptoAddress cryptoAddress : addressPortfolioObj.cryptoAddressArrayList) {
+        for(CryptoAddress cryptoAddress : StateObj.addressPortfolioObj.cryptoAddressArrayList) {
             data.add(cryptoAddress.toString());
         }
 

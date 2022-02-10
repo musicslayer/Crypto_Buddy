@@ -35,8 +35,6 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
 
     TransactionTable table;
 
-    TransactionPortfolioObj transactionPortfolioObj;
-
     @Override
     public int getAdLayoutViewID() {
         return R.id.transaction_portfolio_explorer_adLayout;
@@ -63,17 +61,15 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         });
         confirmBackDialogFragment.restoreListeners(this, "back");
 
-        transactionPortfolioObj = TransactionPortfolio.getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
-
         if(savedInstanceState == null) {
-            StateObj.transactionPortfolioObj = transactionPortfolioObj;
+            StateObj.transactionPortfolioObj = TransactionPortfolio.getFromName(TransactionPortfolioExplorerActivity.this, getIntent().getStringExtra("TransactionPortfolioName"));
         }
 
         Toolbar toolbar = findViewById(R.id.transaction_portfolio_explorer_toolbar);
         setSupportActionBar(toolbar);
 
         TextView T = findViewById(R.id.transaction_portfolio_explorer_infoTextView);
-        T.setText("Portfolio = " + transactionPortfolioObj.name);
+        T.setText("Portfolio = " + StateObj.transactionPortfolioObj.name);
 
         ImageButton helpButton = findViewById(R.id.transaction_portfolio_explorer_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -91,8 +87,8 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDeleteTransaction(Table table, Transaction transaction) {
                 // Remove the transaction from the portfolio.
-                transactionPortfolioObj.removeData(transaction);
-                TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, transactionPortfolioObj);
+                StateObj.transactionPortfolioObj.removeData(transaction);
+                TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, StateObj.transactionPortfolioObj);
             }
         });
 
@@ -101,8 +97,8 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
-                    transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
-                    TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, transactionPortfolioObj);
+                    StateObj.transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
+                    TransactionPortfolio.updatePortfolio(TransactionPortfolioExplorerActivity.this, StateObj.transactionPortfolioObj);
 
                     table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
                 }
@@ -128,7 +124,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         });
 
         if(savedInstanceState == null) {
-            table.addRows(transactionPortfolioObj.transactionArrayList);
+            table.addRows(StateObj.transactionPortfolioObj.transactionArrayList);
         }
     }
 

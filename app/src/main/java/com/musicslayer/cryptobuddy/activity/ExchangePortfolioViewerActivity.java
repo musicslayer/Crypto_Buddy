@@ -92,22 +92,22 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    ExchangePortfolio.removePortfolio(ExchangePortfolioViewerActivity.this, ExchangePortfolio.getFromName(currentDeletePortfolioName));
+                    ExchangePortfolio.removePortfolio(ExchangePortfolioViewerActivity.this, ExchangePortfolio.getFromName(ExchangePortfolioViewerActivity.this, currentDeletePortfolioName));
                     updateLayout();
                 }
             }
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        for(ExchangePortfolioObj exchangePortfolioObj : ExchangePortfolio.settings_exchange_portfolio) {
+        for(String exchangePortfolioObjName : ExchangePortfolio.settings_exchange_portfolio_names) {
             AppCompatButton B = new AppCompatButton(ExchangePortfolioViewerActivity.this);
-            B.setText(exchangePortfolioObj.name);
+            B.setText(exchangePortfolioObjName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(ExchangePortfolioViewerActivity.this, ExchangePortfolioExplorerActivity.class);
-                    intent.putExtra("ExchangePortfolioName",  exchangePortfolioObj.name);
+                    intent.putExtra("ExchangePortfolioName",  exchangePortfolioObjName);
                     startActivity(intent);
 
                     finish();
@@ -120,7 +120,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = exchangePortfolioObj.name;
+                    currentDeletePortfolioName = exchangePortfolioObjName;
                     confirmDeletePortfolioDialogFragment.show(ExchangePortfolioViewerActivity.this, "delete");
                 }
             });
