@@ -20,9 +20,31 @@ abstract public class BaseActivity extends CrashActivity {
 
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
-        if(App.isAppInitialized) {
-            AppearanceUtil.setAppearance(this);
+        // In some situations (like manually removing a permission), the app may be "reset" and left in a bad state.
+        // We need to exit the app and tell the user to restart.
+        if(!App.isAppInitialized) {
+            if(this instanceof InitialActivity) {
+                // InitialActivity is the entry point of the app and is allowed to initialize.
+                ((InitialActivity)this).initialize();
+            }
+            else {
+                // If we get here, we are uninitialized, but we are not at the entry point of the app. Something went wrong!
+
+                // The Toast database is not initialized, so manually create this toast.
+                android.widget.Toast.makeText(this, "Crypto Buddy needs to be restarted.", android.widget.Toast.LENGTH_LONG).show();
+
+                try {
+                    // May throw Exceptions, but we don't care. We just need the app to eventually exit.
+                    finish();
+                }
+                catch(Exception ignored) {
+                }
+
+                return;
+            }
         }
+
+        AppearanceUtil.setAppearance(this);
 
         // By default, do nothing when a new purchase is made.
         InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {

@@ -51,7 +51,12 @@ public class InitialActivity extends BaseActivity {
 
     @Override
     public void createLayout(Bundle savedInstanceState) {
-        // Don't actually show anything. Just do initialization code and then launch MainActivity.
+        // Don't actually show anything. This activity exists because it is the only one allowed to perform initialization.
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
+    public void initialize() {
         Context applicationContext = getApplicationContext();
 
         // Set time zone base date.
@@ -90,8 +95,5 @@ public class InitialActivity extends BaseActivity {
         Setting.initialize(applicationContext);
 
         App.isAppInitialized = true;
-
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
     }
 }
