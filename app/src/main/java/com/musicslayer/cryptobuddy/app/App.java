@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.app;
 
+import android.os.Build;
+
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
@@ -11,6 +13,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 // The code in this class must be especially crash free because we cannot use CrashReporterDialog here, or even AlertDialog.
 public class App extends MultiDexApplication {
@@ -22,6 +25,7 @@ public class App extends MultiDexApplication {
 
     // Store this for use later when the context may not be available.
     public static String cacheDir;
+    public static ArrayList<String> externalFilesDirs;
 
     @Override
     public void onCreate() {
@@ -48,12 +52,23 @@ public class App extends MultiDexApplication {
             // Needed for older Android versions.
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
-            cacheDir = getApplicationContext().getCacheDir().getAbsolutePath();
+            cacheDir = this.getCacheDir().getAbsolutePath();
+
+            // Older APIs only support one folder, but newer APIs may have more than one.
+            externalFilesDirs = new ArrayList<>();
+            if(Build.VERSION.SDK_INT >= 19) {
+                for(File file : this.getExternalFilesDirs("documents")) {
+                    externalFilesDirs.add(file.getAbsolutePath() + File.separatorChar);
+                }
+            }
+            else {
+                externalFilesDirs.add(this.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
+            }
 
             // Try to clear out previously created files from the cache.
             // Then access the cache again to make sure the folder is recreated.
             FileUtils.deleteQuietly(new File(cacheDir));
-            getApplicationContext().getCacheDir();
+            this.getCacheDir();
         }
         catch(Exception e) {
             // Try to proceed on in case the method is removed in a later Android version.

@@ -66,7 +66,7 @@ public class FileUtil {
         return stringArrayList;
     }
 
-    public static File writeTempFile(Context context, String s) {
+    public static File writeTempFile(String s) {
         // Returns a tempfile with the String written to it.
         File file;
         try {
@@ -83,22 +83,7 @@ public class FileUtil {
         return file;
     }
 
-    public static ArrayList<String> getExternalFolderBases(Context context) {
-        ArrayList<String> externalFolderBases = new ArrayList<>();
-        // Older APIs only support one folder, but newer APIs may have more than one.
-        if(Build.VERSION.SDK_INT >= 19) {
-            for(File file : context.getExternalFilesDirs("documents")) {
-                externalFolderBases.add(file.getAbsolutePath() + File.separatorChar);
-            }
-        }
-        else {
-            externalFolderBases.add(context.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
-        }
-
-        return externalFolderBases;
-    }
-
-    public static String readExternalFile(Context context, String externalFolder, String name) {
+    public static String readExternalFile(String externalFolder, String name) {
         // Reads data from an external file into a String.
         String s;
 
@@ -114,7 +99,7 @@ public class FileUtil {
         return s;
     }
 
-    public static File writeExternalFile(Context context, String externalFolder, String name, String s) {
+    public static File writeExternalFile(String externalFolder, String name, String s) {
         // Returns an external file with the String written to it.
         File externalFile;
 
@@ -130,7 +115,7 @@ public class FileUtil {
         return externalFile;
     }
 
-    public static ArrayList<File> getExternalFiles(Context context, String externalFolder) {
+    public static ArrayList<File> getExternalFiles(String externalFolder) {
         ArrayList<File> fileArrayList;
 
         try {

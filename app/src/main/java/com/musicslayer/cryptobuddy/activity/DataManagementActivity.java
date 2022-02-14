@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -50,7 +51,7 @@ public class DataManagementActivity extends BaseActivity {
         TextView T_BASEFOLDER = findViewById(R.id.data_management_exportFolderBaseTextView);
         TextView T_FOLDER = findViewById(R.id.data_management_exportFolderTextView);
 
-        ArrayList<String> externalFolderBases = FileUtil.getExternalFolderBases(this);
+        ArrayList<String> externalFolderBases = App.externalFilesDirs;
 
         BorderedSpinnerView bsv = findViewById(R.id.data_management_exportFolderBaseSpinner);
         bsv.setOptions(externalFolderBases);
@@ -95,7 +96,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onClickImpl(View view) {
                 // Create temp file with exported data.
                 ArrayList<File> fileArrayList = new ArrayList<>();
-                fileArrayList.add(FileUtil.writeTempFile(activity, Persistence.exportAllToJSON()));
+                fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON()));
                 MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
             }
         });

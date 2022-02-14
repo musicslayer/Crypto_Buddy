@@ -59,7 +59,7 @@ public class ImportDataDialog extends BaseDialog {
                         return;
                     }
 
-                    String json = FileUtil.readExternalFile(activity, externalFolder, fileName);
+                    String json = FileUtil.readExternalFile(externalFolder, fileName);
 
                     if(json != null) {
                         isComplete = true;
@@ -79,7 +79,7 @@ public class ImportDataDialog extends BaseDialog {
             }
         });
 
-        ArrayList<File> existingFiles = FileUtil.getExternalFiles(activity, externalFolder);
+        ArrayList<File> existingFiles = FileUtil.getExternalFiles(externalFolder);
         TextView T = findViewById(R.id.import_data_dialog_existingFilesTextView);
         if(existingFiles == null) {
             String redText = RichStringBuilder.redText("Problem accessing existing files.");

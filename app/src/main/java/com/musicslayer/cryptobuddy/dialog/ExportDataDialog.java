@@ -61,7 +61,7 @@ public class ExportDataDialog extends BaseDialog {
                     }
 
                     String json = Persistence.exportAllToJSON();
-                    File externalFile = FileUtil.writeExternalFile(activity, externalFolder, fileName, json);
+                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
 
                     if(externalFile != null) {
                         ToastUtil.showToast(activity,"export_success");
@@ -79,7 +79,7 @@ public class ExportDataDialog extends BaseDialog {
             }
         });
 
-        ArrayList<File> existingFiles = FileUtil.getExternalFiles(activity, externalFolder);
+        ArrayList<File> existingFiles = FileUtil.getExternalFiles(externalFolder);
         TextView T = findViewById(R.id.export_data_dialog_existingFilesTextView);
         if(existingFiles == null) {
             String redText = RichStringBuilder.redText("Problem accessing existing files.");

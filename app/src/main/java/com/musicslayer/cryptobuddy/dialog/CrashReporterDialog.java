@@ -49,8 +49,8 @@ public class CrashReporterDialog extends BaseDialog {
             try {
                 // Attach two files. One has the Exception that caused the crash, and the other has the DataDump data.
                 // Some of the Exception may be obfuscated by ProGuard.
-                File fileA = FileUtil.writeTempFile(activity, crashException.toString());
-                File fileB = FileUtil.writeTempFile(activity, DataDumpUtil.getAllData(activity));
+                File fileA = FileUtil.writeTempFile(crashException.toString());
+                File fileB = FileUtil.writeTempFile(DataDumpUtil.getAllData(activity));
 
                 ArrayList<File> fileArrayList = new ArrayList<>();
                 fileArrayList.add(fileA);
@@ -68,8 +68,8 @@ public class CrashReporterDialog extends BaseDialog {
             try {
                 // Attach three files. One has the Exception that caused the crash, one has the DataDump data, and one has a screenshot.
                 // Some of the Exception may be obfuscated by ProGuard.
-                File fileA = FileUtil.writeTempFile(activity, crashException.toString());
-                File fileB = FileUtil.writeTempFile(activity, DataDumpUtil.getAllData(activity));
+                File fileA = FileUtil.writeTempFile(crashException.toString());
+                File fileB = FileUtil.writeTempFile(DataDumpUtil.getAllData(activity));
                 File fileC = ScreenshotUtil.writeScreenshotFile(activity);
 
                 ArrayList<File> fileArrayList = new ArrayList<>();
