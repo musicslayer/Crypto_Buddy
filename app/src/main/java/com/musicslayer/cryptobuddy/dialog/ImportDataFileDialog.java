@@ -17,61 +17,73 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 
-public class ExportDataDialog extends BaseDialog {
+// TODO Let user select what kinds of data to import.
+// TODO Rename to be ImportFileDialog?
+
+public class ImportDataFileDialog extends BaseDialog {
     String externalFolder;
 
     ArrayList<String> existingFileNames = new ArrayList<>();
 
-    public ExportDataDialog(Activity activity, String externalFolder) {
+    public ImportDataFileDialog(Activity activity, String externalFolder) {
         super(activity);
         this.externalFolder = externalFolder;
     }
 
     public int getBaseViewID() {
-        return R.id.export_data_dialog;
+        return R.id.import_data_file_dialog;
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_export_data);
+        setContentView(R.layout.dialog_import_data_file);
 
-        ImageButton helpButton = findViewById(R.id.export_data_dialog_helpButton);
+        ImageButton helpButton = findViewById(R.id.import_data_file_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                HelpUtil.showHelp(ExportDataDialog.this.activity, R.raw.help_export_data);
+                HelpUtil.showHelp(ImportDataFileDialog.this.activity, R.raw.help_import_data);
             }
         });
 
-        final FileEditText E_FILE = findViewById(R.id.export_data_dialog_fileEditText);
+        final FileEditText E_FILE = findViewById(R.id.import_data_file_dialog_fileEditText);
 
-        Button B_CONFIRM = findViewById(R.id.export_data_dialog_confirmButton);
+        Button B_CONFIRM = findViewById(R.id.import_data_file_dialog_confirmButton);
         B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 boolean isValid = E_FILE.test();
 
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
-                    if(existingFileNames.contains(fileName)) {
-                        // TODO Open confirmation dialog and ask to overwrite.
-                        ToastUtil.showToast(activity, "file_already_exists");
+                    if(!existingFileNames.contains(fileName)) {
+                        ToastUtil.showToast(activity, "file_does_not_exist");
                         return;
                     }
 
-                    String json = Persistence.exportAllToJSON();
-                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
+                    String fileText;
 
-                    if(externalFile != null) {
-                        ToastUtil.showToast(activity,"export_file_success");
+                    try {
+                        // Check if file text can be parsed as JSON.
+                        fileText = FileUtil.readExternalFile(externalFolder, fileName);
+                        new JSONObject(fileText);
+                        // TODO Check some sort of marker or checksum or version number?
+                    }
+                    catch(Exception ignored) {
+                        ToastUtil.showToast(activity,"import_file_failed");
+                        return;
+                    }
 
-                        isComplete = true;
-                        dismiss();
-                    }
-                    else {
-                        ToastUtil.showToast(activity,"export_file_failed");
-                    }
+                    isComplete = true;
+                    dismiss();
+
+                    // We must do this after the dismissal because of the recreate.
+                    Persistence.importAllFromJSON(activity, fileText);
+                    ToastUtil.showToast(activity,"import_file_success");
+
                 }
                 else {
                     ToastUtil.showToast(activity,"must_fill_inputs");
@@ -80,7 +92,7 @@ public class ExportDataDialog extends BaseDialog {
         });
 
         ArrayList<File> existingFiles = FileUtil.getExternalFiles(externalFolder);
-        TextView T = findViewById(R.id.export_data_dialog_existingFilesTextView);
+        TextView T = findViewById(R.id.import_data_file_dialog_existingFilesTextView);
         if(existingFiles == null) {
             String redText = RichStringBuilder.redText("Problem accessing existing files.");
             T.setText(Html.fromHtml(redText));

@@ -13,8 +13,8 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.dialog.ExportDataDialog;
-import com.musicslayer.cryptobuddy.dialog.ImportDataDialog;
+import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
+import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
@@ -78,7 +78,7 @@ public class DataManagementActivity extends BaseActivity {
         B_EXPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ExportDataDialog.class, externalFolder).show(DataManagementActivity.this, "export");
+                BaseDialogFragment.newInstance(ExportDataFileDialog.class, externalFolder).show(DataManagementActivity.this, "export");
             }
         });
 
@@ -86,7 +86,7 @@ public class DataManagementActivity extends BaseActivity {
         B_IMPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ImportDataDialog.class, externalFolder).show(DataManagementActivity.this, "import");
+                BaseDialogFragment.newInstance(ImportDataFileDialog.class, externalFolder).show(DataManagementActivity.this, "import");
             }
         });
 
