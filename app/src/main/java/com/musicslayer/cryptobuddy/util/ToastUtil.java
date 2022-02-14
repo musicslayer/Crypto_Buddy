@@ -65,8 +65,9 @@ public class ToastUtil {
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", duration));
 
         // Clipboard
+        toastMap.put("clipboard_empty", Toast.makeText(context, "Cannot paste. Clipboard is empty.", duration));
+        toastMap.put("clipboard_not_text", Toast.makeText(context, "Cannot paste. Clipboard does not contain text.", duration));
         toastMap.put("copy", Toast.makeText(context, "Text copied to clipboard.", duration));
-        toastMap.put("no_paste", Toast.makeText(context, "Cannot paste. Clipboard is empty or does not contain text.", duration));
         toastMap.put("paste", Toast.makeText(context, "Text pasted from clipboard.", duration));
 
         // Other Activities
@@ -126,12 +127,14 @@ public class ToastUtil {
         toastMap.put("restoring_purchases", Toast.makeText(context, "Restoring purchases. Please wait a few seconds.", duration));
 
         // Import and Export
-        toastMap.put("export_failed", Toast.makeText(context, "Could not export to file.", duration));
-        toastMap.put("export_success", Toast.makeText(context, "Export to file complete.", duration));
+        toastMap.put("export_file_failed", Toast.makeText(context, "Could not export to file.", duration));
+        toastMap.put("export_file_success", Toast.makeText(context, "Export to file complete.", duration));
         toastMap.put("file_already_exists", Toast.makeText(context, "A file with this name already exists.", duration));
         toastMap.put("file_does_not_exist", Toast.makeText(context, "A file with this name does not exist.", duration));
-        toastMap.put("import_failed", Toast.makeText(context, "Could not import from file.", duration));
-        toastMap.put("import_success", Toast.makeText(context, "Import from file complete.", duration));
+        toastMap.put("import_clipboard_failed", Toast.makeText(context, "Could not import from clipboard. Text was not exported from this app.", duration));
+        toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
+        toastMap.put("import_file_failed", Toast.makeText(context, "Could not import from file. File was not exported from this app.", duration));
+        toastMap.put("import_file_success", Toast.makeText(context, "Import from file complete.", duration));
 
         // Internal Only
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", duration));

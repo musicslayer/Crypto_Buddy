@@ -64,7 +64,7 @@ public class ChooseAddressDialog extends BaseDialog {
         B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 CharSequence pasteText = ClipboardUtil.paste(ChooseAddressDialog.this.activity);
-                if(!"".contentEquals(pasteText)) {
+                if(pasteText != null) {
                     E_ADDRESS.setText(pasteText);
                 }
             }

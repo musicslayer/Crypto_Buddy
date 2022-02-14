@@ -64,13 +64,13 @@ public class ExportDataDialog extends BaseDialog {
                     File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
 
                     if(externalFile != null) {
-                        ToastUtil.showToast(activity,"export_success");
+                        ToastUtil.showToast(activity,"export_file_success");
 
                         isComplete = true;
                         dismiss();
                     }
                     else {
-                        ToastUtil.showToast(activity,"export_failed");
+                        ToastUtil.showToast(activity,"export_file_failed");
                     }
                 }
                 else {

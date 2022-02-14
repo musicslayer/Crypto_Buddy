@@ -94,7 +94,7 @@ public class DataManagementActivity extends BaseActivity {
         B_EMAIL.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                // Create temp file with exported data.
+                // Create temp file with exported data and email it.
                 ArrayList<File> fileArrayList = new ArrayList<>();
                 fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON()));
                 MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
@@ -105,23 +105,21 @@ public class DataManagementActivity extends BaseActivity {
         B_CLIPBOARD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                String clipboardText = String.valueOf(ClipboardUtil.getText(DataManagementActivity.this));
-                if(clipboardText.isEmpty() || "null".equals(clipboardText)) {
-                    ToastUtil.showToast(DataManagementActivity.this,"no_paste");
-                    return;
-                }
+                String clipboardText;
 
-                // Check if it is valid JSON.
                 try {
+                    // Check if clipboard text can be parsed as JSON.
+                    clipboardText = String.valueOf(ClipboardUtil.getText(DataManagementActivity.this));
                     new JSONObject(clipboardText);
+                    // TODO Check some sort of marker or checksum or version number?
                 }
                 catch(Exception ignored) {
-                    // TODO Toast for data not properly formatted.
+                    ToastUtil.showToast(activity,"import_clipboard_failed");
                     return;
                 }
 
                 Persistence.importAllFromJSON(activity, clipboardText);
-                ToastUtil.showToast(activity,"import_success"); // TODO Message shouldn't say "file".
+                ToastUtil.showToast(activity,"import_clipboard_success");
             }
         });
 

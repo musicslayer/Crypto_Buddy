@@ -17,8 +17,13 @@ import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
+
+// TODO Let user select what kinds of data to import.
+// TODO Rename to be ImportFileDialog?
 
 public class ImportDataDialog extends BaseDialog {
     String externalFolder;
@@ -59,19 +64,26 @@ public class ImportDataDialog extends BaseDialog {
                         return;
                     }
 
-                    String json = FileUtil.readExternalFile(externalFolder, fileName);
+                    String fileText;
 
-                    if(json != null) {
-                        isComplete = true;
-                        dismiss();
+                    try {
+                        // Check if file text can be parsed as JSON.
+                        fileText = FileUtil.readExternalFile(externalFolder, fileName);
+                        new JSONObject(fileText);
+                        // TODO Check some sort of marker or checksum or version number?
+                    }
+                    catch(Exception ignored) {
+                        ToastUtil.showToast(activity,"import_file_failed");
+                        return;
+                    }
 
-                        // We must do this after the dismissal because of the recreate.
-                        Persistence.importAllFromJSON(activity, json);
-                        ToastUtil.showToast(activity,"import_success");
-                    }
-                    else {
-                        ToastUtil.showToast(activity,"import_failed");
-                    }
+                    isComplete = true;
+                    dismiss();
+
+                    // We must do this after the dismissal because of the recreate.
+                    Persistence.importAllFromJSON(activity, fileText);
+                    ToastUtil.showToast(activity,"import_file_success");
+
                 }
                 else {
                     ToastUtil.showToast(activity,"must_fill_inputs");
