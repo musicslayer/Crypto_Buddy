@@ -29,13 +29,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/data_management_folderTextView"
+        android:id="@+id/data_management_exportFolderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Storage Folder:"
+        android:text="Export Folder:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/data_management_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_toolbar" />
 
     <TextView
         android:id="@+id/data_management_exportTextView"
@@ -45,13 +45,13 @@
         android:layout_weight="1"
         android:text="Export app data to a file."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_folderTextView" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderTextView" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/data_management_exportButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Export"
+        android:text="Export Data"
         app:drawableLeftCompat="@drawable/ic_baseline_import_export_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/data_management_exportTextView" />
@@ -70,7 +70,7 @@
         android:id="@+id/data_management_importButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Import"
+        android:text="Import Data"
         app:drawableLeftCompat="@drawable/ic_baseline_import_export_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/data_management_importTextView" />
@@ -89,7 +89,7 @@
         android:id="@+id/data_management_emailButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Email"
+        android:text="Email Data"
         app:drawableLeftCompat="@drawable/ic_baseline_email_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/data_management_emailTextView" />
@@ -108,7 +108,7 @@
         android:id="@+id/data_management_clipboardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Paste"
+        android:text="Paste Data"
         app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/data_management_clipboardTextView" />

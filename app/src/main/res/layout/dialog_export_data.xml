@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/export_data_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/export_data_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Export" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/export_data_dialog_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@id/export_data_dialog_toolbar"
+        app:layout_constraintEnd_toEndOf="@id/export_data_dialog_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <TextView
+        android:id="@+id/export_data_dialog_messageTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Choose a file name to export data to.\nValid Characters: Letters, Numbers, Period, Space, Underscore"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/export_data_dialog_toolbar" />
+
+    <com.musicslayer.cryptobuddy.view.red.FileEditText
+        android:id="@+id/export_data_dialog_fileEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/export_data_dialog_messageTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/export_data_dialog_confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/export_data_dialog_fileEditText" />
+
+    <TextView
+        android:id="@+id/export_data_dialog_existingFilesTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Existing Files:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/export_data_dialog_confirmButton" />
+</androidx.constraintlayout.widget.ConstraintLayout>

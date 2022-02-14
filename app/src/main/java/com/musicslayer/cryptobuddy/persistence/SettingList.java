@@ -7,6 +7,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
+import com.musicslayer.cryptobuddy.util.ContextUtil;
 
 public class SettingList {
     // Just pick something that would never actually be saved.
@@ -50,5 +51,44 @@ public class SettingList {
 
         editor.clear();
         editor.apply();
+    }
+
+    // TODO New interface???
+    //public String exportVersion() { return "1"; }
+
+    public static String exportToJSON() throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        for(Setting setting : Setting.settings) {
+            o.put("settings_" + setting.getSettingsKey(), Serialization.serialize(setting));
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        // Only import settings that currently exist.
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        for(Setting setting : Setting.settings) {
+            String key = "settings_" + setting.getSettingsKey();
+            String value = o.getString(key);
+
+            if(value != null) {
+                // This round trip of deserializing and serializing ensures that the data is valid.
+                Setting dummySetting = Serialization.deserialize(value, Setting.class);
+                editor.putString(key, Serialization.serialize(dummySetting));
+            }
+        }
+
+        editor.apply();
+
+        // Reinitialize data. Some settings need to recreate the activity, so do it unconditionally just to be safe.
+        Setting.initialize(context);
+        ContextUtil.getActivityFromContext(context).recreate();
     }
 }
