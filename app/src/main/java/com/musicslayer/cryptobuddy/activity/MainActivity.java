@@ -35,6 +35,7 @@ import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;
@@ -232,8 +233,11 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 if(Purchases.isUnlockDataManagementPurchased()) {
-                    startActivity(new Intent(MainActivity.this, DataManagementActivity.class));
-                    finish();
+                    // Don't bother unless user is OK with both read and write permissions.
+                    if(PermissionUtil.requestExternalReadWritePermission(MainActivity.this)) {
+                        startActivity(new Intent(MainActivity.this, DataManagementActivity.class));
+                        finish();
+                    }
                 }
                 else {
                     ToastUtil.showToast(MainActivity.this,"unlock_data_management_required");

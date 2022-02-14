@@ -54,23 +54,17 @@ public class ImportDataDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 boolean isValid = E_FILE.test();
 
-                if(!PermissionUtil.requestExternalReadPermission(activity)) {
-                    return;
-                }
-
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
                     if(!existingFileNames.contains(fileName)) {
-                        ToastUtil.showToast(activity, "file_already_exists");
+                        ToastUtil.showToast(activity, "file_does_not_exist");
                         return;
                     }
 
                     String json = FileUtil.readExternalFile(activity, EXPORT_FOLDER, fileName);
-                    Persistence.importAllFromJSON(activity, json);
-                    // TODO Do all the imports...
-
 
                     if(json != null) {
+                        Persistence.importAllFromJSON(activity, json);
                         ToastUtil.showToast(activity,"import_success");
 
                         isComplete = true;

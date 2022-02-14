@@ -39,9 +39,7 @@ public class DataManagementActivity extends BaseActivity {
         B_EXPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                if(PermissionUtil.requestExternalReadPermission(DataManagementActivity.this)) {
-                    BaseDialogFragment.newInstance(ExportDataDialog.class).show(DataManagementActivity.this, "export");
-                }
+                BaseDialogFragment.newInstance(ExportDataDialog.class).show(DataManagementActivity.this, "export");
             }
         });
 

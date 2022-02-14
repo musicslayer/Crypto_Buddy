@@ -52,10 +52,6 @@ public class ExportDataDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 boolean isValid = E_FILE.test();
 
-                if(!PermissionUtil.requestExternalWritePermission(activity)) {
-                    return;
-                }
-
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
                     if(existingFileNames.contains(fileName)) {

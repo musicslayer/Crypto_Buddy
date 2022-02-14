@@ -79,6 +79,7 @@ public class ToastUtil {
         toastMap.put("no_camera_permission", Toast.makeText(context, "Camera permission is not granted.", duration));
         toastMap.put("no_external_read_permission", Toast.makeText(context, "External read permission is not granted.", duration));
         toastMap.put("no_external_write_permission", Toast.makeText(context, "External write permission is not granted.", duration));
+        toastMap.put("no_external_read_write_permission", Toast.makeText(context, "External read and write permissions are not granted.", duration));
 
         // Google Play
         toastMap.put("google_play_missing", Toast.makeText(context, "Google Play services is missing.", duration));
@@ -128,6 +129,9 @@ public class ToastUtil {
         toastMap.put("export_failed", Toast.makeText(context, "Could not export to file.", duration));
         toastMap.put("export_success", Toast.makeText(context, "Export to file complete.", duration));
         toastMap.put("file_already_exists", Toast.makeText(context, "A file with this name already exists.", duration));
+        toastMap.put("file_does_not_exist", Toast.makeText(context, "A file with this name does not exist.", duration));
+        toastMap.put("import_failed", Toast.makeText(context, "Could not import from file.", duration));
+        toastMap.put("import_success", Toast.makeText(context, "Import from file complete.", duration));
 
         // Internal Only
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", duration));

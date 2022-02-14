@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -50,26 +51,32 @@ public class PermissionUtil {
         return true;
     }
 
-    public static boolean requestExternalReadPermission(Activity activity) {
+    @SuppressLint("NewApi") // Code analyzer doesn't recognize our conditional statements.
+    public static boolean requestExternalReadWritePermission(Activity activity) {
         // Older versions cannot run the app unless the permission has already been granted, so only check for newer versions.
-        if(Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        // For simplicity, just request both permissions at once.
+        // API 29 and above does not need and cannot grant the write permission, so only ask for read permission.
+        boolean needsRead = Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+        boolean needsWrite = Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 29 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+
+        // To avoid confusion, only ask for permissions we don't already have.
+        if(needsRead && needsWrite) {
+            ToastUtil.showToast(activity,"no_external_read_write_permission");
+            activity.requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+            return false;
+        }
+        else if(needsRead) {
             ToastUtil.showToast(activity,"no_external_read_permission");
             activity.requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 0);
             return false;
         }
-
-        return true;
-    }
-
-    public static boolean requestExternalWritePermission(Activity activity) {
-        // Older versions cannot run the app unless the permission has already been granted, so only check for newer versions.
-        // API 29 and above does not need and cannot grant this permission.
-        if(Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 29 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        else if(needsWrite) {
             ToastUtil.showToast(activity,"no_external_write_permission");
             activity.requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
             return false;
         }
-
-        return true;
+        else {
+            return true;
+        }
     }
 }
