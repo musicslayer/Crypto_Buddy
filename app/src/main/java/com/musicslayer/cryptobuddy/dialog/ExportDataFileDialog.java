@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
@@ -47,6 +49,30 @@ public class ExportDataFileDialog extends BaseDialog {
 
         final FileEditText E_FILE = findViewById(R.id.export_data_file_dialog_fileEditText);
 
+        BaseDialogFragment confirmFileOverwriteDialogFragment = BaseDialogFragment.newInstance(ConfirmFileOverwriteDialog.class);
+        confirmFileOverwriteDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ConfirmFileOverwriteDialog)dialog).isComplete) {
+                    String fileName = E_FILE.getTextString();
+
+                    String json = Persistence.exportAllToJSON();
+                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
+
+                    if(externalFile != null) {
+                        ToastUtil.showToast(activity,"export_file_success");
+
+                        isComplete = true;
+                        dismiss();
+                    }
+                    else {
+                        ToastUtil.showToast(activity,"export_file_failed");
+                    }
+                }
+            }
+        });
+        confirmFileOverwriteDialogFragment.restoreListeners(activity, "overwrite");
+
         Button B_CONFIRM = findViewById(R.id.export_data_file_dialog_confirmButton);
         B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
@@ -55,8 +81,7 @@ public class ExportDataFileDialog extends BaseDialog {
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
                     if(existingFileNames.contains(fileName)) {
-                        // TODO Open confirmation dialog and ask to overwrite.
-                        ToastUtil.showToast(activity, "file_already_exists");
+                        confirmFileOverwriteDialogFragment.show(activity, "overwrite");
                         return;
                     }
 

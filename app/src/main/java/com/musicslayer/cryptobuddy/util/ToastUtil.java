@@ -129,7 +129,6 @@ public class ToastUtil {
         // Import and Export
         toastMap.put("export_file_failed", Toast.makeText(context, "Could not export to file.", duration));
         toastMap.put("export_file_success", Toast.makeText(context, "Export to file complete.", duration));
-        toastMap.put("file_already_exists", Toast.makeText(context, "A file with this name already exists.", duration));
         toastMap.put("file_does_not_exist", Toast.makeText(context, "A file with this name does not exist.", duration));
         toastMap.put("import_clipboard_failed", Toast.makeText(context, "Could not import from clipboard. Text was not exported from this app.", duration));
         toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
