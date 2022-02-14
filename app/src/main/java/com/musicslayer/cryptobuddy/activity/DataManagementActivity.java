@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,13 +7,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataDialog;
 import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.PermissionUtil;
 
 public class DataManagementActivity extends BaseActivity {
     @Override
@@ -33,7 +30,7 @@ public class DataManagementActivity extends BaseActivity {
         setContentView(R.layout.activity_data_management);
 
         TextView T_FOLDER = findViewById(R.id.data_management_exportFolderTextView);
-        T_FOLDER.setText("Export Folder:\n" + FileUtil.getFullExternalFolderPath(this, ExportDataDialog.EXPORT_FOLDER));
+        T_FOLDER.setText("Export Folder:\n" + FileUtil.getExternalFolderPath(this, ExportDataDialog.EXPORT_FOLDER));
 
         Button B_EXPORT = findViewById(R.id.data_management_exportButton);
         B_EXPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {

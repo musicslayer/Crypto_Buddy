@@ -1,13 +1,6 @@
 package com.musicslayer.cryptobuddy.util;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
 
 import com.musicslayer.cryptobuddy.app.App;
 
@@ -89,69 +82,21 @@ public class FileUtil {
         return file;
     }
 
-    public static String getDocumentsFolder() {
-        if(Build.VERSION.SDK_INT < 29) {
-            return "Documents";
-        }
-        else {
-            return Environment.DIRECTORY_DOCUMENTS;
-        }
-    }
-
-    public static String getFullExternalFolderPath(Context context, String subfolder) {
-        // Used only to show the folder for display purposes. Should not be used with APIs to read/write files.
-        return Environment.getExternalStorageDirectory().getAbsolutePath() +
-            File.separatorChar + getDocumentsFolder() +
-            File.separatorChar + context.getPackageName() +
-            File.separatorChar + subfolder +
-            File.separatorChar;
-    }
-
     public static String getExternalFolderPath(Context context, String subfolder) {
-        String externalFolderBase = getDocumentsFolder() + File.separatorChar + context.getPackageName() + File.separatorChar + subfolder + File.separatorChar;
-
-        // New APIs only need relative path, but old APIs need entire path.
-        if(Build.VERSION.SDK_INT < 29) {
-            externalFolderBase = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separatorChar + externalFolderBase;
-        }
-
-        return externalFolderBase;
+         return context.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar + subfolder + File.separatorChar;
     }
 
     public static String readExternalFile(Context context, String subfolder, String name) {
         // Reads data from an external file into a String.
         String s;
-        if(Build.VERSION.SDK_INT < 29) {
-            // Older APIs can write to the file like normal.
-            try {
-                File externalFile = new File(getExternalFolderPath(context, subfolder) + name);
-                s = FileUtils.readFileToString(externalFile, Charset.forName("UTF-8"));
-            }
-            catch(Exception e) { // Catch everything!
-                ThrowableUtil.processThrowable(e);
-                s = null;
-            }
+
+        try {
+            File externalFile = new File(getExternalFolderPath(context, subfolder) + name);
+            s = FileUtils.readFileToString(externalFile, Charset.forName("UTF-8"));
         }
-        else {
-            // Newer APIs must use the MediaStore to read from the file.
-            try {
-                // TODO Find more precise way to do this?
-                File externalFile = null;
-
-                ArrayList<File> fileArrayList = getExternalFiles(context, subfolder);
-                for(File file : fileArrayList) {
-                    if(name.equals(file.getName())) {
-                        externalFile = file;
-                        break;
-                    }
-                }
-
-                s = FileUtils.readFileToString(externalFile, Charset.forName("UTF-8"));
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                s = null;
-            }
+        catch(Exception e) { // Catch everything!
+            ThrowableUtil.processThrowable(e);
+            s = null;
         }
 
         return s;
@@ -161,115 +106,37 @@ public class FileUtil {
         // Returns an external file with the String written to it.
         File externalFile;
 
-        if(Build.VERSION.SDK_INT < 29) {
-            // Older APIs can write to the file like normal.
-            try {
-                externalFile = new File(getExternalFolderPath(context, subfolder) + name);
-                FileUtils.writeStringToFile(externalFile, s, Charset.forName("UTF-8"));
-            }
-            catch(Exception e) { // Catch everything!
-                ThrowableUtil.processThrowable(e);
-                externalFile = null;
-            }
+        try {
+            externalFile = new File(getExternalFolderPath(context, subfolder) + name);
+            FileUtils.writeStringToFile(externalFile, s, Charset.forName("UTF-8"));
         }
-        else {
-            // Newer APIs must use the MediaStore to write to the file.
-            try {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "*/*");
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, getExternalFolderPath(context, subfolder));
-
-                Uri fileUri = context.getContentResolver().insert(MediaStore.Files.getContentUri("external"), contentValues);
-
-                // Do this so we can write to the file later.
-                context.getContentResolver().openOutputStream(fileUri).close();
-
-                // Get the absolute file path (there should only be one item found here).
-                String externalFilePath;
-                Cursor cursor = context.getContentResolver().query(fileUri, null, null, null, null);
-                if(cursor == null) {
-                    externalFilePath = fileUri.getPath();
-                }
-                else {
-                    cursor.moveToFirst();
-                    int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                    externalFilePath = cursor.getString(idx);
-                    cursor.close();
-                }
-
-                externalFile = new File(externalFilePath);
-                FileUtils.writeStringToFile(externalFile, s, Charset.forName("UTF-8"));
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-                externalFile = null;
-            }
+        catch(Exception e) { // Catch everything!
+            ThrowableUtil.processThrowable(e);
+            externalFile = null;
         }
 
         return externalFile;
     }
 
     public static ArrayList<File> getExternalFiles(Context context, String subfolder) {
-        updateExternalFiles(context, subfolder);
-
         ArrayList<File> fileArrayList;
 
-        if(Build.VERSION.SDK_INT < 29) {
-            try {
-                File externalFolder = new File(getExternalFolderPath(context, subfolder));
+        try {
+            File externalFolder = new File(getExternalFolderPath(context, subfolder));
 
-                File[] externalFiles = externalFolder.listFiles();
-                if(externalFiles == null) {
-                    fileArrayList = new ArrayList<>();
-                }
-                else {
-                    fileArrayList = new ArrayList<>(Arrays.asList(externalFiles));
-                }
+            File[] externalFiles = externalFolder.listFiles();
+            if(externalFiles == null) {
+                fileArrayList = new ArrayList<>();
             }
-            catch(Exception ignored) {
-                fileArrayList = null;
+            else {
+                fileArrayList = new ArrayList<>(Arrays.asList(externalFiles));
             }
         }
-        else {
-            try {
-                fileArrayList = new ArrayList<>();
-
-                Cursor cursor = context.getContentResolver().query(
-                    MediaStore.Files.getContentUri("external"),
-                    null,
-                    MediaStore.MediaColumns.RELATIVE_PATH + "=?",
-                    new String[]{getExternalFolderPath(context, subfolder)}, null);
-                if(cursor == null) {
-                    // Something went wrong.
-                    fileArrayList = null;
-                }
-                else {
-                    while(cursor.moveToNext()) {
-                        int idx = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-                        fileArrayList.add(new File(cursor.getString(idx)));
-                    }
-                    cursor.close();
-                }
-            }
-            catch(Exception ignored) {
-                fileArrayList = null;
-            }
+        catch(Exception ignored) {
+            fileArrayList = null;
         }
 
         return fileArrayList;
-    }
-
-    public static void updateExternalFiles(Context context, String subfolder) {
-        // Refresh the MediaStore in case files were altered by external means.
-        // This is only needed on newer APIs.
-        if(Build.VERSION.SDK_INT < 29) {
-            return;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(new File(getFullExternalFolderPath(context, subfolder))));
-        context.sendBroadcast(intent);
     }
 
     public static File downloadFile(String urlString) {

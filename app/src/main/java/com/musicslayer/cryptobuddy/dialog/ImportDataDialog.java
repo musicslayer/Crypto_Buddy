@@ -64,11 +64,12 @@ public class ImportDataDialog extends BaseDialog {
                     String json = FileUtil.readExternalFile(activity, EXPORT_FOLDER, fileName);
 
                     if(json != null) {
-                        Persistence.importAllFromJSON(activity, json);
-                        ToastUtil.showToast(activity,"import_success");
-
                         isComplete = true;
                         dismiss();
+
+                        // We must do this after the dismissal because of the recreate.
+                        Persistence.importAllFromJSON(activity, json);
+                        ToastUtil.showToast(activity,"import_success");
                     }
                     else {
                         ToastUtil.showToast(activity,"import_failed");

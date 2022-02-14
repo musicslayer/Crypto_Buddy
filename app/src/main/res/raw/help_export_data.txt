@@ -1,2 +1,6 @@
 Export app data to a file in the shared/external storage folder.
-This file will persist if the app is uninstalled, and can be accessed by other apps or by mounting the device to a computer.
+This file can usually be accessed externally by mounting your device to a computer.
+(If your device does not support that, we recommend using the EMAIL option instead to make the file available externally.)
+
+IMPORTANT - If you want the file to persist if the app is uninstalled, you must choose to keep app data.
+Otherwise all export files in the shared/external storage folder will be erased.
