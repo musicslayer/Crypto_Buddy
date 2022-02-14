@@ -14,7 +14,6 @@ import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
@@ -22,12 +21,13 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class ExportDataDialog extends BaseDialog {
-    public final static String EXPORT_FOLDER = "exports";
+    String externalFolder;
 
     ArrayList<String> existingFileNames = new ArrayList<>();
 
-    public ExportDataDialog(Activity activity) {
+    public ExportDataDialog(Activity activity, String externalFolder) {
         super(activity);
+        this.externalFolder = externalFolder;
     }
 
     public int getBaseViewID() {
@@ -61,7 +61,7 @@ public class ExportDataDialog extends BaseDialog {
                     }
 
                     String json = Persistence.exportAllToJSON();
-                    File externalFile = FileUtil.writeExternalFile(activity, EXPORT_FOLDER, fileName, json);
+                    File externalFile = FileUtil.writeExternalFile(activity, externalFolder, fileName, json);
 
                     if(externalFile != null) {
                         ToastUtil.showToast(activity,"export_success");
@@ -79,7 +79,7 @@ public class ExportDataDialog extends BaseDialog {
             }
         });
 
-        ArrayList<File> existingFiles = FileUtil.getExternalFiles(activity, EXPORT_FOLDER);
+        ArrayList<File> existingFiles = FileUtil.getExternalFiles(activity, externalFolder);
         TextView T = findViewById(R.id.export_data_dialog_existingFilesTextView);
         if(existingFiles == null) {
             String redText = RichStringBuilder.redText("Problem accessing existing files.");

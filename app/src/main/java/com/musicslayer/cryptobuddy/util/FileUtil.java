@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.musicslayer.cryptobuddy.app.App;
 
@@ -82,16 +83,27 @@ public class FileUtil {
         return file;
     }
 
-    public static String getExternalFolderPath(Context context, String subfolder) {
-         return context.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar + subfolder + File.separatorChar;
+    public static ArrayList<String> getExternalFolderBases(Context context) {
+        ArrayList<String> externalFolderBases = new ArrayList<>();
+        // Older APIs only support one folder, but newer APIs may have more than one.
+        if(Build.VERSION.SDK_INT >= 19) {
+            for(File file : context.getExternalFilesDirs("documents")) {
+                externalFolderBases.add(file.getAbsolutePath() + File.separatorChar);
+            }
+        }
+        else {
+            externalFolderBases.add(context.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
+        }
+
+        return externalFolderBases;
     }
 
-    public static String readExternalFile(Context context, String subfolder, String name) {
+    public static String readExternalFile(Context context, String externalFolder, String name) {
         // Reads data from an external file into a String.
         String s;
 
         try {
-            File externalFile = new File(getExternalFolderPath(context, subfolder) + name);
+            File externalFile = new File(externalFolder + name);
             s = FileUtils.readFileToString(externalFile, Charset.forName("UTF-8"));
         }
         catch(Exception e) { // Catch everything!
@@ -102,12 +114,12 @@ public class FileUtil {
         return s;
     }
 
-    public static File writeExternalFile(Context context, String subfolder, String name, String s) {
+    public static File writeExternalFile(Context context, String externalFolder, String name, String s) {
         // Returns an external file with the String written to it.
         File externalFile;
 
         try {
-            externalFile = new File(getExternalFolderPath(context, subfolder) + name);
+            externalFile = new File(externalFolder + name);
             FileUtils.writeStringToFile(externalFile, s, Charset.forName("UTF-8"));
         }
         catch(Exception e) { // Catch everything!
@@ -118,13 +130,13 @@ public class FileUtil {
         return externalFile;
     }
 
-    public static ArrayList<File> getExternalFiles(Context context, String subfolder) {
+    public static ArrayList<File> getExternalFiles(Context context, String externalFolder) {
         ArrayList<File> fileArrayList;
 
         try {
-            File externalFolder = new File(getExternalFolderPath(context, subfolder));
+            File externalFolderFile = new File(externalFolder);
 
-            File[] externalFiles = externalFolder.listFiles();
+            File[] externalFiles = externalFolderFile.listFiles();
             if(externalFiles == null) {
                 fileArrayList = new ArrayList<>();
             }

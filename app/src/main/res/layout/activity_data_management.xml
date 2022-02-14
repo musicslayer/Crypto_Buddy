@@ -29,13 +29,31 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/data_management_exportFolderBaseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Choose External Folder Base:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_management_adLayout" />
+
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/data_management_exportFolderBaseSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderBaseTextView">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
+    <TextView
         android:id="@+id/data_management_exportFolderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Export Folder:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderBaseSpinner" />
 
     <TextView
         android:id="@+id/data_management_exportTextView"
