@@ -6,8 +6,8 @@
 
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-permission android:name="android.permission.CAMERA" android:required="false"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:required="false"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:required="false" android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:required="false" android:maxSdkVersion="18"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:required="false" android:maxSdkVersion="18"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.android.vending.BILLING"/>
 
@@ -33,7 +33,6 @@
         android:fullBackupContent="false"
         android:hasFragileUserData="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:requestLegacyExternalStorage="true"
         tools:replace="android:allowBackup"
         tools:targetApi="s">
 
