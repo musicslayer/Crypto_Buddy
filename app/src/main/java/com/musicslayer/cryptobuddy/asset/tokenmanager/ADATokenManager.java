@@ -39,7 +39,7 @@ public class ADATokenManager extends TokenManager {
             final int[] progress_current = new int[1];
             int progress_total = fileArrayJSON.length();
 
-            File file = FileUtil.downloadFile("https://api.github.com/repos/cardano-foundation/cardano-token-registry/zipball");
+            File file = FileUtil.downloadFile(".zip","https://api.github.com/repos/cardano-foundation/cardano-token-registry/zipball");
 
             StringBuilder json = new StringBuilder("[");
 

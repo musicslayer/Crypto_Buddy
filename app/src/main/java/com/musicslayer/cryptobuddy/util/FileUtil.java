@@ -151,12 +151,11 @@ public class FileUtil {
         return fileArrayList;
     }
 
-    public static File downloadFile(String urlString) {
+    public static File downloadFile(String fileExtension, String urlString) {
         // Downloads the file at the url to a tempfile and then returns it.
         File file;
         try {
-            // TODO Pass in name.
-            file = File.createTempFile("CryptoBuddy_ZipFile_", ".zip", new File(App.cacheDir));
+            file = File.createTempFile("CryptoBuddy_DownloadedFile_", fileExtension, new File(App.cacheDir));
             boolean result = WebUtil.download(urlString, file);
 
             // If anything went wrong, we don't want the file.
