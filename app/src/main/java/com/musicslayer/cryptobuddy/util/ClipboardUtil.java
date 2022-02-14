@@ -15,6 +15,7 @@ public class ClipboardUtil {
     }
 
     public static CharSequence paste(Context context) {
+        // TODO Separate messages for empty text and not text.
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         boolean hasText = clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN) && !"".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText());
 
@@ -25,6 +26,19 @@ public class ClipboardUtil {
         else {
             ToastUtil.showToast(context,"no_paste");
             return "";
+        }
+    }
+
+    public static CharSequence getText(Context context) {
+        // Get Clipboard text without showing any messages.
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        boolean hasText = clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN);
+
+        if(!hasText) {
+            return null;
+        }
+        else {
+            return clipboard.getPrimaryClip().getItemAt(0).getText();
         }
     }
 }

@@ -14,9 +14,15 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataDialog;
+import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
+import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.MessageUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,6 +93,10 @@ public class DataManagementActivity extends BaseActivity {
         B_EMAIL.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
+                // Create temp file with exported data.
+                ArrayList<File> fileArrayList = new ArrayList<>();
+                fileArrayList.add(FileUtil.writeTempFile(activity, Persistence.exportAllToJSON()));
+                MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
             }
         });
 
@@ -94,6 +104,23 @@ public class DataManagementActivity extends BaseActivity {
         B_CLIPBOARD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
+                String clipboardText = String.valueOf(ClipboardUtil.getText(DataManagementActivity.this));
+                if(clipboardText.isEmpty() || "null".equals(clipboardText)) {
+                    ToastUtil.showToast(DataManagementActivity.this,"no_paste");
+                    return;
+                }
+
+                // Check if it is valid JSON.
+                try {
+                    new JSONObject(clipboardText);
+                }
+                catch(Exception ignored) {
+                    // TODO Toast for data not properly formatted.
+                    return;
+                }
+
+                Persistence.importAllFromJSON(activity, clipboardText);
+                ToastUtil.showToast(activity,"import_success"); // TODO Message shouldn't say "file".
             }
         });
 
