@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO Update Proguard rules for export/import functions.
+
 // Methods to quickly manipulate all persistent app data on a user's device.
 public class Persistence {
     // All classes with persistent data.
@@ -32,7 +34,7 @@ public class Persistence {
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }
 
-    public static String exportAllToJSON() {
+    public static String exportAllToJSON(Context context) {
         // Return a JSON representation of all the persistent data stored in the app.
 
         // Map each SharedPreferences key to it's data.
@@ -44,8 +46,11 @@ public class Persistence {
                 Class<?> clazz = persistentClassMap.get(clazzString);
                 if(clazz == null) { throw new NullPointerException(); }
 
+                boolean canExport = ReflectUtil.callStaticMethod(clazz, "canExport");
+                if(!canExport) { continue; }
+
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
-                String value = ReflectUtil.callStaticMethod(clazz, "exportToJSON");
+                String value = ReflectUtil.callExportToJSON(clazz, context);
 
                 o.put(key, value);
             }
@@ -58,8 +63,9 @@ public class Persistence {
         return o.toStringOrNull();
     }
 
-    public static void importAllFromJSON(Context context, String json){
+    // TODO Most classes should only import things that don't already exist. Or give a toggle option.
 
+    public static void importAllFromJSON(Context context, String json){
         // Map each SharedPreferences key to it's data.
         Serialization.JSONObjectWithNull o;
         try {
@@ -69,23 +75,21 @@ public class Persistence {
             return;
         }
 
-        // Individually, try to add each piece of data.
+        // Individually, try to load each piece of data.
         for(String clazzString : new ArrayList<>(persistentClassMap.keySet())) {
             try {
                 Class<?> clazz = persistentClassMap.get(clazzString);
                 if(clazz == null) { throw new NullPointerException(); }
 
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
-                String value = o.getString(key);
+                if(!o.has(key)) { continue; }
 
-                //ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey", value);
+                String value = o.getString(key);
+                ReflectUtil.callImportFromJSON(clazz, context, value);
+
                 if(key.equals("settings_data")) {
                     SettingList.importFromJSON1(context, value);
                 }
-
-                //ReflectUtil.callStaticMethod(clazz, "exportToJSON");
-
-                //o.put(key, value);
             }
             catch(Exception e) {
                 // If one class's data cannot be imported, skip it and do nothing.

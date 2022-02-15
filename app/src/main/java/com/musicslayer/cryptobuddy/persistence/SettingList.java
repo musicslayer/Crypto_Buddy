@@ -56,11 +56,17 @@ public class SettingList {
     // TODO New interface???
     //public String exportVersion() { return "1"; }
 
-    public static String exportToJSON() throws org.json.JSONException {
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
 
         for(Setting setting : Setting.settings) {
-            o.put("settings_" + setting.getSettingsKey(), Serialization.serialize(setting));
+            String key = "settings_" + setting.getSettingsKey();
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
         }
 
         return o.toStringOrNull();
@@ -76,12 +82,13 @@ public class SettingList {
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
-            String value = o.getString(key);
-
-            if(value != null) {
-                // This round trip of deserializing and serializing ensures that the data is valid.
-                Setting dummySetting = Serialization.deserialize(value, Setting.class);
-                editor.putString(key, Serialization.serialize(dummySetting));
+            if(o.has(key)) {
+                String value = o.getString(key);
+                if(!DEFAULT.equals(value)) {
+                    // This round trip of deserializing and serializing ensures that the data is valid.
+                    Setting dummySetting = Serialization.deserialize(value, Setting.class);
+                    editor.putString(key, Serialization.serialize(dummySetting));
+                }
             }
         }
 

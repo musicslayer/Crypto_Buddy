@@ -122,4 +122,6 @@ public class Purchases {
         editor.clear();
         editor.apply();
     }
+
+    public static boolean canExport() { return false; }
 }

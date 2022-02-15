@@ -53,4 +53,48 @@ public class CoinManagerList {
         editor.clear();
         editor.apply();
     }
+
+    //public String exportVersion() { return "1"; }
+
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        for(CoinManager coinManager : CoinManager.coinManagers) {
+            String key = "coin_manager_" + coinManager.getSettingsKey();
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        // Only import coin managers that currently exist.
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        for(CoinManager coinManager : CoinManager.coinManagers) {
+            String key = "coin_manager_" + coinManager.getSettingsKey();
+            if(o.has(key)) {
+                String value = o.getString(key);
+                if(!DEFAULT.equals(value)) {
+                    // This round trip of deserializing and serializing ensures that the data is valid.
+                    CoinManager dummyCoinManager = Serialization.deserialize(value, CoinManager.class);
+                    editor.putString(key, Serialization.serialize(dummyCoinManager));
+                }
+            }
+        }
+
+        editor.apply();
+
+        // Reinitialize data.
+        CoinManager.initialize(context);
+    }
 }

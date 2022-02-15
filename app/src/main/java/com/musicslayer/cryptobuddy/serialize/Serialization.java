@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+// TODO validate method - deserialize and serialize to make sure string is valid.
+
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 public class Serialization {
@@ -719,6 +721,10 @@ public class Serialization {
 
         public String toStringOrNull() {
             return jsonObject == null ? null : jsonObject.toString();
+        }
+
+        public boolean has(String key) {
+            return jsonObject.has(key);
         }
 
         public String getString(String key) throws org.json.JSONException {

@@ -53,4 +53,48 @@ public class FiatManagerList {
         editor.clear();
         editor.apply();
     }
+
+    //public String exportVersion() { return "1"; }
+
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        for(FiatManager fiatManager : FiatManager.fiatManagers) {
+            String key = "fiat_manager_" + fiatManager.getSettingsKey();
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        // Only import fiat managers that currently exist.
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        for(FiatManager fiatManager : FiatManager.fiatManagers) {
+            String key = "fiat_manager_" + fiatManager.getSettingsKey();
+            if(o.has(key)) {
+                String value = o.getString(key);
+                if(!DEFAULT.equals(value)) {
+                    // This round trip of deserializing and serializing ensures that the data is valid.
+                    FiatManager dummyFiatManager = Serialization.deserialize(value, FiatManager.class);
+                    editor.putString(key, Serialization.serialize(dummyFiatManager));
+                }
+            }
+        }
+
+        editor.apply();
+
+        // Reinitialize data.
+        FiatManager.initialize(context);
+    }
 }

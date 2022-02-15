@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 // TODO Let user select what kinds of data to import.
-// TODO Rename to be ImportFileDialog?
 
 public class ImportDataFileDialog extends BaseDialog {
     String externalFolder;

@@ -28,6 +28,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
+// TODO Export by copying to clipboard.
+// TODO Export/Import need Progress Dialog?
+
 public class DataManagementActivity extends BaseActivity {
     public final static String EXPORT_FOLDER = "exports";
 
@@ -96,7 +99,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onClickImpl(View view) {
                 // Create temp file with exported data and email it.
                 ArrayList<File> fileArrayList = new ArrayList<>();
-                fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON()));
+                fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(DataManagementActivity.this)));
                 MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
             }
         });

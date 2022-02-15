@@ -53,4 +53,6 @@ public class Review {
         editor.clear();
         editor.apply();
     }
+
+    public static boolean canExport() { return false; }
 }

@@ -73,4 +73,26 @@ public class ReflectUtil {
             throw new IllegalStateException(e);
         }
     }
+
+    public static <T> String callExportToJSON(Class<T> clazz, Context context) {
+        try {
+            Method m = clazz.getMethod("exportToJSON", Context.class);
+            return (String)m.invoke(null, context);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> void callImportFromJSON(Class<T> clazz, Context context, String s) {
+        try {
+            Method m = clazz.getMethod("importFromJSON1", Context.class, String.class);
+            m.invoke(null, context, s);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
 }

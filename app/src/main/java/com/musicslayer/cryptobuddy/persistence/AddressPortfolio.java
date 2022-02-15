@@ -126,4 +126,61 @@ public class AddressPortfolio {
         editor.clear();
         editor.apply();
     }
+
+    //public String exportVersion() { return "1"; }
+
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        String sizeKey = "address_portfolio_size";
+        int size = settings.getInt(sizeKey, 0);
+        o.put(sizeKey, Serialization.int_serialize(size));
+
+        for(int i = 0; i < size; i++) {
+            String nameKey = "address_portfolio_names" + i;
+            String serialNameString = settings.getString(nameKey, DEFAULT);
+            o.put(nameKey, serialNameString);
+
+            String key = "address_portfolio" + i;
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        String sizeKey = "address_portfolio_size";
+        int size = Serialization.int_deserialize(o.getString(sizeKey));
+        editor.putInt(sizeKey, size);
+
+        for(int i = 0; i < size; i++) {
+            String nameKey = "address_portfolio_names" + i;
+            String nameValue = o.getString(nameKey);
+
+            editor.putString(nameKey, nameValue);
+
+            String key = "address_portfolio" + i;
+            String value = o.getString(key);
+
+            // This round trip of deserializing and serializing ensures that the data is valid.
+            AddressPortfolioObj dummyAddressPortfolioObj = Serialization.deserialize(value, AddressPortfolioObj.class);
+            editor.putString(key, Serialization.serialize(dummyAddressPortfolioObj));
+        }
+
+        editor.apply();
+
+        // Reinitialize data.
+        AddressPortfolio.loadAllData(context);
+    }
 }

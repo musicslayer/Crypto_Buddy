@@ -53,4 +53,50 @@ public class TokenManagerList {
         editor.clear();
         editor.apply();
     }
+
+    //public String exportVersion() { return "1"; }
+
+    // TODO Only Serialize Found/Custom tokens.
+
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            String key = "token_manager_" + tokenManager.getSettingsKey();
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        // Only import token managers that currently exist.
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            String key = "token_manager_" + tokenManager.getSettingsKey();
+            if(o.has(key)) {
+                String value = o.getString(key);
+                if(!DEFAULT.equals(value)) {
+                    // This round trip of deserializing and serializing ensures that the data is valid.
+                    TokenManager dummyTokenManager = Serialization.deserialize(value, TokenManager.class);
+                    editor.putString(key, Serialization.serialize(dummyTokenManager));
+                }
+            }
+        }
+
+        editor.apply();
+
+        // Reinitialize data.
+        TokenManager.initialize(context);
+    }
 }

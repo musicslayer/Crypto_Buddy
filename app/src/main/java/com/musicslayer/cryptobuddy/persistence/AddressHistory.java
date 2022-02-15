@@ -94,4 +94,52 @@ public class AddressHistory {
         editor.clear();
         editor.apply();
     }
+
+    //public String exportVersion() { return "1"; }
+
+    public static boolean canExport() { return true; }
+
+    public static String exportToJSON(Context context) throws org.json.JSONException {
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+
+        String sizeKey = "address_history_size";
+        int size = settings.getInt(sizeKey, 0);
+        o.put(sizeKey, Serialization.int_serialize(size));
+
+        for(int i = 0; i < size; i++) {
+            String key = "address_history" + i;
+            String serialString = settings.getString(key, DEFAULT);
+            o.put(key, serialString);
+        }
+
+        return o.toStringOrNull();
+    }
+
+
+    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+
+        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        String sizeKey = "address_history_size";
+        int size = Serialization.int_deserialize(o.getString(sizeKey));
+        editor.putInt(sizeKey, size);
+
+        for(int i = 0; i < size; i++) {
+            String key = "address_history" + i;
+            String value = o.getString(key);
+
+            // This round trip of deserializing and serializing ensures that the data is valid.
+            AddressHistoryObj dummyAddressHistoryObj = Serialization.deserialize(value, AddressHistoryObj.class);
+            editor.putString(key, Serialization.serialize(dummyAddressHistoryObj));
+        }
+
+        editor.apply();
+
+        // Reinitialize data.
+        AddressHistory.loadAllData(context);
+    }
 }

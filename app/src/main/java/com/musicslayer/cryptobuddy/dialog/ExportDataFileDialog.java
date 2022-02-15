@@ -56,7 +56,7 @@ public class ExportDataFileDialog extends BaseDialog {
                 if(((ConfirmFileOverwriteDialog)dialog).isComplete) {
                     String fileName = E_FILE.getTextString();
 
-                    String json = Persistence.exportAllToJSON();
+                    String json = Persistence.exportAllToJSON(activity);
                     File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
 
                     if(externalFile != null) {
@@ -85,7 +85,7 @@ public class ExportDataFileDialog extends BaseDialog {
                         return;
                     }
 
-                    String json = Persistence.exportAllToJSON();
+                    String json = Persistence.exportAllToJSON(activity);
                     File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
 
                     if(externalFile != null) {
