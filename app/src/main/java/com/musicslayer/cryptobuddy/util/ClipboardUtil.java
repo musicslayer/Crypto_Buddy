@@ -8,22 +8,33 @@ import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 public class ClipboardUtil {
     public static void copy(Context context, String label, String text) {
-        ToastUtil.showToast(context,"copy");
-
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.setPrimaryClip(ClipData.newPlainText(label, text));
+
+        // Check to see if size is too large.
+        try {
+            clipboard.setPrimaryClip(ClipData.newPlainText(label, text));
+            ToastUtil.showToast(context,"copy");
+        }
+        catch(RuntimeException e) {
+            Throwable cause = e.getCause();
+            if(cause instanceof android.os.TransactionTooLargeException) {
+                ToastUtil.showToast(context,"clipboard_text_too_large");
+            }
+            else {
+                // Something else went wrong. Just rethrow the original exception.
+                throw(e);
+            }
+        }
     }
 
     public static CharSequence paste(Context context) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        boolean notText = !(clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN));
-        boolean isEmpty = "".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText());
 
-        if(notText) {
+        if(!clipboard.hasPrimaryClip() || !clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
             ToastUtil.showToast(context,"clipboard_not_text");
             return null;
         }
-        else if(isEmpty) {
+        else if(clipboard.getPrimaryClip().getItemAt(0).getText() == null || "".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText())) {
             ToastUtil.showToast(context,"clipboard_empty");
             return null;
         }
@@ -36,13 +47,11 @@ public class ClipboardUtil {
     public static CharSequence getText(Context context) {
         // Get Clipboard text without showing any messages.
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        boolean notText = !clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN);
-        boolean isEmpty = "".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText());
 
-        if(notText) {
+        if(!clipboard.hasPrimaryClip() || !clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
             return null;
         }
-        else if(isEmpty) {
+        else if(clipboard.getPrimaryClip().getItemAt(0).getText() == null || "".contentEquals(clipboard.getPrimaryClip().getItemAt(0).getText())) {
             return null;
         }
         else{

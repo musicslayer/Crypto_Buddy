@@ -67,6 +67,7 @@ public class ToastUtil {
         // Clipboard
         toastMap.put("clipboard_empty", Toast.makeText(context, "Cannot paste. Clipboard is empty.", duration));
         toastMap.put("clipboard_not_text", Toast.makeText(context, "Cannot paste. Clipboard does not contain text.", duration));
+        toastMap.put("clipboard_text_too_large", Toast.makeText(context, "Cannot copy. Text is too large to place on clipboard.", duration));
         toastMap.put("copy", Toast.makeText(context, "Text copied to clipboard.", duration));
         toastMap.put("paste", Toast.makeText(context, "Text pasted from clipboard.", duration));
 

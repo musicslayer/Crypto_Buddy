@@ -113,22 +113,41 @@
         app:layout_constraintTop_toBottomOf="@id/data_management_emailTextView" />
 
     <TextView
-        android:id="@+id/data_management_clipboardTextView"
+        android:id="@+id/data_management_copyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:text="Export app data to the clipboard."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_management_emailButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/data_management_copyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Copy Data"
+        app:drawableLeftCompat="@drawable/ic_baseline_content_copy_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_management_copyTextView" />
+
+    <TextView
+        android:id="@+id/data_management_pasteTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_weight="1"
         android:text="Import app data from the clipboard."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_emailButton" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_copyButton" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_clipboardButton"
+        android:id="@+id/data_management_pasteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Paste Data"
         app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_clipboardTextView" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_pasteTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

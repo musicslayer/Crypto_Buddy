@@ -28,8 +28,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
-// TODO Export by copying to clipboard.
 // TODO Export/Import need Progress Dialog?
+// TODO Let user pick "Downloads" folder.
 
 public class DataManagementActivity extends BaseActivity {
     public final static String EXPORT_FOLDER = "exports";
@@ -104,8 +104,16 @@ public class DataManagementActivity extends BaseActivity {
             }
         });
 
-        Button B_CLIPBOARD = findViewById(R.id.data_management_clipboardButton);
-        B_CLIPBOARD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        Button B_COPY = findViewById(R.id.data_management_copyButton);
+        B_COPY.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                ClipboardUtil.copy(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this));
+            }
+        });
+
+        Button B_PASTE = findViewById(R.id.data_management_pasteButton);
+        B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 String clipboardText;
