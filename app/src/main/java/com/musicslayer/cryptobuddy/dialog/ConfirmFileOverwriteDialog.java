@@ -10,8 +10,6 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.settings.setting.ConfirmationSetting;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
-// TODO Files "p" and "P" overwrite each other, but this dialog doesn't appear.
-
 public class ConfirmFileOverwriteDialog extends BaseDialog {
     public ConfirmFileOverwriteDialog(Activity activity) {
         super(activity);

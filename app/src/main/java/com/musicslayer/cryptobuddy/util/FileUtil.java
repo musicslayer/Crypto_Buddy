@@ -136,6 +136,11 @@ public class FileUtil {
         return fileArrayList;
     }
 
+    public static boolean isExternalFileExisting(String externalFolder, String name) {
+        // This takes into account the case sensitivity of the file system.
+        return new File(externalFolder + name).exists();
+    }
+
     public static File downloadFile(String fileExtension, String urlString) {
         // Downloads the file at the url to a tempfile and then returns it.
         File file;

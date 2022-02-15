@@ -80,7 +80,7 @@ public class ExportDataFileDialog extends BaseDialog {
 
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
-                    if(existingFileNames.contains(fileName)) {
+                    if(FileUtil.isExternalFileExisting(externalFolder, fileName)) {
                         confirmFileOverwriteDialogFragment.show(activity, "overwrite");
                         return;
                     }
