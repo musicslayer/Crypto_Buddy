@@ -56,8 +56,6 @@ public class TokenManagerList {
 
     //public String exportVersion() { return "1"; }
 
-    // TODO Only Serialize Found/Custom tokens.
-
     public static boolean canExport() { return true; }
 
     public static String exportToJSON(Context context) throws org.json.JSONException {
@@ -73,7 +71,7 @@ public class TokenManagerList {
             String newSerialString;
             try {
                 Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
-                oldJSON.remove("downloaded_tokens");
+                oldJSON.put("downloaded_tokens", new Serialization.JSONArrayWithNull());
                 newSerialString = oldJSON.toStringOrNull();
             }
             catch(Exception e) {

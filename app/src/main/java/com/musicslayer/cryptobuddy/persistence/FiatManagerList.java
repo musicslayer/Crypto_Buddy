@@ -71,7 +71,7 @@ public class FiatManagerList {
             String newSerialString;
             try {
                 Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
-                oldJSON.remove("hardcoded_fiats");
+                oldJSON.put("hardcoded_fiats", new Serialization.JSONArrayWithNull());
                 newSerialString = oldJSON.toStringOrNull();
             }
             catch(Exception e) {
