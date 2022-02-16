@@ -167,15 +167,11 @@ public class ExchangePortfolio {
         for(int i = 0; i < size; i++) {
             String nameKey = "exchange_portfolio_names" + i;
             String nameValue = o.getString(nameKey);
-
             editor.putString(nameKey, nameValue);
 
             String key = "exchange_portfolio" + i;
             String value = o.getString(key);
-
-            // This round trip of deserializing and serializing ensures that the data is valid.
-            ExchangePortfolioObj dummyExchangePortfolioObj = Serialization.deserialize(value, ExchangePortfolioObj.class);
-            editor.putString(key, Serialization.serialize(dummyExchangePortfolioObj));
+            editor.putString(key, Serialization.validate(value, ExchangePortfolioObj.class));
         }
 
         editor.apply();

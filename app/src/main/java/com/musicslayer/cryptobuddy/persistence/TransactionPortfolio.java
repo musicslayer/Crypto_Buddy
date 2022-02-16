@@ -167,15 +167,11 @@ public class TransactionPortfolio {
         for(int i = 0; i < size; i++) {
             String nameKey = "transaction_portfolio_names" + i;
             String nameValue = o.getString(nameKey);
-
             editor.putString(nameKey, nameValue);
 
             String key = "transaction_portfolio" + i;
             String value = o.getString(key);
-
-            // This round trip of deserializing and serializing ensures that the data is valid.
-            TransactionPortfolioObj dummyTransactionPortfolioObj = Serialization.deserialize(value, TransactionPortfolioObj.class);
-            editor.putString(key, Serialization.serialize(dummyTransactionPortfolioObj));
+            editor.putString(key, Serialization.validate(value, TransactionPortfolioObj.class));
         }
 
         editor.apply();

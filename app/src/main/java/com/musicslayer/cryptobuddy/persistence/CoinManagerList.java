@@ -97,9 +97,7 @@ public class CoinManagerList {
             if(o.has(key)) {
                 String value = o.getString(key);
                 if(!DEFAULT.equals(value)) {
-                    // This round trip of deserializing and serializing ensures that the data is valid.
-                    CoinManager dummyCoinManager = Serialization.deserialize(value, CoinManager.class);
-                    editor.putString(key, Serialization.serialize(dummyCoinManager));
+                    editor.putString(key, Serialization.validate(value, CoinManager.class));
                 }
             }
         }

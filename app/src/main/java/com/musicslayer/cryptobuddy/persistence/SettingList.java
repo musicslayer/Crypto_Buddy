@@ -85,9 +85,7 @@ public class SettingList {
             if(o.has(key)) {
                 String value = o.getString(key);
                 if(!DEFAULT.equals(value)) {
-                    // This round trip of deserializing and serializing ensures that the data is valid.
-                    Setting dummySetting = Serialization.deserialize(value, Setting.class);
-                    editor.putString(key, Serialization.serialize(dummySetting));
+                    editor.putString(key, Serialization.validate(value, Setting.class));
                 }
             }
         }

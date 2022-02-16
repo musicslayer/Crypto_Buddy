@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import static android.content.Context.MODE_PRIVATE;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 
 public class AddressHistory {
@@ -131,10 +132,7 @@ public class AddressHistory {
         for(int i = 0; i < size; i++) {
             String key = "address_history" + i;
             String value = o.getString(key);
-
-            // This round trip of deserializing and serializing ensures that the data is valid.
-            AddressHistoryObj dummyAddressHistoryObj = Serialization.deserialize(value, AddressHistoryObj.class);
-            editor.putString(key, Serialization.serialize(dummyAddressHistoryObj));
+            editor.putString(key, Serialization.validate(value, AddressHistoryObj.class));
         }
 
         editor.apply();

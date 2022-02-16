@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-// TODO validate method - deserialize and serialize to make sure string is valid.
-
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 public class Serialization {
@@ -94,6 +92,12 @@ public class Serialization {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+    }
+
+    public static <T extends SerializableToJSON> String validate(String s, Class<T> clazzT) {
+        // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
+        SerializableToJSON dummyObject = Serialization.deserialize(s, clazzT);
+        return Serialization.serialize(dummyObject);
     }
 
     public static <T extends SerializableToJSON> String serializeArrayList(ArrayList<T> arrayList) {

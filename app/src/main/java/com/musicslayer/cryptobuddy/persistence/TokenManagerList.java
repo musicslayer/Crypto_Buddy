@@ -97,9 +97,7 @@ public class TokenManagerList {
             if(o.has(key)) {
                 String value = o.getString(key);
                 if(!DEFAULT.equals(value)) {
-                    // This round trip of deserializing and serializing ensures that the data is valid.
-                    TokenManager dummyTokenManager = Serialization.deserialize(value, TokenManager.class);
-                    editor.putString(key, Serialization.serialize(dummyTokenManager));
+                    editor.putString(key, Serialization.validate(value, TokenManager.class));
                 }
             }
         }

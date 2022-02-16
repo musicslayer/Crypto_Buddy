@@ -167,15 +167,11 @@ public class AddressPortfolio {
         for(int i = 0; i < size; i++) {
             String nameKey = "address_portfolio_names" + i;
             String nameValue = o.getString(nameKey);
-
             editor.putString(nameKey, nameValue);
 
             String key = "address_portfolio" + i;
             String value = o.getString(key);
-
-            // This round trip of deserializing and serializing ensures that the data is valid.
-            AddressPortfolioObj dummyAddressPortfolioObj = Serialization.deserialize(value, AddressPortfolioObj.class);
-            editor.putString(key, Serialization.serialize(dummyAddressPortfolioObj));
+            editor.putString(key, Serialization.validate(value, AddressPortfolioObj.class));
         }
 
         editor.apply();

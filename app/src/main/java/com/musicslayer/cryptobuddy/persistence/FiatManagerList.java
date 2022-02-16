@@ -97,9 +97,7 @@ public class FiatManagerList {
             if(o.has(key)) {
                 String value = o.getString(key);
                 if(!DEFAULT.equals(value)) {
-                    // This round trip of deserializing and serializing ensures that the data is valid.
-                    FiatManager dummyFiatManager = Serialization.deserialize(value, FiatManager.class);
-                    editor.putString(key, Serialization.serialize(dummyFiatManager));
+                    editor.putString(key, Serialization.validate(value, FiatManager.class));
                 }
             }
         }
