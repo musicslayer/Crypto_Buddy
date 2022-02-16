@@ -66,7 +66,19 @@ public class FiatManagerList {
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
             String serialString = settings.getString(key, DEFAULT);
-            o.put(key, serialString);
+
+            // We do not want to export hardcoded fiats, so let's remove them.
+            String newSerialString;
+            try {
+                Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
+                oldJSON.remove("hardcoded_fiats");
+                newSerialString = oldJSON.toStringOrNull();
+            }
+            catch(Exception e) {
+                throw new IllegalStateException(e);
+            }
+
+            o.put(key, newSerialString);
         }
 
         return o.toStringOrNull();

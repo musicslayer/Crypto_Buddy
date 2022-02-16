@@ -66,7 +66,19 @@ public class CoinManagerList {
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String key = "coin_manager_" + coinManager.getSettingsKey();
             String serialString = settings.getString(key, DEFAULT);
-            o.put(key, serialString);
+
+            // We do not want to export hardcoded coins, so let's remove them.
+            String newSerialString;
+            try {
+                Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
+                oldJSON.remove("hardcoded_coins");
+                newSerialString = oldJSON.toStringOrNull();
+            }
+            catch(Exception e) {
+                throw new IllegalStateException(e);
+            }
+
+            o.put(key, newSerialString);
         }
 
         return o.toStringOrNull();

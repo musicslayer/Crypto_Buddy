@@ -754,6 +754,10 @@ public class Serialization {
             return this;
         }
 
+        public void remove(String key) {
+            jsonObject.remove(key);
+        }
+
         private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
             return new JSONObjectWithNull((JSONObject)(jsonObject.get(key) instanceof JSONObject ? jsonObject.get(key) : null));
         }

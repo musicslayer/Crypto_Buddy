@@ -68,7 +68,19 @@ public class TokenManagerList {
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
             String serialString = settings.getString(key, DEFAULT);
-            o.put(key, serialString);
+
+            // We do not want to export downloaded tokens, so let's remove them.
+            String newSerialString;
+            try {
+                Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
+                oldJSON.remove("downloaded_tokens");
+                newSerialString = oldJSON.toStringOrNull();
+            }
+            catch(Exception e) {
+                throw new IllegalStateException(e);
+            }
+
+            o.put(key, newSerialString);
         }
 
         return o.toStringOrNull();
