@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.util.UriUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 public class DataManagementActivity extends BaseActivity {
     String fileName;
     String folderName;
+    Uri uri;
+    boolean isURI;
     String fileText;
     String clipboardText;
 
@@ -63,9 +67,16 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
-                    File externalFile = FileUtil.writeFile(folderName, fileName, json);
 
-                    if(externalFile != null) {
+                    boolean isSuccess;
+                    if(isURI) {
+                        isSuccess = UriUtil.writeFile(DataManagementActivity.this, uri, fileName, json);
+                    }
+                    else {
+                        isSuccess = FileUtil.writeFile(folderName, fileName, json) != null;
+                    }
+
+                    if(isSuccess) {
                         ToastUtil.showToast(activity,"export_file_success");
                     }
                     else {
@@ -83,6 +94,8 @@ public class DataManagementActivity extends BaseActivity {
                 if(((ExportDataFileDialog)dialog).isComplete) {
                     fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
                     folderName = ((ExportDataFileDialog)dialog).user_FOLDERNAME;
+                    uri = ((ExportDataFileDialog)dialog).user_URI;
+                    isURI = ((ExportDataFileDialog)dialog).user_ISURI;
 
                     // Launch dialog to ask user which data types to import.
                     exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");

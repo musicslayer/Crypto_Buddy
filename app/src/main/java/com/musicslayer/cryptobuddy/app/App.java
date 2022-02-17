@@ -25,6 +25,7 @@ public class App extends MultiDexApplication {
 
     // Store this for use later when the context may not be available.
     public static String cacheDir;
+    public static ArrayList<String> internalFilesDirs;
     public static ArrayList<String> externalFilesDirs;
 
     @Override
@@ -54,7 +55,11 @@ public class App extends MultiDexApplication {
 
             cacheDir = this.getCacheDir().getAbsolutePath();
 
-            // Older APIs only support one folder, but newer APIs may have more than one.
+            // For now, there is only one of these folders.
+            internalFilesDirs = new ArrayList<>();
+            internalFilesDirs.add(this.getFilesDir().getAbsolutePath() + File.separatorChar);
+
+            // Older APIs only support one external folder, but newer APIs may have more than one.
             externalFilesDirs = new ArrayList<>();
             if(Build.VERSION.SDK_INT >= 19) {
                 for(File file : this.getExternalFilesDirs("documents")) {

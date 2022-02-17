@@ -65,6 +65,7 @@ public class ToastUtil {
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", duration));
 
         // Other Activities
+        toastMap.put("document", Toast.makeText(context, "Your device does not have a document browser.", duration));
         toastMap.put("email", Toast.makeText(context, "Your device does not have an email application.", duration));
         toastMap.put("review", Toast.makeText(context, "Could not open Google Play app or website.", duration));
         toastMap.put("sms", Toast.makeText(context, "Your device does not have a text messaging application.", duration));
@@ -141,7 +142,9 @@ public class ToastUtil {
         toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
         toastMap.put("import_file_failed", Toast.makeText(context, "Could not import from file. File was not exported from this app.", duration));
         toastMap.put("import_file_success", Toast.makeText(context, "Import from file complete.", duration));
+        toastMap.put("no_folder_selected", Toast.makeText(context, "No data folder selected.", duration));
         toastMap.put("nothing_selected", Toast.makeText(context, "There is nothing selected.", duration));
+        toastMap.put("folder_selection_problem", Toast.makeText(context, "Problem selecting data folder.", duration));
 
         // Internal Only
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", duration));

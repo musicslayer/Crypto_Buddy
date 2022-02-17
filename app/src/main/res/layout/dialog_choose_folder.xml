@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choose_folder_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/choose_folder_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Choose Folder" />
+
+    <TextView
+        android:id="@+id/choose_folder_dialog_internalFolderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Internal Folders:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_toolbar" />
+
+    <TableLayout
+        android:id="@+id/choose_folder_dialog_internalFolderTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_internalFolderTextView"/>
+
+    <TextView
+        android:id="@+id/choose_folder_dialog_externalFolderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="External Folders:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_internalFolderTableLayout" />
+
+    <TableLayout
+        android:id="@+id/choose_folder_dialog_externalFolderTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_externalFolderTextView"/>
+
+    <TextView
+        android:id="@+id/choose_folder_dialog_otherFolderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Other:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_externalFolderTableLayout" />
+
+    <TableLayout
+        android:id="@+id/choose_folder_dialog_otherFolderTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_otherFolderTextView"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

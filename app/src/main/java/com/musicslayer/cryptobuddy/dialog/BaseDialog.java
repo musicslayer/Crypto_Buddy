@@ -7,6 +7,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
+import androidx.activity.result.ActivityResult;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
@@ -55,5 +56,8 @@ abstract public class BaseDialog extends CrashDialog {
         p.removeView(v);
         s.addView(v);
         p.addView(s);
+    }
+
+    public void onActivityResultComplete(ActivityResult result) {
     }
 }

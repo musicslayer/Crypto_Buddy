@@ -3,8 +3,12 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -19,6 +23,16 @@ import java.util.ArrayList;
 public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
     public DialogInterface.OnShowListener SL;
     public DialogInterface.OnDismissListener DL;
+
+    public ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onActivityResultComplete);
+
+    // TODO This only works once per dialog!!!
+    public void onActivityResultComplete(ActivityResult result) {
+        Dialog dialog = getDialog();
+        if(dialog instanceof BaseDialog) {
+            ((BaseDialog)dialog).onActivityResultComplete(result);
+        }
+    }
 
     public static BaseDialogFragment newInstance(Class<?> clazz, Object... args) {
         Bundle bundle = new Bundle();
@@ -83,10 +97,10 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public void restoreListeners(Context context, String tag) {
-        BaseDialogFragment gdf = (BaseDialogFragment)getDialogByTag(context, tag);
-        if (gdf != null) {
-            gdf.setOnShowListener(SL);
-            gdf.setOnDismissListener(DL);
+        BaseDialogFragment bdf = (BaseDialogFragment) getFragmentByTag(context, tag);
+        if (bdf != null) {
+            bdf.setOnShowListener(SL);
+            bdf.setOnDismissListener(DL);
         }
     }
 
@@ -99,14 +113,14 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public static boolean isNotShowing(Context context, String tag) {
-        return getDialogByTag(context, tag) == null;
+        return getFragmentByTag(context, tag) == null;
     }
 
     public static FragmentManager getFragmentManager(Context context) {
         return ((AppCompatActivity)ContextUtil.getActivityFromContext(context)).getSupportFragmentManager();
     }
 
-    public static Fragment getDialogByTag(Context context, String tag) {
+    public static Fragment getFragmentByTag(Context context, String tag) {
         return getFragmentManager(context).findFragmentByTag(tag);
     }
 
@@ -124,5 +138,18 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
         }
 
         return dialogArrayList;
+    }
+
+    public static ArrayList<BaseDialogFragment> getAllBaseDialogFragments(Context context) {
+        // Returns a list of all the BaseDialogFragments currently on the stack.
+        ArrayList<BaseDialogFragment> fragmentArrayList = new ArrayList<>();
+
+        for(Fragment fragment : getFragmentManager(context).getFragments()) {
+            if(fragment instanceof BaseDialogFragment) {
+                fragmentArrayList.add((BaseDialogFragment)fragment);
+            }
+        }
+
+        return fragmentArrayList;
     }
 }
