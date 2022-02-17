@@ -18,6 +18,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -118,12 +119,10 @@ public class ChooseFolderDialog extends BaseDialog {
                     ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
                     ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
                     if(documentApp != null && !documentApp.equals(unsupportedAction)) {
-                        ArrayList<BaseDialogFragment> bdfArrayList = BaseDialogFragment.getAllBaseDialogFragments(activity);
-                        BaseDialogFragment bdf = bdfArrayList.get(bdfArrayList.size() - 1);
-                        bdf.activityResultLauncher.launch(documentIntent);
+                        ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
                     }
                     else {
-                        ToastUtil.showToast(activity,"document");
+                        ToastUtil.showToast(activity, "document");
                     }
                 }
             });
@@ -143,7 +142,7 @@ public class ChooseFolderDialog extends BaseDialog {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT) // We only call this on API > 21
     @Override
-    public void onActivityResultComplete(ActivityResult result) {
+    public void onActivityResultImpl(ActivityResult result) {
         boolean isSuccess = true;
 
         if(result.getResultCode() == Activity.RESULT_OK) {

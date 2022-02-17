@@ -3,12 +3,8 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -23,16 +19,6 @@ import java.util.ArrayList;
 public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
     public DialogInterface.OnShowListener SL;
     public DialogInterface.OnDismissListener DL;
-
-    public ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onActivityResultComplete);
-
-    // TODO This only works once per dialog!!!
-    public void onActivityResultComplete(ActivityResult result) {
-        Dialog dialog = getDialog();
-        if(dialog instanceof BaseDialog) {
-            ((BaseDialog)dialog).onActivityResultComplete(result);
-        }
-    }
 
     public static BaseDialogFragment newInstance(Class<?> clazz, Object... args) {
         Bundle bundle = new Bundle();
@@ -138,18 +124,5 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
         }
 
         return dialogArrayList;
-    }
-
-    public static ArrayList<BaseDialogFragment> getAllBaseDialogFragments(Context context) {
-        // Returns a list of all the BaseDialogFragments currently on the stack.
-        ArrayList<BaseDialogFragment> fragmentArrayList = new ArrayList<>();
-
-        for(Fragment fragment : getFragmentManager(context).getFragments()) {
-            if(fragment instanceof BaseDialogFragment) {
-                fragmentArrayList.add((BaseDialogFragment)fragment);
-            }
-        }
-
-        return fragmentArrayList;
     }
 }

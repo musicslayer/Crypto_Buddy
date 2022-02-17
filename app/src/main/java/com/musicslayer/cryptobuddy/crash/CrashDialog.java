@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.musicslayer.cryptobuddy.dialog.CrashReporterDialog;
@@ -82,6 +83,26 @@ abstract public class CrashDialog extends Dialog {
         }
     }
 
+    // This is not a real Dialog method - we are just adding this ourselves.
+    final protected void onActivityResult(ActivityResult result) {
+        try {
+            onActivityResultImpl(result);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+
+            if(canLaunchCrashReporterDialog()) {
+                CrashException crashException = new CrashException(e);
+                crashException.setLocationInfo(activity,null);
+                crashException.appendExtraInfoFromArgument(result);
+                CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, activity, "crash");
+            }
+        }
+    }
+
     @Override
     final public void show() {
         try {
@@ -152,6 +173,7 @@ abstract public class CrashDialog extends Dialog {
     public void onBackPressedImpl() { super.onBackPressed(); } // Unlike in Activities, here we allow default behavior.
     protected void onCreateImpl(Bundle savedInstanceState) {}
     public void onResumeImpl() {}
+    public void onActivityResultImpl(ActivityResult result) {}
     public void showImpl() {}
     public Bundle onSaveInstanceStateImpl(Bundle bundle) { return bundle; }
     public void onRestoreInstanceStateImpl(Bundle bundle) {}

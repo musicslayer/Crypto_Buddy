@@ -1,10 +1,14 @@
 package com.musicslayer.cryptobuddy.crash;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +21,8 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import java.util.ArrayList;
 
 abstract public class CrashActivity extends AppCompatActivity {
+    public ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onActivityResult);
+
     @Override
     final public void onBackPressed() {
         try {
@@ -69,6 +75,25 @@ abstract public class CrashActivity extends AppCompatActivity {
 
             CrashException crashException = new CrashException(e);
             crashException.setLocationInfo(this, null);
+
+            CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
+        }
+    }
+
+    // Create our own method to listen for activity results and pass through to dialogs.
+    final public void onActivityResult(ActivityResult result) {
+        try {
+            onActivityResultImpl(result);
+        }
+        catch(CrashBypassException e) {
+            // Do nothing.
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+
+            CrashException crashException = new CrashException(e);
+            crashException.setLocationInfo(this, null);
+            crashException.appendExtraInfoFromArgument(result);
 
             CrashReporterDialogFragment.showCrashDialogFragment(CrashReporterDialog.class, crashException, this, "crash");
         }
@@ -177,6 +202,15 @@ abstract public class CrashActivity extends AppCompatActivity {
         if(!baseDialogArrayList.isEmpty()) {
             BaseDialog lastBaseDialog = (BaseDialog) baseDialogArrayList.get(baseDialogArrayList.size() - 1);
             lastBaseDialog.onResume();
+        }
+    }
+
+    // Call our own "onActivityResult" method on the uppermost visible Dialog.
+    public void onActivityResultImpl(ActivityResult result) {
+        ArrayList<Dialog> baseDialogArrayList = BaseDialogFragment.getAllDialogs(this);
+        if(!baseDialogArrayList.isEmpty()) {
+            BaseDialog lastBaseDialog = (BaseDialog) baseDialogArrayList.get(baseDialogArrayList.size() - 1);
+            lastBaseDialog.onActivityResult(result);
         }
     }
 }
