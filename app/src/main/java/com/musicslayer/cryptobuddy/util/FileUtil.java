@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.content.Context;
-import android.os.Build;
 
 import com.musicslayer.cryptobuddy.app.App;
 
@@ -16,6 +15,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FileUtil {
+    public static String readFile(String folderName, String fileName) {
+        String s;
+
+        try {
+            File file = new File(folderName + fileName);
+            s = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
+        }
+        catch(Exception e) { // Catch everything!
+            ThrowableUtil.processThrowable(e);
+            s = null;
+        }
+
+        return s;
+    }
+
     public static String readFile(Context context, int id) {
         return readFile(new BufferedReader(new InputStreamReader(context.getResources().openRawResource(id))));
     }
@@ -66,6 +80,22 @@ public class FileUtil {
         return stringArrayList;
     }
 
+    public static File writeFile(String folderName, String fileName, String s) {
+        // Returns a file with the String written to it.
+        File file;
+
+        try {
+            file = new File(folderName + fileName);
+            FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            file = null;
+        }
+
+        return file;
+    }
+
     public static File writeTempFile(String s) {
         // Returns a tempfile with the String written to it.
         File file;
@@ -73,60 +103,26 @@ public class FileUtil {
             file = File.createTempFile("CryptoBuddy_TextFile_", ".txt", new File(App.cacheDir));
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
         }
-        catch(Exception e) { // Catch everything!
+        catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-
-            // This class may be used by CrashReporterDialog, so just return null instead of throwing something.
             file = null;
         }
 
         return file;
     }
 
-    public static String readExternalFile(String externalFolder, String name) {
-        // Reads data from an external file into a String.
-        String s;
-
-        try {
-            File externalFile = new File(externalFolder + name);
-            s = FileUtils.readFileToString(externalFile, Charset.forName("UTF-8"));
-        }
-        catch(Exception e) { // Catch everything!
-            ThrowableUtil.processThrowable(e);
-            s = null;
-        }
-
-        return s;
-    }
-
-    public static File writeExternalFile(String externalFolder, String name, String s) {
-        // Returns an external file with the String written to it.
-        File externalFile;
-
-        try {
-            externalFile = new File(externalFolder + name);
-            FileUtils.writeStringToFile(externalFile, s, Charset.forName("UTF-8"));
-        }
-        catch(Exception e) { // Catch everything!
-            ThrowableUtil.processThrowable(e);
-            externalFile = null;
-        }
-
-        return externalFile;
-    }
-
-    public static ArrayList<File> getExternalFiles(String externalFolder) {
+    public static ArrayList<File> getFiles(String folderName) {
         ArrayList<File> fileArrayList;
 
         try {
-            File externalFolderFile = new File(externalFolder);
+            File folder = new File(folderName);
 
-            File[] externalFiles = externalFolderFile.listFiles();
-            if(externalFiles == null) {
+            File[] files = folder.listFiles();
+            if(files == null) {
                 fileArrayList = new ArrayList<>();
             }
             else {
-                fileArrayList = new ArrayList<>(Arrays.asList(externalFiles));
+                fileArrayList = new ArrayList<>(Arrays.asList(files));
             }
         }
         catch(Exception ignored) {
@@ -136,9 +132,9 @@ public class FileUtil {
         return fileArrayList;
     }
 
-    public static boolean isExternalFileExisting(String externalFolder, String name) {
+    public static boolean exists(String folderName, String fileName) {
         // This takes into account the case sensitivity of the file system.
-        return new File(externalFolder + name).exists();
+        return new File(folderName + fileName).exists();
     }
 
     public static File downloadFile(String fileExtension, String urlString) {

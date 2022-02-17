@@ -5,33 +5,38 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class ExportDataFileDialog extends BaseDialog {
-    String externalFolder;
+    public final static String DATA_FOLDER = "exports";
+
+    String dataFolder;
 
     ArrayList<String> existingFileNames = new ArrayList<>();
 
     public String user_FILENAME;
+    public String user_FOLDERNAME;
 
-    public ExportDataFileDialog(Activity activity, String externalFolder) {
+    public ExportDataFileDialog(Activity activity) {
         super(activity);
-        this.externalFolder = externalFolder;
     }
 
     public int getBaseViewID() {
@@ -49,6 +54,35 @@ public class ExportDataFileDialog extends BaseDialog {
             }
         });
 
+        TextView T_BASEFOLDER = findViewById(R.id.export_data_file_dialog_dataFolderBaseTextView);
+        TextView T_FOLDER = findViewById(R.id.export_data_file_dialog_dataFolderTextView);
+
+        ArrayList<String> dataFolderBases = App.externalFilesDirs;
+
+        BorderedSpinnerView bsv = findViewById(R.id.export_data_file_dialog_dataFolderBaseSpinner);
+        bsv.setOptions(dataFolderBases);
+        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(activity) {
+            public void onNothingSelectedImpl(AdapterView<?> parent) {}
+            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
+                dataFolder = dataFolderBases.get(pos) + DATA_FOLDER + File.separatorChar;
+                T_FOLDER.setText("Data Folder:\n" + dataFolder);
+                updateLayout();
+            }
+        });
+
+        if(dataFolderBases.size() == 1) {
+            T_BASEFOLDER.setVisibility(View.GONE);
+            bsv.setVisibility(View.GONE);
+        }
+
+        if(dataFolderBases.size() == 0) {
+            T_BASEFOLDER.setVisibility(View.GONE);
+            bsv.setVisibility(View.GONE);
+            T_FOLDER.setText(Html.fromHtml(RichStringBuilder.redText("No data folders are available.")));
+        }
+    }
+
+    public void updateLayout() {
         final FileEditText E_FILE = findViewById(R.id.export_data_file_dialog_fileEditText);
 
         BaseDialogFragment confirmFileOverwriteDialogFragment = BaseDialogFragment.newInstance(ConfirmFileOverwriteDialog.class);
@@ -57,6 +91,8 @@ public class ExportDataFileDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmFileOverwriteDialog)dialog).isComplete) {
                     user_FILENAME = E_FILE.getTextString();
+                    user_FOLDERNAME = dataFolder;
+
                     isComplete = true;
                     dismiss();
                 }
@@ -71,12 +107,14 @@ public class ExportDataFileDialog extends BaseDialog {
 
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
-                    if(FileUtil.isExternalFileExisting(externalFolder, fileName)) {
+                    if(FileUtil.exists(dataFolder, fileName)) {
                         confirmFileOverwriteDialogFragment.show(activity, "overwrite");
                         return;
                     }
 
                     user_FILENAME = fileName;
+                    user_FOLDERNAME = dataFolder;
+
                     isComplete = true;
                     dismiss();
                 }
@@ -86,7 +124,7 @@ public class ExportDataFileDialog extends BaseDialog {
             }
         });
 
-        ArrayList<File> existingFiles = FileUtil.getExternalFiles(externalFolder);
+        ArrayList<File> existingFiles = FileUtil.getFiles(dataFolder);
         TextView T = findViewById(R.id.export_data_file_dialog_existingFilesTextView);
         if(existingFiles == null) {
             String redText = RichStringBuilder.redText("Problem accessing existing files.");

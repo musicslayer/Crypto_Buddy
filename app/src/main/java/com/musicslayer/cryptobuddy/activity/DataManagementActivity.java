@@ -3,17 +3,12 @@ package com.musicslayer.cryptobuddy.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.app.App;
-import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -21,24 +16,21 @@ import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
-import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 import java.io.File;
 import java.util.ArrayList;
 
 // TODO Let user pick "Downloads" folder.
+// TODO Show toast if there are no suitable folders to export/import to?
 
 public class DataManagementActivity extends BaseActivity {
-    public final static String EXPORT_FOLDER = "exports";
-
-    String externalFolder;
     String fileName;
+    String folderName;
     String fileText;
     String clipboardText;
 
@@ -57,32 +49,7 @@ public class DataManagementActivity extends BaseActivity {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_data_management);
 
-        TextView T_BASEFOLDER = findViewById(R.id.data_management_exportFolderBaseTextView);
-        TextView T_FOLDER = findViewById(R.id.data_management_exportFolderTextView);
-
-        ArrayList<String> externalFolderBases = App.externalFilesDirs;
-
-        BorderedSpinnerView bsv = findViewById(R.id.data_management_exportFolderBaseSpinner);
-        bsv.setOptions(externalFolderBases);
-        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this) {
-            public void onNothingSelectedImpl(AdapterView<?> parent) {}
-            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                externalFolder = externalFolderBases.get(pos) + EXPORT_FOLDER + File.separatorChar;
-                T_FOLDER.setText("Export Folder:\n" + externalFolder);
-                updateLayout();
-            }
-        });
-
-        if(externalFolderBases.size() == 1) {
-            T_BASEFOLDER.setVisibility(View.GONE);
-            bsv.setVisibility(View.GONE);
-        }
-
-        if(externalFolderBases.size() == 0) {
-            T_BASEFOLDER.setVisibility(View.GONE);
-            bsv.setVisibility(View.GONE);
-            T_FOLDER.setText(Html.fromHtml(RichStringBuilder.redText("No export folders are available.")));
-        }
+        updateLayout();
     }
 
     public void updateLayout() {
@@ -96,7 +63,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
-                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
+                    File externalFile = FileUtil.writeFile(folderName, fileName, json);
 
                     if(externalFile != null) {
                         ToastUtil.showToast(activity,"export_file_success");
@@ -109,12 +76,13 @@ public class DataManagementActivity extends BaseActivity {
         });
         exportFile_selectDataTypesDialogFragment.restoreListeners(this, "select_export_file");
 
-        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class, externalFolder);
+        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class);
         exportDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ExportDataFileDialog)dialog).isComplete) {
                     fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
+                    folderName = ((ExportDataFileDialog)dialog).user_FOLDERNAME;
 
                     // Launch dialog to ask user which data types to import.
                     exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
@@ -143,7 +111,7 @@ public class DataManagementActivity extends BaseActivity {
             }
         };
 
-        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class, externalFolder);
+        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
         importDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -152,7 +120,7 @@ public class DataManagementActivity extends BaseActivity {
 
                     try {
                         // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
-                        fileText = FileUtil.readExternalFile(externalFolder, ((ImportDataFileDialog)dialog).user_FILENAME);
+                        fileText = FileUtil.readFile(((ImportDataFileDialog)dialog).user_FOLDERNAME, ((ImportDataFileDialog)dialog).user_FILENAME);
                         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
                     }
@@ -274,6 +242,7 @@ public class DataManagementActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("fileName", fileName);
+        bundle.putString("folderName", folderName);
         bundle.putString("fileText", fileText);
         bundle.putString("clipboardText", clipboardText);
     }
@@ -282,6 +251,7 @@ public class DataManagementActivity extends BaseActivity {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             fileName = bundle.getString("fileName");
+            folderName = bundle.getString("folderName");
             fileText = bundle.getString("fileText");
             clipboardText = bundle.getString("clipboardText");
         }

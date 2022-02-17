@@ -30,12 +30,40 @@
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
     <TextView
+        android:id="@+id/import_data_file_dialog_dataFolderBaseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Choose Data Folder Base:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_toolbar" />
+
+    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
+        android:id="@+id/import_data_file_dialog_dataFolderBaseSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderBaseTextView">
+
+    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+
+    <TextView
+        android:id="@+id/import_data_file_dialog_dataFolderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Data Folder:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderBaseSpinner" />
+
+    <TextView
         android:id="@+id/import_data_file_dialog_messageTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Choose a file name to import data from."
+        android:layout_marginTop="24dp"
+        android:text="Choose a file name to import data from.\nValid Characters: Letters, Numbers, Period, Space, Underscore"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderTextView" />
 
     <com.musicslayer.cryptobuddy.view.red.FileEditText
         android:id="@+id/import_data_file_dialog_fileEditText"
