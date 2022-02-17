@@ -115,17 +115,16 @@ public class ChooseFolderDialog extends BaseDialog {
                 public void onClickImpl(View view) {
                     Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 
-                    // TODO This check doesn't work...?
                     ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
                     ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
-                    //if(documentApp != null && !documentApp.equals(unsupportedAction)) {
+                    if(documentApp != null && !documentApp.equals(unsupportedAction)) {
                         ArrayList<BaseDialogFragment> bdfArrayList = BaseDialogFragment.getAllBaseDialogFragments(activity);
                         BaseDialogFragment bdf = bdfArrayList.get(bdfArrayList.size() - 1);
                         bdf.activityResultLauncher.launch(documentIntent);
-                    //}
-                    //else {
-                    //    ToastUtil.showToast(activity,"document");
-                    //}
+                    }
+                    else {
+                        ToastUtil.showToast(activity,"document");
+                    }
                 }
             });
 
