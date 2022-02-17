@@ -55,99 +55,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderBaseSpinner" />
 
-    <TextView
-        android:id="@+id/data_management_exportTextView"
+    <TableLayout
+        android:id="@+id/data_management_tableLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
-        android:text="Export app data to a file."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderTextView" />
+        app:layout_constraintTop_toBottomOf="@id/data_management_exportFolderTextView">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_exportButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Export Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_import_export_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_exportTextView" />
+        <TableRow
+            android:id="@+id/data_management_tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/data_management_importTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
-        android:text="Import app data from a file."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_exportButton" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_exportButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export\n(File)"
+                app:drawableLeftCompat="@drawable/ic_baseline_insert_drive_file_24" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_importButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Import Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_import_export_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_importTextView" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_importButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Import\n(File)"
+                app:drawableLeftCompat="@drawable/ic_baseline_insert_drive_file_24" />
+        </TableRow>
 
-    <TextView
-        android:id="@+id/data_management_emailTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
-        android:text="Export app data to an email attachment."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_importButton" />
+        <TableRow
+            android:id="@+id/data_management_tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_emailButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_email_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_emailTextView" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_copyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export\n(Clipboard)"
+                app:drawableLeftCompat="@drawable/ic_baseline_content_copy_24" />
 
-    <TextView
-        android:id="@+id/data_management_copyTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
-        android:text="Export app data to the clipboard."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_emailButton" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_pasteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Import\n(Clipboard)"
+                app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24" />
+        </TableRow>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_copyButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Copy Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_content_copy_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_copyTextView" />
+        <TableRow
+            android:id="@+id/data_management_tableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/data_management_pasteTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
-        android:text="Import app data from the clipboard."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_copyButton" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_emailButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export\n(Email)"
+                app:drawableLeftCompat="@drawable/ic_baseline_email_24" />
+        </TableRow>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/data_management_pasteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Paste Data"
-        app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_management_pasteTextView" />
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

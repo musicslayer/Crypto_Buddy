@@ -64,13 +64,6 @@ public class ToastUtil {
         // QR Codes
         toastMap.put("multiple_qr_codes_read", Toast.makeText(context, "Multiple QR Codes Read. Please isolate a single QR code.", duration));
 
-        // Clipboard
-        toastMap.put("clipboard_empty", Toast.makeText(context, "Cannot paste. Clipboard is empty.", duration));
-        toastMap.put("clipboard_not_text", Toast.makeText(context, "Cannot paste. Clipboard does not contain text.", duration));
-        toastMap.put("clipboard_text_too_large", Toast.makeText(context, "Cannot copy. Text is too large to place on clipboard.", duration));
-        toastMap.put("copy", Toast.makeText(context, "Text copied to clipboard.", duration));
-        toastMap.put("paste", Toast.makeText(context, "Text pasted from clipboard.", duration));
-
         // Other Activities
         toastMap.put("email", Toast.makeText(context, "Your device does not have an email application.", duration));
         toastMap.put("review", Toast.makeText(context, "Could not open Google Play app or website.", duration));
@@ -127,11 +120,24 @@ public class ToastUtil {
         toastMap.put("billing_problem", Toast.makeText(context, "Cannot connect to Google Play Billing Service.", duration));
         toastMap.put("restoring_purchases", Toast.makeText(context, "Restoring purchases. Please wait a few seconds.", duration));
 
+        // Clipboard
+        toastMap.put("copy_clipboard_text_too_large", Toast.makeText(context, "Cannot copy. Text is too large to place on clipboard.", duration));
+        toastMap.put("copy_clipboard_unknown_error", Toast.makeText(context, "Cannot copy. Cause is unknown.", duration));
+        toastMap.put("copy_clipboard_success", Toast.makeText(context, "Text copied to clipboard.", duration));
+        toastMap.put("paste_clipboard_empty", Toast.makeText(context, "Cannot paste. Clipboard is empty.", duration));
+        toastMap.put("paste_clipboard_not_text", Toast.makeText(context, "Cannot paste. Clipboard does not contain text.", duration));
+        toastMap.put("paste_clipboard_success", Toast.makeText(context, "Text pasted from clipboard.", duration));
+
         // Import and Export
+        toastMap.put("export_clipboard_text_too_large", Toast.makeText(context, "Could not export to clipboard. Text is too large to place on clipboard.", duration));
+        toastMap.put("export_clipboard_unknown_error", Toast.makeText(context, "Could not export to clipboard. Cause is unknown.", duration));
+        toastMap.put("export_clipboard_success", Toast.makeText(context, "Export to clipboard complete.", duration));
         toastMap.put("export_file_failed", Toast.makeText(context, "Could not export to file.", duration));
         toastMap.put("export_file_success", Toast.makeText(context, "Export to file complete.", duration));
         toastMap.put("file_does_not_exist", Toast.makeText(context, "A file with this name does not exist.", duration));
-        toastMap.put("import_clipboard_failed", Toast.makeText(context, "Could not import from clipboard. Text was not exported from this app.", duration));
+        toastMap.put("import_clipboard_empty", Toast.makeText(context, "Could not import from clipboard. Clipboard is empty.", duration));
+        toastMap.put("import_clipboard_not_from_app", Toast.makeText(context, "Could not import from clipboard. Text was not exported from this app.", duration));
+        toastMap.put("import_clipboard_not_text", Toast.makeText(context, "Could not import from clipboard. Clipboard does not contain text.", duration));
         toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
         toastMap.put("import_file_failed", Toast.makeText(context, "Could not import from file. File was not exported from this app.", duration));
         toastMap.put("import_file_success", Toast.makeText(context, "Import from file complete.", duration));

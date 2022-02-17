@@ -215,7 +215,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.copy(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes));
+                    ClipboardUtil.exportText(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes));
                 }
             }
         });
@@ -249,12 +249,12 @@ public class DataManagementActivity extends BaseActivity {
 
                 try {
                     // Check if clipboard text can be parsed as JSON. If so, store the data type keys that are present.
-                    clipboardText = String.valueOf(ClipboardUtil.getText(DataManagementActivity.this));
+                    clipboardText = String.valueOf(ClipboardUtil.importText(DataManagementActivity.this));
                     Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(clipboardText);
                     dataTypes = o.keys();
                 }
                 catch(Exception ignored) {
-                    ToastUtil.showToast(activity,"import_clipboard_failed");
+                    ToastUtil.showToast(activity,"import_clipboard_not_from_app");
                     return;
                 }
 
