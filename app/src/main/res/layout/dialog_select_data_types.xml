@@ -26,6 +26,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_data_types_dialog_toolbar" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/select_data_types_dialog_selectAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select All"
+        app:drawableLeftCompat="@drawable/ic_baseline_select_all_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_data_types_dialog_confirmButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/select_data_types_dialog_clearAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear All"
+        app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
+        app:layout_constraintStart_toEndOf="@id/select_data_types_dialog_selectAllButton"
+        app:layout_constraintTop_toBottomOf="@id/select_data_types_dialog_confirmButton" />
+
     <LinearLayout
         android:id="@+id/select_data_types_dialog_checkBoxLayout"
         android:layout_width="match_parent"
@@ -34,6 +52,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/select_data_types_dialog_confirmButton" />
+        app:layout_constraintTop_toBottomOf="@id/select_data_types_dialog_clearAllButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,6 +62,24 @@ public class SelectDataTypesDialog extends BaseDialog {
             }
         });
 
+        Button B_SELECTALL = findViewById(R.id.select_data_types_dialog_selectAllButton);
+        B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                for(int i = 0; i < dataTypes.size(); i++) {
+                    C[i].setChecked(true);
+                }
+            }
+        });
+
+        Button B_CLEARALL = findViewById(R.id.select_data_types_dialog_clearAllButton);
+        B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                for(int i = 0; i < dataTypes.size(); i++) {
+                    C[i].setChecked(false);
+                }
+            }
+        });
+
         updateLayout();
     }
 
