@@ -7,10 +7,11 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 
 public class UriUtil {
     public static String readFile(Context context, Uri uri, String fileName) {
+        InputStream o = null;
+
         try {
             DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
 
@@ -20,15 +21,21 @@ public class UriUtil {
                 return null;
             }
 
-            InputStream o = context.getContentResolver().openInputStream(documentFile.getUri());
-            return StreamUtil.readIntoString(o);
+            o = context.getContentResolver().openInputStream(documentFile.getUri());
+            String s = StreamUtil.readIntoString(o);
+            StreamUtil.safeFlushAndClose(o);
+
+            return s;
         }
         catch(Exception ignored) {
+            StreamUtil.safeFlushAndClose(o);
             return null;
         }
     }
 
     public static boolean writeFile(Context context, Uri uri, String fileName, String s) {
+        OutputStream o = null;
+
         try {
             DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
 
@@ -40,13 +47,14 @@ public class UriUtil {
 
             DocumentFile documentFile = documentFolder.createFile("*/*", fileName);
 
-            byte[] out = s.getBytes(Charset.forName("UTF-8"));
-            OutputStream o = context.getContentResolver().openOutputStream(documentFile.getUri());
-            o.write(out);
-            o.close();
+            o = context.getContentResolver().openOutputStream(documentFile.getUri());
+            StreamUtil.writeFromString(o, s);
+            StreamUtil.safeFlushAndClose(o);
+
             return true;
         }
         catch(Exception ignored) {
+            StreamUtil.safeFlushAndClose(o);
             return false;
         }
     }

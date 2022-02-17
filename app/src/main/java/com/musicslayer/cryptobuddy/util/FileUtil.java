@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class FileUtil {
     public static String readFile(String folderName, String fileName) {
@@ -44,11 +43,11 @@ public class FileUtil {
                 stringBuilder.append(string).append("\n");
             }
 
-            StreamUtil.safeClose(file);
+            StreamUtil.safeFlushAndClose(file);
         }
         catch(IOException e) {
             ThrowableUtil.processThrowable(e);
-            StreamUtil.safeClose(file);
+            StreamUtil.safeFlushAndClose(file);
             throw new IllegalStateException(e);
         }
 
@@ -69,11 +68,11 @@ public class FileUtil {
                 stringArrayList.add(string);
             }
 
-            StreamUtil.safeClose(file);
+            StreamUtil.safeFlushAndClose(file);
         }
         catch(IOException e) {
             ThrowableUtil.processThrowable(e);
-            StreamUtil.safeClose(file);
+            StreamUtil.safeFlushAndClose(file);
             throw new IllegalStateException(e);
         }
 

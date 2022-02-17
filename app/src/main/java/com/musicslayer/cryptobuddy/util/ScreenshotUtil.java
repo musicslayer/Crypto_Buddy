@@ -15,6 +15,8 @@ public class ScreenshotUtil {
         // Captures the view of the Activity (without dialogs or anything else that is on top of it) and writes it to a file.
         // This only includes what is currently visible on the screen, not offscreen content (for example, the rest of a ScrollView).
         File file;
+        FileOutputStream outputStream = null;
+
         try {
             file = File.createTempFile("CryptoBuddy_ScreenshotFile_", ".bmp", new File(App.cacheDir));
 
@@ -23,13 +25,13 @@ public class ScreenshotUtil {
             Canvas canvas = new Canvas(bitmap);
             view.draw(canvas);
 
-            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-            outputStream.close();
+            StreamUtil.safeFlushAndClose(outputStream);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
+            StreamUtil.safeFlushAndClose(outputStream);
 
             // This class may be used by CrashReporterDialog, so just return null instead of throwing something.
             file = null;

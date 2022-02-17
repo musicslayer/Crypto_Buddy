@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 public class WebUtil {
     // This is the amount of time we want between web requests, to avoid overloading other APIs and triggering their rate limiting.
@@ -97,11 +96,9 @@ public class WebUtil {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
 
-            byte[] out = body.getBytes(Charset.forName("UTF-8"));
             stream = connection.getOutputStream();
-            stream.write(out);
-
-            StreamUtil.safeClose(stream);
+            StreamUtil.writeFromString(stream, body);
+            StreamUtil.safeFlushAndClose(stream);
 
             result = WebUtil.request(connection);
 
@@ -109,7 +106,7 @@ public class WebUtil {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            StreamUtil.safeClose(stream);
+            StreamUtil.safeFlushAndClose(stream);
             safeDisconnect(connection);
         }
 
@@ -143,11 +140,9 @@ public class WebUtil {
             connection.setRequestProperty(keyName, key);
             connection.setRequestProperty("Content-Type", "application/json");
 
-            byte[] out = body.getBytes(Charset.forName("UTF-8"));
             stream = connection.getOutputStream();
-            stream.write(out);
-
-            StreamUtil.safeClose(stream);
+            StreamUtil.writeFromString(stream, body);
+            StreamUtil.safeFlushAndClose(stream);
 
             result = WebUtil.request(connection);
 
@@ -155,7 +150,7 @@ public class WebUtil {
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            StreamUtil.safeClose(stream);
+            StreamUtil.safeFlushAndClose(stream);
             safeDisconnect(connection);
         }
 
@@ -186,14 +181,14 @@ public class WebUtil {
 
             responseStream = new BufferedInputStream(url.openStream());
             byte[] responseByteArray = StreamUtil.readIntoByteArray(responseStream);
-            StreamUtil.safeClose(responseStream);
+            StreamUtil.safeFlushAndClose(responseStream);
 
             FileUtils.writeByteArrayToFile(file, responseByteArray);
             result = true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            StreamUtil.safeClose(responseStream);
+            StreamUtil.safeFlushAndClose(responseStream);
         }
 
         return result;
@@ -209,11 +204,11 @@ public class WebUtil {
             try {
                 responseStream = connection.getInputStream();
                 String responseString = StreamUtil.readIntoString(responseStream);
-                StreamUtil.safeClose(responseStream);
+                StreamUtil.safeFlushAndClose(responseStream);
                 data[0] = responseString;
             }
             catch(IOException e) {
-                StreamUtil.safeClose(responseStream);
+                StreamUtil.safeFlushAndClose(responseStream);
                 data[0] = null;
             }
 

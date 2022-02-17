@@ -26,12 +26,12 @@ public class ZipUtil {
                 zin.closeEntry();
             }
 
-            StreamUtil.safeClose(fin);
-            StreamUtil.safeClose(zin);
+            StreamUtil.safeFlushAndClose(fin);
+            StreamUtil.safeFlushAndClose(zin);
         }
         catch(Exception e) {
-            StreamUtil.safeClose(fin);
-            StreamUtil.safeClose(zin);
+            StreamUtil.safeFlushAndClose(fin);
+            StreamUtil.safeFlushAndClose(zin);
         }
     }
 
