@@ -112,17 +112,40 @@ public class FileUtil {
     }
 
     public static ArrayList<File> getFiles(String folderName) {
-        ArrayList<File> fileArrayList;
+        ArrayList<File> fileArrayList = new ArrayList<>();
 
         try {
             File folder = new File(folderName);
 
             File[] files = folder.listFiles();
-            if(files == null) {
-                fileArrayList = new ArrayList<>();
+            if(files != null) {
+                for(File file : files) {
+                    if(file.isFile()) {
+                        fileArrayList.add(file);
+                    }
+                }
             }
-            else {
-                fileArrayList = new ArrayList<>(Arrays.asList(files));
+        }
+        catch(Exception ignored) {
+            fileArrayList = null;
+        }
+
+        return fileArrayList;
+    }
+
+    public static ArrayList<File> getFolders(String folderName) {
+        ArrayList<File> fileArrayList = new ArrayList<>();
+
+        try {
+            File folder = new File(folderName);
+
+            File[] files = folder.listFiles();
+            if(files != null) {
+                for(File file : files) {
+                    if(!file.isFile()) {
+                        fileArrayList.add(file);
+                    }
+                }
             }
         }
         catch(Exception ignored) {
@@ -135,6 +158,11 @@ public class FileUtil {
     public static boolean exists(String folderName, String fileName) {
         // This takes into account the case sensitivity of the file system.
         return new File(folderName + fileName).exists();
+    }
+
+    public static boolean isFile(String folderName, String fileName) {
+        // This takes into account the case sensitivity of the file system.
+        return new File(folderName + fileName).isFile();
     }
 
     public static File downloadFile(String fileExtension, String urlString) {

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -15,7 +14,6 @@ import androidx.documentfile.provider.DocumentFile;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -23,6 +21,8 @@ import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ExportDataFileDialog extends BaseDialog {
     public final static String DATA_FOLDER = "exports";
@@ -30,8 +30,6 @@ public class ExportDataFileDialog extends BaseDialog {
     String dataFolder;
     Uri uri;
     boolean isURI;
-
-    ArrayList<String> existingFileNames = new ArrayList<>();
 
     public String user_FILENAME;
     public String user_FOLDERNAME;
@@ -57,18 +55,14 @@ public class ExportDataFileDialog extends BaseDialog {
             }
         });
 
-        BaseDialogFragment chooseFolderDialogFragment = BaseDialogFragment.newInstance(ChooseFolderDialog.class);
+        BaseDialogFragment chooseFolderDialogFragment = BaseDialogFragment.newInstance(ChooseFolderDialog.class, DATA_FOLDER);
         chooseFolderDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseFolderDialog)dialog).isComplete) {
-                    dataFolder = ((ChooseFolderDialog)dialog).user_FOLDERNAME + File.separatorChar;
+                    dataFolder = ((ChooseFolderDialog)dialog).user_FOLDERNAME;
                     uri = ((ChooseFolderDialog)dialog).user_URI;
                     isURI = ((ChooseFolderDialog)dialog).user_ISURI;
-
-                    if(!isURI) {
-                        dataFolder = dataFolder + DATA_FOLDER + File.separatorChar;
-                    }
 
                     updateLayout();
                 }
@@ -129,18 +123,28 @@ public class ExportDataFileDialog extends BaseDialog {
                     String fileName = E_FILE.getTextString();
 
                     boolean exists;
+                    boolean isFile;
                     if(isURI) {
                         DocumentFile documentFolder = DocumentFile.fromTreeUri(activity, uri);
                         DocumentFile oldDocumentFile = documentFolder.findFile(fileName);
+
                         exists = oldDocumentFile != null;
+                        isFile = exists && oldDocumentFile.isFile();
                     }
                     else {
                         exists = FileUtil.exists(dataFolder, fileName);
+                        isFile = exists && FileUtil.isFile(dataFolder, fileName);
                     }
 
                     if(exists) {
-                        confirmFileOverwriteDialogFragment.show(activity, "overwrite");
-                        return;
+                        if(isFile) {
+                            confirmFileOverwriteDialogFragment.show(activity, "overwrite");
+                            return;
+                        }
+                        else {
+                            ToastUtil.showToast(activity,"cannot_overwrite_folder");
+                            return;
+                        }
                     }
 
                     user_FILENAME = fileName;
@@ -161,36 +165,74 @@ public class ExportDataFileDialog extends BaseDialog {
         else {
             T.setVisibility(View.VISIBLE);
 
+            // These entries could be files or folders.
             ArrayList<File> existingFiles;
+            ArrayList<File> existingFolders;
             if(isURI) {
                 existingFiles = new ArrayList<>();
+                existingFolders = new ArrayList<>();
 
                 DocumentFile[] documentFiles = DocumentFile.fromTreeUri(activity, uri).listFiles();
                 for(DocumentFile documentFile : documentFiles) {
-                    existingFiles.add(new File(documentFile.getName()));
+                    if(documentFile.isFile()) {
+                        existingFiles.add(new File(documentFile.getName()));
+                    }
+                    else {
+                        existingFolders.add(new File(documentFile.getName()));
+                    }
                 }
             }
             else {
                 existingFiles = FileUtil.getFiles(dataFolder);
+                existingFolders = FileUtil.getFolders(dataFolder);
             }
 
-            if(existingFiles == null) {
-                String redText = RichStringBuilder.redText("Problem accessing existing files.");
-                T.setText(Html.fromHtml(redText));
+            StringBuilder s = new StringBuilder();
+            if(existingFolders == null) {
+                s.append("(Problem accessing existing folders)");
             }
-            else if(existingFiles.isEmpty()) {
-                T.setText("No existing files.");
+            else if(existingFolders.isEmpty()) {
+                s.append("(No existing folders)");
             }
             else {
-                StringBuilder s = new StringBuilder();
-                s.append("Existing files:");
-                for(File existingFile : existingFiles) {
-                    existingFileNames.add(existingFile.getName());
-                    s.append("\n").append(existingFile.getName());
+                s.append("Existing folders:");
+
+                ArrayList<String> existingFolderNames = new ArrayList<>();
+                for(File existingFolder : existingFolders) {
+                    existingFolderNames.add(existingFolder.getName());
                 }
 
-                T.setText(s.toString());
+                Collections.sort(existingFolderNames, Comparator.comparing(String::toLowerCase));
+
+                for(String existingFolderName : existingFolderNames) {
+                    s.append("\n").append(existingFolderName);
+                }
             }
+
+            s.append("\n\n");
+
+            if(existingFiles == null) {
+                s.append("(Problem accessing existing files)");
+            }
+            else if(existingFiles.isEmpty()) {
+                s.append("(No existing files)");
+            }
+            else {
+                s.append("Existing files:");
+
+                ArrayList<String> existingFileNames = new ArrayList<>();
+                for(File existingFile : existingFiles) {
+                    existingFileNames.add(existingFile.getName());
+                }
+
+                Collections.sort(existingFileNames, Comparator.comparing(String::toLowerCase));
+
+                for(String existingFileName : existingFileNames) {
+                    s.append("\n").append(existingFileName);
+                }
+            }
+
+            T.setText(s.toString());
         }
     }
 

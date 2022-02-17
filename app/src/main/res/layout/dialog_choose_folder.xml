@@ -36,6 +36,7 @@
         android:id="@+id/choose_folder_dialog_externalFolderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="External Folders:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_internalFolderTableLayout" />
@@ -51,6 +52,7 @@
         android:id="@+id/choose_folder_dialog_otherFolderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Other:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_folder_dialog_externalFolderTableLayout" />

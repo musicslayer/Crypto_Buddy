@@ -23,15 +23,20 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
-import java.util.ArrayList;
+import java.io.File;
 
 public class ChooseFolderDialog extends BaseDialog {
+    String subfolder;
+
     public String user_FOLDERNAME;
     public Uri user_URI;
     public boolean user_ISURI;
 
-    public ChooseFolderDialog(Activity activity) {
+    public ChooseFolderDialog(Activity activity, String subfolder) {
         super(activity);
+
+        // Pass in "" if you do not want to use a subfolder (null cannot be passed in).
+        this.subfolder = subfolder;
     }
 
     public int getBaseViewID() {
@@ -49,13 +54,20 @@ public class ChooseFolderDialog extends BaseDialog {
         tableInternal.removeAllViews();
 
         for(String folderName : App.internalFilesDirs) {
+            // Add in the subfolder if one was supplied.
+            if(!subfolder.isEmpty()) {
+                folderName = folderName + subfolder + File.separatorChar;
+            }
+
+            final String folderName_final = folderName;
+
             AppCompatButton B = new AppCompatButton(activity);
             B.setText(folderName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 @Override
                 public void onClickImpl(View view) {
-                    user_FOLDERNAME = folderName;
+                    user_FOLDERNAME = folderName_final;
                     user_URI = null;
                     user_ISURI = false;
 
@@ -65,10 +77,9 @@ public class ChooseFolderDialog extends BaseDialog {
             });
 
             TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            TRP.setMargins(80,0,0,0);
 
             TableRow TR = new TableRow(activity);
-            TR.addView(B);
+            TR.addView(B, TRP);
             tableInternal.addView(TR);
         }
 
@@ -76,13 +87,20 @@ public class ChooseFolderDialog extends BaseDialog {
         tableExternal.removeAllViews();
 
         for(String folderName : App.externalFilesDirs) {
+            // Add in the subfolder if one was supplied.
+            if(subfolder != null && !"".equals(subfolder)) {
+                folderName = folderName + subfolder + File.separatorChar;
+            }
+
+            final String folderName_final = folderName;
+
             AppCompatButton B = new AppCompatButton(activity);
             B.setText(folderName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 @Override
                 public void onClickImpl(View view) {
-                    user_FOLDERNAME = folderName;
+                    user_FOLDERNAME = folderName_final;
                     user_URI = null;
                     user_ISURI = false;
 
@@ -92,10 +110,9 @@ public class ChooseFolderDialog extends BaseDialog {
             });
 
             TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            TRP.setMargins(80,0,0,0);
 
             TableRow TR = new TableRow(activity);
-            TR.addView(B);
+            TR.addView(B, TRP);
             tableExternal.addView(TR);
         }
 
@@ -128,10 +145,9 @@ public class ChooseFolderDialog extends BaseDialog {
             });
 
             TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            TRP.setMargins(80,0,0,0);
 
             TableRow TR = new TableRow(activity);
-            TR.addView(B);
+            TR.addView(B, TRP);
             tableOther.addView(TR);
         }
         else {
