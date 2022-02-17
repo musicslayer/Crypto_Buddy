@@ -130,6 +130,7 @@ public class ToastUtil {
         toastMap.put("paste_clipboard_success", Toast.makeText(context, "Text pasted from clipboard.", duration));
 
         // Import and Export
+        toastMap.put("cannot_import_folder", Toast.makeText(context, "Cannot import a folder.", duration));
         toastMap.put("cannot_overwrite_folder", Toast.makeText(context, "A folder with that name already exists and cannot be overwritten.", duration));
         toastMap.put("export_clipboard_text_too_large", Toast.makeText(context, "Could not export to clipboard. Text is too large to place on clipboard.", duration));
         toastMap.put("export_clipboard_unknown_error", Toast.makeText(context, "Could not export to clipboard. Cause is unknown.", duration));

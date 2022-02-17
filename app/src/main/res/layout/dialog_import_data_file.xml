@@ -29,23 +29,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
-    <TextView
-        android:id="@+id/import_data_file_dialog_dataFolderBaseTextView"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/import_data_file_dialog_chooseFolderButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Choose Data Folder Base:"
+        android:text="Choose Base Folder"
+        app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_toolbar" />
-
-    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
-        android:id="@+id/import_data_file_dialog_dataFolderBaseSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderBaseTextView">
-
-    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
+        app:layout_constraintTop_toBottomOf="@+id/import_data_file_dialog_toolbar" />
 
     <TextView
         android:id="@+id/import_data_file_dialog_dataFolderTextView"
@@ -54,7 +45,7 @@
         android:layout_weight="1"
         android:text="Data Folder:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderBaseSpinner" />
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_chooseFolderButton" />
 
     <TextView
         android:id="@+id/import_data_file_dialog_messageTextView"

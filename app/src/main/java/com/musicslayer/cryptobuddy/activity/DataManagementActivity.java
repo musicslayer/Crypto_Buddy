@@ -27,9 +27,6 @@ import com.musicslayer.cryptobuddy.util.UriUtil;
 import java.io.File;
 import java.util.ArrayList;
 
-// TODO Let user pick "Downloads" folder.
-// TODO Show toast if there are no suitable folders to export/import to?
-
 public class DataManagementActivity extends BaseActivity {
     String fileName;
     String folderName;
@@ -129,11 +126,22 @@ public class DataManagementActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ImportDataFileDialog)dialog).isComplete) {
+                    fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
+                    folderName = ((ImportDataFileDialog)dialog).user_FOLDERNAME;
+                    uri = ((ImportDataFileDialog)dialog).user_URI;
+                    isURI = ((ImportDataFileDialog)dialog).user_ISURI;
+
                     ArrayList<String> dataTypes;
 
                     try {
                         // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
-                        fileText = FileUtil.readFile(((ImportDataFileDialog)dialog).user_FOLDERNAME, ((ImportDataFileDialog)dialog).user_FILENAME);
+                        if(isURI) {
+                            fileText = UriUtil.readFile(activity, uri, fileName);
+                        }
+                        else {
+                            fileText = FileUtil.readFile(folderName, fileName);
+                        }
+
                         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
                     }

@@ -139,21 +139,20 @@ public class ExportDataFileDialog extends BaseDialog {
                     if(exists) {
                         if(isFile) {
                             confirmFileOverwriteDialogFragment.show(activity, "overwrite");
-                            return;
                         }
                         else {
                             ToastUtil.showToast(activity,"cannot_overwrite_folder");
-                            return;
                         }
                     }
+                    else {
+                        user_FILENAME = fileName;
+                        user_FOLDERNAME = dataFolder;
+                        user_URI = uri;
+                        user_ISURI = isURI;
 
-                    user_FILENAME = fileName;
-                    user_FOLDERNAME = dataFolder;
-                    user_URI = uri;
-                    user_ISURI = isURI;
-
-                    isComplete = true;
-                    dismiss();
+                        isComplete = true;
+                        dismiss();
+                    }
                 }
             }
         });
@@ -165,7 +164,6 @@ public class ExportDataFileDialog extends BaseDialog {
         else {
             T.setVisibility(View.VISIBLE);
 
-            // These entries could be files or folders.
             ArrayList<File> existingFiles;
             ArrayList<File> existingFolders;
             if(isURI) {
