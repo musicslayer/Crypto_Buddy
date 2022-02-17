@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
@@ -760,6 +761,15 @@ public class Serialization {
 
         public void remove(String key) {
             jsonObject.remove(key);
+        }
+
+        public ArrayList<String> keys() {
+            ArrayList<String> keys = new ArrayList<>();
+            Iterator<String> it = jsonObject.keys();
+            while(it.hasNext()) {
+                keys.add(it.next());
+            }
+            return keys;
         }
 
         private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {

@@ -27,6 +27,8 @@ public class ExportDataFileDialog extends BaseDialog {
 
     ArrayList<String> existingFileNames = new ArrayList<>();
 
+    public String user_FILENAME;
+
     public ExportDataFileDialog(Activity activity, String externalFolder) {
         super(activity);
         this.externalFolder = externalFolder;
@@ -54,20 +56,9 @@ public class ExportDataFileDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmFileOverwriteDialog)dialog).isComplete) {
-                    String fileName = E_FILE.getTextString();
-
-                    String json = Persistence.exportAllToJSON(activity);
-                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
-
-                    if(externalFile != null) {
-                        ToastUtil.showToast(activity,"export_file_success");
-
-                        isComplete = true;
-                        dismiss();
-                    }
-                    else {
-                        ToastUtil.showToast(activity,"export_file_failed");
-                    }
+                    user_FILENAME = E_FILE.getTextString();
+                    isComplete = true;
+                    dismiss();
                 }
             }
         });
@@ -85,18 +76,9 @@ public class ExportDataFileDialog extends BaseDialog {
                         return;
                     }
 
-                    String json = Persistence.exportAllToJSON(activity);
-                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
-
-                    if(externalFile != null) {
-                        ToastUtil.showToast(activity,"export_file_success");
-
-                        isComplete = true;
-                        dismiss();
-                    }
-                    else {
-                        ToastUtil.showToast(activity,"export_file_failed");
-                    }
+                    user_FILENAME = fileName;
+                    isComplete = true;
+                    dismiss();
                 }
                 else {
                     ToastUtil.showToast(activity,"must_fill_inputs");

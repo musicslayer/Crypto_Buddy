@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -8,22 +9,25 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
+import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
+import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +39,9 @@ public class DataManagementActivity extends BaseActivity {
     public final static String EXPORT_FOLDER = "exports";
 
     String externalFolder;
+    String fileName;
+    String fileText;
+    String clipboardText;
 
     @Override
     public int getAdLayoutViewID() {
@@ -63,6 +70,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 externalFolder = externalFolderBases.get(pos) + EXPORT_FOLDER + File.separatorChar;
                 T_FOLDER.setText("Export Folder:\n" + externalFolder);
+                updateLayout();
             }
         });
 
@@ -76,67 +84,207 @@ public class DataManagementActivity extends BaseActivity {
             bsv.setVisibility(View.GONE);
             T_FOLDER.setText(Html.fromHtml(RichStringBuilder.redText("No export folders are available.")));
         }
+    }
+
+    public void updateLayout() {
+        ArrayList<String> dataTypes = Persistence.getAllDataTypes();
+
+        // Export to File
+        BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        exportFile_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
+                    File externalFile = FileUtil.writeExternalFile(externalFolder, fileName, json);
+
+                    if(externalFile != null) {
+                        ToastUtil.showToast(activity,"export_file_success");
+                    }
+                    else {
+                        ToastUtil.showToast(activity,"export_file_failed");
+                    }
+                }
+            }
+        });
+        exportFile_selectDataTypesDialogFragment.restoreListeners(this, "select_export_file");
+
+        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class, externalFolder);
+        exportDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ExportDataFileDialog)dialog).isComplete) {
+                    fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
+
+                    // Launch dialog to ask user which data types to import.
+                    exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
+                }
+            }
+        });
+        exportDataFileDialogFragment.restoreListeners(this, "export_file");
 
         Button B_EXPORT = findViewById(R.id.data_management_exportButton);
         B_EXPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ExportDataFileDialog.class, externalFolder).show(DataManagementActivity.this, "export");
+                exportDataFileDialogFragment.show(DataManagementActivity.this, "export_file");
             }
         });
+
+        // Import from File
+        DialogInterface.OnDismissListener importFile_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    Persistence.importAllFromJSON(activity, chosenDataTypes, fileText);
+                    ToastUtil.showToast(activity,"import_file_success");
+                }
+            }
+        };
+
+        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class, externalFolder);
+        importDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ImportDataFileDialog)dialog).isComplete) {
+                    ArrayList<String> dataTypes;
+
+                    try {
+                        // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
+                        fileText = FileUtil.readExternalFile(externalFolder, ((ImportDataFileDialog)dialog).user_FILENAME);
+                        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
+                        dataTypes = o.keys();
+                    }
+                    catch(Exception ignored) {
+                        ToastUtil.showToast(activity,"import_file_failed");
+                        return;
+                    }
+
+                    // Launch dialog to ask user which data types to import.
+                    BaseDialogFragment importFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+                    importFile_selectDataTypesDialogFragment.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
+                    importFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_file");
+                }
+            }
+        });
+        importDataFileDialogFragment.restoreListeners(this, "import_file");
 
         Button B_IMPORT = findViewById(R.id.data_management_importButton);
         B_IMPORT.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                BaseDialogFragment.newInstance(ImportDataFileDialog.class, externalFolder).show(DataManagementActivity.this, "import");
+                importDataFileDialogFragment.show(DataManagementActivity.this, "import_file");
             }
         });
+
+        BaseDialogFragment importFile_selectDataTypesDialogFragment2 = (BaseDialogFragment) this.getSupportFragmentManager().findFragmentByTag("select_import_file");
+        if (importFile_selectDataTypesDialogFragment2 != null) {
+            importFile_selectDataTypesDialogFragment2.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
+        }
+
+        // Export to Email
+        BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        exportEmail_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    // Create temp file with exported data and email it.
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    ArrayList<File> fileArrayList = new ArrayList<>();
+                    fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes)));
+                    MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
+                }
+            }
+        });
+        exportEmail_selectDataTypesDialogFragment.restoreListeners(this, "select_export_email");
 
         Button B_EMAIL = findViewById(R.id.data_management_emailButton);
         B_EMAIL.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                // Create temp file with exported data and email it.
-                ArrayList<File> fileArrayList = new ArrayList<>();
-                fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(DataManagementActivity.this)));
-                MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
+                exportEmail_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_email");
             }
         });
+
+        // Export to Clipboard
+        BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        exportClipboard_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    // Create temp file with exported data and email it.
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    ClipboardUtil.copy(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes));
+                }
+            }
+        });
+        exportClipboard_selectDataTypesDialogFragment.restoreListeners(this, "select_export_clipboard");
 
         Button B_COPY = findViewById(R.id.data_management_copyButton);
         B_COPY.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                ClipboardUtil.copy(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this));
+                exportClipboard_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_clipboard");
             }
         });
+
+        // Import from Clipboard
+        DialogInterface.OnDismissListener importClipboard_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    Persistence.importAllFromJSON(activity, chosenDataTypes, clipboardText);
+                    ToastUtil.showToast(activity,"import_clipboard_success");
+                }
+            }
+        };
 
         Button B_PASTE = findViewById(R.id.data_management_pasteButton);
         B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                String clipboardText;
+                ArrayList<String> dataTypes;
 
                 try {
-                    // Check if clipboard text can be parsed as JSON.
+                    // Check if clipboard text can be parsed as JSON. If so, store the data type keys that are present.
                     clipboardText = String.valueOf(ClipboardUtil.getText(DataManagementActivity.this));
-                    new JSONObject(clipboardText);
-                    // TODO Check some sort of marker or checksum or version number?
+                    Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(clipboardText);
+                    dataTypes = o.keys();
                 }
                 catch(Exception ignored) {
                     ToastUtil.showToast(activity,"import_clipboard_failed");
                     return;
                 }
 
-                Persistence.importAllFromJSON(activity, clipboardText);
-                ToastUtil.showToast(activity,"import_clipboard_success");
+                // Launch dialog to ask user which data types to import.
+                BaseDialogFragment importClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+                importClipboard_selectDataTypesDialogFragment.setOnDismissListener(importClipboard_selectDataTypesDialogFragmentListener);
+                importClipboard_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_clipboard");
             }
         });
 
-        updateLayout();
+        BaseDialogFragment importClipboard_selectDataTypesDialogFragment2 = (BaseDialogFragment) this.getSupportFragmentManager().findFragmentByTag("select_import_clipboard");
+        if (importClipboard_selectDataTypesDialogFragment2 != null) {
+            importClipboard_selectDataTypesDialogFragment2.setOnDismissListener(importClipboard_selectDataTypesDialogFragmentListener);
+        }
     }
 
-    public void updateLayout() {
+    @Override
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        bundle.putString("fileName", fileName);
+        bundle.putString("fileText", fileText);
+        bundle.putString("clipboardText", clipboardText);
+    }
+
+    @Override
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        if(bundle != null) {
+            fileName = bundle.getString("fileName");
+            fileText = bundle.getString("fileText");
+            clipboardText = bundle.getString("clipboardText");
+        }
     }
 }

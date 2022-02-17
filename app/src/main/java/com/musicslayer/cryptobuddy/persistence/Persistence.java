@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,28 +35,51 @@ public class Persistence {
         persistentClassMap.put("TransactionPortfolio", TransactionPortfolio.class);
     }
 
-    public static String exportAllToJSON(Context context) {
+    public static ArrayList<String> getAllDataTypes() {
+        // Return all the possible data types that we can export (in alphabetical order).
+        ArrayList<String> dataTypes = new ArrayList<>();
+
+        ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String clazzString : sortedKeys) {
+            Class<?> clazz = persistentClassMap.get(clazzString);
+            if(clazz == null) { throw new NullPointerException(); }
+
+            boolean canExport = ReflectUtil.callStaticMethod(clazz, "canExport");
+            if(!canExport) { continue; }
+
+            String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
+            dataTypes.add(key);
+        }
+
+        return dataTypes;
+    }
+
+    public static String exportAllToJSON(Context context, ArrayList<String> dataTypes) {
         // Return a JSON representation of all the persistent data stored in the app.
 
-        // Map each SharedPreferences key to it's data.
+        // Each SharedPreferences key maps to its data.
         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
 
-        // Individually, try to add each piece of data.
-        for(String clazzString : new ArrayList<>(persistentClassMap.keySet())) {
+        // Individually, try to export each piece of data (in alphabetical order).
+        ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String clazzString : sortedKeys) {
             try {
                 Class<?> clazz = persistentClassMap.get(clazzString);
                 if(clazz == null) { throw new NullPointerException(); }
 
-                boolean canExport = ReflectUtil.callStaticMethod(clazz, "canExport");
-                if(!canExport) { continue; }
-
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
+                if(!dataTypes.contains(key)) { continue; }
+
                 String value = ReflectUtil.callExportToJSON(clazz, context);
 
                 o.put(key, value);
             }
             catch(Exception e) {
-                // If one class's data cannot be written, skip it and do nothing.
+                // If one class's data cannot be exported, skip it and do nothing.
                 ThrowableUtil.processThrowable(e);
             }
         }
@@ -63,33 +87,30 @@ public class Persistence {
         return o.toStringOrNull();
     }
 
-    // TODO Most classes should only import things that don't already exist. Or give a toggle option.
-
-    public static void importAllFromJSON(Context context, String json){
-        // Map each SharedPreferences key to it's data.
+    public static void importAllFromJSON(Context context, ArrayList<String> dataTypes, String json) {
+        // Each SharedPreferences key maps to its data.
         Serialization.JSONObjectWithNull o;
         try {
             o = new Serialization.JSONObjectWithNull(json);
         }
-        catch(Exception ignored) {
-            return;
+        catch(Exception e) {
+            throw new IllegalStateException(e);
         }
 
-        // Individually, try to load each piece of data.
-        for(String clazzString : new ArrayList<>(persistentClassMap.keySet())) {
+        // Individually, try to import each piece of data (in alphabetical order).
+        ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String clazzString : sortedKeys) {
             try {
                 Class<?> clazz = persistentClassMap.get(clazzString);
                 if(clazz == null) { throw new NullPointerException(); }
 
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
-                if(!o.has(key)) { continue; }
+                if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
                 String value = o.getString(key);
                 ReflectUtil.callImportFromJSON(clazz, context, value);
-
-                if(key.equals("settings_data")) {
-                    SettingList.importFromJSON1(context, value);
-                }
             }
             catch(Exception e) {
                 // If one class's data cannot be imported, skip it and do nothing.
@@ -102,8 +123,11 @@ public class Persistence {
         // Return a representation of all the persistent data stored in the app.
         HashMap<String, HashMap<String, String>> allDataMap = new HashMap<>();
 
-        // Individually, try to add each piece of data.
-        for(String clazzString : new ArrayList<>(persistentClassMap.keySet())) {
+        // Individually, try to add each piece of data (in alphabetical order).
+        ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String clazzString : sortedKeys) {
             try {
                 Class<?> clazz = persistentClassMap.get(clazzString);
                 if(clazz == null) { throw new NullPointerException(); }
@@ -136,7 +160,7 @@ public class Persistence {
     }
 
     public static HashMap<String, String> getDataMap(Context context, String name) {
-        // Get all data inside a SharedPreferences instance as a string.
+        // Get all data inside a SharedPreferences instance as a HashMap.
         HashMap<String, String> hashMap = new HashMap<>();
 
         SharedPreferences settings = context.getSharedPreferences(name, MODE_PRIVATE);
@@ -152,14 +176,16 @@ public class Persistence {
 
     public static boolean resetAllData(Context context) {
         // Resets all stored persistent data in the app. App should be just like a new install.
-        // Individually, try to reset each piece of data.
+        // Individually, try to reset each piece of data (in alphabetical order).
         // Note that each "resetData" method should erase both active and stored data.
         boolean isComplete = true;
 
-        ArrayList<String> keys = new ArrayList<>(persistentClassMap.keySet());
-        for(String key : keys) {
+        ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String clazzString : sortedKeys) {
             try {
-                Class<?> value = persistentClassMap.get(key);
+                Class<?> value = persistentClassMap.get(clazzString);
                 if(value == null) { throw new NullPointerException(); }
 
                 ReflectUtil.callResetAllData(value, context);

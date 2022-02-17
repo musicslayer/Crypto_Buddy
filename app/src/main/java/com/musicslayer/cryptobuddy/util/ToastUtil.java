@@ -135,6 +135,7 @@ public class ToastUtil {
         toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
         toastMap.put("import_file_failed", Toast.makeText(context, "Could not import from file. File was not exported from this app.", duration));
         toastMap.put("import_file_success", Toast.makeText(context, "Import from file complete.", duration));
+        toastMap.put("nothing_selected", Toast.makeText(context, "There is nothing selected.", duration));
 
         // Internal Only
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", duration));

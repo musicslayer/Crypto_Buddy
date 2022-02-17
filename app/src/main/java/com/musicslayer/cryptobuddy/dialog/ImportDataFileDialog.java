@@ -10,24 +10,21 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
-
-// TODO Let user select what kinds of data to import.
 
 public class ImportDataFileDialog extends BaseDialog {
     String externalFolder;
 
     ArrayList<String> existingFileNames = new ArrayList<>();
+
+    public String user_FILENAME;
 
     public ImportDataFileDialog(Activity activity, String externalFolder) {
         super(activity);
@@ -58,31 +55,15 @@ public class ImportDataFileDialog extends BaseDialog {
 
                 if(isValid) {
                     String fileName = E_FILE.getTextString();
-                    if(!existingFileNames.contains(fileName)) {
+
+                    if(!FileUtil.isExternalFileExisting(externalFolder, fileName)) {
                         ToastUtil.showToast(activity, "file_does_not_exist");
                         return;
                     }
 
-                    String fileText;
-
-                    try {
-                        // Check if file text can be parsed as JSON.
-                        fileText = FileUtil.readExternalFile(externalFolder, fileName);
-                        new JSONObject(fileText);
-                        // TODO Check some sort of marker or checksum or version number?
-                    }
-                    catch(Exception ignored) {
-                        ToastUtil.showToast(activity,"import_file_failed");
-                        return;
-                    }
-
+                    user_FILENAME = fileName;
                     isComplete = true;
                     dismiss();
-
-                    // We must do this after the dismissal because of the recreate.
-                    Persistence.importAllFromJSON(activity, fileText);
-                    ToastUtil.showToast(activity,"import_file_success");
-
                 }
                 else {
                     ToastUtil.showToast(activity,"must_fill_inputs");
