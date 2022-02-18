@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.serialize;
 
+import android.net.Uri;
+
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -9,6 +11,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -473,6 +476,22 @@ public class Serialization {
 
     public static BigDecimal bigdecimal_deserialize(String s) {
         return s == null ? null : new BigDecimal(string_deserialize(s));
+    }
+
+    public static String file_serialize(File obj) {
+        return obj == null ? null : string_serialize(obj.getAbsolutePath());
+    }
+
+    public static File file_deserialize(String s) {
+        return s == null ? null : new File(string_deserialize(s));
+    }
+
+    public static String uri_serialize(Uri obj) {
+        return obj == null ? null : string_serialize(obj.toString());
+    }
+
+    public static Uri uri_deserialize(String s) {
+        return s == null ? null : Uri.parse(string_deserialize(s));
     }
 
     // Asset.serializeToJSON only serializes a key used to lookup an Asset later.

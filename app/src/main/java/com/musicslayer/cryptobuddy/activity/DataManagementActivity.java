@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,22 +15,20 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
+import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.util.UriUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class DataManagementActivity extends BaseActivity {
     String fileName;
-    String folderName;
-    Uri uri;
-    boolean isURI;
+    public UniversalFile universalFolder;
     String fileText;
     String clipboardText;
 
@@ -65,13 +62,7 @@ public class DataManagementActivity extends BaseActivity {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
 
-                    boolean isSuccess;
-                    if(isURI) {
-                        isSuccess = UriUtil.writeFile(DataManagementActivity.this, uri, fileName, json);
-                    }
-                    else {
-                        isSuccess = FileUtil.writeFile(folderName, fileName, json) != null;
-                    }
+                    boolean isSuccess = universalFolder.writeFile(fileName, json);
 
                     if(isSuccess) {
                         ToastUtil.showToast(activity,"export_file_success");
@@ -90,9 +81,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ExportDataFileDialog)dialog).isComplete) {
                     fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
-                    folderName = ((ExportDataFileDialog)dialog).user_FOLDERNAME;
-                    uri = ((ExportDataFileDialog)dialog).user_URI;
-                    isURI = ((ExportDataFileDialog)dialog).user_ISURI;
+                    universalFolder = ((ExportDataFileDialog)dialog).user_UNIVERSALFOLDER;
 
                     // Launch dialog to ask user which data types to import.
                     exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
@@ -127,21 +116,13 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ImportDataFileDialog)dialog).isComplete) {
                     fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
-                    folderName = ((ImportDataFileDialog)dialog).user_FOLDERNAME;
-                    uri = ((ImportDataFileDialog)dialog).user_URI;
-                    isURI = ((ImportDataFileDialog)dialog).user_ISURI;
+                    universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
 
                     ArrayList<String> dataTypes;
 
                     try {
                         // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
-                        if(isURI) {
-                            fileText = UriUtil.readFile(activity, uri, fileName);
-                        }
-                        else {
-                            fileText = FileUtil.readFile(folderName, fileName);
-                        }
-
+                        fileText = universalFolder.readFile(fileName);
                         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
                     }
@@ -263,7 +244,7 @@ public class DataManagementActivity extends BaseActivity {
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
         bundle.putString("fileName", fileName);
-        bundle.putString("folderName", folderName);
+        bundle.putParcelable("universalFolder", universalFolder);
         bundle.putString("fileText", fileText);
         bundle.putString("clipboardText", clipboardText);
     }
@@ -272,7 +253,7 @@ public class DataManagementActivity extends BaseActivity {
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             fileName = bundle.getString("fileName");
-            folderName = bundle.getString("folderName");
+            universalFolder = bundle.getParcelable("universalFolder");
             fileText = bundle.getString("fileText");
             clipboardText = bundle.getString("clipboardText");
         }

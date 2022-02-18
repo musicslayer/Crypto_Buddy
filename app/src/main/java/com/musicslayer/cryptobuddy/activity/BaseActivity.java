@@ -18,8 +18,14 @@ abstract public class BaseActivity extends CrashActivity {
     abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getAdLayoutViewID();
 
+    public static BaseActivity activity;
+
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
+        // TODO REMOVE
+        // Store a static reference to the current activity.
+        activity = this;
+
         // In some situations (like manually removing a permission), the app may be "reset" and left in a bad state.
         // We need to exit the app and tell the user to restart.
         if(!App.isAppInitialized) {

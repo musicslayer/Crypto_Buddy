@@ -2,24 +2,20 @@ package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.documentfile.provider.DocumentFile;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,14 +23,10 @@ import java.util.Comparator;
 public class ExportDataFileDialog extends BaseDialog {
     public final static String DATA_FOLDER = "exports";
 
-    String dataFolder;
-    Uri uri;
-    boolean isURI;
+    public UniversalFile universalFolder;
 
     public String user_FILENAME;
-    public String user_FOLDERNAME;
-    public Uri user_URI;
-    public boolean user_ISURI;
+    public UniversalFile user_UNIVERSALFOLDER;
 
     public ExportDataFileDialog(Activity activity) {
         super(activity);
@@ -60,9 +52,7 @@ public class ExportDataFileDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseFolderDialog)dialog).isComplete) {
-                    dataFolder = ((ChooseFolderDialog)dialog).user_FOLDERNAME;
-                    uri = ((ChooseFolderDialog)dialog).user_URI;
-                    isURI = ((ChooseFolderDialog)dialog).user_ISURI;
+                    universalFolder = ((ChooseFolderDialog)dialog).user_UNIVERSALFOLDER;
 
                     updateLayout();
                 }
@@ -82,11 +72,11 @@ public class ExportDataFileDialog extends BaseDialog {
 
     public void updateLayout() {
         TextView T_FOLDER = findViewById(R.id.export_data_file_dialog_dataFolderTextView);
-        if(dataFolder == null) {
+        if(universalFolder == null) {
             T_FOLDER.setText("No data folder selected.");
         }
         else {
-            T_FOLDER.setText("Data Folder:\n" + dataFolder);
+            T_FOLDER.setText("Data Folder:\n" + universalFolder.getDisplayPath());
         }
 
         final FileEditText E_FILE = findViewById(R.id.export_data_file_dialog_fileEditText);
@@ -97,9 +87,7 @@ public class ExportDataFileDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmFileOverwriteDialog)dialog).isComplete) {
                     user_FILENAME = E_FILE.getTextString();
-                    user_FOLDERNAME = dataFolder;
-                    user_URI = uri;
-                    user_ISURI = isURI;
+                    user_UNIVERSALFOLDER = universalFolder;
 
                     isComplete = true;
                     dismiss();
@@ -113,7 +101,7 @@ public class ExportDataFileDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 boolean isValid = E_FILE.test();
 
-                if(dataFolder == null) {
+                if(universalFolder == null) {
                     ToastUtil.showToast(activity,"no_folder_selected");
                 }
                 else if(!isValid) {
@@ -122,22 +110,8 @@ public class ExportDataFileDialog extends BaseDialog {
                 else {
                     String fileName = E_FILE.getTextString();
 
-                    boolean exists;
-                    boolean isFile;
-                    if(isURI) {
-                        DocumentFile documentFolder = DocumentFile.fromTreeUri(activity, uri);
-                        DocumentFile oldDocumentFile = documentFolder.findFile(fileName);
-
-                        exists = oldDocumentFile != null;
-                        isFile = exists && oldDocumentFile.isFile();
-                    }
-                    else {
-                        exists = FileUtil.exists(dataFolder, fileName);
-                        isFile = exists && FileUtil.isFile(dataFolder, fileName);
-                    }
-
-                    if(exists) {
-                        if(isFile) {
+                    if(universalFolder.contains(fileName)) {
+                        if(universalFolder.containsFile(fileName)) {
                             confirmFileOverwriteDialogFragment.show(activity, "overwrite");
                         }
                         else {
@@ -146,9 +120,7 @@ public class ExportDataFileDialog extends BaseDialog {
                     }
                     else {
                         user_FILENAME = fileName;
-                        user_FOLDERNAME = dataFolder;
-                        user_URI = uri;
-                        user_ISURI = isURI;
+                        user_UNIVERSALFOLDER = universalFolder;
 
                         isComplete = true;
                         dismiss();
@@ -158,47 +130,24 @@ public class ExportDataFileDialog extends BaseDialog {
         });
 
         TextView T = findViewById(R.id.export_data_file_dialog_existingFilesTextView);
-        if(dataFolder == null) {
+        if(universalFolder == null) {
             T.setVisibility(View.GONE);
         }
         else {
             T.setVisibility(View.VISIBLE);
 
-            ArrayList<File> existingFiles;
-            ArrayList<File> existingFolders;
-            if(isURI) {
-                existingFiles = new ArrayList<>();
-                existingFolders = new ArrayList<>();
-
-                DocumentFile[] documentFiles = DocumentFile.fromTreeUri(activity, uri).listFiles();
-                for(DocumentFile documentFile : documentFiles) {
-                    if(documentFile.isFile()) {
-                        existingFiles.add(new File(documentFile.getName()));
-                    }
-                    else {
-                        existingFolders.add(new File(documentFile.getName()));
-                    }
-                }
-            }
-            else {
-                existingFiles = FileUtil.getFiles(dataFolder);
-                existingFolders = FileUtil.getFolders(dataFolder);
-            }
+            ArrayList<String> existingFileNames = universalFolder.getFileNames();
+            ArrayList<String> existingFolderNames = universalFolder.getFolderNames();
 
             StringBuilder s = new StringBuilder();
-            if(existingFolders == null) {
+            if(existingFolderNames == null) {
                 s.append("(Problem accessing existing folders)");
             }
-            else if(existingFolders.isEmpty()) {
+            else if(existingFolderNames.isEmpty()) {
                 s.append("(No existing folders)");
             }
             else {
                 s.append("Existing folders:");
-
-                ArrayList<String> existingFolderNames = new ArrayList<>();
-                for(File existingFolder : existingFolders) {
-                    existingFolderNames.add(existingFolder.getName());
-                }
 
                 Collections.sort(existingFolderNames, Comparator.comparing(String::toLowerCase));
 
@@ -209,19 +158,14 @@ public class ExportDataFileDialog extends BaseDialog {
 
             s.append("\n\n");
 
-            if(existingFiles == null) {
+            if(existingFileNames == null) {
                 s.append("(Problem accessing existing files)");
             }
-            else if(existingFiles.isEmpty()) {
+            else if(existingFileNames.isEmpty()) {
                 s.append("(No existing files)");
             }
             else {
                 s.append("Existing files:");
-
-                ArrayList<String> existingFileNames = new ArrayList<>();
-                for(File existingFile : existingFiles) {
-                    existingFileNames.add(existingFile.getName());
-                }
 
                 Collections.sort(existingFileNames, Comparator.comparing(String::toLowerCase));
 
@@ -236,14 +180,14 @@ public class ExportDataFileDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putString("dataFolder", dataFolder);
+        bundle.putParcelable("universalFolder", universalFolder);
         return bundle;
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            dataFolder = bundle.getString("dataFolder");
+            universalFolder = bundle.getParcelable("universalFolder");
         }
     }
 }

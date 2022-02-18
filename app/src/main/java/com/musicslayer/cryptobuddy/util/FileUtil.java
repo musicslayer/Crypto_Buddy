@@ -14,14 +14,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class FileUtil {
-    public static String readFile(String folderName, String fileName) {
+    public static String readFile(File folder, String name) {
         String s;
 
         try {
-            File file = new File(folderName + fileName);
+            File file = new File(folder.getAbsolutePath() + File.separatorChar + name);
             s = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
         }
-        catch(Exception e) { // Catch everything!
+        catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             s = null;
         }
@@ -79,20 +79,17 @@ public class FileUtil {
         return stringArrayList;
     }
 
-    public static File writeFile(String folderName, String fileName, String s) {
-        // Returns a file with the String written to it.
-        File file;
-
+    public static boolean writeFile(File folder, String name, String s) {
+        // Writes string to this file, and returns whether it was a success.
         try {
-            file = new File(folderName + fileName);
+            File file = new File(folder.getAbsolutePath() + File.separatorChar + name);
             FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
+            return true;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            file = null;
+            return false;
         }
-
-        return file;
     }
 
     public static File writeTempFile(String s) {
@@ -108,60 +105,6 @@ public class FileUtil {
         }
 
         return file;
-    }
-
-    public static ArrayList<File> getFiles(String folderName) {
-        ArrayList<File> fileArrayList = new ArrayList<>();
-
-        try {
-            File folder = new File(folderName);
-
-            File[] files = folder.listFiles();
-            if(files != null) {
-                for(File file : files) {
-                    if(file.isFile()) {
-                        fileArrayList.add(file);
-                    }
-                }
-            }
-        }
-        catch(Exception ignored) {
-            fileArrayList = null;
-        }
-
-        return fileArrayList;
-    }
-
-    public static ArrayList<File> getFolders(String folderName) {
-        ArrayList<File> fileArrayList = new ArrayList<>();
-
-        try {
-            File folder = new File(folderName);
-
-            File[] files = folder.listFiles();
-            if(files != null) {
-                for(File file : files) {
-                    if(!file.isFile()) {
-                        fileArrayList.add(file);
-                    }
-                }
-            }
-        }
-        catch(Exception ignored) {
-            fileArrayList = null;
-        }
-
-        return fileArrayList;
-    }
-
-    public static boolean exists(String folderName, String fileName) {
-        // This takes into account the case sensitivity of the file system.
-        return new File(folderName + fileName).exists();
-    }
-
-    public static boolean isFile(String folderName, String fileName) {
-        // This takes into account the case sensitivity of the file system.
-        return new File(folderName + fileName).isFile();
     }
 
     public static File downloadFile(String fileExtension, String urlString) {

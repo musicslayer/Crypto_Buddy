@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.app;
 
+import android.content.ContentResolver;
 import android.os.Build;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -27,6 +28,7 @@ public class App extends MultiDexApplication {
     public static String cacheDir;
     public static ArrayList<String> internalFilesDirs;
     public static ArrayList<String> externalFilesDirs;
+    public static ContentResolver contentResolver;
 
     @Override
     public void onCreate() {
@@ -69,6 +71,8 @@ public class App extends MultiDexApplication {
             else {
                 externalFilesDirs.add(this.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
             }
+
+            contentResolver = this.getContentResolver();
 
             // Try to clear out previously created files from the cache.
             // Then access the cache again to make sure the folder is recreated.

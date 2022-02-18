@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -21,6 +20,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.io.File;
@@ -28,9 +28,7 @@ import java.io.File;
 public class ChooseFolderDialog extends BaseDialog {
     String subfolder;
 
-    public String user_FOLDERNAME;
-    public Uri user_URI;
-    public boolean user_ISURI;
+    public UniversalFile user_UNIVERSALFOLDER;
 
     public ChooseFolderDialog(Activity activity, String subfolder) {
         super(activity);
@@ -56,7 +54,7 @@ public class ChooseFolderDialog extends BaseDialog {
         for(String folderName : App.internalFilesDirs) {
             // Add in the subfolder if one was supplied.
             if(!subfolder.isEmpty()) {
-                folderName = folderName + subfolder + File.separatorChar;
+                folderName = folderName + subfolder;
             }
 
             final String folderName_final = folderName;
@@ -67,9 +65,7 @@ public class ChooseFolderDialog extends BaseDialog {
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 @Override
                 public void onClickImpl(View view) {
-                    user_FOLDERNAME = folderName_final;
-                    user_URI = null;
-                    user_ISURI = false;
+                    user_UNIVERSALFOLDER = UniversalFile.fromFile(new File(folderName_final));
 
                     isComplete = true;
                     dismiss();
@@ -89,7 +85,7 @@ public class ChooseFolderDialog extends BaseDialog {
         for(String folderName : App.externalFilesDirs) {
             // Add in the subfolder if one was supplied.
             if(subfolder != null && !"".equals(subfolder)) {
-                folderName = folderName + subfolder + File.separatorChar;
+                folderName = folderName + subfolder;
             }
 
             final String folderName_final = folderName;
@@ -100,9 +96,7 @@ public class ChooseFolderDialog extends BaseDialog {
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 @Override
                 public void onClickImpl(View view) {
-                    user_FOLDERNAME = folderName_final;
-                    user_URI = null;
-                    user_ISURI = false;
+                    user_UNIVERSALFOLDER = UniversalFile.fromFile(new File(folderName_final));
 
                     isComplete = true;
                     dismiss();
@@ -162,15 +156,11 @@ public class ChooseFolderDialog extends BaseDialog {
         boolean isSuccess = true;
 
         if(result.getResultCode() == Activity.RESULT_OK) {
-            // Turn the returned Uri into the full folder path.
-            // This should only be called on newer Android versions, so we can use the MediaStore.
             try {
                 Uri uri = result.getData().getData();
                 DocumentFile documentFile = DocumentFile.fromTreeUri(activity, uri);
 
-                user_FOLDERNAME = DocumentsContract.getDocumentId(documentFile.getUri());
-                user_URI = uri;
-                user_ISURI = true;
+                user_UNIVERSALFOLDER = UniversalFile.fromTreeUri(documentFile.getUri());
 
                 isComplete = true;
                 dismiss();

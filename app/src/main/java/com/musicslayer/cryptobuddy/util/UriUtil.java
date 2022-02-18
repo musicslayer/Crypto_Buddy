@@ -5,23 +5,20 @@ import android.net.Uri;
 
 import androidx.documentfile.provider.DocumentFile;
 
+import com.musicslayer.cryptobuddy.app.App;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class UriUtil {
-    public static String readFile(Context context, Uri uri, String fileName) {
+    public static String readUri(Context context, Uri uri, String name) {
         InputStream o = null;
 
         try {
             DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
+            DocumentFile documentFile = documentFolder.findFile(name);
 
-            // If the file doesn't exists, return null.
-            DocumentFile documentFile = documentFolder.findFile(fileName);
-            if(documentFile == null) {
-                return null;
-            }
-
-            o = context.getContentResolver().openInputStream(documentFile.getUri());
+            o = App.contentResolver.openInputStream(documentFile.getUri());
             String s = StreamUtil.readIntoString(o);
             StreamUtil.safeFlushAndClose(o);
 
@@ -33,21 +30,21 @@ public class UriUtil {
         }
     }
 
-    public static boolean writeFile(Context context, Uri uri, String fileName, String s) {
+    public static boolean writeUri(Context context, Uri uri, String name, String s) {
         OutputStream o = null;
 
         try {
             DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
 
-            // If the file exists, delete it before creating it.
-            DocumentFile oldDocumentFile = documentFolder.findFile(fileName);
+            // If the file exists, delete it before creating it again.
+            DocumentFile oldDocumentFile = documentFolder.findFile(name);
             if(oldDocumentFile != null) {
                 oldDocumentFile.delete();
             }
 
-            DocumentFile documentFile = documentFolder.createFile("*/*", fileName);
+            DocumentFile documentFile = documentFolder.createFile("*/*", name);
 
-            o = context.getContentResolver().openOutputStream(documentFile.getUri());
+            o = App.contentResolver.openOutputStream(documentFile.getUri());
             StreamUtil.writeFromString(o, s);
             StreamUtil.safeFlushAndClose(o);
 
