@@ -30,57 +30,95 @@
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/import_data_file_dialog_chooseFolderButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Choose Base Folder"
-        app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/import_data_file_dialog_toolbar" />
-
-    <TextView
-        android:id="@+id/import_data_file_dialog_dataFolderTextView"
-        android:layout_width="wrap_content"
+        android:id="@+id/import_data_file_dialog_toggleButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Data Folder:"
+        android:text="File View"
+        app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_chooseFolderButton" />
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_toolbar" />
 
-    <TextView
-        android:id="@+id/import_data_file_dialog_messageTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Choose a file name to import data from.\nValid Characters: Letters, Numbers, Period, Space, Underscore"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_dataFolderTextView" />
-
-    <com.musicslayer.cryptobuddy.view.red.FileEditText
-        android:id="@+id/import_data_file_dialog_fileEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_messageTextView" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/import_data_file_dialog_confirmButton"
+    <LinearLayout
+        android:id="@+id/import_data_file_dialog_fileLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirm"
-        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_fileEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/import_data_file_dialog_toggleButton">
 
-    <TextView
-        android:id="@+id/import_data_file_dialog_existingFilesTextView"
-        android:layout_width="0dp"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/import_data_file_dialog_chooseFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose File"
+            app:drawableLeftCompat="@drawable/ic_baseline_insert_drive_file_24"/>
+
+        <TextView
+            android:id="@+id/import_data_file_dialog_dataFileTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data File:"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/import_data_file_dialog_confirmFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Confirm"
+            app:drawableLeftCompat="@drawable/ic_baseline_check_24"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/import_data_file_dialog_folderLinearLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Existing Files:"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_confirmButton" />
+        app:layout_constraintTop_toBottomOf="@id/import_data_file_dialog_fileLinearLayout">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/import_data_file_dialog_chooseFolderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Base Folder"
+            app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
+
+        <TextView
+            android:id="@+id/import_data_file_dialog_dataFolderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data Folder:" />
+
+        <TextView
+            android:id="@+id/import_data_file_dialog_messageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Choose a file name to import data from.\nValid Characters: Letters, Numbers, Period, Space, Underscore" />
+
+        <com.musicslayer.cryptobuddy.view.red.FileEditText
+            android:id="@+id/import_data_file_dialog_fileEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/import_data_file_dialog_confirmFolderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirm"
+            app:drawableLeftCompat="@drawable/ic_baseline_check_24" />
+
+        <TextView
+            android:id="@+id/import_data_file_dialog_existingFilesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Existing Files:" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

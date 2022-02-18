@@ -13,9 +13,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
-import com.musicslayer.cryptobuddy.dialog.ExportDataFileNewDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
-import com.musicslayer.cryptobuddy.dialog.ImportDataFileNewDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
@@ -84,28 +82,18 @@ public class DataManagementActivity extends BaseActivity {
         });
         exportFile_selectDataTypesDialogFragment.restoreListeners(this, "select_export_file");
 
-        //BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class);
-        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileNewDialog.class);
+        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class);
         exportDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((ExportDataFileNewDialog)dialog).isComplete) {
-                    universalFile = ((ExportDataFileNewDialog)dialog).user_UNIVERSALFILE;
-
-                    // Launch dialog to ask user which data types to import.
-                    exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
-                }
-
-            /*
                 if(((ExportDataFileDialog)dialog).isComplete) {
-                    fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
+                    universalFile = ((ExportDataFileDialog)dialog).user_UNIVERSALFILE;
                     universalFolder = ((ExportDataFileDialog)dialog).user_UNIVERSALFOLDER;
+                    fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
 
                     // Launch dialog to ask user which data types to import.
                     exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
                 }
-
-             */
             }
         });
         exportDataFileDialogFragment.restoreListeners(this, "export_file");
@@ -130,17 +118,14 @@ public class DataManagementActivity extends BaseActivity {
             }
         };
 
-        //BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
-        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileNewDialog.class);
+        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
         importDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                //if(((ImportDataFileDialog)dialog).isComplete) {
-                if(((ImportDataFileNewDialog)dialog).isComplete) {
-                    //fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
-                    //universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
-
-                    universalFile = ((ImportDataFileNewDialog)dialog).user_UNIVERSALFILE;
+                if(((ImportDataFileDialog)dialog).isComplete) {
+                    universalFile = ((ImportDataFileDialog)dialog).user_UNIVERSALFILE;
+                    universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
+                    fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
 
                     ArrayList<String> dataTypes;
 
