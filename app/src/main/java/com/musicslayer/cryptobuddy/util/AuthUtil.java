@@ -189,16 +189,34 @@ public class AuthUtil {
 
         public String serializeToJSON() throws org.json.JSONException {
             return new JSONWithNull.JSONObjectWithNull()
-                    .put("token_e", Serialization.byte_serializeArray(token_e))
-                    .put("expiryTime", Serialization.long_serialize(expiryTime))
+                    .put("token_e", Serialization.serializeArray(toObjectArray(token_e)))
+                    .put("expiryTime", Serialization.serialize(expiryTime))
                     .toStringOrNull();
         }
 
         public static OAuthToken deserializeFromJSON(String s) throws org.json.JSONException {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            byte[] token_e = Serialization.byte_deserializeArray(o.getString("token_e"));
-            long expiryTime = Serialization.long_deserialize(o.getString("expiryTime"));
+            byte[] token_e = toPrimitiveArray(Serialization.deserializeArray(o.getString("token_e"), Byte.class));
+            long expiryTime = Serialization.deserialize(o.getString("expiryTime"), Long.class);
             return new OAuthToken(token_e, expiryTime);
+        }
+
+        private static Byte[] toObjectArray(byte[] primtiveArray) {
+            Byte[] objectArray = new Byte[primtiveArray.length];
+            int i = 0;
+            for(byte b : primtiveArray) {
+                objectArray[i++] = b;
+            }
+            return objectArray;
+        }
+
+        private static byte[] toPrimitiveArray(Byte[] objectArray) {
+            byte[] primtiveArray = new byte[objectArray.length];
+            int i = 0;
+            for(Byte b : objectArray) {
+                primtiveArray[i++] = b;
+            }
+            return primtiveArray;
         }
 
         private OAuthToken(byte[] token_e, long expiryTime) {

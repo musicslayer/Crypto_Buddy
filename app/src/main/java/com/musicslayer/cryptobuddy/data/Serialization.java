@@ -12,7 +12,10 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import org.json.JSONException;
+
 import java.io.File;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,23 +45,24 @@ public class Serialization {
     }
 
     // Methods for objects that implement "SerializableToJSON".
-    public static <T extends SerializableToJSON> String serialize(T obj) {
+    public static <T> String serialize(T obj) {
         if(obj == null) { return null; }
+        SerializableToJSON wrappedObj = wrapObj(obj);
 
         String s;
         try {
-            s = obj.serializeToJSON();
+            s = wrappedObj.serializeToJSON();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
 
-        if(obj instanceof Versionable) {
+        if(wrappedObj instanceof Versionable) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             try {
                 JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-                o.put(SERIALIZATION_VERSION_MARKER, ((Versionable)obj).serializationVersion());
+                o.put(SERIALIZATION_VERSION_MARKER, ((Versionable)wrappedObj).serializationVersion());
                 s = o.toStringOrNull();
             }
             catch(Exception e) {
@@ -70,8 +74,9 @@ public class Serialization {
         return s;
     }
 
-    public static <T extends SerializableToJSON> T deserialize(String s, Class<T> clazzT) {
+    public static <T> T deserialize(String s, Class<T> clazzT) {
         if(s == null) { return null; }
+        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
 
         // First try to get the version number. If none is present, then the data was not versioned.
         String version;
@@ -86,10 +91,10 @@ public class Serialization {
         // Call the appropriate deserialization method for the version number.
         try {
             if(version == null) {
-                return ReflectUtil.callStaticMethod(clazzT, "deserializeFromJSON", s);
+                return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSON", s);
             }
             else {
-                return ReflectUtil.callStaticMethod(clazzT, "deserializeFromJSON" + version, s);
+                return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSON" + version, s);
             }
         }
         catch(Exception e) {
@@ -98,19 +103,19 @@ public class Serialization {
         }
     }
 
-    public static <T extends SerializableToJSON> String validate(String s, Class<T> clazzT) {
+    public static <T> String validate(String s, Class<T> clazzT) {
         // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
-        SerializableToJSON dummyObject = Serialization.deserialize(s, clazzT);
-        return Serialization.serialize(dummyObject);
+        T dummyObject = deserialize(s, clazzT);
+        return serialize(dummyObject);
     }
 
-    public static <T extends SerializableToJSON> String serializeArrayList(ArrayList<T> arrayList) {
-        if(arrayList == null) { return null; }
+    public static <T> String serializeArray(T[] array) {
+        if(array == null) { return null; }
 
         try {
             JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(T t : arrayList) {
-                a.put(new JSONWithNull.JSONObjectWithNull(Serialization.serialize(t)));
+            for(T t : array) {
+                a.put(serialize(t));
             }
 
             return a.toStringOrNull();
@@ -121,7 +126,46 @@ public class Serialization {
         }
     }
 
-    public static <T extends SerializableToJSON> ArrayList<T> deserializeArrayList(String s, Class<T> clazzT) {
+    public static <T> T[] deserializeArray(String s, Class<T> clazzT) {
+        if(s == null) { return null; }
+
+        try {
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
+
+            @SuppressWarnings("unchecked")
+            T[] array = (T[])Array.newInstance(clazzT, a.length());
+
+            for(int i = 0; i < a.length(); i++) {
+                String o = a.getString(i);
+                array[i] = deserialize(o, clazzT);
+            }
+
+            return array;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> String serializeArrayList(ArrayList<T> arrayList) {
+        if(arrayList == null) { return null; }
+
+        try {
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
+            for(T t : arrayList) {
+                a.put(new JSONWithNull.JSONObjectWithNull(serialize(t)));
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> ArrayList<T> deserializeArrayList(String s, Class<T> clazzT) {
         if(s == null) { return null; }
 
         try {
@@ -129,7 +173,7 @@ public class Serialization {
 
             JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
-                arrayList.add(Serialization.deserialize(a.getJSONObjectString(i), clazzT));
+                arrayList.add(deserialize(a.getJSONObjectString(i), clazzT));
             }
 
             return arrayList;
@@ -140,7 +184,7 @@ public class Serialization {
         }
     }
 
-    public static <T extends SerializableToJSON, U extends SerializableToJSON> String serializeHashMap(HashMap<T, U> hashMap) {
+    public static <T, U> String serializeHashMap(HashMap<T, U> hashMap) {
         if(hashMap == null) { return null; }
 
         // Serialize a hashmap as an array of keys and an array of values, in the same order.
@@ -152,8 +196,8 @@ public class Serialization {
 
         try {
             return new JSONWithNull.JSONObjectWithNull()
-                .put("keys", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(keyArrayList)))
-                .put("values", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(valueArrayList)))
+                .put("keys", new JSONWithNull.JSONArrayWithNull(serializeArrayList(keyArrayList)))
+                .put("values", new JSONWithNull.JSONArrayWithNull(serializeArrayList(valueArrayList)))
                 .toStringOrNull();
         }
         catch(Exception e) {
@@ -162,14 +206,14 @@ public class Serialization {
         }
     }
 
-    public static <T extends SerializableToJSON, U extends SerializableToJSON> HashMap<T, U> deserializeHashMap(String s, Class<T> clazzT, Class<U> clazzU) {
+    public static <T, U> HashMap<T, U> deserializeHashMap(String s, Class<T> clazzT, Class<U> clazzU) {
         if(s == null) { return null; }
 
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
-            ArrayList<T> arrayListT = Serialization.deserializeArrayList(o.getJSONArray("keys").toStringOrNull(), clazzT);
-            ArrayList<U> arrayListU = Serialization.deserializeArrayList(o.getJSONArray("values").toStringOrNull(), clazzU);
+            ArrayList<T> arrayListT = deserializeArrayList(o.getJSONArray("keys").toStringOrNull(), clazzT);
+            ArrayList<U> arrayListU = deserializeArrayList(o.getJSONArray("values").toStringOrNull(), clazzU);
 
             if(arrayListT == null || arrayListU == null || arrayListT.size() != arrayListU.size()) {
                 return null;
@@ -188,573 +232,405 @@ public class Serialization {
         }
     }
 
-    // Methods for types that do not implement the interface and can be serialized into a single string.
-    // These do not have any version information.
-    public static String string_serialize(String obj) {
-        return obj; // Same output for null and non-null
+    // For classes that do not implement SerializableToJSON, we wrap them in classes that define the required methods.
+    public static SerializableToJSON wrapObj(Object obj) {
+        // Converts an arbitrary object into a SerializableToJSON subclass.
+        // Note that obj will always be non-null.
+        if(obj instanceof SerializableToJSON) {
+            return (SerializableToJSON)obj;
+        }
+        else if(obj instanceof String) {
+            return new StringSerializableToJSON((String)obj);
+        }
+        else if(obj instanceof Boolean) {
+            return new BooleanSerializableToJSON((Boolean)obj);
+        }
+        else if(obj instanceof Byte) {
+            return new ByteSerializableToJSON((Byte)obj);
+        }
+        else if(obj instanceof Integer) {
+            return new IntegerSerializableToJSON((Integer)obj);
+        }
+        else if(obj instanceof Long) {
+            return new LongSerializableToJSON((Long)obj);
+        }
+        else if(obj instanceof Date) {
+            return new DateSerializableToJSON((Date)obj);
+        }
+        else if(obj instanceof BigDecimal) {
+            return new BigDecimalSerializableToJSON((BigDecimal)obj);
+        }
+        else if(obj instanceof File) {
+            return new FileSerializableToJSON((File)obj);
+        }
+        else if(obj instanceof DocumentFile) {
+            return new DocumentFileSerializableToJSON((DocumentFile)obj);
+        }
+        else if(obj instanceof Fiat) {
+            return new FiatSerializableToJSON((Fiat)obj);
+        }
+        else if(obj instanceof Coin) {
+            return new CoinSerializableToJSON((Coin)obj);
+        }
+        else if(obj instanceof Token) {
+            return new TokenSerializableToJSON((Token)obj);
+        }
+        else {
+            // Anything else is unsupported.
+            throw new IllegalStateException();
+        }
     }
 
-    public static String string_deserialize(String s) {
-        return s; // Same output for null and non-null
+    public static Class<? extends SerializableToJSON> wrapClass(Class<?> clazz) {
+        // Converts an arbitrary class into a SerializableToJSON class.
+        if(SerializableToJSON.class.isAssignableFrom(clazz)) {
+            return SerializableToJSON.class;
+        }
+        else if(String.class.isAssignableFrom(clazz)) {
+            return StringSerializableToJSON.class;
+        }
+        else if(Boolean.class.isAssignableFrom(clazz)) {
+            return BooleanSerializableToJSON.class;
+        }
+        else if(Byte.class.isAssignableFrom(clazz)) {
+            return ByteSerializableToJSON.class;
+        }
+        else if(Integer.class.isAssignableFrom(clazz)) {
+            return IntegerSerializableToJSON.class;
+        }
+        else if(Long.class.isAssignableFrom(clazz)) {
+            return LongSerializableToJSON.class;
+        }
+        else if(Date.class.isAssignableFrom(clazz)) {
+            return DateSerializableToJSON.class;
+        }
+        else if(BigDecimal.class.isAssignableFrom(clazz)) {
+            return BigDecimalSerializableToJSON.class;
+        }
+        else if(File.class.isAssignableFrom(clazz)) {
+            return FileSerializableToJSON.class;
+        }
+        else if(DocumentFile.class.isAssignableFrom(clazz)) {
+            return DocumentFileSerializableToJSON.class;
+        }
+        else if(Fiat.class.isAssignableFrom(clazz)) {
+            return FiatSerializableToJSON.class;
+        }
+        else if(Coin.class.isAssignableFrom(clazz)) {
+            return CoinSerializableToJSON.class;
+        }
+        else if(Token.class.isAssignableFrom(clazz)) {
+            return TokenSerializableToJSON.class;
+        }
+        else {
+            // Anything else is unsupported.
+            throw new IllegalStateException();
+        }
     }
 
-    public static String string_serializeArrayList(ArrayList<String> arrayList) {
-        if(arrayList == null) { return null; }
+    private static class StringSerializableToJSON implements SerializableToJSON {
+        String obj;
+        private StringSerializableToJSON(String obj) {
+            this.obj = obj;
+        }
 
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(String s : arrayList) {
-                a.put(Serialization.string_serialize(s));
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return obj;
+        }
+
+        public String deserializeFromJSON(String s) throws JSONException {
+            return s;
+        }
+    }
+
+    private static class BooleanSerializableToJSON implements SerializableToJSON {
+        boolean obj;
+        private BooleanSerializableToJSON(boolean obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return Boolean.toString(obj);
+        }
+
+        public boolean deserializeFromJSON(String s) throws JSONException {
+            return Boolean.parseBoolean(s);
+        }
+    }
+
+    private static class ByteSerializableToJSON implements SerializableToJSON {
+        byte obj;
+        private ByteSerializableToJSON(byte obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return Byte.toString(obj);
+        }
+
+        public byte deserializeFromJSON(String s) throws JSONException {
+            return Byte.parseByte(s);
+        }
+    }
+
+    private static class IntegerSerializableToJSON implements SerializableToJSON {
+        int obj;
+        private IntegerSerializableToJSON(int obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return Integer.toString(obj);
+        }
+
+        public int deserializeFromJSON(String s) throws JSONException {
+            return Integer.parseInt(s);
+        }
+    }
+
+    private static class LongSerializableToJSON implements SerializableToJSON {
+        long obj;
+        private LongSerializableToJSON(long obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return Long.toString(obj);
+        }
+
+        public long deserializeFromJSON(String s) throws JSONException {
+            return Long.parseLong(s);
+        }
+    }
+
+    private static class DateSerializableToJSON implements SerializableToJSON {
+        Date obj;
+        private DateSerializableToJSON(Date obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return Long.toString(obj.getTime());
+        }
+
+        public Date deserializeFromJSON(String s) throws JSONException {
+            return new Date(Long.parseLong(s));
+        }
+    }
+
+    private static class BigDecimalSerializableToJSON implements SerializableToJSON {
+        BigDecimal obj;
+        private BigDecimalSerializableToJSON(BigDecimal obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return obj.toString();
+        }
+
+        public BigDecimal deserializeFromJSON(String s) throws JSONException {
+            return new BigDecimal(s);
+        }
+    }
+
+    private static class FileSerializableToJSON implements SerializableToJSON {
+        File obj;
+        private FileSerializableToJSON(File obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            return obj.getAbsolutePath();
+        }
+
+        public File deserializeFromJSON(String s) throws JSONException {
+            return new File(s);
+        }
+    }
+
+    private static class DocumentFileSerializableToJSON implements SerializableToJSON {
+        DocumentFile obj;
+        private DocumentFileSerializableToJSON(DocumentFile obj) {
+            this.obj = obj;
+        }
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            try {
+                return new JSONWithNull.JSONObjectWithNull()
+                        .put("class", serialize(obj.getClass().getSimpleName()))
+                        .put("uri", serialize(obj.getUri().toString()))
+                        .toStringOrNull();
             }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<String> string_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<String> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.string_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String string_serializeHashMap(HashMap<String, String> hashMap) {
-        if(hashMap == null) { return null; }
-
-        // Serialize a hashmap as an array of keys and an array of values, in the same order.
-        ArrayList<String> keyArrayList = new ArrayList<>(hashMap.keySet());
-        ArrayList<String> valueArrayList = new ArrayList<>();
-        for(String key : keyArrayList) {
-            valueArrayList.add(hashMap.get(key));
-        }
-
-        try {
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("keys", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(keyArrayList)))
-                    .put("values", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(valueArrayList)))
-                    .toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static HashMap<String, String> string_deserializeHashMap(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-
-            ArrayList<String> arrayListT = Serialization.string_deserializeArrayList(o.getJSONArray("keys").toStringOrNull());
-            ArrayList<String> arrayListU = Serialization.string_deserializeArrayList(o.getJSONArray("values").toStringOrNull());
-
-            if(arrayListT == null || arrayListU == null || arrayListT.size() != arrayListU.size()) {
-                return null;
-            }
-
-            HashMap<String, String> hashMap = new HashMap<>();
-            for(int i = 0; i < arrayListT.size(); i++) {
-                hashMap.put(arrayListT.get(i), arrayListU.get(i));
-            }
-
-            return hashMap;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String boolean_serialize(boolean b) {
-        return string_serialize(Boolean.toString(b));
-    }
-
-    public static boolean boolean_deserialize(String s) {
-        return Boolean.parseBoolean(string_deserialize(s));
-    }
-
-    public static String boolean_serializeArrayList(ArrayList<Boolean> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(boolean b : arrayList) {
-                a.put(Serialization.boolean_serialize(b));
-            }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Boolean> boolean_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Boolean> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.boolean_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String byte_serialize(byte b) {
-        return string_serialize(Byte.toString(b));
-    }
-
-    public static byte byte_deserialize(String s) {
-        return Byte.parseByte(string_deserialize(s));
-    }
-
-    public static String byte_serializeArray(byte[] array) {
-        if(array == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(byte b : array) {
-                a.put(Serialization.byte_serialize(b));
-            }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static byte[] byte_deserializeArray(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            byte[] array = new byte[a.length()];
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                array[i] = Serialization.byte_deserialize(o);
-            }
-
-            return array;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String int_serialize(int i) {
-        return string_serialize(Integer.toString(i));
-    }
-
-    public static int int_deserialize(String s) {
-        return Integer.parseInt(string_deserialize(s));
-    }
-
-    public static String int_serializeArrayList(ArrayList<Integer> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(int i : arrayList) {
-                a.put(Serialization.int_serialize(i));
-            }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Integer> int_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Integer> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.int_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String long_serialize(long l) {
-        return string_serialize(Long.toString(l));
-    }
-
-    public static long long_deserialize(String s) {
-        return Long.parseLong(string_deserialize(s));
-    }
-
-    public static String long_serializeArrayList(ArrayList<Long> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(long l : arrayList) {
-                a.put(Serialization.long_serialize(l));
-            }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Long> long_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Long> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.long_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String date_serialize(Date obj) {
-        return obj == null ? null : string_serialize(Long.toString(obj.getTime()));
-    }
-
-    public static Date date_deserialize(String s) {
-        return s == null ? null : new Date(Long.parseLong(string_deserialize(s)));
-    }
-
-    public static String bigdecimal_serialize(BigDecimal obj) {
-        return obj == null ? null : string_serialize(obj.toString());
-    }
-
-    public static BigDecimal bigdecimal_deserialize(String s) {
-        return s == null ? null : new BigDecimal(string_deserialize(s));
-    }
-
-    public static String file_serialize(File obj) {
-        return obj == null ? null : string_serialize(obj.getAbsolutePath());
-    }
-
-    public static File file_deserialize(String s) {
-        return s == null ? null : new File(string_deserialize(s));
-    }
-
-    public static String documentfile_serialize(DocumentFile obj) {
-        if(obj == null) { return null; }
-
-        try {
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("class", string_serialize(obj.getClass().getSimpleName()))
-                    .put("uri", string_serialize(obj.getUri().toString()))
-                    .toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static DocumentFile documentfile_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String clazz = Serialization.string_deserialize(o.getString("class"));
-            Uri uri = Uri.parse(Serialization.string_deserialize(o.getString("uri")));
-
-            if("TreeDocumentFile".equals(clazz)) {
-                return DocumentFile.fromTreeUri(App.applicationContext, uri);
-            }
-            else if("SingleDocumentFile".equals(clazz)) {
-                return DocumentFile.fromSingleUri(App.applicationContext, uri);
-            }
-            else {
-                return null;
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
             }
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
+
+        public DocumentFile deserializeFromJSON(String s) throws JSONException {
+            try {
+                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+                String clazz = o.getString("class");
+                Uri uri = Uri.parse(o.getString("uri"));
+
+                if("TreeDocumentFile".equals(clazz)) {
+                    return DocumentFile.fromTreeUri(App.applicationContext, uri);
+                }
+                else if("SingleDocumentFile".equals(clazz)) {
+                    return DocumentFile.fromSingleUri(App.applicationContext, uri);
+                }
+                else {
+                    return null;
+                }
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
+            }
         }
     }
 
+    // TODO Will these asset methods work?
     // Asset.serializeToJSON only serializes a key used to lookup an Asset later.
     // These method serializes all the information needed to construct an asset from scratch.
-    public static String fiat_serialize(Fiat obj) {
-        if(obj == null) { return null; }
-
-        try {
-            // Use original properties directly, not the potentially modified ones from getter functions.
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.getOriginalKey()))
-                    .put("name", string_serialize(obj.getOriginalName()))
-                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
-                    .put("scale", int_serialize(obj.getOriginalScale()))
-                    .put("fiat_type", string_serialize(obj.getOriginalAssetType()))
-                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
-                    .toStringOrNull();
+    private static class FiatSerializableToJSON implements SerializableToJSON {
+        Fiat obj;
+        private FiatSerializableToJSON(Fiat obj) {
+            this.obj = obj;
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
 
-    public static Fiat fiat_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.string_deserialize(o.getString("key"));
-            String name = Serialization.string_deserialize(o.getString("name"));
-            String display_name = Serialization.string_deserialize(o.getString("display_name"));
-            int scale = Serialization.int_deserialize(o.getString("scale"));
-            String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
-            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
-
-            return new Fiat(key, name, display_name, scale, fiat_type, additional_info);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String fiat_serializeArrayList(ArrayList<Fiat> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(Fiat obj : arrayList) {
-                a.put(Serialization.fiat_serialize(obj));
+        @Override
+        public String serializeToJSON() throws JSONException {
+            try {
+                // Use original properties directly, not the potentially modified ones from getter functions.
+                return new JSONWithNull.JSONObjectWithNull()
+                        .put("key", serialize(obj.getOriginalKey()))
+                        .put("name", serialize(obj.getOriginalName()))
+                        .put("display_name", serialize(obj.getOriginalDisplayName()))
+                        .put("scale", serialize(obj.getOriginalScale()))
+                        .put("fiat_type", serialize(obj.getOriginalAssetType()))
+                        .put("additional_info", serializeHashMap(obj.getOriginalAdditionalInfo()))
+                        .toStringOrNull();
             }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Fiat> fiat_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Fiat> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.fiat_deserialize(o));
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
             }
-
-            return arrayList;
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
 
-    public static String coin_serialize(Coin obj) {
-        if(obj == null) { return null; }
+        public Fiat deserializeFromJSON(String s) throws JSONException {
+            try {
+                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+                String key = deserialize(o.getString("key"), String.class);
+                String name = deserialize(o.getString("name"), String.class);
+                String display_name = deserialize(o.getString("display_name"), String.class);
+                int scale = deserialize(o.getString("scale"), Integer.class);
+                String fiat_type = deserialize(o.getString("fiat_type"), String.class);
+                HashMap<String, String> additional_info = deserializeHashMap(o.getString("additional_info"), String.class, String.class);
 
-        try {
-            // Use original properties directly, not the potentially modified ones from getter functions.
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.getOriginalKey()))
-                    .put("name", string_serialize(obj.getOriginalName()))
-                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
-                    .put("scale", int_serialize(obj.getOriginalScale()))
-                    .put("coin_type", string_serialize(obj.getOriginalAssetType()))
-                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
-                    .toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static Coin coin_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.string_deserialize(o.getString("key"));
-            String name = Serialization.string_deserialize(o.getString("name"));
-            String display_name = Serialization.string_deserialize(o.getString("display_name"));
-            int scale = Serialization.int_deserialize(o.getString("scale"));
-            String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
-            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
-
-            return new Coin(key, name, display_name, scale, coin_type, additional_info);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String coin_serializeArrayList(ArrayList<Coin> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(Coin obj : arrayList) {
-                a.put(Serialization.coin_serialize(obj));
+                return new Fiat(key, name, display_name, scale, fiat_type, additional_info);
             }
-
-            return a.toStringOrNull();
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Coin> coin_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Coin> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.coin_deserialize(o));
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
             }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
         }
     }
 
-    public static String token_serialize(Token obj) {
-        if(obj == null) { return null; }
-
-        try {
-            // Use original properties directly, not the potentially modified ones from getter functions.
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("key", string_serialize(obj.getOriginalKey()))
-                    .put("name", string_serialize(obj.getOriginalName()))
-                    .put("display_name", string_serialize(obj.getOriginalDisplayName()))
-                    .put("scale", int_serialize(obj.getOriginalScale()))
-                    .put("token_type", string_serialize(obj.getOriginalAssetType()))
-                    .put("additional_info", string_serializeHashMap(obj.getOriginalAdditionalInfo()))
-                    .toStringOrNull();
+    private static class CoinSerializableToJSON implements SerializableToJSON {
+        Coin obj;
+        private CoinSerializableToJSON(Coin obj) {
+            this.obj = obj;
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
 
-    public static Token token_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.string_deserialize(o.getString("key"));
-            String name = Serialization.string_deserialize(o.getString("name"));
-            String display_name = Serialization.string_deserialize(o.getString("display_name"));
-            int scale = Serialization.int_deserialize(o.getString("scale"));
-            String token_type = Serialization.string_deserialize(o.getString("token_type"));
-            HashMap<String, String> additional_info = Serialization.string_deserializeHashMap(o.getString("additional_info"));
-
-            return new Token(key, name, display_name, scale, token_type, additional_info);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static String token_serializeArrayList(ArrayList<Token> arrayList) {
-        if(arrayList == null) { return null; }
-
-        try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
-            for(Token obj : arrayList) {
-                a.put(Serialization.token_serialize(obj));
+        @Override
+        public String serializeToJSON() throws JSONException {
+            try {
+                // Use original properties directly, not the potentially modified ones from getter functions.
+                return new JSONWithNull.JSONObjectWithNull()
+                        .put("key", serialize(obj.getOriginalKey()))
+                        .put("name", serialize(obj.getOriginalName()))
+                        .put("display_name", serialize(obj.getOriginalDisplayName()))
+                        .put("scale", serialize(obj.getOriginalScale()))
+                        .put("fiat_type", serialize(obj.getOriginalAssetType()))
+                        .put("additional_info", serializeHashMap(obj.getOriginalAdditionalInfo()))
+                        .toStringOrNull();
             }
-
-            return a.toStringOrNull();
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
+            }
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
+
+        public Coin deserializeFromJSON(String s) throws JSONException {
+            try {
+                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+                String key = deserialize(o.getString("key"), String.class);
+                String name = deserialize(o.getString("name"), String.class);
+                String display_name = deserialize(o.getString("display_name"), String.class);
+                int scale = deserialize(o.getString("scale"), Integer.class);
+                String fiat_type = deserialize(o.getString("fiat_type"), String.class);
+                HashMap<String, String> additional_info = deserializeHashMap(o.getString("additional_info"), String.class, String.class);
+
+                return new Coin(key, name, display_name, scale, fiat_type, additional_info);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
+            }
         }
     }
 
-    public static ArrayList<Token> token_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Token> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(Serialization.token_deserialize(o));
-            }
-
-            return arrayList;
+    private static class TokenSerializableToJSON implements SerializableToJSON {
+        Token obj;
+        private TokenSerializableToJSON(Token obj) {
+            this.obj = obj;
         }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
+
+        @Override
+        public String serializeToJSON() throws JSONException {
+            try {
+                // Use original properties directly, not the potentially modified ones from getter functions.
+                return new JSONWithNull.JSONObjectWithNull()
+                        .put("key", serialize(obj.getOriginalKey()))
+                        .put("name", serialize(obj.getOriginalName()))
+                        .put("display_name", serialize(obj.getOriginalDisplayName()))
+                        .put("scale", serialize(obj.getOriginalScale()))
+                        .put("fiat_type", serialize(obj.getOriginalAssetType()))
+                        .put("additional_info", serializeHashMap(obj.getOriginalAdditionalInfo()))
+                        .toStringOrNull();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
+            }
+        }
+
+        public Token deserializeFromJSON(String s) throws JSONException {
+            try {
+                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+                String key = deserialize(o.getString("key"), String.class);
+                String name = deserialize(o.getString("name"), String.class);
+                String display_name = deserialize(o.getString("display_name"), String.class);
+                int scale = deserialize(o.getString("scale"), Integer.class);
+                String fiat_type = deserialize(o.getString("fiat_type"), String.class);
+                HashMap<String, String> additional_info = deserializeHashMap(o.getString("additional_info"), String.class, String.class);
+
+                return new Token(key, name, display_name, scale, fiat_type, additional_info);
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                throw new IllegalStateException(e);
+            }
         }
     }
 }

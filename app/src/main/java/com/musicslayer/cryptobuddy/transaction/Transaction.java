@@ -287,7 +287,7 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
             .put("actionedAssetQuantity", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(actionedAssetQuantity)))
             .put("otherAssetQuantity", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(otherAssetQuantity)))
             .put("timestamp", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp)))
-            .put("info", Serialization.string_serialize(info))
+            .put("info", Serialization.serialize(info))
             .toStringOrNull();
     }
 
@@ -297,7 +297,7 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
         AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObjectString("actionedAssetQuantity"), AssetQuantity.class);
         AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObjectString("otherAssetQuantity"), AssetQuantity.class);
         Timestamp timestamp = Serialization.deserialize(o.getJSONObjectString("timestamp"), Timestamp.class);
-        String info = Serialization.string_deserialize(o.getString("info"));
+        String info = Serialization.deserialize(o.getString("info"), String.class);
         return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }
 }

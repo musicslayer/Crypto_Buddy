@@ -136,13 +136,13 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.string_serialize(getKey()))
+            .put("key", Serialization.serialize(getKey()))
             .toStringOrNull();
     }
 
     public static Network deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.string_deserialize(o.getString("key"));
+        String key = Serialization.deserialize(o.getString("key"), String.class);
         return Network.getNetworkFromKey(key);
     }
 }

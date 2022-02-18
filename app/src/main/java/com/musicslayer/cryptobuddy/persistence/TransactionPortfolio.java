@@ -139,7 +139,7 @@ public class TransactionPortfolio {
 
         String sizeKey = "transaction_portfolio_size";
         int size = settings.getInt(sizeKey, 0);
-        o.put(sizeKey, Serialization.int_serialize(size));
+        o.put(sizeKey, Serialization.serialize(size));
 
         for(int i = 0; i < size; i++) {
             String nameKey = "transaction_portfolio_names" + i;
@@ -162,7 +162,7 @@ public class TransactionPortfolio {
         SharedPreferences.Editor editor = settings.edit();
 
         String sizeKey = "transaction_portfolio_size";
-        int size = Serialization.int_deserialize(o.getString(sizeKey));
+        int size = Serialization.deserialize(o.getString(sizeKey), Integer.class);
         editor.putInt(sizeKey, size);
 
         for(int i = 0; i < size; i++) {

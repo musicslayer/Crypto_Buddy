@@ -405,8 +405,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.string_serialize(getKey()))
-            .put("fiat_type", Serialization.string_serialize(getFiatType()))
+            .put("key", Serialization.serialize(getKey()))
+            .put("fiat_type", Serialization.serialize(getFiatType()))
             .put("hardcoded_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(hardcoded_fiats)))
             .put("found_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(found_fiats)))
             .put("custom_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(custom_fiats)))
@@ -415,8 +415,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
     public static FiatManager deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.string_deserialize(o.getString("key"));
-        String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+        String key = Serialization.deserialize(o.getString("key"), String.class);
+        String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
         ArrayList<Fiat> hardcoded_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("hardcoded_fiats"));
         ArrayList<Fiat> found_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("found_fiats"));
         ArrayList<Fiat> custom_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("custom_fiats"));
@@ -436,11 +436,11 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.string_deserialize(o.getString("key"));
-            String name = Serialization.string_deserialize(o.getString("name"));
-            String display_name = Serialization.string_deserialize(o.getString("display_name"));
-            int scale = Serialization.int_deserialize(o.getString("scale"));
-            String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+            String key = Serialization.deserialize(o.getString("key"), String.class);
+            String name = Serialization.deserialize(o.getString("name"), String.class);
+            String display_name = Serialization.deserialize(o.getString("display_name"), String.class);
+            int scale = Serialization.deserialize(o.getString("scale"), Integer.class);
+            String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
 
             return Fiat.buildFiat(key, name, display_name, scale, fiat_type);
         }
@@ -472,8 +472,8 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
     public static FiatManager deserializeFromJSON2(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.string_deserialize(o.getString("key"));
-        String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
+        String key = Serialization.deserialize(o.getString("key"), String.class);
+        String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
         ArrayList<Fiat> hardcoded_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
         ArrayList<Fiat> found_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("found_fiats"));
         ArrayList<Fiat> custom_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("custom_fiats"));

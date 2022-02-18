@@ -118,13 +118,13 @@ public class Action implements Serialization.SerializableToJSON, Serialization.V
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("actionString", Serialization.string_serialize(actionString))
+            .put("actionString", Serialization.serialize(actionString))
             .toStringOrNull();
     }
 
     public static Action deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String actionString = Serialization.string_deserialize(o.getString("actionString"));
+        String actionString = Serialization.deserialize(o.getString("actionString"), String.class);
         return new Action(actionString);
     }
 }

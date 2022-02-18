@@ -31,14 +31,14 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.string_serialize(name))
+            .put("name", Serialization.serialize(name))
             .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
             .toStringOrNull();
     }
 
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.string_deserialize(o.getString("name"));
+        String name = Serialization.deserialize(o.getString("name"), String.class);
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
 
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);

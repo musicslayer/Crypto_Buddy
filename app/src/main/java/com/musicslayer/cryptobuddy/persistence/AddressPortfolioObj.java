@@ -41,14 +41,14 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON, Se
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.string_serialize(name))
+            .put("name", Serialization.serialize(name))
             .put("cryptoAddressArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoAddressArrayList)))
             .toStringOrNull();
     }
 
     public static AddressPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.string_deserialize(o.getString("name"));
+        String name = Serialization.deserialize(o.getString("name"), String.class);
         ArrayList<CryptoAddress> cryptoAddressArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoAddressArrayList"), CryptoAddress.class);
 
         AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);

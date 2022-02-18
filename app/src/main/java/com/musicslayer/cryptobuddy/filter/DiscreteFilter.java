@@ -13,18 +13,18 @@ public class DiscreteFilter extends Filter {
 
     public String serializeToJSON_sub() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("filterType", Serialization.string_serialize(getFilterType()))
-            .put("choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(choices)))
-            .put("user_choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(user_choices)))
-            .put("user_not_choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(user_not_choices)))
+            .put("filterType", Serialization.serialize(getFilterType()))
+            .put("choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(choices)))
+            .put("user_choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(user_choices)))
+            .put("user_not_choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(user_not_choices)))
             .toStringOrNull();
     }
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("choices"));
-        ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_choices"));
-        ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_not_choices"));
+        ArrayList<String> choices = Serialization.deserializeArrayList(o.getJSONArrayString("choices"), String.class);
+        ArrayList<String> user_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_choices"), String.class);
+        ArrayList<String> user_not_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_not_choices"), String.class);
 
         DiscreteFilter discreteFilter = new DiscreteFilter();
         discreteFilter.choices = choices;

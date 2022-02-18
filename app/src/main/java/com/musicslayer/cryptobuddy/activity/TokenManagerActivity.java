@@ -89,13 +89,13 @@ public class TokenManagerActivity extends BaseActivity {
                 ProgressDialogFragment.updateProgressTitle("Downloading All Tokens...");
 
                 String tokenAllJSON = WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
-                ProgressDialogFragment.setValue(Serialization.string_serialize(tokenAllJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenAllJSON));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenAllJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue());
+                String tokenAllJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 if(tokenAllJSON == null) {
                     ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
@@ -162,13 +162,13 @@ public class TokenManagerActivity extends BaseActivity {
                     tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
                 }
 
-                ProgressDialogFragment.setValue(Serialization.string_serializeArrayList(tokenJSONArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(tokenJSONArrayList));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<String> tokenJSONArrayList = Serialization.string_deserializeArrayList(ProgressDialogFragment.getValue());
+                ArrayList<String> tokenJSONArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isAllComplete = true;
 

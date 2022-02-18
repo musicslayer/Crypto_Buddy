@@ -48,7 +48,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
 
     public static Filter deserializeFromJSON(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String filterType = Serialization.string_deserialize(o.getString("filterType"));
+        String filterType = Serialization.deserialize(o.getString("filterType"), String.class);
         if("!DISCRETE!".equals(filterType)) {
             return DiscreteFilter.deserializeFromJSON_sub(s);
         }

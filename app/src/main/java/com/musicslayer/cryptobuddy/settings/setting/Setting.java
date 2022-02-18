@@ -144,17 +144,17 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.string_serialize(getKey()))
-            .put("settingsKey", Serialization.string_serialize(getSettingsKey()))
-            .put("chosenOptionName", Serialization.string_serialize(chosenOptionName))
+            .put("key", Serialization.serialize(getKey()))
+            .put("settingsKey", Serialization.serialize(getSettingsKey()))
+            .put("chosenOptionName", Serialization.serialize(chosenOptionName))
             .toStringOrNull();
     }
 
     public static Setting deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.string_deserialize(o.getString("key"));
-        String settingsKey = Serialization.string_deserialize(o.getString("settingsKey"));
-        String chosenOptionName = Serialization.string_deserialize(o.getString("chosenOptionName"));
+        String key = Serialization.deserialize(o.getString("key"), String.class);
+        String settingsKey = Serialization.deserialize(o.getString("settingsKey"), String.class);
+        String chosenOptionName = Serialization.deserialize(o.getString("chosenOptionName"), String.class);
 
         // This is a dummy object that only has to hold onto the data.
         Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);

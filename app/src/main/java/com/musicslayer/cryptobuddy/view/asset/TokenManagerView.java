@@ -60,13 +60,13 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getFixedJSON();
-                ProgressDialogFragment.setValue(Serialization.string_serialize(tokenJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue());
+                String tokenJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isComplete;
                 if(tokenJSON == null) {
@@ -93,13 +93,13 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getJSON();
-                ProgressDialogFragment.setValue(Serialization.string_serialize(tokenJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenJSON = Serialization.string_deserialize(ProgressDialogFragment.getValue());
+                String tokenJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isComplete;
                 if(tokenJSON == null) {

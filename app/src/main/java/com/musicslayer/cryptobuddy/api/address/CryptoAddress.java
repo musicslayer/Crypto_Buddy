@@ -161,17 +161,17 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("address", Serialization.string_serialize(address))
+            .put("address", Serialization.serialize(address))
             .put("network", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(network)))
-            .put("includeTokens", Serialization.boolean_serialize(includeTokens))
+            .put("includeTokens", Serialization.serialize(includeTokens))
             .toStringOrNull();
     }
 
     public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String address = Serialization.string_deserialize(o.getString("address"));
+        String address = Serialization.deserialize(o.getString("address"), String.class);
         Network network = Serialization.deserialize(o.getJSONObjectString("network"), Network.class);
-        boolean includeTokens = Serialization.boolean_deserialize(o.getString("includeTokens"));
+        boolean includeTokens = Serialization.deserialize(o.getString("includeTokens"), Boolean.class);
         return new CryptoAddress(address, network, includeTokens);
     }
 }

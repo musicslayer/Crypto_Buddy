@@ -21,16 +21,16 @@ abstract public class API implements Serialization.SerializableToJSON, Serializa
     public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         return new JSONWithNull.JSONObjectWithNull()
-            .put("apiType", Serialization.string_serialize(getAPIType()))
-            .put("key", Serialization.string_serialize(getKey()))
+            .put("apiType", Serialization.serialize(getAPIType()))
+            .put("key", Serialization.serialize(getKey()))
             .toStringOrNull();
     }
 
     public static API deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String apiType = Serialization.string_deserialize(o.getString("apiType"));
-        String key = Serialization.string_deserialize(o.getString("key"));
+        String apiType = Serialization.deserialize(o.getString("apiType"), String.class);
+        String key = Serialization.deserialize(o.getString("key"), String.class);
         return API.getAPI(apiType, key);
     }
 

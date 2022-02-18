@@ -23,16 +23,16 @@ import java.util.ArrayList;
 public class UniversalFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(Serialization.file_serialize(file));
-        out.writeString(Serialization.documentfile_serialize(documentFile));
+        out.writeString(Serialization.serialize(file));
+        out.writeString(Serialization.serialize(documentFile));
     }
 
     public static final Parcelable.Creator<UniversalFile> CREATOR = new Parcelable.Creator<UniversalFile>() {
         @SuppressLint("NewApi")
         @Override
         public UniversalFile createFromParcel(Parcel in) {
-            File file = Serialization.file_deserialize(in.readString());
-            DocumentFile documentFile = Serialization.documentfile_deserialize(in.readString());
+            File file = Serialization.deserialize(in.readString(), File.class);
+            DocumentFile documentFile = Serialization.deserialize(in.readString(), DocumentFile.class);
 
             if(file != null) {
                 return fromFile(file);

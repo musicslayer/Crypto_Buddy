@@ -40,14 +40,14 @@ public class ExchangePortfolioObj implements Serialization.SerializableToJSON, S
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.string_serialize(name))
+            .put("name", Serialization.serialize(name))
             .put("cryptoExchangeArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoExchangeArrayList)))
             .toStringOrNull();
     }
 
     public static ExchangePortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.string_deserialize(o.getString("name"));
+        String name = Serialization.deserialize(o.getString("name"), String.class);
         ArrayList<CryptoExchange> cryptoExchangeArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoExchangeArrayList"), CryptoExchange.class);
 
         ExchangePortfolioObj exchangePortfolioObj = new ExchangePortfolioObj(name);

@@ -199,17 +199,17 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
 
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("amount", Serialization.bigdecimal_serialize(amount))
-            .put("isLoss", Serialization.boolean_serialize(isLoss))
-            .put("isInfinity", Serialization.boolean_serialize(isInfinity))
+            .put("amount", Serialization.serialize(amount))
+            .put("isLoss", Serialization.serialize(isLoss))
+            .put("isInfinity", Serialization.serialize(isInfinity))
             .toStringOrNull();
     }
 
     public static AssetAmount deserializeFromJSON1(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        BigDecimal amount = Serialization.bigdecimal_deserialize(o.getString("amount"));
-        boolean isLoss = Serialization.boolean_deserialize(o.getString("isLoss"));
-        boolean isInfinity = Serialization.boolean_deserialize(o.getString("isInfinity"));
+        BigDecimal amount = Serialization.deserialize(o.getString("amount"), BigDecimal.class);
+        boolean isLoss = Serialization.deserialize(o.getString("isLoss"), Boolean.class);
+        boolean isInfinity = Serialization.deserialize(o.getString("isInfinity"), Boolean.class);
 
         AssetAmount a = new AssetAmount(amount);
         a.isLoss = isLoss;
