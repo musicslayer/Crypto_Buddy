@@ -3,7 +3,8 @@ package com.musicslayer.cryptobuddy.transaction;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
 import java.math.BigDecimal;
@@ -197,7 +198,7 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("amount", Serialization.bigdecimal_serialize(amount))
             .put("isLoss", Serialization.boolean_serialize(isLoss))
             .put("isInfinity", Serialization.boolean_serialize(isInfinity))
@@ -205,7 +206,7 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
     }
 
     public static AssetAmount deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         BigDecimal amount = Serialization.bigdecimal_deserialize(o.getString("amount"));
         boolean isLoss = Serialization.boolean_deserialize(o.getString("isLoss"));
         boolean isInfinity = Serialization.boolean_deserialize(o.getString("isInfinity"));

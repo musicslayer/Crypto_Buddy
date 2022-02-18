@@ -38,7 +38,7 @@ import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;

@@ -37,7 +37,7 @@ import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 

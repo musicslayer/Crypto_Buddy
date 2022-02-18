@@ -35,7 +35,6 @@ import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.Date;

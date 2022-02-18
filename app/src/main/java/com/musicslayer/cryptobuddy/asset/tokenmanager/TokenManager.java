@@ -9,7 +9,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -436,17 +437,17 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("token_type", Serialization.string_serialize(getTokenType()))
-            .put("downloaded_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(downloaded_tokens)))
-            .put("found_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(found_tokens)))
-            .put("custom_tokens", new Serialization.JSONArrayWithNull(Serialization.token_serializeArrayList(custom_tokens)))
+            .put("downloaded_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(downloaded_tokens)))
+            .put("found_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(found_tokens)))
+            .put("custom_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(custom_tokens)))
             .toStringOrNull();
     }
 
     public static TokenManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String token_type = Serialization.string_deserialize(o.getString("token_type"));
         ArrayList<Token> downloaded_tokens = token_deserializeArrayList1(o.getJSONArrayString("downloaded_tokens"));
@@ -467,7 +468,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -490,7 +491,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         try {
             ArrayList<Token> arrayList = new ArrayList<>();
 
-            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(token_deserialize1(o));
@@ -505,7 +506,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
     }
 
     public static TokenManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String token_type = Serialization.string_deserialize(o.getString("token_type"));
         ArrayList<Token> downloaded_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));

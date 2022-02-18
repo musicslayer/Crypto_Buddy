@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -46,7 +47,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     }
 
     public static Filter deserializeFromJSON(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String filterType = Serialization.string_deserialize(o.getString("filterType"));
         if("!DISCRETE!".equals(filterType)) {
             return DiscreteFilter.deserializeFromJSON_sub(s);

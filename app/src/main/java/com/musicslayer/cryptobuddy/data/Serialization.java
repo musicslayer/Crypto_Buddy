@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.serialize;
+package com.musicslayer.cryptobuddy.data;
 
 import android.net.Uri;
 
@@ -8,18 +8,15 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
@@ -60,7 +57,7 @@ public class Serialization {
         if(obj instanceof Versionable) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             try {
-                JSONObjectWithNull o = new JSONObjectWithNull(s);
+                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
                 o.put(SERIALIZATION_VERSION_MARKER, ((Versionable)obj).serializationVersion());
                 s = o.toStringOrNull();
             }
@@ -79,7 +76,7 @@ public class Serialization {
         // First try to get the version number. If none is present, then the data was not versioned.
         String version;
         try {
-            JSONObjectWithNull o = new JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             version = o.getString(SERIALIZATION_VERSION_MARKER);
         }
         catch(Exception e) {
@@ -111,9 +108,9 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(T t : arrayList) {
-                a.put(new JSONObjectWithNull(Serialization.serialize(t)));
+                a.put(new JSONWithNull.JSONObjectWithNull(Serialization.serialize(t)));
             }
 
             return a.toStringOrNull();
@@ -130,7 +127,7 @@ public class Serialization {
         try {
             ArrayList<T> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 arrayList.add(Serialization.deserialize(a.getJSONObjectString(i), clazzT));
             }
@@ -154,9 +151,9 @@ public class Serialization {
         }
 
         try {
-            return new JSONObjectWithNull()
-                .put("keys", new JSONArrayWithNull(Serialization.serializeArrayList(keyArrayList)))
-                .put("values", new JSONArrayWithNull(Serialization.serializeArrayList(valueArrayList)))
+            return new JSONWithNull.JSONObjectWithNull()
+                .put("keys", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(keyArrayList)))
+                .put("values", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(valueArrayList)))
                 .toStringOrNull();
         }
         catch(Exception e) {
@@ -169,7 +166,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            JSONObjectWithNull o = new JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
             ArrayList<T> arrayListT = Serialization.deserializeArrayList(o.getJSONArray("keys").toStringOrNull(), clazzT);
             ArrayList<U> arrayListU = Serialization.deserializeArrayList(o.getJSONArray("values").toStringOrNull(), clazzU);
@@ -205,7 +202,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(String s : arrayList) {
                 a.put(Serialization.string_serialize(s));
             }
@@ -224,7 +221,7 @@ public class Serialization {
         try {
             ArrayList<String> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.string_deserialize(o));
@@ -249,9 +246,9 @@ public class Serialization {
         }
 
         try {
-            return new JSONObjectWithNull()
-                    .put("keys", new JSONArrayWithNull(Serialization.string_serializeArrayList(keyArrayList)))
-                    .put("values", new JSONArrayWithNull(Serialization.string_serializeArrayList(valueArrayList)))
+            return new JSONWithNull.JSONObjectWithNull()
+                    .put("keys", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(keyArrayList)))
+                    .put("values", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(valueArrayList)))
                     .toStringOrNull();
         }
         catch(Exception e) {
@@ -264,7 +261,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            JSONObjectWithNull o = new JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
             ArrayList<String> arrayListT = Serialization.string_deserializeArrayList(o.getJSONArray("keys").toStringOrNull());
             ArrayList<String> arrayListU = Serialization.string_deserializeArrayList(o.getJSONArray("values").toStringOrNull());
@@ -298,7 +295,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(boolean b : arrayList) {
                 a.put(Serialization.boolean_serialize(b));
             }
@@ -317,7 +314,7 @@ public class Serialization {
         try {
             ArrayList<Boolean> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.boolean_deserialize(o));
@@ -343,7 +340,7 @@ public class Serialization {
         if(array == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(byte b : array) {
                 a.put(Serialization.byte_serialize(b));
             }
@@ -360,7 +357,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             byte[] array = new byte[a.length()];
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
@@ -387,7 +384,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(int i : arrayList) {
                 a.put(Serialization.int_serialize(i));
             }
@@ -406,7 +403,7 @@ public class Serialization {
         try {
             ArrayList<Integer> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.int_deserialize(o));
@@ -432,7 +429,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(long l : arrayList) {
                 a.put(Serialization.long_serialize(l));
             }
@@ -451,7 +448,7 @@ public class Serialization {
         try {
             ArrayList<Long> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.long_deserialize(o));
@@ -493,7 +490,7 @@ public class Serialization {
         if(obj == null) { return null; }
 
         try {
-            return new Serialization.JSONObjectWithNull()
+            return new JSONWithNull.JSONObjectWithNull()
                     .put("class", string_serialize(obj.getClass().getSimpleName()))
                     .put("uri", string_serialize(obj.getUri().toString()))
                     .toStringOrNull();
@@ -508,7 +505,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String clazz = Serialization.string_deserialize(o.getString("class"));
             Uri uri = Uri.parse(Serialization.string_deserialize(o.getString("uri")));
 
@@ -535,7 +532,7 @@ public class Serialization {
 
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
-            return new Serialization.JSONObjectWithNull()
+            return new JSONWithNull.JSONObjectWithNull()
                     .put("key", string_serialize(obj.getOriginalKey()))
                     .put("name", string_serialize(obj.getOriginalName()))
                     .put("display_name", string_serialize(obj.getOriginalDisplayName()))
@@ -554,7 +551,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -574,7 +571,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(Fiat obj : arrayList) {
                 a.put(Serialization.fiat_serialize(obj));
             }
@@ -593,7 +590,7 @@ public class Serialization {
         try {
             ArrayList<Fiat> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.fiat_deserialize(o));
@@ -612,7 +609,7 @@ public class Serialization {
 
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
-            return new Serialization.JSONObjectWithNull()
+            return new JSONWithNull.JSONObjectWithNull()
                     .put("key", string_serialize(obj.getOriginalKey()))
                     .put("name", string_serialize(obj.getOriginalName()))
                     .put("display_name", string_serialize(obj.getOriginalDisplayName()))
@@ -631,7 +628,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -651,7 +648,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(Coin obj : arrayList) {
                 a.put(Serialization.coin_serialize(obj));
             }
@@ -670,7 +667,7 @@ public class Serialization {
         try {
             ArrayList<Coin> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.coin_deserialize(o));
@@ -689,7 +686,7 @@ public class Serialization {
 
         try {
             // Use original properties directly, not the potentially modified ones from getter functions.
-            return new Serialization.JSONObjectWithNull()
+            return new JSONWithNull.JSONObjectWithNull()
                     .put("key", string_serialize(obj.getOriginalKey()))
                     .put("name", string_serialize(obj.getOriginalName()))
                     .put("display_name", string_serialize(obj.getOriginalDisplayName()))
@@ -708,7 +705,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -728,7 +725,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONArrayWithNull a = new JSONArrayWithNull();
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
             for(Token obj : arrayList) {
                 a.put(Serialization.token_serialize(obj));
             }
@@ -747,7 +744,7 @@ public class Serialization {
         try {
             ArrayList<Token> arrayList = new ArrayList<>();
 
-            JSONArrayWithNull a = new JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(Serialization.token_deserialize(o));
@@ -758,130 +755,6 @@ public class Serialization {
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
-        }
-    }
-
-    // Classes to properly handle null String values.
-    public static class JSONObjectWithNull {
-        private JSONObject jsonObject;
-
-        public JSONObjectWithNull() {
-            jsonObject = new JSONObject();
-        }
-
-        public JSONObjectWithNull(String s) throws org.json.JSONException {
-            jsonObject = s == null ? null : new JSONObject(s);
-        }
-
-        public JSONObjectWithNull(JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-        }
-
-        public String toStringOrNull() {
-            return jsonObject == null ? null : jsonObject.toString();
-        }
-
-        public boolean has(String key) {
-            return jsonObject.has(key);
-        }
-
-        public String getString(String key) throws org.json.JSONException {
-            return (String)(jsonObject.get(key) instanceof String ? jsonObject.get(key) : null);
-        }
-
-        public String getJSONObjectString(String key) throws org.json.JSONException {
-            return getJSONObject(key).toStringOrNull();
-        }
-
-        public String getJSONArrayString(String key) throws org.json.JSONException {
-            return getJSONArray(key).toStringOrNull();
-        }
-
-        public JSONObjectWithNull put(String key, String s) throws org.json.JSONException {
-            jsonObject = s == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, s);
-            return this;
-        }
-
-        public JSONObjectWithNull put(String key, JSONObjectWithNull obj) throws org.json.JSONException {
-            jsonObject = obj.jsonObject == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, obj.jsonObject);
-            return this;
-        }
-
-        public JSONObjectWithNull put(String key, JSONArrayWithNull arr) throws org.json.JSONException {
-            jsonObject = arr.jsonArray == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, arr.jsonArray);
-            return this;
-        }
-
-        public void remove(String key) {
-            jsonObject.remove(key);
-        }
-
-        public ArrayList<String> keys() {
-            ArrayList<String> keys = new ArrayList<>();
-            Iterator<String> it = jsonObject.keys();
-            while(it.hasNext()) {
-                keys.add(it.next());
-            }
-            return keys;
-        }
-
-        private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
-            return new JSONObjectWithNull((JSONObject)(jsonObject.get(key) instanceof JSONObject ? jsonObject.get(key) : null));
-        }
-
-        private JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
-            return new JSONArrayWithNull((JSONArray)(jsonObject.get(key) instanceof JSONArray ? jsonObject.get(key) : null));
-        }
-    }
-
-    public static class JSONArrayWithNull {
-        private JSONArray jsonArray;
-
-        public JSONArrayWithNull() {
-            jsonArray = new JSONArray();
-        }
-
-        public JSONArrayWithNull(String s) throws org.json.JSONException {
-            jsonArray = s == null ? null : new JSONArray(s);
-        }
-
-        public JSONArrayWithNull(JSONArray jsonArray) {
-            this.jsonArray = jsonArray;
-        }
-
-        public int length() {
-            return jsonArray.length();
-        }
-
-        public String toStringOrNull() {
-            return jsonArray == null ? null : jsonArray.toString();
-        }
-
-        public String getString(int i) throws org.json.JSONException {
-            return jsonArray.get(i) instanceof String ? (String)jsonArray.get(i) : null;
-        }
-
-        public String getJSONObjectString(int i) throws org.json.JSONException {
-            return getJSONObject(i).toStringOrNull();
-        }
-
-        public JSONArrayWithNull put(String s) {
-            jsonArray = s == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(s);
-            return this;
-        }
-
-        public JSONArrayWithNull put(JSONObjectWithNull obj) {
-            jsonArray = obj.jsonObject == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(obj.jsonObject);
-            return this;
-        }
-
-        public JSONArrayWithNull put(JSONArrayWithNull arr) {
-            jsonArray = arr.jsonArray == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(arr.jsonArray);
-            return this;
-        }
-
-        private JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
-            return new JSONObjectWithNull((JSONObject)(jsonArray.get(i) instanceof JSONObject ? jsonArray.get(i) : null));
         }
     }
 }

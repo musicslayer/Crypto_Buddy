@@ -15,7 +15,7 @@ import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;

@@ -8,7 +8,8 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
 import java.util.ArrayList;
@@ -159,15 +160,15 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("address", Serialization.string_serialize(address))
-            .put("network", new Serialization.JSONObjectWithNull(Serialization.serialize(network)))
+            .put("network", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(network)))
             .put("includeTokens", Serialization.boolean_serialize(includeTokens))
             .toStringOrNull();
     }
 
     public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String address = Serialization.string_deserialize(o.getString("address"));
         Network network = Serialization.deserialize(o.getJSONObjectString("network"), Network.class);
         boolean includeTokens = Serialization.boolean_deserialize(o.getString("includeTokens"));

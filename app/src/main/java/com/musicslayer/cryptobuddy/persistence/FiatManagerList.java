@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 public class FiatManagerList {
     // Just pick something that would never actually be saved.
@@ -61,7 +62,7 @@ public class FiatManagerList {
     public static String exportToJSON(Context context) throws org.json.JSONException {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
@@ -70,8 +71,8 @@ public class FiatManagerList {
             // We do not want to export hardcoded fiats, so let's remove them.
             String newSerialString;
             try {
-                Serialization.JSONObjectWithNull oldJSON = new Serialization.JSONObjectWithNull(serialString);
-                oldJSON.put("hardcoded_fiats", new Serialization.JSONArrayWithNull());
+                JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
+                oldJSON.put("hardcoded_fiats", new JSONWithNull.JSONArrayWithNull());
                 newSerialString = oldJSON.toStringOrNull();
             }
             catch(Exception e) {
@@ -86,7 +87,7 @@ public class FiatManagerList {
 
 
     public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import fiat managers that currently exist.
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);

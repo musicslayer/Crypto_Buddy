@@ -3,7 +3,8 @@ package com.musicslayer.cryptobuddy.api.exchange;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
@@ -30,19 +31,19 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public AssetQuantityData discrepancyData;
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
-            .put("cryptoExchange", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoExchange)))
-            .put("exchangeAPI_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI_currentBalance)))
-            .put("exchangeAPI_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI_transactions)))
-            .put("currentBalanceArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
-            .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
-            .put("timestamp_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
-            .put("timestamp_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
+        return new JSONWithNull.JSONObjectWithNull()
+            .put("cryptoExchange", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(cryptoExchange)))
+            .put("exchangeAPI_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI_currentBalance)))
+            .put("exchangeAPI_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI_transactions)))
+            .put("currentBalanceArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
+            .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .put("timestamp_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
+            .put("timestamp_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
             .toStringOrNull();
     }
 
     public static ExchangeData deserializeFromJSON(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         CryptoExchange cryptoExchange = Serialization.deserialize(o.getJSONObjectString("cryptoExchange"), CryptoExchange.class);
         ExchangeAPI exchangeAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_currentBalance"), ExchangeAPI.class);
         ExchangeAPI exchangeAPI_transactions = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_transactions"), ExchangeAPI.class);

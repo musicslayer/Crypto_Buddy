@@ -5,7 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -134,7 +135,7 @@ public class ExchangePortfolio {
     public static String exportToJSON(Context context) throws org.json.JSONException {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "exchange_portfolio_size";
         int size = settings.getInt(sizeKey, 0);
@@ -155,7 +156,7 @@ public class ExchangePortfolio {
 
 
     public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();

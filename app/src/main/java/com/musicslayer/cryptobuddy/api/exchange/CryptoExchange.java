@@ -6,7 +6,8 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -89,14 +90,14 @@ public class CryptoExchange implements Serialization.SerializableToJSON, Seriali
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
-            .put("exchange", new Serialization.JSONObjectWithNull(Serialization.serialize(exchange)))
-            .put("exchangeAPI", new Serialization.JSONObjectWithNull(Serialization.serialize(exchangeAPI)))
+        return new JSONWithNull.JSONObjectWithNull()
+            .put("exchange", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchange)))
+            .put("exchangeAPI", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI)))
             .toStringOrNull();
     }
 
     public static CryptoExchange deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         Exchange exchange = Serialization.deserialize(o.getJSONObjectString("exchange"), Exchange.class);
         ExchangeAPI exchangeAPI = Serialization.deserialize(o.getJSONObjectString("exchangeAPI"), ExchangeAPI.class);
         return new CryptoExchange(exchange, exchangeAPI);

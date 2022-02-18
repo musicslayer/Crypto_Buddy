@@ -5,7 +5,8 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -55,14 +56,14 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
-            .put("assetArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(assetArrayList)))
-            .put("fiat", new Serialization.JSONObjectWithNull(Serialization.serialize(fiat)))
+        return new JSONWithNull.JSONObjectWithNull()
+            .put("assetArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(assetArrayList)))
+            .put("fiat", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(fiat)))
             .toStringOrNull();
     }
 
     public static CryptoPrice deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         ArrayList<Asset> assetArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("assetArrayList"), Asset.class);
         Fiat fiat = Serialization.deserialize(o.getJSONObjectString("fiat"), Fiat.class);
         return new CryptoPrice(assetArrayList, fiat);

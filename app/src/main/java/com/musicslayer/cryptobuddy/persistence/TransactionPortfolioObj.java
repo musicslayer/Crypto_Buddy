@@ -1,7 +1,8 @@
 package com.musicslayer.cryptobuddy.persistence;
 
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -29,14 +30,14 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("name", Serialization.string_serialize(name))
-            .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
             .toStringOrNull();
     }
 
     public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
         ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
 

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 public class AddressPortfolio {
     // This default will cause an error when deserialized. We should never see this value used.
@@ -134,7 +135,7 @@ public class AddressPortfolio {
     public static String exportToJSON(Context context) throws org.json.JSONException {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "address_portfolio_size";
         int size = settings.getInt(sizeKey, 0);
@@ -155,7 +156,7 @@ public class AddressPortfolio {
 
 
     public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();

@@ -2,8 +2,9 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.Date;
 
@@ -44,13 +45,13 @@ public class Timestamp implements Serialization.SerializableToJSON, Serializatio
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("date", Serialization.date_serialize(date))
             .toStringOrNull();
     }
 
     public static Timestamp deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         Date date = Serialization.date_deserialize(o.getString("date"));
         return new Timestamp(date);
     }

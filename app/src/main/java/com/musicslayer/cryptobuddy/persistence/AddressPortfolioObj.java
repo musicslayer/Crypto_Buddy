@@ -1,7 +1,8 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -39,14 +40,14 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON, Se
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("name", Serialization.string_serialize(name))
-            .put("cryptoAddressArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(cryptoAddressArrayList)))
+            .put("cryptoAddressArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoAddressArrayList)))
             .toStringOrNull();
     }
 
     public static AddressPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
         ArrayList<CryptoAddress> cryptoAddressArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoAddressArrayList"), CryptoAddress.class);
 

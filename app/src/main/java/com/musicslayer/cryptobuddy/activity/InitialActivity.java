@@ -42,8 +42,7 @@ import java.util.Date;
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
-// TODO Toggle buttons, each label need same amount of letters.
-// TODO If I uninstall, make sure internal and external folders both persist.
+// TODO Importing still obliterates everything.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

@@ -23,7 +23,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;

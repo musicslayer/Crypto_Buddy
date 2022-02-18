@@ -4,12 +4,13 @@ import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
@@ -31,19 +32,19 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public AssetQuantityData discrepancyData;
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
-            .put("cryptoAddress", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoAddress)))
-            .put("addressAPI_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(addressAPI_currentBalance)))
-            .put("addressAPI_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(addressAPI_transactions)))
-            .put("currentBalanceArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
-            .put("transactionArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
-            .put("timestamp_currentBalance", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
-            .put("timestamp_transactions", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
+        return new JSONWithNull.JSONObjectWithNull()
+            .put("cryptoAddress", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(cryptoAddress)))
+            .put("addressAPI_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(addressAPI_currentBalance)))
+            .put("addressAPI_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(addressAPI_transactions)))
+            .put("currentBalanceArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
+            .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .put("timestamp_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
+            .put("timestamp_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
             .toStringOrNull();
     }
 
     public static AddressData deserializeFromJSON(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
         AddressAPI addressAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("addressAPI_currentBalance"), AddressAPI.class);
         AddressAPI addressAPI_transactions = Serialization.deserialize(o.getJSONObjectString("addressAPI_transactions"), AddressAPI.class);

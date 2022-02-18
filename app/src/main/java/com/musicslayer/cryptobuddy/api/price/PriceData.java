@@ -2,7 +2,8 @@ package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -21,19 +22,19 @@ public class PriceData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_marketCap;
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
-            .put("cryptoPrice", new Serialization.JSONObjectWithNull(Serialization.serialize(cryptoPrice)))
-            .put("priceAPI_price", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_price)))
-            .put("priceAPI_marketCap", new Serialization.JSONObjectWithNull(Serialization.serialize(priceAPI_marketCap)))
-            .put("priceHashMap", new Serialization.JSONObjectWithNull(Serialization.serializeHashMap(priceHashMap)))
-            .put("marketCapHashMap", new Serialization.JSONObjectWithNull(Serialization.serializeHashMap(marketCapHashMap)))
-            .put("timestamp_price", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_price)))
-            .put("timestamp_marketCap", new Serialization.JSONObjectWithNull(Serialization.serialize(timestamp_marketCap)))
+        return new JSONWithNull.JSONObjectWithNull()
+            .put("cryptoPrice", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(cryptoPrice)))
+            .put("priceAPI_price", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(priceAPI_price)))
+            .put("priceAPI_marketCap", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(priceAPI_marketCap)))
+            .put("priceHashMap", new JSONWithNull.JSONObjectWithNull(Serialization.serializeHashMap(priceHashMap)))
+            .put("marketCapHashMap", new JSONWithNull.JSONObjectWithNull(Serialization.serializeHashMap(marketCapHashMap)))
+            .put("timestamp_price", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_price)))
+            .put("timestamp_marketCap", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_marketCap)))
             .toStringOrNull();
     }
 
     public static PriceData deserializeFromJSON(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         CryptoPrice cryptoPrice = Serialization.deserialize(o.getJSONObjectString("cryptoPrice"), CryptoPrice.class);
         PriceAPI priceAPI_price = Serialization.deserialize(o.getJSONObjectString("priceAPI_price"), PriceAPI.class);
         PriceAPI priceAPI_marketCap = Serialization.deserialize(o.getJSONObjectString("priceAPI_marketCap"), PriceAPI.class);

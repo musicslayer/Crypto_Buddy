@@ -4,7 +4,8 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;
@@ -142,7 +143,7 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("settingsKey", Serialization.string_serialize(getSettingsKey()))
             .put("chosenOptionName", Serialization.string_serialize(chosenOptionName))
@@ -150,7 +151,7 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
     }
 
     public static Setting deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String settingsKey = Serialization.string_deserialize(o.getString("settingsKey"));
         String chosenOptionName = Serialization.string_deserialize(o.getString("chosenOptionName"));

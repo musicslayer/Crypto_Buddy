@@ -1,7 +1,8 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -38,14 +39,14 @@ public class ExchangePortfolioObj implements Serialization.SerializableToJSON, S
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("name", Serialization.string_serialize(name))
-            .put("cryptoExchangeArrayList", new Serialization.JSONArrayWithNull(Serialization.serializeArrayList(cryptoExchangeArrayList)))
+            .put("cryptoExchangeArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoExchangeArrayList)))
             .toStringOrNull();
     }
 
     public static ExchangePortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String name = Serialization.string_deserialize(o.getString("name"));
         ArrayList<CryptoExchange> cryptoExchangeArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoExchangeArrayList"), CryptoExchange.class);
 

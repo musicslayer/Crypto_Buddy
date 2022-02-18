@@ -1,8 +1,9 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +13,7 @@ public class DateFilter extends Filter {
     public Date user_endDate;
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("filterType", Serialization.string_serialize(getFilterType()))
             .put("user_startDate", Serialization.date_serialize(user_startDate))
             .put("user_endDate", Serialization.date_serialize(user_endDate))
@@ -20,7 +21,7 @@ public class DateFilter extends Filter {
     }
 
     public static DateFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         Date user_startDate = Serialization.date_deserialize(o.getString("user_startDate"));
         Date user_endDate = Serialization.date_deserialize(o.getString("user_endDate"));
 

@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.transaction;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 import java.util.HashMap;

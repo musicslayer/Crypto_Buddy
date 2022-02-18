@@ -1,7 +1,8 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 
@@ -11,16 +12,16 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("filterType", Serialization.string_serialize(getFilterType()))
-            .put("choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(choices)))
-            .put("user_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_choices)))
-            .put("user_not_choices", new Serialization.JSONArrayWithNull(Serialization.string_serializeArrayList(user_not_choices)))
+            .put("choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(choices)))
+            .put("user_choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(user_choices)))
+            .put("user_not_choices", new JSONWithNull.JSONArrayWithNull(Serialization.string_serializeArrayList(user_not_choices)))
             .toStringOrNull();
     }
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         ArrayList<String> choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("choices"));
         ArrayList<String> user_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_choices"));
         ArrayList<String> user_not_choices = Serialization.string_deserializeArrayList(o.getJSONArrayString("user_not_choices"));

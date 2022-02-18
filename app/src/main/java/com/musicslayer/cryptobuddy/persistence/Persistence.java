@@ -5,7 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -60,7 +60,7 @@ public class Persistence {
         // Return a JSON representation of all the persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         // Individually, try to export each piece of data (in alphabetical order).
         ArrayList<String> sortedKeys = new ArrayList<>(persistentClassMap.keySet());
@@ -89,9 +89,9 @@ public class Persistence {
 
     public static void importAllFromJSON(Context context, ArrayList<String> dataTypes, String json) {
         // Each SharedPreferences key maps to its data.
-        Serialization.JSONObjectWithNull o;
+        JSONWithNull.JSONObjectWithNull o;
         try {
-            o = new Serialization.JSONObjectWithNull(json);
+            o = new JSONWithNull.JSONObjectWithNull(json);
         }
         catch(Exception e) {
             throw new IllegalStateException(e);

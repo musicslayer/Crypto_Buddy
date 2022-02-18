@@ -8,7 +8,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String serializeToJSON() throws org.json.JSONException {
         // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
         // Use original properties directly, not the potentially modified ones from getter functions.
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
                 .put("assetKind", Serialization.string_serialize(getAssetKind()))
                 .put("key", Serialization.string_serialize(getOriginalKey()))
                 .put("name", Serialization.string_serialize(getOriginalName()))
@@ -138,7 +139,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
     public static Asset deserializeFromJSON1(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String assetType = Serialization.string_deserialize(o.getString("assetType"));
         String key = Serialization.string_deserialize(o.getString("key"));
 
@@ -157,7 +158,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
     public static Asset deserializeFromJSON2(String s) throws org.json.JSONException {
         // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String assetKind = Serialization.string_deserialize(o.getString("assetKind"));
         String assetType = Serialization.string_deserialize(o.getString("assetType"));
         String key = Serialization.string_deserialize(o.getString("key"));
@@ -181,7 +182,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
     public static Asset deserializeFromJSON3(String s) throws org.json.JSONException {
         // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String assetKind = Serialization.string_deserialize(o.getString("assetKind"));
         String key = Serialization.string_deserialize(o.getString("key"));
         String name = Serialization.string_deserialize(o.getString("name"));

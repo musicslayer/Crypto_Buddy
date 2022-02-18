@@ -24,7 +24,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ViewTokensDialog;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;

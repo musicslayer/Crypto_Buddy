@@ -6,7 +6,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -403,17 +404,17 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("fiat_type", Serialization.string_serialize(getFiatType()))
-            .put("hardcoded_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(hardcoded_fiats)))
-            .put("found_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(found_fiats)))
-            .put("custom_fiats", new Serialization.JSONArrayWithNull(Serialization.fiat_serializeArrayList(custom_fiats)))
+            .put("hardcoded_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(hardcoded_fiats)))
+            .put("found_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(found_fiats)))
+            .put("custom_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(custom_fiats)))
             .toStringOrNull();
     }
 
     public static FiatManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
         ArrayList<Fiat> hardcoded_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("hardcoded_fiats"));
@@ -434,7 +435,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -455,7 +456,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         try {
             ArrayList<Fiat> arrayList = new ArrayList<>();
 
-            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(fiat_deserialize1(o));
@@ -470,7 +471,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     }
 
     public static FiatManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String fiat_type = Serialization.string_deserialize(o.getString("fiat_type"));
         ArrayList<Fiat> hardcoded_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));

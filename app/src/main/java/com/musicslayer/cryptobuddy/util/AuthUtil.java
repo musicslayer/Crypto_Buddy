@@ -12,7 +12,8 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 
 import org.json.JSONObject;
 
@@ -187,14 +188,14 @@ public class AuthUtil {
         private final long expiryTime;
 
         public String serializeToJSON() throws org.json.JSONException {
-            return new Serialization.JSONObjectWithNull()
+            return new JSONWithNull.JSONObjectWithNull()
                     .put("token_e", Serialization.byte_serializeArray(token_e))
                     .put("expiryTime", Serialization.long_serialize(expiryTime))
                     .toStringOrNull();
         }
 
         public static OAuthToken deserializeFromJSON(String s) throws org.json.JSONException {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             byte[] token_e = Serialization.byte_deserializeArray(o.getString("token_e"));
             long expiryTime = Serialization.long_deserialize(o.getString("expiryTime"));
             return new OAuthToken(token_e, expiryTime);

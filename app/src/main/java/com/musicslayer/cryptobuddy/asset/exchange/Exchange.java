@@ -7,7 +7,8 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -108,13 +109,13 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Seri
     public String serializationVersion() { return "1"; }
 
     public String serializeToJSON() throws org.json.JSONException {
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
                 .put("key", Serialization.string_serialize(getKey()))
                 .toStringOrNull();
     }
 
     public static Exchange deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         return Exchange.getExchangeFromKey(key);
     }

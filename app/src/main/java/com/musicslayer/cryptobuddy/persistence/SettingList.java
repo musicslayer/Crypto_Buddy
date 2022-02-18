@@ -5,7 +5,8 @@ import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
 
@@ -54,14 +55,14 @@ public class SettingList {
     }
 
     // TODO New interface???
-    //public String exportVersion() { return "1"; }
+    //public String exportationVersion() { return "1"; }
 
     public static boolean canExport() { return true; }
 
     public static String exportToJSON(Context context) throws org.json.JSONException {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
@@ -74,7 +75,7 @@ public class SettingList {
 
 
     public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import settings that currently exist.
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);

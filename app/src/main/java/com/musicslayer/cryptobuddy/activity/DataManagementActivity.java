@@ -17,7 +17,7 @@ import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
@@ -141,7 +141,7 @@ public class DataManagementActivity extends BaseActivity {
                             throw new IllegalStateException();
                         }
 
-                        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
+                        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
                     }
                     catch(Exception ignored) {
@@ -238,7 +238,7 @@ public class DataManagementActivity extends BaseActivity {
                 try {
                     // Check if clipboard text can be parsed as JSON. If so, store the data type keys that are present.
                     clipboardText = String.valueOf(ClipboardUtil.importText(DataManagementActivity.this));
-                    Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(clipboardText);
+                    JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(clipboardText);
                     dataTypes = o.keys();
                 }
                 catch(Exception ignored) {

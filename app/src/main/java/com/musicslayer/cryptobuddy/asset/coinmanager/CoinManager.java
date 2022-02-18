@@ -6,7 +6,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
-import com.musicslayer.cryptobuddy.serialize.Serialization;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -403,17 +404,17 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
 
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
-        return new Serialization.JSONObjectWithNull()
+        return new JSONWithNull.JSONObjectWithNull()
             .put("key", Serialization.string_serialize(getKey()))
             .put("coin_type", Serialization.string_serialize(getCoinType()))
-            .put("hardcoded_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(hardcoded_coins)))
-            .put("found_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(found_coins)))
-            .put("custom_coins", new Serialization.JSONArrayWithNull(Serialization.coin_serializeArrayList(custom_coins)))
+            .put("hardcoded_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(hardcoded_coins)))
+            .put("found_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(found_coins)))
+            .put("custom_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(custom_coins)))
             .toStringOrNull();
     }
 
     public static CoinManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
         ArrayList<Coin> hardcoded_coins = coin_deserializeArrayList1(o.getJSONArrayString("hardcoded_coins"));
@@ -434,7 +435,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
             String key = Serialization.string_deserialize(o.getString("key"));
             String name = Serialization.string_deserialize(o.getString("name"));
             String display_name = Serialization.string_deserialize(o.getString("display_name"));
@@ -456,7 +457,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         try {
             ArrayList<Coin> arrayList = new ArrayList<>();
 
-            Serialization.JSONArrayWithNull a = new Serialization.JSONArrayWithNull(s);
+            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
                 arrayList.add(coin_deserialize1(o));
@@ -471,7 +472,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     }
 
     public static CoinManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
         String key = Serialization.string_deserialize(o.getString("key"));
         String coin_type = Serialization.string_deserialize(o.getString("coin_type"));
         ArrayList<Coin> hardcoded_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
