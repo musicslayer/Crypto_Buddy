@@ -14,6 +14,20 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class FileUtil {
+    public static String readFile(File file) {
+        String s;
+
+        try {
+            s = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            s = null;
+        }
+
+        return s;
+    }
+
     public static String readFile(File folder, String name) {
         String s;
 
@@ -77,6 +91,18 @@ public class FileUtil {
         }
 
         return stringArrayList;
+    }
+
+    public static boolean writeFile(File file, String s) {
+        // Writes string to this file, and returns whether it was a success.
+        try {
+            FileUtils.writeStringToFile(file, s, Charset.forName("UTF-8"));
+            return true;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            return false;
+        }
     }
 
     public static boolean writeFile(File folder, String name, String s) {

@@ -8,13 +8,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class UriUtil {
-    public static String readUri(DocumentFile documentFile, String name) {
+
+    public static String readUri(DocumentFile documentFile) {
         InputStream o = null;
 
         try {
-            DocumentFile child = documentFile.findFile(name);
-
-            o = App.contentResolver.openInputStream(child.getUri());
+            o = App.contentResolver.openInputStream(documentFile.getUri());
             String s = StreamUtil.readIntoString(o);
             StreamUtil.safeFlushAndClose(o);
 
@@ -26,19 +25,53 @@ public class UriUtil {
         }
     }
 
-    public static boolean writeUri(DocumentFile documentFile, String name, String s) {
+    public static String readUri(DocumentFile documentFolder, String name) {
+        InputStream o = null;
+
+        try {
+            DocumentFile documentFile = documentFolder.findFile(name);
+
+            o = App.contentResolver.openInputStream(documentFile.getUri());
+            String s = StreamUtil.readIntoString(o);
+            StreamUtil.safeFlushAndClose(o);
+
+            return s;
+        }
+        catch(Exception ignored) {
+            StreamUtil.safeFlushAndClose(o);
+            return null;
+        }
+    }
+
+    public static boolean writeUri(DocumentFile documentFile, String s) {
+        OutputStream o = null;
+
+        try {
+            o = App.contentResolver.openOutputStream(documentFile.getUri());
+            StreamUtil.writeFromString(o, s);
+            StreamUtil.safeFlushAndClose(o);
+
+            return true;
+        }
+        catch(Exception ignored) {
+            StreamUtil.safeFlushAndClose(o);
+            return false;
+        }
+    }
+
+    public static boolean writeUri(DocumentFile documentFolder, String name, String s) {
         OutputStream o = null;
 
         try {
             // If the file exists, delete it before creating it again.
-            DocumentFile oldChild = documentFile.findFile(name);
-            if(oldChild != null) {
-                oldChild.delete();
+            DocumentFile oldDocumentFile = documentFolder.findFile(name);
+            if(oldDocumentFile != null) {
+                oldDocumentFile.delete();
             }
 
-            DocumentFile child = documentFile.createFile("*/*", name);
+            DocumentFile documentFile = documentFolder.createFile("*/*", name);
 
-            o = App.contentResolver.openOutputStream(child.getUri());
+            o = App.contentResolver.openOutputStream(documentFile.getUri());
             StreamUtil.writeFromString(o, s);
             StreamUtil.safeFlushAndClose(o);
 

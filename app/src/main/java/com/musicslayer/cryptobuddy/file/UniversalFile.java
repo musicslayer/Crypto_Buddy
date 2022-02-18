@@ -211,7 +211,31 @@ public class UniversalFile implements Parcelable {
         return folderNames;
     }
 
-    public String readFile(String name) {
+    public String read() {
+        // Reads the content of this file and returns it as a string.
+        if(file != null) {
+            try {
+                return FileUtil.readFile(file);
+            }
+            catch(Exception ignored) {
+                return null;
+            }
+        }
+        else if(documentFile != null) {
+            try {
+                return UriUtil.readUri(documentFile);
+            }
+            catch(Exception ignored) {
+                return null;
+            }
+        }
+        else {
+            // Nothing read, so return null.
+            return null;
+        }
+    }
+
+    public String readContent(String name) {
         // Reads the content of the input file in this folder and returns it as a string.
         if(file != null) {
             try {
@@ -235,7 +259,31 @@ public class UniversalFile implements Parcelable {
         }
     }
 
-    public boolean writeFile(String name, String s) {
+    public boolean write(String s) {
+        // Writes string to the input file in this folder and returns whether it was a success.
+        if(file != null) {
+            try {
+                return FileUtil.writeFile(file, s);
+            }
+            catch(Exception ignored) {
+                return false;
+            }
+        }
+        else if(documentFile != null) {
+            try {
+                return UriUtil.writeUri(documentFile, s);
+            }
+            catch(Exception ignored) {
+                return false;
+            }
+        }
+        else {
+            // Nothing written, so return false.
+            return false;
+        }
+    }
+
+    public boolean writeContent(String name, String s) {
         // Writes string to the input file in this folder and returns whether it was a success.
         if(file != null) {
             try {

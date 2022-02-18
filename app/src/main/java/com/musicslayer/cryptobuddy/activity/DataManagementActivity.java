@@ -13,7 +13,9 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
+import com.musicslayer.cryptobuddy.dialog.ExportDataFileNewDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
+import com.musicslayer.cryptobuddy.dialog.ImportDataFileNewDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.persistence.Persistence;
@@ -27,8 +29,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class DataManagementActivity extends BaseActivity {
-    String fileName;
+    public UniversalFile universalFile;
     public UniversalFile universalFolder;
+    String fileName;
     String fileText;
     String clipboardText;
 
@@ -62,7 +65,13 @@ public class DataManagementActivity extends BaseActivity {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
 
-                    boolean isSuccess = universalFolder.writeFile(fileName, json);
+                    boolean isSuccess = false;
+                    if(universalFolder != null) {
+                        isSuccess = universalFolder.writeContent(fileName, json);
+                    }
+                    else if(universalFile != null) {
+                        isSuccess = universalFile.write(json);
+                    }
 
                     if(isSuccess) {
                         ToastUtil.showToast(activity,"export_file_success");
@@ -75,10 +84,19 @@ public class DataManagementActivity extends BaseActivity {
         });
         exportFile_selectDataTypesDialogFragment.restoreListeners(this, "select_export_file");
 
-        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class);
+        //BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileDialog.class);
+        BaseDialogFragment exportDataFileDialogFragment = BaseDialogFragment.newInstance(ExportDataFileNewDialog.class);
         exportDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
+                if(((ExportDataFileNewDialog)dialog).isComplete) {
+                    universalFile = ((ExportDataFileNewDialog)dialog).user_UNIVERSALFILE;
+
+                    // Launch dialog to ask user which data types to import.
+                    exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
+                }
+
+            /*
                 if(((ExportDataFileDialog)dialog).isComplete) {
                     fileName = ((ExportDataFileDialog)dialog).user_FILENAME;
                     universalFolder = ((ExportDataFileDialog)dialog).user_UNIVERSALFOLDER;
@@ -86,6 +104,8 @@ public class DataManagementActivity extends BaseActivity {
                     // Launch dialog to ask user which data types to import.
                     exportFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_export_file");
                 }
+
+             */
             }
         });
         exportDataFileDialogFragment.restoreListeners(this, "export_file");
@@ -110,19 +130,32 @@ public class DataManagementActivity extends BaseActivity {
             }
         };
 
-        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
+        //BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
+        BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileNewDialog.class);
         importDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((ImportDataFileDialog)dialog).isComplete) {
-                    fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
-                    universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
+                //if(((ImportDataFileDialog)dialog).isComplete) {
+                if(((ImportDataFileNewDialog)dialog).isComplete) {
+                    //fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
+                    //universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
+
+                    universalFile = ((ImportDataFileNewDialog)dialog).user_UNIVERSALFILE;
 
                     ArrayList<String> dataTypes;
 
                     try {
                         // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
-                        fileText = universalFolder.readFile(fileName);
+                        if(universalFolder != null) {
+                            fileText = universalFolder.readContent(fileName);
+                        }
+                        else if (universalFile != null){
+                            fileText = universalFile.read();
+                        }
+                        else {
+                            throw new IllegalStateException();
+                        }
+
                         Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
                     }
@@ -243,8 +276,9 @@ public class DataManagementActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("fileName", fileName);
+        bundle.putParcelable("universalFile", universalFile);
         bundle.putParcelable("universalFolder", universalFolder);
+        bundle.putString("fileName", fileName);
         bundle.putString("fileText", fileText);
         bundle.putString("clipboardText", clipboardText);
     }
@@ -252,8 +286,9 @@ public class DataManagementActivity extends BaseActivity {
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            fileName = bundle.getString("fileName");
+            universalFile = bundle.getParcelable("universalFile");
             universalFolder = bundle.getParcelable("universalFolder");
+            fileName = bundle.getString("fileName");
             fileText = bundle.getString("fileText");
             clipboardText = bundle.getString("clipboardText");
         }

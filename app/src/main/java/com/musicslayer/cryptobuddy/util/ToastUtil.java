@@ -138,15 +138,17 @@ public class ToastUtil {
         toastMap.put("export_file_failed", Toast.makeText(context, "Could not export to file.", duration));
         toastMap.put("export_file_success", Toast.makeText(context, "Export to file complete.", duration));
         toastMap.put("file_does_not_exist", Toast.makeText(context, "A file with this name does not exist.", duration));
+        toastMap.put("file_selection_problem", Toast.makeText(context, "Problem selecting data file.", duration));
+        toastMap.put("folder_selection_problem", Toast.makeText(context, "Problem selecting data folder.", duration));
         toastMap.put("import_clipboard_empty", Toast.makeText(context, "Could not import from clipboard. Clipboard is empty.", duration));
         toastMap.put("import_clipboard_not_from_app", Toast.makeText(context, "Could not import from clipboard. Text was not exported from this app.", duration));
         toastMap.put("import_clipboard_not_text", Toast.makeText(context, "Could not import from clipboard. Clipboard does not contain text.", duration));
         toastMap.put("import_clipboard_success", Toast.makeText(context, "Import from clipboard complete.", duration));
         toastMap.put("import_file_failed", Toast.makeText(context, "Could not import from file. File was not exported from this app.", duration));
         toastMap.put("import_file_success", Toast.makeText(context, "Import from file complete.", duration));
+        toastMap.put("no_file_selected", Toast.makeText(context, "No data file selected.", duration));
         toastMap.put("no_folder_selected", Toast.makeText(context, "No data folder selected.", duration));
         toastMap.put("nothing_selected", Toast.makeText(context, "There is nothing selected.", duration));
-        toastMap.put("folder_selection_problem", Toast.makeText(context, "Problem selecting data folder.", duration));
 
         // Internal Only
         toastMap.put("lock_purchases", Toast.makeText(context, "Purchases locked.", duration));

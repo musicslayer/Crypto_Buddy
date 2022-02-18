@@ -150,7 +150,7 @@ public class ChooseFolderDialog extends BaseDialog {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT) // We only call this on API > 21
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResultImpl(ActivityResult result) {
         boolean isSuccess = true;

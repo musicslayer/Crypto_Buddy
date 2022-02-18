@@ -490,12 +490,42 @@ public class Serialization {
     }
 
     public static String documentfile_serialize(DocumentFile obj) {
-        return obj == null ? null : string_serialize(obj.getUri().toString());
+        if(obj == null) { return null; }
+
+        try {
+            return new Serialization.JSONObjectWithNull()
+                    .put("class", string_serialize(obj.getClass().getSimpleName()))
+                    .put("uri", string_serialize(obj.getUri().toString()))
+                    .toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
     }
 
     public static DocumentFile documentfile_deserialize(String s) {
-        // Just use "fromTreeUri" for now.
-        return s == null ? null : DocumentFile.fromTreeUri(App.applicationContext, Uri.parse(string_deserialize(s)));
+        if(s == null) { return null; }
+
+        try {
+            Serialization.JSONObjectWithNull o = new Serialization.JSONObjectWithNull(s);
+            String clazz = Serialization.string_deserialize(o.getString("class"));
+            Uri uri = Uri.parse(Serialization.string_deserialize(o.getString("uri")));
+
+            if("TreeDocumentFile".equals(clazz)) {
+                return DocumentFile.fromTreeUri(App.applicationContext, uri);
+            }
+            else if("SingleDocumentFile".equals(clazz)) {
+                return DocumentFile.fromSingleUri(App.applicationContext, uri);
+            }
+            else {
+                return null;
+            }
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
     }
 
     // Asset.serializeToJSON only serializes a key used to lookup an Asset later.

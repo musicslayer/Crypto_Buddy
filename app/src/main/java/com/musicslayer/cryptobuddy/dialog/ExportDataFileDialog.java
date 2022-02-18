@@ -129,12 +129,12 @@ public class ExportDataFileDialog extends BaseDialog {
             }
         });
 
-        TextView T = findViewById(R.id.export_data_file_dialog_existingFilesTextView);
+        TextView T_EXISTINGFILES = findViewById(R.id.export_data_file_dialog_existingFilesTextView);
         if(universalFolder == null) {
-            T.setVisibility(View.GONE);
+            T_EXISTINGFILES.setVisibility(View.GONE);
         }
         else {
-            T.setVisibility(View.VISIBLE);
+            T_EXISTINGFILES.setVisibility(View.VISIBLE);
 
             ArrayList<String> existingFileNames = universalFolder.getFileNames();
             ArrayList<String> existingFolderNames = universalFolder.getFolderNames();
@@ -174,7 +174,7 @@ public class ExportDataFileDialog extends BaseDialog {
                 }
             }
 
-            T.setText(s.toString());
+            T_EXISTINGFILES.setText(s.toString());
         }
     }
 
