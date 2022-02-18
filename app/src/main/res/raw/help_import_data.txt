@@ -1,6 +1,0 @@
-Import app data from a file in the shared/external storage folder.
-Data that is imported will overwrite any existing data.
-
-For example, if you currently have 3 Transaction Portfolios named "A", "B", and "C",
-and you import a Transaction Portfolio named "B", then "A" and "C" will remain untouched,
-but "B" will be completely overwritten with the data that was taken from the file.

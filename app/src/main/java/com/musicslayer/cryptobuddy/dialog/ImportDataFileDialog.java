@@ -57,7 +57,7 @@ public class ImportDataFileDialog extends BaseDialog {
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                HelpUtil.showHelp(ImportDataFileDialog.this.activity, R.raw.help_import_data);
+                HelpUtil.showHelp(ImportDataFileDialog.this.activity, R.raw.help_import_data_file);
             }
         });
 
@@ -102,13 +102,21 @@ public class ImportDataFileDialog extends BaseDialog {
         });
 
         Button B_TOGGLE = findViewById(R.id.import_data_file_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                isFolder = !isFolder;
 
-                updateLayout();
-            }
-        });
+        if(Build.VERSION.SDK_INT >= 19) {
+            B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+                public void onClickImpl(View v) {
+                    isFolder = !isFolder;
+
+                    updateLayout();
+                }
+            });
+        }
+        else {
+            // Older devices only have the folder option.
+            B_TOGGLE.setVisibility(View.GONE);
+            isFolder = true;
+        }
 
         updateLayout();
     }

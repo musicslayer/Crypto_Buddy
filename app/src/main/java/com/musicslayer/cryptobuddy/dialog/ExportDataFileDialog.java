@@ -57,7 +57,7 @@ public class ExportDataFileDialog extends BaseDialog {
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View view) {
-                HelpUtil.showHelp(ExportDataFileDialog.this.activity, R.raw.help_export_data);
+                HelpUtil.showHelp(ExportDataFileDialog.this.activity, R.raw.help_export_data_file);
             }
         });
 
@@ -122,13 +122,22 @@ public class ExportDataFileDialog extends BaseDialog {
         });
 
         Button B_TOGGLE = findViewById(R.id.export_data_file_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-            public void onClickImpl(View v) {
-                isFolder = !isFolder;
 
-                updateLayout();
-            }
-        });
+        if(Build.VERSION.SDK_INT >= 19) {
+            B_TOGGLE.setVisibility(View.VISIBLE);
+            B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+                public void onClickImpl(View v) {
+                    isFolder = !isFolder;
+
+                    updateLayout();
+                }
+            });
+        }
+        else {
+            // Older devices only have the folder option.
+            B_TOGGLE.setVisibility(View.GONE);
+            isFolder = true;
+        }
 
         updateLayout();
     }
