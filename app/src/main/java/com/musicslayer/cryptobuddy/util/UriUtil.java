@@ -1,8 +1,5 @@
 package com.musicslayer.cryptobuddy.util;
 
-import android.content.Context;
-import android.net.Uri;
-
 import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.app.App;
@@ -11,14 +8,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class UriUtil {
-    public static String readUri(Context context, Uri uri, String name) {
+    public static String readUri(DocumentFile documentFile, String name) {
         InputStream o = null;
 
         try {
-            DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
-            DocumentFile documentFile = documentFolder.findFile(name);
+            DocumentFile child = documentFile.findFile(name);
 
-            o = App.contentResolver.openInputStream(documentFile.getUri());
+            o = App.contentResolver.openInputStream(child.getUri());
             String s = StreamUtil.readIntoString(o);
             StreamUtil.safeFlushAndClose(o);
 
@@ -30,21 +26,19 @@ public class UriUtil {
         }
     }
 
-    public static boolean writeUri(Context context, Uri uri, String name, String s) {
+    public static boolean writeUri(DocumentFile documentFile, String name, String s) {
         OutputStream o = null;
 
         try {
-            DocumentFile documentFolder = DocumentFile.fromTreeUri(context, uri);
-
             // If the file exists, delete it before creating it again.
-            DocumentFile oldDocumentFile = documentFolder.findFile(name);
-            if(oldDocumentFile != null) {
-                oldDocumentFile.delete();
+            DocumentFile oldChild = documentFile.findFile(name);
+            if(oldChild != null) {
+                oldChild.delete();
             }
 
-            DocumentFile documentFile = documentFolder.createFile("*/*", name);
+            DocumentFile child = documentFile.createFile("*/*", name);
 
-            o = App.contentResolver.openOutputStream(documentFile.getUri());
+            o = App.contentResolver.openOutputStream(child.getUri());
             StreamUtil.writeFromString(o, s);
             StreamUtil.safeFlushAndClose(o);
 

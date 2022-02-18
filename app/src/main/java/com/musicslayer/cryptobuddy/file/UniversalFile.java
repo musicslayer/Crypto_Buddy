@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.file;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,11 +9,9 @@ import android.provider.DocumentsContract;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.musicslayer.cryptobuddy.activity.BaseActivity;
 import com.musicslayer.cryptobuddy.serialize.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.UriUtil;
-
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class UniversalFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(Serialization.file_serialize(file));
-        out.writeString(Serialization.uri_serialize(treeUri));
+        out.writeString(Serialization.documentfile_serialize(documentFile));
     }
 
     public static final Parcelable.Creator<UniversalFile> CREATOR = new Parcelable.Creator<UniversalFile>() {
@@ -35,13 +32,13 @@ public class UniversalFile implements Parcelable {
         @Override
         public UniversalFile createFromParcel(Parcel in) {
             File file = Serialization.file_deserialize(in.readString());
-            Uri treeUri = Serialization.uri_deserialize(in.readString());
+            DocumentFile documentFile = Serialization.documentfile_deserialize(in.readString());
 
             if(file != null) {
                 return fromFile(file);
             }
-            else if(treeUri != null) {
-                return fromTreeUri(treeUri);
+            else if(documentFile != null) {
+                return fromDocumentFile(documentFile);
             }
             else {
                 return null;
@@ -61,20 +58,20 @@ public class UniversalFile implements Parcelable {
 
     // Only one field should be non-null.
     File file;
-    Uri treeUri;
+    DocumentFile documentFile;
 
     public static UniversalFile fromFile(File file) {
         UniversalFile obj = new UniversalFile();
         obj.file = file;
-        obj.treeUri = null;
+        obj.documentFile = null;
         return obj;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static UniversalFile fromTreeUri(Uri treeUri) {
+    public static UniversalFile fromDocumentFile(DocumentFile documentFile) {
         UniversalFile obj = new UniversalFile();
         obj.file = null;
-        obj.treeUri = treeUri;
+        obj.documentFile = documentFile;
         return obj;
     }
 
@@ -84,24 +81,12 @@ public class UniversalFile implements Parcelable {
     @SuppressLint("NewApi")
     public String getDisplayPath() {
         // For regular files, this is the full path to the file.
-        // For uris, this is the document ID.
+        // For document files, this is the document ID.
         if(file != null) {
             return file.getAbsolutePath();
         }
-        else if(treeUri != null) {
-            return DocumentsContract.getDocumentId(treeUri);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public String getName() {
-        if(file != null) {
-            return file.getName();
-        }
-        else if(treeUri != null) {
-            return treeUri.getLastPathSegment();
+        else if(documentFile != null) {
+            return DocumentsContract.getDocumentId(documentFile.getUri());
         }
         else {
             return null;
@@ -112,8 +97,7 @@ public class UniversalFile implements Parcelable {
         if(file != null) {
             return file.isFile();
         }
-        else if(treeUri != null) {
-            DocumentFile documentFile = DocumentFile.fromSingleUri(BaseActivity.activity, treeUri);
+        else if(documentFile != null) {
             return documentFile.isFile();
         }
         else {
@@ -128,9 +112,9 @@ public class UniversalFile implements Parcelable {
         if(file != null) {
             return new File(file.getAbsolutePath() + File.separatorChar + name).isFile();
         }
-        else if(treeUri != null) {
-            DocumentFile documentFolder = DocumentFile.fromTreeUri(BaseActivity.activity, treeUri);
-            return documentFolder.findFile(name) != null && documentFolder.findFile(name).isFile();
+        else if(documentFile != null) {
+            DocumentFile child = documentFile.findFile(name);
+            return child != null && child.isFile();
         }
         else {
             // If we don't recognize it, just say it doesn't exist.
@@ -143,8 +127,7 @@ public class UniversalFile implements Parcelable {
         if(file != null) {
             return file.exists();
         }
-        else if(treeUri != null) {
-            DocumentFile documentFile = DocumentFile.fromSingleUri(BaseActivity.activity, treeUri);
+        else if(documentFile != null) {
             return documentFile.exists();
         }
         else {
@@ -159,9 +142,8 @@ public class UniversalFile implements Parcelable {
         if(file != null) {
             return new File(file.getAbsolutePath() + File.separatorChar + name).exists();
         }
-        else if(treeUri != null) {
-            DocumentFile documentFolder = DocumentFile.fromTreeUri(BaseActivity.activity, treeUri);
-            return documentFolder.findFile(name) != null;
+        else if(documentFile != null) {
+            return documentFile.findFile(name) != null;
         }
         else {
             // If we don't recognize it, just say it doesn't exist.
@@ -182,12 +164,12 @@ public class UniversalFile implements Parcelable {
                 }
             }
         }
-        else if(treeUri != null) {
-            DocumentFile[] documentFiles = DocumentFile.fromTreeUri(BaseActivity.activity, treeUri).listFiles();
+        else if(documentFile != null) {
+            DocumentFile[] documentFiles = documentFile.listFiles();
             if(documentFiles != null) {
-                for(DocumentFile documentFile : documentFiles) {
-                    if(documentFile.isFile()) {
-                        fileNames.add(documentFile.getName());
+                for(DocumentFile df : documentFiles) {
+                    if(df.isFile()) {
+                        fileNames.add(df.getName());
                     }
                 }
             }
@@ -212,12 +194,12 @@ public class UniversalFile implements Parcelable {
                 }
             }
         }
-        else if(treeUri != null) {
-            DocumentFile[] documentFiles = DocumentFile.fromTreeUri(BaseActivity.activity, treeUri).listFiles();
+        else if(documentFile != null) {
+            DocumentFile[] documentFiles = documentFile.listFiles();
             if(documentFiles != null) {
-                for(DocumentFile documentFile : documentFiles) {
-                    if(!documentFile.isFile()) {
-                        folderNames.add(documentFile.getName());
+                for(DocumentFile df : documentFiles) {
+                    if(!df.isFile()) {
+                        folderNames.add(df.getName());
                     }
                 }
             }
@@ -239,9 +221,9 @@ public class UniversalFile implements Parcelable {
                 return null;
             }
         }
-        else if(treeUri != null) {
+        else if(documentFile != null) {
             try {
-                return UriUtil.readUri(BaseActivity.activity, treeUri, name);
+                return UriUtil.readUri(documentFile, name);
             }
             catch(Exception ignored) {
                 return null;
@@ -263,9 +245,9 @@ public class UniversalFile implements Parcelable {
                 return false;
             }
         }
-        else if(treeUri != null) {
+        else if(documentFile != null) {
             try {
-                return UriUtil.writeUri(BaseActivity.activity, treeUri, name, s);
+                return UriUtil.writeUri(documentFile, name, s);
             }
             catch(Exception ignored) {
                 return false;

@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.app;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.os.Build;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -24,11 +25,12 @@ public class App extends MultiDexApplication {
     public static boolean isGooglePlayAvailable = true;
     public static boolean isAppInitialized = false;
 
-    // Store this for use later when the context may not be available.
+    // Store these for use later when the context may not be available.
     public static String cacheDir;
     public static ArrayList<String> internalFilesDirs;
     public static ArrayList<String> externalFilesDirs;
     public static ContentResolver contentResolver;
+    public static Context applicationContext;
 
     @Override
     public void onCreate() {
@@ -73,6 +75,8 @@ public class App extends MultiDexApplication {
             }
 
             contentResolver = this.getContentResolver();
+
+            applicationContext = this.getApplicationContext();
 
             // Try to clear out previously created files from the cache.
             // Then access the cache again to make sure the folder is recreated.

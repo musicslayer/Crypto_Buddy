@@ -2,6 +2,9 @@ package com.musicslayer.cryptobuddy.serialize;
 
 import android.net.Uri;
 
+import androidx.documentfile.provider.DocumentFile;
+
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
@@ -486,12 +489,13 @@ public class Serialization {
         return s == null ? null : new File(string_deserialize(s));
     }
 
-    public static String uri_serialize(Uri obj) {
-        return obj == null ? null : string_serialize(obj.toString());
+    public static String documentfile_serialize(DocumentFile obj) {
+        return obj == null ? null : string_serialize(obj.getUri().toString());
     }
 
-    public static Uri uri_deserialize(String s) {
-        return s == null ? null : Uri.parse(string_deserialize(s));
+    public static DocumentFile documentfile_deserialize(String s) {
+        // Just use "fromTreeUri" for now.
+        return s == null ? null : DocumentFile.fromTreeUri(App.applicationContext, Uri.parse(string_deserialize(s)));
     }
 
     // Asset.serializeToJSON only serializes a key used to lookup an Asset later.

@@ -158,9 +158,9 @@ public class ChooseFolderDialog extends BaseDialog {
         if(result.getResultCode() == Activity.RESULT_OK) {
             try {
                 Uri uri = result.getData().getData();
-                DocumentFile documentFile = DocumentFile.fromTreeUri(activity, uri);
+                DocumentFile documentFile = DocumentFile.fromTreeUri(App.applicationContext, uri);
 
-                user_UNIVERSALFOLDER = UniversalFile.fromTreeUri(documentFile.getUri());
+                user_UNIVERSALFOLDER = UniversalFile.fromDocumentFile(documentFile);
 
                 isComplete = true;
                 dismiss();
