@@ -64,8 +64,6 @@ abstract public class PersistentDataStore {
             }
         }
 
-        //Collections.sort(dataTypes);
-
         return dataTypes;
     }
 
@@ -158,12 +156,11 @@ abstract public class PersistentDataStore {
 
     public static boolean resetAllStoredData() {
         // Resets all stored persistent data in the app. App should be just like a new install.
-        // Individually, try to reset each piece of data (in alphabetical order).
-        // Note that each "resetData" method should erase both active and stored data.
         boolean isComplete = true;
 
         for(PersistentDataStore persistentDataStore : persistent_data_stores) {
             try {
+                // This method should erase both active and stored data.
                 persistentDataStore.resetAllData();
             }
             catch(Exception e) {

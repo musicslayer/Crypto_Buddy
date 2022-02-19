@@ -25,6 +25,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DataManagementActivity extends BaseActivity {
     public UniversalFile universalFile;
@@ -53,6 +54,7 @@ public class DataManagementActivity extends BaseActivity {
 
     public void updateLayout() {
         ArrayList<String> exportableDataTypes = PersistentDataStore.getAllExportableDataTypes();
+        Collections.sort(exportableDataTypes);
 
         // Export to File
         BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
