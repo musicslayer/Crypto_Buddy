@@ -1,24 +1,24 @@
 package com.musicslayer.cryptobuddy.monetization;
 
 import android.app.Activity;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
+import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
-import com.musicslayer.cryptobuddy.crash.CrashAcknowledgePurchaseResponseListener;
-import com.musicslayer.cryptobuddy.crash.CrashConsumeResponseListener;
-import com.musicslayer.cryptobuddy.crash.CrashPurchasesResponseListener;
-import com.musicslayer.cryptobuddy.crash.CrashSkuDetailsResponseListener;
+import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -32,55 +32,33 @@ public class InAppPurchase {
     public static BillingClient billingClient;
 
     public static InAppPurchaseListener inAppPurchaseListener; // Used to handle activity UI updates.
-    public static WrapperPurchasesUpdatedListener wrapperPurchasesUpdatedListener; // Used to pass in "context" without a memory leak.
-    public static WrapperUpdateAllPurchasesListener wrapperUpdateAllPurchasesListener; // Used to pass in "context" without a memory leak.
 
     public static void setInAppPurchaseListener(InAppPurchase.InAppPurchaseListener inAppPurchaseListener) {
         InAppPurchase.inAppPurchaseListener = inAppPurchaseListener;
     }
 
-    public static void setWrapperPurchasesUpdatedListener(Context context) {
-        InAppPurchase.wrapperPurchasesUpdatedListener = new WrapperPurchasesUpdatedListener() {
-            @Override
-            public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
-                if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    for(Purchase purchase : purchases) {
-                        if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-                            for(String id : purchase.getSkus()) {
-                                grantPurchase(context, id);
-                            }
-
-                            InAppPurchase.acknowledgeOrConsume(context, purchase);
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    public static void setWrapperUpdateAllPurchasesListener(Context context) {
-        InAppPurchase.wrapperUpdateAllPurchasesListener = new WrapperUpdateAllPurchasesListener() {
-            @Override
-            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                InAppPurchase.updateAllPurchases(context);
-            }
-        };
-    }
-
-    public static void initialize(Context context) {
+    public static void initialize() {
         // The application context should be passed in here to avoid a memory leak.
         if(billingClient == null || !billingClient.isReady()) {
             PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
                 @Override
                 public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
-                    if(wrapperPurchasesUpdatedListener != null) {
-                        wrapperPurchasesUpdatedListener.onPurchasesUpdated(billingResult, purchases);
+                    if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                        for(Purchase purchase : purchases) {
+                            if(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                                for(String id : purchase.getSkus()) {
+                                    grantPurchase(id);
+                                }
+
+                                InAppPurchase.acknowledgeOrConsume(purchase);
+                            }
+                        }
                     }
                 }
             };
 
             // Use application context here to avoid a memory leak.
-            billingClient = BillingClient.newBuilder(context)
+            billingClient = BillingClient.newBuilder(App.applicationContext)
                 .setListener(purchasesUpdatedListener)
                 .enablePendingPurchases()
                 .build();
@@ -88,8 +66,8 @@ public class InAppPurchase {
             billingClient.startConnection(new BillingClientStateListener() {
                 @Override
                 public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-                    if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && wrapperUpdateAllPurchasesListener != null) {
-                        wrapperUpdateAllPurchasesListener.onBillingSetupFinished(billingResult);
+                    if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                        InAppPurchase.updateAllPurchases();
                     }
                 }
 
@@ -130,106 +108,106 @@ public class InAppPurchase {
         InAppPurchase.purchase(activity, skuList);
     }
 
-    public static void purchase(Activity activity, List<String> skuList) {
+    private static void purchase(Activity activity, List<String> skuList) {
         if(!billingClient.isReady()) {
-            ToastUtil.showToast(activity,"billing_connection_not_finished");
+            ToastUtil.showToast("billing_connection_not_finished");
             return;
         }
 
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
 
-        billingClient.querySkuDetailsAsync(params.build(), new CrashSkuDetailsResponseListener(activity) {
+        billingClient.querySkuDetailsAsync(params.build(), new SkuDetailsResponseListener() {
             @Override
-            public void onSkuDetailsResponseImpl(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
+            public void onSkuDetailsResponse(@NonNull BillingResult billingResult, List<SkuDetails> skuDetailsList) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && skuDetailsList != null && skuDetailsList.size() > 0) {
                     // We do not support a user purchasing more than one thing at once, so we know that there is only one sku.
                     BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList.get(0)).build();
                     billingClient.launchBillingFlow(activity, billingFlowParams);
                 }
                 else {
-                    ToastUtil.showToast(activity,"billing_problem");
+                    ToastUtil.showToast("billing_problem");
                 }
             }
         });
     }
 
-    public static void acknowledgeOrConsume(Context context, Purchase purchase) {
+    public static void acknowledgeOrConsume(Purchase purchase) {
         // One-time items are just acknowledged.
         // Consumable items will be both consumed and acknowledged so they can be purchased again.
         if(!purchase.isAcknowledged() && purchase.getSkus().size() > 0) {
             // There is only one sku, so just check the first element to figure out which category it falls in.
             String id = purchase.getSkus().get(0);
             if("remove_ads".equals(id) || "premium".equals(id)) {
-                acknowledge(context, purchase);
+                acknowledge(purchase);
             }
             else if("support_developer_1".equals(id) || "support_developer_2".equals(id) || "support_developer_3".equals(id)) {
-                consume(context, purchase);
+                consume(purchase);
             }
         }
     }
 
-    public static void acknowledge(Context context, Purchase purchase) {
+    public static void acknowledge(Purchase purchase) {
         AcknowledgePurchaseParams acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                 .setPurchaseToken(purchase.getPurchaseToken())
                 .build();
 
         final String toastKey = purchase.getSkus().get(0);
 
-        billingClient.acknowledgePurchase(acknowledgePurchaseParams, new CrashAcknowledgePurchaseResponseListener(context) {
+        billingClient.acknowledgePurchase(acknowledgePurchaseParams, new AcknowledgePurchaseResponseListener() {
             @Override
-            public void onAcknowledgePurchaseResponseImpl(@NonNull BillingResult billingResult) {
+            public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
                 if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    ToastUtil.showToast(context,toastKey + "_purchase");
+                    ToastUtil.showToast(toastKey + "_purchase");
                 }
                 else {
-                    ToastUtil.showToast(context,"acknowledge_problem");
+                    ToastUtil.showToast("acknowledge_problem");
                 }
             }
         });
     }
 
-    public static void consume(Context context, Purchase purchase) {
+    public static void consume(Purchase purchase) {
         ConsumeParams consumeParams =
             ConsumeParams.newBuilder()
             .setPurchaseToken(purchase.getPurchaseToken())
             .build();
 
         // This will also do an implicit acknowledgement.
-        billingClient.consumeAsync(consumeParams, new CrashConsumeResponseListener(context) {
+        billingClient.consumeAsync(consumeParams, new ConsumeResponseListener() {
             @Override
-            public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
+            public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
                 if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                    ToastUtil.showToast(context,"support_developers_purchase");
+                    ToastUtil.showToast("support_developers_purchase");
                 }
             }
         });
     }
 
     // Internal use only!
-    public static void refund(Context context) {
+    public static void refund() {
         if(!billingClient.isReady()) {
-            ToastUtil.showToast(context,"billing_connection_not_finished");
+            ToastUtil.showToast("billing_connection_not_finished");
             return;
         }
 
-        ToastUtil.showToast(context,"refund_purchases");
+        ToastUtil.showToast("refund_purchases");
 
-        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
+        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
             @Override
-            public void onQueryPurchasesResponseImpl(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
+            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     for(Purchase purchase : purchases) {
                         for(String id : purchase.getSkus()) {
-                            revokePurchase(context, id);
+                            revokePurchase(id);
                         }
 
                         ConsumeParams.Builder params = ConsumeParams.newBuilder();
                         params.setPurchaseToken(purchase.getPurchaseToken());
-                        billingClient.consumeAsync(params.build(), new CrashConsumeResponseListener(context) {
+                        billingClient.consumeAsync(params.build(), new ConsumeResponseListener() {
                             @Override
-                            public void onConsumeResponseImpl(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
-                                ToastUtil.showToast(context,"refund_purchases_complete");
+                            public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
+                                ToastUtil.showToast("refund_purchases_complete");
                             }
                         });
                     }
@@ -239,44 +217,44 @@ public class InAppPurchase {
     }
 
     // Internal use only!
-    public static void lock(Context context) {
+    public static void lock() {
         // Just lock one-time items.
-        revokePurchase(context, "remove_ads");
-        revokePurchase(context, "premium");
+        revokePurchase("remove_ads");
+        revokePurchase("premium");
     }
 
     // Internal use only!
-    public static void unlock(Context context) {
+    public static void unlock() {
         // Just unlock one-time items.
-        grantPurchase(context, "remove_ads");
-        grantPurchase(context, "premium");
+        grantPurchase("remove_ads");
+        grantPurchase("premium");
     }
 
-    private static void grantPurchase(Context context, String id) {
-        Purchases.updatePurchase(context, id, true);
+    private static void grantPurchase(String id) {
+        Purchases.updatePurchase(id, true);
 
         if(InAppPurchase.inAppPurchaseListener != null) {
             InAppPurchase.inAppPurchaseListener.onInAppPurchase();
         }
     }
 
-    private static void revokePurchase(Context context, String id) {
-        Purchases.updatePurchase(context, id, false);
+    private static void revokePurchase(String id) {
+        Purchases.updatePurchase(id, false);
 
         if(InAppPurchase.inAppPurchaseListener != null) {
             InAppPurchase.inAppPurchaseListener.onInAppPurchase();
         }
     }
 
-    public static void updateAllPurchases(Context context) {
+    public static void updateAllPurchases() {
         if(!billingClient.isReady()) {
-            ToastUtil.showToast(context,"billing_connection_not_finished");
+            ToastUtil.showToast("billing_connection_not_finished");
             return;
         }
 
-        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new CrashPurchasesResponseListener(context) {
+        billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
             @Override
-            public void onQueryPurchasesResponseImpl(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
+            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchases) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     ArrayList<Purchase> toAcknowledgeList = new ArrayList<>();
 
@@ -303,15 +281,15 @@ public class InAppPurchase {
 
                     for(String id : productMap.keySet()) {
                         if(productMap.get(id) == null) {
-                            revokePurchase(context, id);
+                            revokePurchase(id);
                         }
                         else if("GRANT".equals(productMap.get(id))) {
-                            grantPurchase(context, id);
+                            grantPurchase(id);
                         }
                     }
 
                     for(Purchase purchase : toAcknowledgeList) {
-                        InAppPurchase.acknowledgeOrConsume(context, purchase);
+                        InAppPurchase.acknowledgeOrConsume(purchase);
                     }
                 }
             }
@@ -320,13 +298,5 @@ public class InAppPurchase {
 
     abstract public static class InAppPurchaseListener {
         abstract public void onInAppPurchase();
-    }
-
-    abstract public static class WrapperPurchasesUpdatedListener {
-        abstract public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases);
-    }
-
-    abstract public static class WrapperUpdateAllPurchasesListener {
-        abstract public void onBillingSetupFinished(@NonNull BillingResult billingResult);
     }
 }

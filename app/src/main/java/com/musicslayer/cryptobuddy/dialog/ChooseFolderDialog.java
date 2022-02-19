@@ -133,7 +133,7 @@ public class ChooseFolderDialog extends BaseDialog {
                         ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
                     }
                     else {
-                        ToastUtil.showToast(activity, "document");
+                        ToastUtil.showToast("document");
                     }
                 }
             });
@@ -174,7 +174,7 @@ public class ChooseFolderDialog extends BaseDialog {
         }
 
         if(!isSuccess) {
-            ToastUtil.showToast(activity,"folder_selection_problem");
+            ToastUtil.showToast("folder_selection_problem");
         }
     }
 }

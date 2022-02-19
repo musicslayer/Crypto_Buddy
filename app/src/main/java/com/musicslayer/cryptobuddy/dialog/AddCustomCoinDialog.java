@@ -67,9 +67,9 @@ public class AddCustomCoinDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomCoinDialog)dialog).isComplete) {
                     chosenCoinManager.addCustomCoin(((ReplaceCustomCoinDialog)dialog).newCoin);
-                    CoinManagerList.updateCoinManager(activity, chosenCoinManager);
+                    CoinManagerList.updateCoinManager(chosenCoinManager);
 
-                    ToastUtil.showToast(activity,"custom_coin_added");
+                    ToastUtil.showToast("custom_coin_added");
                     isComplete = true;
                     dismiss();
                 }
@@ -84,7 +84,7 @@ public class AddCustomCoinDialog extends BaseDialog {
                 boolean isValid = E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
                 if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     String name = E_SYMBOL.getTextString();
@@ -101,9 +101,9 @@ public class AddCustomCoinDialog extends BaseDialog {
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);
-                        CoinManagerList.updateCoinManager(activity, chosenCoinManager);
+                        CoinManagerList.updateCoinManager(chosenCoinManager);
 
-                        ToastUtil.showToast(activity,"custom_coin_added");
+                        ToastUtil.showToast("custom_coin_added");
                         isComplete = true;
                         dismiss();
                     }

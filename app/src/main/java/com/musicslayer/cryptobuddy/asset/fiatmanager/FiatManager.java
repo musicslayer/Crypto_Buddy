@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.fiatmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
@@ -45,7 +43,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     // Used to store persistent state
     abstract public String getSettingsKey();
 
-    abstract public void initializeHardcodedFiats(Context context);
+    abstract public void initializeHardcodedFiats();
 
     // Most times we cannot do lookup, but subclasses can override if they can.
     public Fiat lookupFiat(String key, String name, String display_name, int scale) { return null; }
@@ -67,18 +65,18 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         this.custom_fiat_display_names = new ArrayList<>();
     }
 
-    public static void initialize(Context context) {
+    public static void initialize() {
         fiatManagers = new ArrayList<>();
         fiatManagers_map = new HashMap<>();
         fiatManagers_fiat_type_map = new HashMap<>();
         fiatManagers_fiat_types = new ArrayList<>();
 
-        fiatManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_fiatmanager);
+        fiatManagers_names = FileUtil.readFileIntoLines(R.raw.asset_fiatmanager);
         for(String fiatManagerName : fiatManagers_names) {
             FiatManager fiatManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiatmanager." + fiatManagerName);
 
             // Use the deserialized dummy object to fill in the fiats in this real one.
-            FiatManager copyFiatManager = FiatManagerList.loadData(context, fiatManager.getSettingsKey());
+            FiatManager copyFiatManager = FiatManagerList.loadData(fiatManager.getSettingsKey());
 
             // If this is a new FiatManager that wasn't previously saved, then there are no fiats to add.
             if(copyFiatManager != null) {
@@ -92,7 +90,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiatManagers_fiat_type_map.put(fiatManager.getFiatType(), fiatManager);
             fiatManagers_fiat_types.add(fiatManager.getFiatType());
 
-            fiatManager.initializeHardcodedFiats(context);
+            fiatManager.initializeHardcodedFiats();
         }
     }
 

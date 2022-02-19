@@ -91,7 +91,7 @@ public class AddressInfoDialog extends BaseDialog {
                 PriceData newPriceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(!newPriceData.isPriceFull()) {
-                    ToastUtil.showToast(activity,"incomplete_price_data");
+                    ToastUtil.showToast("incomplete_price_data");
                 }
 
                 StateObj.priceData = newPriceData;
@@ -109,11 +109,11 @@ public class AddressInfoDialog extends BaseDialog {
                 ArrayList<AssetQuantity> deltaArray = addressData.currentBalanceArrayList;
 
                 if(deltaArray == null || deltaArray.isEmpty()) {
-                    ToastUtil.showToast(activity, "no_balances_found");
+                    ToastUtil.showToast("no_balances_found");
                     return;
                 }
                 else if(fssv.getChosenAsset() == null) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                     return;
                 }
 
@@ -163,7 +163,6 @@ public class AddressInfoDialog extends BaseDialog {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
             cryptoAddressIdx = bundle.getInt("cryptoAddressIdx");

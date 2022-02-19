@@ -58,7 +58,7 @@ public class OAuthBrowserDialog extends BaseDialog {
                     // Validate we get the same state back for security.
                     String responseState = parameters.get("state");
                     if(!state.equals(responseState)) {
-                        ToastUtil.showToast(activity, "authorization_failed");
+                        ToastUtil.showToast("authorization_failed");
                         dismiss();
                     }
 

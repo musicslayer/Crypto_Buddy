@@ -80,7 +80,7 @@ public class CryptoPricesDialog extends BaseDialog {
                 }
                 else {
                     T.setVisibility(View.GONE);
-                    ToastUtil.showToast(activity,"incomplete_price_data");
+                    ToastUtil.showToast("incomplete_price_data");
                 }
             }
         });
@@ -92,7 +92,7 @@ public class CryptoPricesDialog extends BaseDialog {
                 crypto = (Crypto)ssv.getChosenAsset();
 
                 if(ssv.getChosenAsset() == null || fssv.getChosenAsset() == null) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                 }
                 else {
                     progressDialogFragment.show(CryptoPricesDialog.this.activity, "progress");

@@ -241,7 +241,7 @@ public class WebUtil {
             activity.startActivity(webIntent);
         }
         else {
-            ToastUtil.showToast(activity,"web_browser");
+            ToastUtil.showToast("web_browser");
         }
     }
 

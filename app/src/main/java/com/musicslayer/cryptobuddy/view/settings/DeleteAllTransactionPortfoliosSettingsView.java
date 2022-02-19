@@ -39,8 +39,8 @@ public class DeleteAllTransactionPortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllTransactionPortfoliosDialog)dialog).isComplete) {
-                    TransactionPortfolio.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_transaction_portfolios");
+                    TransactionPortfolio.resetAllData();
+                    ToastUtil.showToast("reset_transaction_portfolios");
                 }
             }
         });

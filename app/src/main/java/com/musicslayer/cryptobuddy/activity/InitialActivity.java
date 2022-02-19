@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -62,42 +61,40 @@ public class InitialActivity extends BaseActivity {
     }
 
     public void initialize() {
-        Context applicationContext = getApplicationContext();
-
         // Set time zone base date.
         TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Purchases should be initialized first, as others may depend on this.
-        Purchases.loadAllPurchases(applicationContext);
+        Purchases.loadAllPurchases();
 
         // Initialize assets here. This will also overwrite hardcoded assets that were loaded from before.
-        FiatManager.initialize(applicationContext);
-        CoinManager.initialize(applicationContext);
+        FiatManager.initialize();
+        CoinManager.initialize();
 
         // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
-        TokenManager.initialize(applicationContext);
+        TokenManager.initialize();
         if(!Purchases.isUnlockTokensPurchased()) {
             TokenManager.resetAllTokens();
-            TokenManagerList.resetAllData(applicationContext);
+            TokenManagerList.resetAllData();
         }
 
-        Exchange.initialize(applicationContext);
-        Network.initialize(applicationContext); // Requires CoinManagers and TokenManagers to have loaded first.
-        AddressAPI.initialize(applicationContext);
-        ExchangeAPI.initialize(applicationContext);
-        PriceAPI.initialize(applicationContext);
-        InAppPurchase.initialize(applicationContext); // Requires Purchases
-        SettingsCategory.initialize(applicationContext);
-        ToastUtil.loadAllToasts(applicationContext);
-        AddressHistory.loadAllData(applicationContext);
-        AddressPortfolio.loadAllData(applicationContext);
-        ExchangePortfolio.loadAllData(applicationContext);
-        TransactionPortfolio.loadAllData(applicationContext);
-        Policy.loadAllData(applicationContext);
-        Review.loadAllData(applicationContext);
+        Exchange.initialize();
+        Network.initialize(); // Requires CoinManagers and TokenManagers to have loaded first.
+        AddressAPI.initialize();
+        ExchangeAPI.initialize();
+        PriceAPI.initialize();
+        InAppPurchase.initialize(); // Requires Purchases
+        SettingsCategory.initialize();
+        ToastUtil.loadAllToasts();
+        AddressHistory.loadAllData();
+        AddressPortfolio.loadAllData();
+        ExchangePortfolio.loadAllData();
+        TransactionPortfolio.loadAllData();
+        Policy.loadAllData();
+        Review.loadAllData();
 
         // Settings should be initialized last, as this could theoretically depend on anything.
-        Setting.initialize(applicationContext);
+        Setting.initialize();
 
         App.isAppInitialized = true;
     }

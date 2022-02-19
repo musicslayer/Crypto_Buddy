@@ -1,11 +1,9 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -25,7 +23,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return settings_transaction_portfolio_names.contains(name);
     }
 
-    public static TransactionPortfolioObj getFromName(Context context, String name) {
+    public static TransactionPortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -37,7 +35,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
     }
 
-    public static void loadAllData(Context context) {
+    public static void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_transaction_portfolio_names = new ArrayList<>();
 
@@ -65,7 +63,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         }
     }
 
-    public static void addPortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
+    public static void addPortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_transaction_portfolio_names.add(transactionPortfolioObj.name);
 
@@ -80,7 +78,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void removePortfolio(Context context, String transactionPortfolioObjName) {
+    public static void removePortfolio(String transactionPortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObjName);
         settings_transaction_portfolio_names.remove(idx);
@@ -108,7 +106,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void updatePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
+    public static void updatePortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -119,7 +117,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         settings_transaction_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -183,6 +181,6 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
 
         // Reinitialize data.
-        TransactionPortfolio.loadAllData(App.applicationContext);
+        TransactionPortfolio.loadAllData();
     }
 }

@@ -29,8 +29,8 @@ abstract public class ExchangeAPI extends API implements Parcelable {
     public static ArrayList<String> exchange_api_names;
     public static ArrayList<String> exchange_api_display_names;
 
-    public static void initialize(Context context) {
-        exchange_api_names = FileUtil.readFileIntoLines(context, R.raw.api_exchange);
+    public static void initialize() {
+        exchange_api_names = FileUtil.readFileIntoLines(R.raw.api_exchange);
 
         exchange_apis = new ArrayList<>();
         exchange_api_map = new HashMap<>();

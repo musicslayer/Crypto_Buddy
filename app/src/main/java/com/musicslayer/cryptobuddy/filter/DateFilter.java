@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.filter;
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
-import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
 import java.util.Date;

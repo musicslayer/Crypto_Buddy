@@ -1,12 +1,10 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -27,7 +25,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         return settings_address_history.contains(addressHistoryObj);
     }
 
-    public static void addAddressToHistory(Context context, AddressHistoryObj addressHistoryObj) {
+    public static void addAddressToHistory(AddressHistoryObj addressHistoryObj) {
         if(isSaved(addressHistoryObj)) {
             settings_address_history.remove(addressHistoryObj);
             settings_address_history.add(0, addressHistoryObj);
@@ -40,15 +38,15 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
             settings_address_history.add(0, addressHistoryObj);
         }
 
-        saveAllData(context);
+        saveAllData();
     }
 
-    public static void removeAddressFromHistory(Context context, AddressHistoryObj addressHistoryObj) {
+    public static void removeAddressFromHistory(AddressHistoryObj addressHistoryObj) {
         settings_address_history.remove(addressHistoryObj);
-        saveAllData(context);
+        saveAllData();
     }
 
-    public static void saveAllData(Context context) {
+    public static void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -65,7 +63,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         editor.apply();
     }
 
-    public static void loadAllData(Context context) {
+    public static void loadAllData() {
         settings_address_history = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -87,7 +85,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         return null;
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         settings_address_history = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -143,6 +141,6 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         editor.apply();
 
         // Reinitialize data.
-        AddressHistory.loadAllData(App.applicationContext);
+        AddressHistory.loadAllData();
     }
 }

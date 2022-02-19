@@ -28,14 +28,14 @@ public class DisclaimerDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_disclaimer);
 
-        String disclaimerText = FileUtil.readFile(activity, R.raw.policy_disclaimer);
+        String disclaimerText = FileUtil.readFile(R.raw.policy_disclaimer);
         TextView T = findViewById(R.id.disclaimer_textView);
         T.setText("To use this app, you must agree to the following disclaimer:\n\n" + disclaimerText);
 
         Button B_AGREEDISCLAIMER = findViewById(R.id.disclaimer_agreeButton);
         B_AGREEDISCLAIMER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                Policy.setAgreeDisclaimer(DisclaimerDialog.this.activity);
+                Policy.setAgreeDisclaimer();
                 dismiss();
             }
         });

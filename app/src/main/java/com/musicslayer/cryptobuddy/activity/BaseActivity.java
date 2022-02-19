@@ -4,6 +4,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.musicslayer.cryptobuddy.app.App;
@@ -31,7 +32,7 @@ abstract public class BaseActivity extends CrashActivity {
                 // If we get here, we are uninitialized, but we are not at the entry point of the app. Something went wrong!
 
                 // The Toast database is not initialized, so manually create this toast.
-                android.widget.Toast.makeText(this, "Crypto Buddy needs to be restarted.", android.widget.Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Crypto Buddy needs to be restarted.", android.widget.Toast.LENGTH_LONG).show();
 
                 try {
                     // May throw Exceptions, but we don't care. We just need the app to eventually exit.
@@ -47,14 +48,7 @@ abstract public class BaseActivity extends CrashActivity {
         AppearanceUtil.setAppearance(this);
 
         // By default, do nothing when a new purchase is made.
-        InAppPurchase.setInAppPurchaseListener(new InAppPurchase.InAppPurchaseListener() {
-            @Override
-            public void onInAppPurchase() {}
-        });
-
-        // We must call these each time so that the listeners always have the current Activity.
-        InAppPurchase.setWrapperPurchasesUpdatedListener(this);
-        InAppPurchase.setWrapperUpdateAllPurchasesListener(this);
+        InAppPurchase.setInAppPurchaseListener(null);
 
         if(savedInstanceState == null) {
             CallbackActivity.wasCallbackFired[0] = false;
@@ -73,7 +67,7 @@ abstract public class BaseActivity extends CrashActivity {
     public void adjustActivity() {
         // Add the ads if the user did not purchase "Remove Ads".
         if(!Purchases.isRemoveAdsPurchased() && getAdLayoutViewID() != -1) {
-            Ad.initializeAds(getApplicationContext());
+            Ad.initializeAds();
             ViewGroup v = findViewById(getAdLayoutViewID());
 
             AdView ad = Ad.createBannerAdView(this);

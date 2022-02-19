@@ -41,7 +41,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAddressHistoryDialog)dialog).isComplete) {
-                    AddressHistory.removeAddressFromHistory(activity, AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
+                    AddressHistory.removeAddressFromHistory(AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
                     updateLayout();
                 }
             }
@@ -56,7 +56,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             B.setText(addressHistoryObj.toString());
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 public void onClickImpl(View v) {
-                    AddressHistory.addAddressToHistory(ChooseHistoryAddressDialog.this.activity, addressHistoryObj);
+                    AddressHistory.addAddressToHistory(addressHistoryObj);
                     user_CRYPTOADDRESS = addressHistoryObj.cryptoAddress;
 
                     isComplete = true;

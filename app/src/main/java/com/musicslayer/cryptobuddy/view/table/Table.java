@@ -105,7 +105,7 @@ abstract public class Table extends CrashTableLayout {
         finishRows();
 
         if(transaction.isFiltered(filterArrayList, columnTypes)) {
-            ToastUtil.showToast(getContext(),"new_transaction_filtered");
+            ToastUtil.showToast("new_transaction_filtered");
         }
     }
 

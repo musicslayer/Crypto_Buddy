@@ -46,7 +46,7 @@ public class MessageUtil {
             activity.startActivity(emailIntent);
         }
         else {
-            ToastUtil.showToast(activity,"email");
+            ToastUtil.showToast("email");
         }
     }
 
@@ -61,7 +61,7 @@ public class MessageUtil {
             activity.startActivity(smsIntent);
         }
         else {
-            ToastUtil.showToast(activity,"sms");
+            ToastUtil.showToast("sms");
         }
     }
 }

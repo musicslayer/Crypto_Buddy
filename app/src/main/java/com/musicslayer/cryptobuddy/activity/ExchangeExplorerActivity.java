@@ -188,7 +188,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(ExchangeExplorerActivity.this);
+                TokenManagerList.saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData, ExchangeData.class));
             }
@@ -213,7 +213,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(ExchangeExplorerActivity.this,"incomplete_exchange_data");
+                    ToastUtil.showToast("incomplete_exchange_data");
                 }
 
                 CryptoExchange cryptoExchange = cryptoExchangeArrayList.get(0);
@@ -227,7 +227,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 updateLayout();
                 updateInfoButtons();
 
-                ToastUtil.showToast(ExchangeExplorerActivity.this,"exchange_data_downloaded");
+                ToastUtil.showToast("exchange_data_downloaded");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");

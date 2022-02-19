@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.coinmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 
@@ -16,7 +14,7 @@ public class UnknownCoinManager extends CoinManager {
     public String getName() { return "UnknownCoinManager"; }
     public String getCoinType() { return coinType; }
     public String getSettingsKey() { return "?"; }
-    public void initializeHardcodedCoins(Context context) {}
+    public void initializeHardcodedCoins() {}
 
     public static UnknownCoinManager createUnknownCoinManager(String key, String coinType) {
         return new UnknownCoinManager(key, coinType);

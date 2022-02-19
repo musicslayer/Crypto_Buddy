@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.util;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.app.App;
 
 import org.apache.commons.io.FileUtils;
@@ -43,8 +41,8 @@ public class FileUtil {
         return s;
     }
 
-    public static String readFile(Context context, int id) {
-        return readFile(new BufferedReader(new InputStreamReader(context.getResources().openRawResource(id))));
+    public static String readFile(int id) {
+        return readFile(new BufferedReader(new InputStreamReader(App.applicationContext.getResources().openRawResource(id))));
     }
 
     public static String readFile(BufferedReader file) {
@@ -68,8 +66,8 @@ public class FileUtil {
         return stringBuilder.toString();
     }
 
-    public static ArrayList<String> readFileIntoLines(Context context, int id) {
-        return readFileIntoLines(new BufferedReader(new InputStreamReader(context.getResources().openRawResource(id))));
+    public static ArrayList<String> readFileIntoLines(int id) {
+        return readFileIntoLines(new BufferedReader(new InputStreamReader(App.applicationContext.getResources().openRawResource(id))));
     }
 
     public static ArrayList<String> readFileIntoLines(BufferedReader file) {

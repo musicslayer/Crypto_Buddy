@@ -61,10 +61,10 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(ExchangePortfolio.isSaved(name)) {
-                        ToastUtil.showToast(ExchangePortfolioViewerActivity.this,"portfolio_name_used");
+                        ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        ExchangePortfolio.addPortfolio(ExchangePortfolioViewerActivity.this, new ExchangePortfolioObj(name));
+                        ExchangePortfolio.addPortfolio(new ExchangePortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -92,7 +92,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    ExchangePortfolio.removePortfolio(ExchangePortfolioViewerActivity.this, currentDeletePortfolioName);
+                    ExchangePortfolio.removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

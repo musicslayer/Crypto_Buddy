@@ -73,7 +73,7 @@ public class TotalDialog extends BaseDialog {
                 PriceData newPriceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(!newPriceData.isPriceFull()) {
-                    ToastUtil.showToast(activity,"incomplete_price_data");
+                    ToastUtil.showToast("incomplete_price_data");
                 }
 
                 StateObj.priceData = newPriceData;
@@ -87,11 +87,11 @@ public class TotalDialog extends BaseDialog {
         B_PRICES.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(filteredTransactionArrayList.isEmpty()) {
-                    ToastUtil.showToast(activity, "no_transactions_found");
+                    ToastUtil.showToast("no_transactions_found");
                     return;
                 }
                 else if(fssv.getChosenAsset() == null) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                 }
 
                 progressDialogFragment.show(TotalDialog.this.activity, "progress");

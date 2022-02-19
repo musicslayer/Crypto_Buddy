@@ -49,7 +49,7 @@ public class StandardSettingsView extends SettingsView {
                 String newSetting = setting.chosenOptionName;
 
                 prefText.setText(setting.chosenOptionDisplay);
-                SettingList.saveSetting(context, setting);
+                SettingList.saveSetting(setting);
 
                 if(!oldSetting.equals(newSetting) && setting.needsRecreate()) {
                     ContextUtil.getActivityFromContext(context).recreate();

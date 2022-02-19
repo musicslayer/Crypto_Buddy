@@ -113,7 +113,7 @@ public class ViewTokensDialog extends BaseDialog {
                     tokenManager.removeCustomToken((Token)asset);
                 }
 
-                TokenManagerList.updateTokenManager(activity, tokenManager);
+                TokenManagerList.updateTokenManager(tokenManager);
 
                 ((TokenManagerActivity)activity).updateLayout();
             }

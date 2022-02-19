@@ -92,11 +92,11 @@ public class AuthUtil {
                 OAuthToken oAuthToken = Serialization.deserialize(ProgressDialogFragment.getValue(), OAuthToken.class);
 
                 if(oAuthToken != null && oAuthToken.isAuthorized()) {
-                    ToastUtil.showToast(activity, "authorization_successful");
+                    ToastUtil.showToast("authorization_successful");
                     L.onAuthorization(oAuthToken);
                 }
                 else {
-                    ToastUtil.showToast(activity, "authorization_failed");
+                    ToastUtil.showToast("authorization_failed");
                 }
             }
         });

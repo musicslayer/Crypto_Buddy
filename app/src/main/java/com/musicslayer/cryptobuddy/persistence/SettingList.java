@@ -1,9 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -18,7 +16,7 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         return "settings_data";
     }
 
-    public static void saveSetting(Context context, Setting setting) {
+    public static void saveSetting(Setting setting) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -26,7 +24,7 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         editor.apply();
     }
 
-    public static void saveAllSettings(Context context) {
+    public static void saveAllSettings() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -37,7 +35,7 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         editor.apply();
     }
 
-    public static Setting loadData(Context context, String settingsKey) {
+    public static Setting loadData(String settingsKey) {
         // Setting will create empty objects, but then this method will fill them in with data.
         // If a new Setting is introduced later, it will still be created but will get no data from here.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -46,7 +44,7 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, Setting.class);
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -97,7 +95,7 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         editor.apply();
 
         // Reinitialize data. Some settings need to recreate the activity, so do it unconditionally just to be safe.
-        Setting.initialize(App.applicationContext);
+        Setting.initialize();
 
         // TODO How to get the real activity.
         //ContextUtil.getActivityFromContext(context).recreate();

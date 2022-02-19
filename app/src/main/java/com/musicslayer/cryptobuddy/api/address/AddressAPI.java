@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.address;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
@@ -25,8 +23,8 @@ abstract public class AddressAPI extends API {
     public static ArrayList<String> address_api_names;
     public static ArrayList<String> address_api_display_names;
 
-    public static void initialize(Context context) {
-        address_api_names = FileUtil.readFileIntoLines(context, R.raw.api_address);
+    public static void initialize() {
+        address_api_names = FileUtil.readFileIntoLines(R.raw.api_address);
 
         address_apis = new ArrayList<>();
         address_api_map = new HashMap<>();

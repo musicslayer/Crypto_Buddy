@@ -64,11 +64,11 @@ public class FiatManagerView extends CrashTableRow {
                         fiatManager.resetCustomFiats();
                     }
 
-                    FiatManagerList.updateFiatManager(getContext(), fiatManager);
+                    FiatManagerList.updateFiatManager(fiatManager);
 
                     Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(context, setting);
+                    SettingList.saveSetting(setting);
 
                     updateLayout();
                 }

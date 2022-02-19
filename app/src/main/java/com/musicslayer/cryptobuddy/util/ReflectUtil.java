@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.util;
 
 import android.app.Activity;
-import android.content.Context;
 
 import java.lang.reflect.Method;
 
@@ -55,40 +54,6 @@ public class ReflectUtil {
             }
 
             return clazz.getConstructor(argClassArray).newInstance(argArray);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static <T> void callResetAllData(Class<T> clazz, Context context) {
-        // Return type is void, and the only argument is the Context object.
-        try {
-            Method m = clazz.getMethod("resetAllData", Context.class);
-            m.invoke(null, context);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static <T> String callExportToJSON(Class<T> clazz, Context context) {
-        try {
-            Method m = clazz.getMethod("exportToJSON", Context.class);
-            return (String)m.invoke(null, context);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static <T> void callImportFromJSON(Class<T> clazz, Context context, String s, String version) {
-        try {
-            Method m = clazz.getMethod("importFromJSON", Context.class, String.class, String.class);
-            m.invoke(null, context, s, version);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

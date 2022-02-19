@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.api.price;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
 import com.musicslayer.cryptobuddy.asset.Asset;
@@ -18,8 +16,8 @@ abstract public class PriceAPI extends API {
     public static ArrayList<String> price_api_names;
     public static ArrayList<String> price_api_display_names;
 
-    public static void initialize(Context context) {
-        price_api_names = FileUtil.readFileIntoLines(context, R.raw.api_price);
+    public static void initialize() {
+        price_api_names = FileUtil.readFileIntoLines(R.raw.api_price);
 
         price_apis = new ArrayList<>();
         price_api_map = new HashMap<>();

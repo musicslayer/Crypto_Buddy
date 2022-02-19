@@ -152,7 +152,7 @@ public class CrashReporterDialog extends BaseDialog {
         resetAlertDialog.setMessage("Are you sure you want to reset ALL STORED APP DATA? This cannot be reversed.");
         resetAlertDialog.setPositiveButton("Yes", (dialog, which) -> {
             try {
-                boolean isComplete = Persistence.resetAllData(activity);
+                boolean isComplete = Persistence.resetAllData();
 
                 // Manually show toast because we do not know if the Toast database was correctly initialized.
                 // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.

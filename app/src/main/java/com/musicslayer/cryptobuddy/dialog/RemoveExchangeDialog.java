@@ -72,7 +72,7 @@ public class RemoveExchangeDialog extends BaseDialog {
                 }
 
                 if(user_cryptoExchangeArrayList.isEmpty()) {
-                    ToastUtil.showToast(activity, "nothing_to_remove");
+                    ToastUtil.showToast("nothing_to_remove");
                     return;
                 }
 

@@ -53,7 +53,7 @@ public class SelectDataTypesDialog extends BaseDialog {
                 }
 
                 if(user_CHOICES.isEmpty()) {
-                    ToastUtil.showToast(activity, "nothing_selected");
+                    ToastUtil.showToast("nothing_selected");
                     return;
                 }
 

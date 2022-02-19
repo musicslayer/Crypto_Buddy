@@ -199,7 +199,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(AddressExplorerActivity.this);
+                TokenManagerList.saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(newAddressData, AddressData.class));
             }
@@ -224,7 +224,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(AddressExplorerActivity.this,"incomplete_address_data");
+                    ToastUtil.showToast("incomplete_address_data");
                 }
 
                 CryptoAddress cryptoAddress = cryptoAddressArrayList.get(0);
@@ -238,7 +238,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 updateLayout();
                 updateInfoButtons();
 
-                ToastUtil.showToast(AddressExplorerActivity.this,"address_data_downloaded");
+                ToastUtil.showToast("address_data_downloaded");
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");

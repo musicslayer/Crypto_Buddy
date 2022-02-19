@@ -88,7 +88,7 @@ public class ScanQRDialog extends BaseDialog {
                     final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                     if(barcodes.size() > 1) {
-                        ToastUtil.showToast(activity,"multiple_qr_codes_read");
+                        ToastUtil.showToast("multiple_qr_codes_read");
                     }
                     else if(barcodes.size() == 1) {
                         user_ADDRESS = barcodes.valueAt(0).displayValue;

@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.tokenmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
@@ -77,18 +75,18 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         this.custom_token_display_names = new ArrayList<>();
     }
 
-    public static void initialize(Context context) {
+    public static void initialize() {
         tokenManagers = new ArrayList<>();
         tokenManagers_map = new HashMap<>();
         tokenManagers_token_type_map = new HashMap<>();
         tokenManagers_token_types = new ArrayList<>();
 
-        tokenManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_tokenmanager);
+        tokenManagers_names = FileUtil.readFileIntoLines(R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
 
             // Use the deserialized dummy object to fill in the tokens in this real one.
-            TokenManager copyTokenManager = TokenManagerList.loadData(context, tokenManager.getSettingsKey());
+            TokenManager copyTokenManager = TokenManagerList.loadData(tokenManager.getSettingsKey());
 
             // If this is a new TokenManager that wasn't previously saved, then there are no tokens to add.
             if(copyTokenManager != null) {

@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.network;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -84,8 +83,8 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
     public static ArrayList<String> network_names;
     public static ArrayList<String> network_display_names;
 
-    public static void initialize(Context context) {
-        network_names = FileUtil.readFileIntoLines(context, R.raw.asset_network);
+    public static void initialize() {
+        network_names = FileUtil.readFileIntoLines(R.raw.asset_network);
 
         networks = new ArrayList<>();
         network_map = new HashMap<>();

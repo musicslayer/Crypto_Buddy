@@ -46,7 +46,7 @@ public class ChoosePageDialog extends BaseDialog {
                 boolean isValid = E_PAGE.test();
 
                 if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     user_PAGE = new BigInteger(E_PAGE.getTextString()).intValue();

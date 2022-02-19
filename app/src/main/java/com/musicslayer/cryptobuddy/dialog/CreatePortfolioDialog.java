@@ -32,7 +32,7 @@ public class CreatePortfolioDialog extends BaseDialog {
                 boolean isValid = E.test();
 
                 if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     user_NAME = E.getTextString();

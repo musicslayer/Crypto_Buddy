@@ -55,13 +55,13 @@ public class DeleteCoinsSettingsView extends SettingsView {
                         CoinManager.resetAllCustomCoins();
                     }
 
-                    CoinManagerList.saveAllData(getContext());
+                    CoinManagerList.saveAllData();
 
                     Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(context, setting);
+                    SettingList.saveSetting(setting);
 
-                    ToastUtil.showToast(context,"reset_coins");
+                    ToastUtil.showToast("reset_coins");
                 }
             }
         });

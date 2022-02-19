@@ -75,7 +75,7 @@ public class ImportDataFileDialog extends BaseDialog {
                         ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
                     }
                     else {
-                        ToastUtil.showToast(activity, "document");
+                        ToastUtil.showToast("document");
                     }
                 }
             }
@@ -160,7 +160,7 @@ public class ImportDataFileDialog extends BaseDialog {
         B_CONFIRM_FILE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 if(universalFile == null) {
-                    ToastUtil.showToast(activity,"no_file_selected");
+                    ToastUtil.showToast("no_file_selected");
                 }
                 else {
                     if(universalFile.exists()) {
@@ -170,7 +170,7 @@ public class ImportDataFileDialog extends BaseDialog {
                         dismiss();
                     }
                     else {
-                        ToastUtil.showToast(activity, "file_does_not_exist");
+                        ToastUtil.showToast("file_does_not_exist");
                     }
                 }
             }
@@ -182,10 +182,10 @@ public class ImportDataFileDialog extends BaseDialog {
                 boolean isValid = E_FILE.test();
 
                 if(universalFolder == null) {
-                    ToastUtil.showToast(activity,"no_folder_selected");
+                    ToastUtil.showToast("no_folder_selected");
                 }
                 else if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     String fileName = E_FILE.getTextString();
@@ -199,11 +199,11 @@ public class ImportDataFileDialog extends BaseDialog {
                             dismiss();
                         }
                         else {
-                            ToastUtil.showToast(activity,"cannot_import_folder");
+                            ToastUtil.showToast("cannot_import_folder");
                         }
                     }
                     else {
-                        ToastUtil.showToast(activity, "file_does_not_exist");
+                        ToastUtil.showToast("file_does_not_exist");
                     }
                 }
             }
@@ -281,7 +281,7 @@ public class ImportDataFileDialog extends BaseDialog {
         }
 
         if(!isSuccess) {
-            ToastUtil.showToast(activity,"file_selection_problem");
+            ToastUtil.showToast("file_selection_problem");
         }
     }
 

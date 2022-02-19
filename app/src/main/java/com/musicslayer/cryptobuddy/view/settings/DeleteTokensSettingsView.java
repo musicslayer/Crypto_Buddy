@@ -57,8 +57,8 @@ public class DeleteTokensSettingsView extends SettingsView {
                         TokenManager.resetAllCustomTokens();
                     }
 
-                    TokenManagerList.saveAllData(context);
-                    ToastUtil.showToast(context,"reset_tokens");
+                    TokenManagerList.saveAllData();
+                    ToastUtil.showToast("reset_tokens");
                 }
             }
         });

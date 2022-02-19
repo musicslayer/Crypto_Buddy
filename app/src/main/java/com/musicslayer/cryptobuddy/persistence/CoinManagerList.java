@@ -1,9 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
@@ -18,7 +16,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         return "coin_manager_data";
     }
 
-    public static void saveAllData(Context context) {
+    public static void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -31,7 +29,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
     }
 
-    public static void updateCoinManager(Context context, CoinManager coinManager) {
+    public static void updateCoinManager(CoinManager coinManager) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -39,7 +37,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
     }
 
-    public static CoinManager loadData(Context context, String settingsKey) {
+    public static CoinManager loadData(String settingsKey) {
         // CoinManager will create empty objects, but then this method will fill them in with data.
         // If a new CoinManager is introduced later, it will still be created but will get no data from here.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -47,7 +45,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         // Only reset data stored in settings, not the TokenManager class.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -111,6 +109,6 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
 
         // Reinitialize data.
-        CoinManager.initialize(App.applicationContext);
+        CoinManager.initialize();
     }
 }

@@ -323,7 +323,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return obj;
         }
 
@@ -343,7 +343,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return Boolean.toString(obj);
         }
 
@@ -363,7 +363,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return Byte.toString(obj);
         }
 
@@ -383,7 +383,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return Integer.toString(obj);
         }
 
@@ -403,7 +403,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return Long.toString(obj);
         }
 
@@ -423,7 +423,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return Long.toString(obj.getTime());
         }
 
@@ -443,7 +443,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return obj.toString();
         }
 
@@ -464,7 +464,7 @@ public class Serialization {
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String serializeToJSON() {
             return obj.getAbsolutePath();
         }
 

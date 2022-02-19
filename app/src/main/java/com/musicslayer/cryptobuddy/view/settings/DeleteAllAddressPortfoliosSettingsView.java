@@ -39,8 +39,8 @@ public class DeleteAllAddressPortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressPortfoliosDialog)dialog).isComplete) {
-                    AddressPortfolio.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_address_portfolios");
+                    AddressPortfolio.resetAllData();
+                    ToastUtil.showToast("reset_address_portfolios");
                 }
             }
         });

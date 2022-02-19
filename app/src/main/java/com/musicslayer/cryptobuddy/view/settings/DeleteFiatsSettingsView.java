@@ -55,13 +55,13 @@ public class DeleteFiatsSettingsView extends SettingsView {
                         FiatManager.resetAllCustomFiats();
                     }
 
-                    FiatManagerList.saveAllData(getContext());
+                    FiatManagerList.saveAllData();
 
                     Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(context, setting);
+                    SettingList.saveSetting(setting);
 
-                    ToastUtil.showToast(context,"reset_fiats");
+                    ToastUtil.showToast("reset_fiats");
                 }
             }
         });

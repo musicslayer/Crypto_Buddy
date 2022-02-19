@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
@@ -11,7 +9,6 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 // TODO Update Proguard rules for export/import functions.
 
@@ -117,7 +114,7 @@ public class Persistence {
         }
     }
 
-    public static HashMap<String, HashMap<String, String>> getAllData(Context context) {
+    public static HashMap<String, HashMap<String, String>> getAllData() {
         // Return a representation of all the persistent data stored in the app.
         HashMap<String, HashMap<String, String>> allDataMap = new HashMap<>();
 
@@ -157,7 +154,7 @@ public class Persistence {
         return allDataMap;
     }
 
-    public static boolean resetAllData(Context context) {
+    public static boolean resetAllData() {
         // Resets all stored persistent data in the app. App should be just like a new install.
         // Individually, try to reset each piece of data (in alphabetical order).
         // Note that each "resetData" method should erase both active and stored data.
@@ -168,10 +165,10 @@ public class Persistence {
 
         for(String clazzString : sortedKeys) {
             try {
-                Class<?> value = persistentClassMap.get(clazzString);
-                if(value == null) { throw new NullPointerException(); }
+                Class<?> clazz = persistentClassMap.get(clazzString);
+                if(clazz == null) { throw new NullPointerException(); }
 
-                ReflectUtil.callResetAllData(value, context);
+                ReflectUtil.callStaticMethod(clazz, "resetAllData");
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

@@ -92,7 +92,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 // If any new tokens are found, save them here.
                 // Then, when the layout is updated, they will be added to the available options.
                 AddressData.getAllData(cryptoAddress);
-                TokenManagerList.saveAllData(activity);
+                TokenManagerList.saveAllData();
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
@@ -108,7 +108,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             @Override
             public void onClickImpl(View view) {
                 if(cryptoAddress == null) {
-                    ToastUtil.showToast(activity, "must_choose_address");
+                    ToastUtil.showToast("must_choose_address");
                 }
                 else {
                     progressDialogFragment.show(activity, "progress");
@@ -129,7 +129,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 AddressData reflectionsAddressData = AddressData.getSingleAllData(cryptoAddress, (Crypto)ssv.getChosenAsset());
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData(activity);
+                TokenManagerList.saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(reflectionsAddressData, AddressData.class));
             }
@@ -162,7 +162,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 }
                 else {
                     // Do not process incomplete data.
-                    ToastUtil.showToast(activity,"incomplete_reflections_data");
+                    ToastUtil.showToast("incomplete_reflections_data");
                 }
             }
         });
@@ -176,13 +176,13 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 boolean isValid = E_TAX.test();
 
                 if(cryptoAddress == null) {
-                    ToastUtil.showToast(activity, "must_choose_address");
+                    ToastUtil.showToast("must_choose_address");
                 }
                 else if(ssv.getChosenAsset() == null) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                 }
                 else if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     reflectionsProgressDialogFragment.show(activity, "progress_reflections");

@@ -39,8 +39,8 @@ public class DeleteAllExchangePortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllExchangePortfoliosDialog)dialog).isComplete) {
-                    ExchangePortfolio.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_exchange_portfolios");
+                    ExchangePortfolio.resetAllData();
+                    ToastUtil.showToast("reset_exchange_portfolios");
                 }
             }
         });

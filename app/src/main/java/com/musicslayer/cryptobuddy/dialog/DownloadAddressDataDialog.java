@@ -81,7 +81,7 @@ public class DownloadAddressDataDialog extends BaseDialog {
                 }
 
                 if(!user_BALANCES.contains(true) && !user_TRANSACTIONS.contains(true)) {
-                    ToastUtil.showToast(activity, "nothing_to_download");
+                    ToastUtil.showToast("nothing_to_download");
                     return;
                 }
 

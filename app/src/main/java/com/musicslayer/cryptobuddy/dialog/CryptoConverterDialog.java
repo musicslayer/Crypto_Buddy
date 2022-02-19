@@ -104,7 +104,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 }
                 else {
                     T.setVisibility(View.GONE);
-                    ToastUtil.showToast(activity,"incomplete_price_data");
+                    ToastUtil.showToast("incomplete_price_data");
                 }
             }
         });
@@ -119,10 +119,10 @@ public class CryptoConverterDialog extends BaseDialog {
                 cryptoSecondary = (Crypto)ssvSecondary.getChosenAsset();
 
                 if(ssvPrimary.getChosenAsset() == null || ssvSecondary.getChosenAsset() == null || fssv.getChosenAsset() == null) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                 }
                 else if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     progressDialogFragment.show(CryptoConverterDialog.this.activity, "progress");

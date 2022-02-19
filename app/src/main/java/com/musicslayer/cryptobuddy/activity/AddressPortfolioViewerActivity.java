@@ -61,10 +61,10 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(AddressPortfolio.isSaved(name)) {
-                        ToastUtil.showToast(AddressPortfolioViewerActivity.this,"portfolio_name_used");
+                        ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        AddressPortfolio.addPortfolio(AddressPortfolioViewerActivity.this, new AddressPortfolioObj(name));
+                        AddressPortfolio.addPortfolio(new AddressPortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -92,7 +92,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    AddressPortfolio.removePortfolio(AddressPortfolioViewerActivity.this, currentDeletePortfolioName);
+                    AddressPortfolio.removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

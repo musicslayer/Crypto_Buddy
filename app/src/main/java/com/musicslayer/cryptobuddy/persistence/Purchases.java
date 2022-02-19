@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -53,7 +52,7 @@ public class Purchases {
         return totalSupportAmount;
     }
 
-    public static void updatePurchase(Context context, String sku, boolean isPurchased) {
+    public static void updatePurchase(String sku, boolean isPurchased) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -70,10 +69,10 @@ public class Purchases {
 
                 // If we changed the purchase status, update TokenManagers right now.
                 if(hasChanged) {
-                    TokenManager.initialize(context);
+                    TokenManager.initialize();
                     if(!isPurchased) {
                         TokenManager.resetAllTokens();
-                        TokenManagerList.resetAllData(context);
+                        TokenManagerList.resetAllData();
                     }
                 }
 
@@ -103,14 +102,14 @@ public class Purchases {
         editor.apply();
     }
 
-    public static void loadAllPurchases(Context context) {
+    public static void loadAllPurchases() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         isRemoveAdsPurchased = sharedPreferences.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
         isUnlockPremiumFeaturesPurchased = sharedPreferences.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);
         totalSupportAmount = sharedPreferences.getInt("purchases_total_support_amount", DEFAULT_totalSupportAmount);
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         isRemoveAdsPurchased = DEFAULT_isRemoveAdsPurchased;
         isUnlockPremiumFeaturesPurchased = DEFAULT_isUnlockPremiumFeaturesPurchased;
         totalSupportAmount = DEFAULT_totalSupportAmount;

@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.coinmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
@@ -17,9 +15,9 @@ public class BaseCoinManager extends CoinManager {
     public String getCoinType() { return "BASE"; }
     public String getSettingsKey() { return "base"; }
 
-    public void initializeHardcodedCoins(Context context) {
+    public void initializeHardcodedCoins() {
         resetHardcodedCoins();
-        String coinJSON = FileUtil.readFile(context, R.raw.asset_coin_hardcoded);
+        String coinJSON = FileUtil.readFile(R.raw.asset_coin_hardcoded);
 
         try {
             JSONObject jsonObject = new JSONObject(coinJSON);
@@ -42,6 +40,6 @@ public class BaseCoinManager extends CoinManager {
             throw new IllegalStateException(e);
         }
 
-        CoinManagerList.updateCoinManager(context, this);
+        CoinManagerList.updateCoinManager(this);
     }
 }

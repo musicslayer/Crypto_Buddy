@@ -801,7 +801,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 ArrayList<Asset> searchAssets = getSearchOptionsAssets();
                 if(searchAssets.isEmpty()) {
                     // We don't want to call "chooseSearch" with null, so just show a Toast.
-                    ToastUtil.showToast(context, "no_search_assets");
+                    ToastUtil.showToast("no_search_assets");
                 }
                 else {
                     StateObj.search_options_assets = searchAssets;

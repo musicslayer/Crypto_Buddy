@@ -16,9 +16,9 @@ import com.musicslayer.cryptobuddy.app.App;
 public class Ad {
     public static boolean areAdsLoaded = false;
 
-    public static void initializeAds(Context context) {
+    public static void initializeAds() {
         if(!areAdsLoaded) {
-            MobileAds.initialize(context, new OnInitializationCompleteListener() {
+            MobileAds.initialize(App.applicationContext, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
                     areAdsLoaded = true;

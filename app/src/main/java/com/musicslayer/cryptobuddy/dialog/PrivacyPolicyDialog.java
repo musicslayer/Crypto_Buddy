@@ -35,7 +35,7 @@ public class PrivacyPolicyDialog extends BaseDialog {
         Button B_AGREEPRIVACYPOLICY = findViewById(R.id.privacy_policy_agreeButton);
         B_AGREEPRIVACYPOLICY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                Policy.setAgreePrivacyPolicy(PrivacyPolicyDialog.this.activity);
+                Policy.setAgreePrivacyPolicy();
                 dismiss();
             }
         });

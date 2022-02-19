@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.exchange;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -45,8 +44,8 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Seri
     public static ArrayList<String> exchange_names;
     public static ArrayList<String> exchange_display_names;
 
-    public static void initialize(Context context) {
-        exchange_names = FileUtil.readFileIntoLines(context, R.raw.asset_exchange);
+    public static void initialize() {
+        exchange_names = FileUtil.readFileIntoLines(R.raw.asset_exchange);
 
         exchanges = new ArrayList<>();
         exchange_map = new HashMap<>();

@@ -60,7 +60,7 @@ public class AddressQRCodeDialog extends BaseDialog {
                 B.setOnClickListener(new CrashView.CrashOnClickListener(AddressQRCodeDialog.this.activity) {
                     @Override
                     public void onClickImpl(View view) {
-                        ClipboardUtil.copy(AddressQRCodeDialog.this.activity, "wallet_address", cryptoAddress.address);
+                        ClipboardUtil.copy("wallet_address", cryptoAddress.address);
                     }
                 });
 

@@ -31,7 +31,7 @@ public class DataDumpUtil {
         // Add all persistent data.
         s.append("\n\nPersistent Data:");
 
-        HashMap<String, HashMap<String, String>> allDataMap = Persistence.getAllData(activity);
+        HashMap<String, HashMap<String, String>> allDataMap = Persistence.getAllData();
         ArrayList<String> allDataKeys = new ArrayList<>(allDataMap.keySet());
         for(String allDataKey : allDataKeys) {
             s.append("\n\n");

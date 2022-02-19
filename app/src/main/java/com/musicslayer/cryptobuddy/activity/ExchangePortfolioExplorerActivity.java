@@ -88,7 +88,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.exchangePortfolioObj = ExchangePortfolio.getFromName(ExchangePortfolioExplorerActivity.this, getIntent().getStringExtra("ExchangePortfolioName"));
+            StateObj.exchangePortfolioObj = ExchangePortfolio.getFromName(getIntent().getStringExtra("ExchangePortfolioName"));
         }
 
         updateFilter();
@@ -161,11 +161,11 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     CryptoExchange newCryptoExchange = ((ChooseExchangeDialog)dialog).user_CRYPTOEXCHANGE;
 
                     if(StateObj.exchangePortfolioObj.isSaved(newCryptoExchange)) {
-                        ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"exchange_in_portfolio");
+                        ToastUtil.showToast("exchange_in_portfolio");
                     }
                     else {
                         StateObj.exchangePortfolioObj.addData(newCryptoExchange);
-                        ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, StateObj.exchangePortfolioObj);
+                        ExchangePortfolio.updatePortfolio(StateObj.exchangePortfolioObj);
 
                         updateFilter();
 
@@ -202,7 +202,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(StateObj.exchangeDataFilterMap, exchange);
                     }
 
-                    ExchangePortfolio.updatePortfolio(ExchangePortfolioExplorerActivity.this, StateObj.exchangePortfolioObj);
+                    ExchangePortfolio.updatePortfolio(StateObj.exchangePortfolioObj);
 
                     hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
                     hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
@@ -282,7 +282,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     newExchangeDataArrayList.add(newExchangeData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    TokenManagerList.saveAllData(ExchangePortfolioExplorerActivity.this);
+                    TokenManagerList.saveAllData();
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newExchangeDataArrayList, ExchangeData.class));
@@ -313,7 +313,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
                     if(!isComplete) {
                         // Only alert once. Others would be redundant.
-                        ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"incomplete_exchange_data");
+                        ToastUtil.showToast("incomplete_exchange_data");
                         break;
                     }
                 }
@@ -343,7 +343,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                 updateLayout();
                 updateInfoButtons();
 
-                ToastUtil.showToast(ExchangePortfolioExplorerActivity.this,"exchange_data_downloaded");
+                ToastUtil.showToast("exchange_data_downloaded");
             }
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");

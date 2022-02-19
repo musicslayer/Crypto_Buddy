@@ -170,7 +170,7 @@ public class MainActivity extends BaseActivity {
                     chooseExchangeDialogFragment.show(MainActivity.this, "exchange");
                 }
                 else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_exchange_integration_required");
+                    ToastUtil.showToast("unlock_exchange_integration_required");
                 }
             }
         });
@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity {
                     finish();
                 }
                 else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_exchange_integration_required");
+                    ToastUtil.showToast("unlock_exchange_integration_required");
                 }
             }
         });
@@ -222,7 +222,7 @@ public class MainActivity extends BaseActivity {
                     BaseDialogFragment.newInstance(ReflectionsCalculatorDialog.class).show(MainActivity.this, "reflections");
                 }
                 else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_reflections_calculator_required");
+                    ToastUtil.showToast("unlock_reflections_calculator_required");
                 }
             }
         });
@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity {
                     finish();
                 }
                 else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_data_management_required");
+                    ToastUtil.showToast("unlock_data_management_required");
                 }
             }
         });
@@ -268,7 +268,7 @@ public class MainActivity extends BaseActivity {
                     finish();
                 }
                 else {
-                    ToastUtil.showToast(MainActivity.this,"unlock_tokens_required");
+                    ToastUtil.showToast("unlock_tokens_required");
                 }
             }
         });
@@ -278,8 +278,8 @@ public class MainActivity extends BaseActivity {
             B_LOCK.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    InAppPurchase.lock(MainActivity.this);
-                    ToastUtil.showToast(MainActivity.this, "lock_purchases");
+                    InAppPurchase.lock();
+                    ToastUtil.showToast("lock_purchases");
                 }
             });
         }
@@ -292,8 +292,8 @@ public class MainActivity extends BaseActivity {
             B_UNLOCK.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    InAppPurchase.unlock(MainActivity.this);
-                    ToastUtil.showToast(MainActivity.this, "unlock_purchases");
+                    InAppPurchase.unlock();
+                    ToastUtil.showToast("unlock_purchases");
                 }
             });
         }
@@ -306,7 +306,7 @@ public class MainActivity extends BaseActivity {
             B_REFUND.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    InAppPurchase.refund(MainActivity.this);
+                    InAppPurchase.refund();
                 }
             });
         }
@@ -415,10 +415,10 @@ public class MainActivity extends BaseActivity {
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {
                         if(((ReviewDialog)dialog).user_LATER) {
-                            Review.setReviewTime(MainActivity.this);
+                            Review.setReviewTime();
                         }
                         else {
-                            Review.disableReviewTime(MainActivity.this);
+                            Review.disableReviewTime();
                         }
                     }
                 }

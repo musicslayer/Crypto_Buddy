@@ -105,7 +105,7 @@ public class ViewFiatsDialog extends BaseDialog {
                     fiatManager.removeCustomFiat((Fiat)asset);
                 }
 
-                FiatManagerList.updateFiatManager(activity, fiatManager);
+                FiatManagerList.updateFiatManager(fiatManager);
 
                 ((FiatManagerActivity)activity).updateLayout();
             }

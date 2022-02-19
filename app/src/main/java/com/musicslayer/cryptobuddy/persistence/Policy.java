@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
@@ -20,7 +19,7 @@ public class Policy {
         return settings_privacy_policy && settings_disclaimer;
     }
 
-    public static void setAgreePrivacyPolicy(Context context) {
+    public static void setAgreePrivacyPolicy() {
         settings_privacy_policy = true;
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -29,7 +28,7 @@ public class Policy {
         editor.apply();
     }
 
-    public static void setAgreeDisclaimer(Context context) {
+    public static void setAgreeDisclaimer() {
         settings_disclaimer = true;
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -38,13 +37,13 @@ public class Policy {
         editor.apply();
     }
 
-    public static void loadAllData(Context context) {
+    public static void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         settings_privacy_policy = sharedPreferences.getBoolean("privacy_policy", DEFAULT_settings_privacy_policy);
         settings_disclaimer = sharedPreferences.getBoolean("disclaimer", DEFAULT_settings_disclaimer);
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         settings_privacy_policy = DEFAULT_settings_privacy_policy;
         settings_disclaimer = DEFAULT_settings_disclaimer;
 

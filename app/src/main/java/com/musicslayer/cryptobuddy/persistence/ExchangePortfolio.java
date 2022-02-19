@@ -1,9 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -25,7 +23,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         return settings_exchange_portfolio_names.contains(name);
     }
 
-    public static ExchangePortfolioObj getFromName(Context context, String name) {
+    public static ExchangePortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -37,7 +35,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         return Serialization.deserialize(serialString, ExchangePortfolioObj.class);
     }
 
-    public static void loadAllData(Context context) {
+    public static void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_exchange_portfolio_names = new ArrayList<>();
 
@@ -65,7 +63,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         }
     }
 
-    public static void addPortfolio(Context context, ExchangePortfolioObj exchangePortfolioObj) {
+    public static void addPortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_exchange_portfolio_names.add(exchangePortfolioObj.name);
 
@@ -80,7 +78,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void removePortfolio(Context context, String exchangePortfolioObjName) {
+    public static void removePortfolio(String exchangePortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObjName);
         settings_exchange_portfolio_names.remove(idx);
@@ -108,7 +106,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void updatePortfolio(Context context, ExchangePortfolioObj exchangePortfolioObj) {
+    public static void updatePortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -119,7 +117,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         settings_exchange_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -183,6 +181,6 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
 
         // Reinitialize data.
-        ExchangePortfolio.loadAllData(App.applicationContext);
+        ExchangePortfolio.loadAllData();
     }
 }

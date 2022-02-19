@@ -76,13 +76,13 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parseFixed(tokenJSON);
 
-                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
+                    TokenManagerList.updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(context,"tokens_not_downloaded");
+                    ToastUtil.showToast("tokens_not_downloaded");
                 }
             }
         });
@@ -109,13 +109,13 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parse(tokenJSON);
 
-                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
+                    TokenManagerList.updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(context,"tokens_not_downloaded");
+                    ToastUtil.showToast("tokens_not_downloaded");
                 }
             }
         });
@@ -136,7 +136,7 @@ public class TokenManagerView extends CrashTableRow {
                         tokenManager.resetCustomTokens();
                     }
 
-                    TokenManagerList.updateTokenManager(getContext(), tokenManager);
+                    TokenManagerList.updateTokenManager(tokenManager);
 
                     updateLayout();
                 }

@@ -53,7 +53,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
 
                 B_AUTHORIZE_BROWSER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                     public void onClickImpl(View v) {
-                        authorizeBrowser(activity, cryptoExchange);
+                        authorizeBrowser(cryptoExchange);
                     }
                 });
             }
@@ -93,7 +93,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         }
     }
 
-    public void authorizeBrowser(Context context, CryptoExchange cryptoExchange) {
+    public void authorizeBrowser(CryptoExchange cryptoExchange) {
         if(cryptoExchange.exchangeAPI != null) {
             cryptoExchange.exchangeAPI.authorize(activity, new AuthUtil.AuthorizationListener() {
                 @Override
@@ -103,7 +103,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
             });
         }
         else {
-            ToastUtil.showToast(context, "authorization_failed");
+            ToastUtil.showToast("authorization_failed");
         }
     }
 }

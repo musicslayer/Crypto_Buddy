@@ -61,10 +61,10 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                     String name = ((CreatePortfolioDialog)dialog).user_NAME;
 
                     if(TransactionPortfolio.isSaved(name)) {
-                        ToastUtil.showToast(TransactionPortfolioViewerActivity.this,"portfolio_name_used");
+                        ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        TransactionPortfolio.addPortfolio(TransactionPortfolioViewerActivity.this, new TransactionPortfolioObj(name));
+                        TransactionPortfolio.addPortfolio(new TransactionPortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -92,7 +92,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    TransactionPortfolio.removePortfolio(TransactionPortfolioViewerActivity.this, currentDeletePortfolioName);
+                    TransactionPortfolio.removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

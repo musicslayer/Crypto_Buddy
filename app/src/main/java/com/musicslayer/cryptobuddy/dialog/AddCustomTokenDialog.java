@@ -68,9 +68,9 @@ public class AddCustomTokenDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
-                    TokenManagerList.updateTokenManager(activity, chosenTokenManager);
+                    TokenManagerList.updateTokenManager(chosenTokenManager);
 
-                    ToastUtil.showToast(activity,"custom_token_added");
+                    ToastUtil.showToast("custom_token_added");
                     isComplete = true;
                     dismiss();
                 }
@@ -85,7 +85,7 @@ public class AddCustomTokenDialog extends BaseDialog {
                 boolean isValid = E_ID.test() & E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
                 if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     String key = E_ID.getTextString();
@@ -99,9 +99,9 @@ public class AddCustomTokenDialog extends BaseDialog {
 
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
-                        TokenManagerList.updateTokenManager(activity, chosenTokenManager);
+                        TokenManagerList.updateTokenManager(chosenTokenManager);
 
-                        ToastUtil.showToast(activity,"custom_token_added");
+                        ToastUtil.showToast("custom_token_added");
                         isComplete = true;
                         dismiss();
                     }

@@ -39,8 +39,8 @@ public class DeleteAllAddressHistorySettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressHistoryDialog)dialog).isComplete) {
-                    AddressHistory.resetAllData(context);
-                    ToastUtil.showToast(context,"reset_address_history");
+                    AddressHistory.resetAllData();
+                    ToastUtil.showToast("reset_address_history");
                 }
             }
         });

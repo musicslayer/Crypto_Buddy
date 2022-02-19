@@ -1,11 +1,9 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -25,7 +23,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         return settings_address_portfolio_names.contains(name);
     }
 
-    public static AddressPortfolioObj getFromName(Context context, String name) {
+    public static AddressPortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -37,7 +35,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         return Serialization.deserialize(serialString, AddressPortfolioObj.class);
     }
 
-    public static void loadAllData(Context context) {
+    public static void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_address_portfolio_names = new ArrayList<>();
 
@@ -65,7 +63,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         }
     }
 
-    public static void addPortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
+    public static void addPortfolio(AddressPortfolioObj addressPortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_address_portfolio_names.add(addressPortfolioObj.name);
 
@@ -80,7 +78,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void removePortfolio(Context context, String addressPortfolioObjName) {
+    public static void removePortfolio(String addressPortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObjName);
         settings_address_portfolio_names.remove(idx);
@@ -108,7 +106,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void updatePortfolio(Context context, AddressPortfolioObj addressPortfolioObj) {
+    public static void updatePortfolio(AddressPortfolioObj addressPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -119,7 +117,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         settings_address_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -183,6 +181,6 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
 
         // Reinitialize data.
-        AddressPortfolio.loadAllData(App.applicationContext);
+        AddressPortfolio.loadAllData();
     }
 }

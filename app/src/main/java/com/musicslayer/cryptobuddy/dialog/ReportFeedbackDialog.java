@@ -111,7 +111,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                 }
 
                 if(!isComplete) {
-                    ToastUtil.showToast(activity,"cannot_attach");
+                    ToastUtil.showToast("cannot_attach");
                 }
 
                 MessageUtil.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Report Feedback", "Selected information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);

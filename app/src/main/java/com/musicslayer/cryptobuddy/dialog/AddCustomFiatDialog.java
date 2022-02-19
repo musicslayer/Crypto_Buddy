@@ -67,9 +67,9 @@ public class AddCustomFiatDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomFiatDialog)dialog).isComplete) {
                     chosenFiatManager.addCustomFiat(((ReplaceCustomFiatDialog)dialog).newFiat);
-                    FiatManagerList.updateFiatManager(activity, chosenFiatManager);
+                    FiatManagerList.updateFiatManager(chosenFiatManager);
 
-                    ToastUtil.showToast(activity,"custom_fiat_added");
+                    ToastUtil.showToast("custom_fiat_added");
                     isComplete = true;
                     dismiss();
                 }
@@ -84,7 +84,7 @@ public class AddCustomFiatDialog extends BaseDialog {
                 boolean isValid = E_NAME.test() & E_SYMBOL.test() & E_DECIMALS.test();
 
                 if(!isValid) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                 }
                 else {
                     String name = E_SYMBOL.getTextString();
@@ -98,9 +98,9 @@ public class AddCustomFiatDialog extends BaseDialog {
 
                     if(oldFiat == null) {
                         chosenFiatManager.addCustomFiat(newFiat);
-                        FiatManagerList.updateFiatManager(activity, chosenFiatManager);
+                        FiatManagerList.updateFiatManager(chosenFiatManager);
 
-                        ToastUtil.showToast(activity,"custom_fiat_added");
+                        ToastUtil.showToast("custom_fiat_added");
                         isComplete = true;
                         dismiss();
                     }

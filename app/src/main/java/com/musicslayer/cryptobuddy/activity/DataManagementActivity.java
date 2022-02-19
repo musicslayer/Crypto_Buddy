@@ -72,10 +72,10 @@ public class DataManagementActivity extends BaseActivity {
                     }
 
                     if(isSuccess) {
-                        ToastUtil.showToast(activity,"export_file_success");
+                        ToastUtil.showToast("export_file_success");
                     }
                     else {
-                        ToastUtil.showToast(activity,"export_file_failed");
+                        ToastUtil.showToast("export_file_failed");
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     Persistence.importAllFromJSON(chosenDataTypes, fileText);
-                    ToastUtil.showToast(activity,"import_file_success");
+                    ToastUtil.showToast("import_file_success");
                 }
             }
         };
@@ -145,7 +145,7 @@ public class DataManagementActivity extends BaseActivity {
                         dataTypes = o.keys();
                     }
                     catch(Exception ignored) {
-                        ToastUtil.showToast(activity,"import_file_failed");
+                        ToastUtil.showToast("import_file_failed");
                         return;
                     }
 
@@ -203,7 +203,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(chosenDataTypes));
+                    ClipboardUtil.exportText("export_data", Persistence.exportAllToJSON(chosenDataTypes));
                 }
             }
         });
@@ -224,7 +224,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     Persistence.importAllFromJSON(chosenDataTypes, clipboardText);
-                    ToastUtil.showToast(activity,"import_clipboard_success");
+                    ToastUtil.showToast("import_clipboard_success");
                 }
             }
         };
@@ -237,12 +237,12 @@ public class DataManagementActivity extends BaseActivity {
 
                 try {
                     // Check if clipboard text can be parsed as JSON. If so, store the data type keys that are present.
-                    clipboardText = String.valueOf(ClipboardUtil.importText(DataManagementActivity.this));
+                    clipboardText = String.valueOf(ClipboardUtil.importText());
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(clipboardText);
                     dataTypes = o.keys();
                 }
                 catch(Exception ignored) {
-                    ToastUtil.showToast(activity,"import_clipboard_not_from_app");
+                    ToastUtil.showToast("import_clipboard_not_from_app");
                     return;
                 }
 

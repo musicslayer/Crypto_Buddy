@@ -50,7 +50,7 @@ public class MessageSettingsView extends SettingsView {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 setting.setSetting(pos);
                 prefText.setText(setting.chosenOptionDisplay);
-                SettingList.saveSetting(context, setting);
+                SettingList.saveSetting(setting);
             }
         });
 
@@ -61,10 +61,10 @@ public class MessageSettingsView extends SettingsView {
         B_MessageTest.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 if(MessageLengthSetting.value.equals(android.widget.Toast.LENGTH_SHORT)) {
-                    ToastUtil.showToast(context,"setting_message_test_short");
+                    ToastUtil.showToast("setting_message_test_short");
                 }
                 else {
-                    ToastUtil.showToast(context,"setting_message_test_long");
+                    ToastUtil.showToast("setting_message_test_long");
                 }
             }
         });

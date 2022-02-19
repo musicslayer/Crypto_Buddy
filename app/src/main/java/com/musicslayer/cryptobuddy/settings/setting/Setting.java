@@ -83,16 +83,16 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         return new StandardSettingsView(context, this);
     }
 
-    public static void initialize(Context context) {
+    public static void initialize() {
         settings = new ArrayList<>();
         setting_map = new HashMap<>();
         setting_settings_map = new HashMap<>();
         setting_display_names = new ArrayList<>();
 
-        setting_names = FileUtil.readFileIntoLines(context, R.raw.settings_setting);
+        setting_names = FileUtil.readFileIntoLines(R.raw.settings_setting);
         for(String settingName : setting_names) {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
-            Setting copySetting = SettingList.loadData(context, setting.getSettingsKey());
+            Setting copySetting = SettingList.loadData(setting.getSettingsKey());
 
             String optionName;
             if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {

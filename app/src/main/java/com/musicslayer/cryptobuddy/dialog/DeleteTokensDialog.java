@@ -62,7 +62,7 @@ public class DeleteTokensDialog extends BaseDialog {
                 }
 
                 if(user_CHOICES.isEmpty()) {
-                    ToastUtil.showToast(activity, "nothing_to_delete");
+                    ToastUtil.showToast("nothing_to_delete");
                     return;
                 }
 

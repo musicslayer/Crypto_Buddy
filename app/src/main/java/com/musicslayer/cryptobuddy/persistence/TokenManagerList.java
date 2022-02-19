@@ -1,9 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
@@ -18,7 +16,7 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         return "token_manager_data";
     }
 
-    public static void saveAllData(Context context) {
+    public static void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -31,7 +29,7 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void updateTokenManager(Context context, TokenManager tokenManager) {
+    public static void updateTokenManager(TokenManager tokenManager) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -39,7 +37,7 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static TokenManager loadData(Context context, String settingsKey) {
+    public static TokenManager loadData(String settingsKey) {
         // TokenManager will create empty objects, but then this method will fill them in with data.
         // If a new TokenManager is introduced later, it will still be created but will get no data from here.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -47,7 +45,7 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, TokenManager.class);
     }
 
-    public static void resetAllData(Context context) {
+    public static void resetAllData() {
         // Only reset data stored in settings, not the TokenManager class.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -111,6 +109,6 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         editor.apply();
 
         // Reinitialize data.
-        TokenManager.initialize(App.applicationContext);
+        TokenManager.initialize();
     }
 }

@@ -89,7 +89,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.addressPortfolioObj = AddressPortfolio.getFromName(AddressPortfolioExplorerActivity.this, getIntent().getStringExtra("AddressPortfolioName"));
+            StateObj.addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
         }
 
         updateFilter();
@@ -175,11 +175,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     CryptoAddress newCryptoAddress = ((ChooseAddressDialog)dialog).user_CRYPTOADDRESS;
 
                     if(StateObj.addressPortfolioObj.isSaved(newCryptoAddress)) {
-                        ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_in_portfolio");
+                        ToastUtil.showToast("address_in_portfolio");
                     }
                     else {
                         StateObj.addressPortfolioObj.addData(newCryptoAddress);
-                        AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, StateObj.addressPortfolioObj);
+                        AddressPortfolio.updatePortfolio(StateObj.addressPortfolioObj);
 
                         updateFilter();
 
@@ -216,7 +216,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(StateObj.addressDataFilterMap, cryptoAddress);
                     }
 
-                    AddressPortfolio.updatePortfolio(AddressPortfolioExplorerActivity.this, StateObj.addressPortfolioObj);
+                    AddressPortfolio.updatePortfolio(StateObj.addressPortfolioObj);
 
                     hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
                     hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
@@ -296,7 +296,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     newAddressDataArrayList.add(newAddressData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
+                    TokenManagerList.saveAllData();
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList, AddressData.class));
@@ -327,7 +327,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
 
                     if(!isComplete) {
                         // Only alert once. Others would be redundant.
-                        ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"incomplete_address_data");
+                        ToastUtil.showToast("incomplete_address_data");
                         break;
                     }
                 }
@@ -357,7 +357,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                 updateLayout();
                 updateInfoButtons();
 
-                ToastUtil.showToast(AddressPortfolioExplorerActivity.this,"address_data_downloaded");
+                ToastUtil.showToast("address_data_downloaded");
             }
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");

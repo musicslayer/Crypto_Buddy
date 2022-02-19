@@ -44,11 +44,11 @@ public class ResetAllSettingsSettingsView extends SettingsView {
                     Setting.resetAllSettings();
 
                     // Clear out any existing data, and then make sure our recently defaulted settings are saved.
-                    SettingList.resetAllData(context);
-                    SettingList.saveAllSettings(context);
+                    SettingList.resetAllData();
+                    SettingList.saveAllSettings();
 
                     ContextUtil.getActivityFromContext(context).recreate();
-                    ToastUtil.showToast(context,"reset_settings");
+                    ToastUtil.showToast("reset_settings");
                 }
             }
         });

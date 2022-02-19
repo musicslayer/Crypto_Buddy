@@ -63,7 +63,7 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);
         B_PASTE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                CharSequence pasteText = ClipboardUtil.paste(ChooseAddressDialog.this.activity);
+                CharSequence pasteText = ClipboardUtil.paste();
                 if(pasteText != null) {
                     E_ADDRESS.setText(pasteText);
                 }
@@ -84,7 +84,7 @@ public class ChooseAddressDialog extends BaseDialog {
         Button B_SCANQR = findViewById(R.id.choose_address_dialog_scanQRButton);
         B_SCANQR.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                if(!PermissionUtil.isGooglePlayServicesAvailable(ChooseAddressDialog.this.activity)) {
+                if(!PermissionUtil.isGooglePlayServicesAvailable()) {
                     return;
                 }
 
@@ -123,7 +123,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
                     user_CRYPTOADDRESS = ((ChooseCryptoDialog)dialog).user_CRYPTOADDRESS;
 
-                    AddressHistory.addAddressToHistory(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
+                    AddressHistory.addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();
@@ -140,18 +140,18 @@ public class ChooseAddressDialog extends BaseDialog {
                 address = address.trim();
 
                 if(address.isEmpty()) {
-                    ToastUtil.showToast(activity,"empty_address");
+                    ToastUtil.showToast("empty_address");
                     return;
                 }
 
                 ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.getAllValidCryptoAddress(address, includeTokens);
 
                 if(cryptoAddressArrayList.isEmpty()) {
-                    ToastUtil.showToast(activity,"unrecognized_address");
+                    ToastUtil.showToast("unrecognized_address");
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);
-                    AddressHistory.addAddressToHistory(ChooseAddressDialog.this.activity, new AddressHistoryObj(user_CRYPTOADDRESS));
+                    AddressHistory.addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();

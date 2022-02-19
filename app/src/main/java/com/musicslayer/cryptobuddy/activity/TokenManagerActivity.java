@@ -98,7 +98,7 @@ public class TokenManagerActivity extends BaseActivity {
                 String tokenAllJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 if(tokenAllJSON == null) {
-                    ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                    ToastUtil.showToast("tokens_not_downloaded");
                 }
                 else {
                     JSONObject tokenAllJSONObject;
@@ -107,7 +107,7 @@ public class TokenManagerActivity extends BaseActivity {
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);
-                        ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                        ToastUtil.showToast("tokens_not_downloaded");
                         return;
                     }
 
@@ -136,13 +136,13 @@ public class TokenManagerActivity extends BaseActivity {
 
                         tokenManagerView.tokenManager.resetDownloadedTokens();
                         tokenManagerView.tokenManager.parseFixed(tokenJSON);
-                        TokenManagerList.updateTokenManager(TokenManagerActivity.this, tokenManagerView.tokenManager);
+                        TokenManagerList.updateTokenManager(tokenManagerView.tokenManager);
 
                         tokenManagerView.updateLayout();
                     }
 
                     if(!isAllComplete) {
-                        ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                        ToastUtil.showToast("tokens_not_downloaded");
                     }
                 }
             }
@@ -177,7 +177,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                     tokenManagerView.tokenManager.resetDownloadedTokens();
                     boolean isComplete = tokenManagerView.tokenManager.parse(tokenJSONArrayList.get(i));
-                    TokenManagerList.updateTokenManager(TokenManagerActivity.this, tokenManagerView.tokenManager);
+                    TokenManagerList.updateTokenManager(tokenManagerView.tokenManager);
 
                     tokenManagerView.updateLayout();
                     if(!isComplete) {
@@ -186,7 +186,7 @@ public class TokenManagerActivity extends BaseActivity {
                 }
 
                 if(!isAllComplete) {
-                    ToastUtil.showToast(TokenManagerActivity.this,"tokens_not_downloaded");
+                    ToastUtil.showToast("tokens_not_downloaded");
                 }
             }
         });

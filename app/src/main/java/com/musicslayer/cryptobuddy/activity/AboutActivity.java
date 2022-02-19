@@ -53,7 +53,7 @@ public class AboutActivity extends BaseActivity {
         T_PRIVACYPOLICY_TEXT.setAutoLinkMask(Linkify.WEB_URLS);
         T_PRIVACYPOLICY_TEXT.setText("https://sites.google.com/view/crypto-buddy-privacy-policy/home" + "\n");
 
-        String disclaimerText = FileUtil.readFile(this, R.raw.policy_disclaimer);
+        String disclaimerText = FileUtil.readFile(R.raw.policy_disclaimer);
         TextView T_DISCLAIMER_TEXT = findViewById(R.id.about_disclaimerText);
         T_DISCLAIMER_TEXT.setText(disclaimerText);
 

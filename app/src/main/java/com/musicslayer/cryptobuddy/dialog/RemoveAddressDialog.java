@@ -72,7 +72,7 @@ public class RemoveAddressDialog extends BaseDialog {
                 }
 
                 if(user_cryptoAddressArrayList.isEmpty()) {
-                    ToastUtil.showToast(activity, "nothing_to_remove");
+                    ToastUtil.showToast("nothing_to_remove");
                     return;
                 }
 

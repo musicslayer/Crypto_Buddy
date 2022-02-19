@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.coinmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
@@ -45,7 +43,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     // Used to store persistent state
     abstract public String getSettingsKey();
 
-    abstract public void initializeHardcodedCoins(Context context);
+    abstract public void initializeHardcodedCoins();
 
     // Most times we cannot do lookup, but subclasses can override if they can.
     public Coin lookupCoin(String key, String name, String display_name, int scale) { return null; }
@@ -67,18 +65,18 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         this.custom_coin_display_names = new ArrayList<>();
     }
 
-    public static void initialize(Context context) {
+    public static void initialize() {
         coinManagers = new ArrayList<>();
         coinManagers_map = new HashMap<>();
         coinManagers_coin_type_map = new HashMap<>();
         coinManagers_coin_types = new ArrayList<>();
 
-        coinManagers_names = FileUtil.readFileIntoLines(context, R.raw.asset_coinmanager);
+        coinManagers_names = FileUtil.readFileIntoLines(R.raw.asset_coinmanager);
         for(String coinManagerName : coinManagers_names) {
             CoinManager coinManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.coinmanager." + coinManagerName);
 
             // Use the deserialized dummy object to fill in the coins in this real one.
-            CoinManager copyCoinManager = CoinManagerList.loadData(context, coinManager.getSettingsKey());
+            CoinManager copyCoinManager = CoinManagerList.loadData(coinManager.getSettingsKey());
 
             // If this is a new CoinManager that wasn't previously saved, then there are no coins to add.
             if(copyCoinManager != null) {
@@ -92,7 +90,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coinManagers_coin_type_map.put(coinManager.getCoinType(), coinManager);
             coinManagers_coin_types.add(coinManager.getCoinType());
 
-            coinManager.initializeHardcodedCoins(context);
+            coinManager.initializeHardcodedCoins();
         }
     }
 

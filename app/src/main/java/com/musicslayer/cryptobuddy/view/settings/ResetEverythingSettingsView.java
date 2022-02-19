@@ -39,12 +39,12 @@ public class ResetEverythingSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
-                    boolean isComplete = Persistence.resetAllData(context);
+                    boolean isComplete = Persistence.resetAllData();
                     if(isComplete) {
-                        ToastUtil.showToast(context,"reset_everything");
+                        ToastUtil.showToast("reset_everything");
                     }
                     else {
-                        ToastUtil.showToast(context,"reset_everything_fail");
+                        ToastUtil.showToast("reset_everything_fail");
                     }
                 }
             }

@@ -216,17 +216,17 @@ public class AddTransactionDialog extends BaseDialog {
                 boolean isValid2 = action.numAssets() == 1 || E_SECONDARYASSET.test();
 
                 if(ssvPrimary.getChosenAsset() == null || (action.numAssets() == 2 && ssvSecondary.getChosenAsset() == null)) {
-                    ToastUtil.showToast(activity,"must_choose_assets");
+                    ToastUtil.showToast("must_choose_assets");
                     return;
                 }
 
                 if(action.numAssets() == 2 && ssvPrimary.getChosenAsset() == ssvSecondary.getChosenAsset()) {
-                    ToastUtil.showToast(activity,"assets_same");
+                    ToastUtil.showToast("assets_same");
                     return;
                 }
 
                 if(!isValid1 || !isValid2) {
-                    ToastUtil.showToast(activity,"must_fill_inputs");
+                    ToastUtil.showToast("must_fill_inputs");
                     return;
                 }
 

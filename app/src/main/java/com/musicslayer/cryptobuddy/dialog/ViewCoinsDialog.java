@@ -105,7 +105,7 @@ public class ViewCoinsDialog extends BaseDialog {
                     coinManager.removeCustomCoin((Coin)asset);
                 }
 
-                CoinManagerList.updateCoinManager(activity, coinManager);
+                CoinManagerList.updateCoinManager(coinManager);
 
                 ((CoinManagerActivity)activity).updateLayout();
             }

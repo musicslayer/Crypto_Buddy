@@ -94,8 +94,8 @@ public class InAppPurchasesActivity extends BaseActivity {
         B_RESTORE_PURCHASES.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                ToastUtil.showToast(InAppPurchasesActivity.this,"restoring_purchases");
-                InAppPurchase.updateAllPurchases(InAppPurchasesActivity.this);
+                ToastUtil.showToast("restoring_purchases");
+                InAppPurchase.updateAllPurchases();
             }
         });
 

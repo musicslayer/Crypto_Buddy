@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-import com.musicslayer.cryptobuddy.crash.CrashRunnable;
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.settings.setting.MessageLengthSetting;
 
 import java.util.HashMap;
@@ -15,7 +15,8 @@ public class ToastUtil {
     final static HashMap<String, Toast> toastMap = new HashMap<>();
 
     @SuppressLint({"ShowToast"})
-    public static void loadAllToasts(Context context) {
+    public static void loadAllToasts() {
+        Context context = App.applicationContext;
         // Use a dummy value for the duration. When the toast is shown, we will set it according to the setting.
         int duration = Toast.LENGTH_SHORT;
 
@@ -167,16 +168,16 @@ public class ToastUtil {
         }
     }
 
-    public static void showToast(Context context, String key) {
+    public static void showToast(String key) {
         Toast toast = toastMap.get(key);
         if(toast != null) {
             toast.setDuration(getToastDuration());
 
             // Toasts must always be shown on the UI Thread.
             // Use Looper so that we do not need access to the activity.
-            new Handler(Looper.getMainLooper()).post(new CrashRunnable(context) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
-                public void runImpl() {
+                public void run() {
                     // At some point, Android changed toast behavior. getView being null is the only way to tell which behavior we will see.
                     if(toast.getView() == null) {
                         // New behavior - We cannot check if the toast is showing, but it is always OK to cancel and (re)show the toast.

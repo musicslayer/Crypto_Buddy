@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.asset.fiatmanager;
 
-import android.content.Context;
-
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
@@ -17,9 +15,9 @@ public class BaseFiatManager extends FiatManager {
     public String getFiatType() { return "BASE"; }
     public String getSettingsKey() { return "base"; }
 
-    public void initializeHardcodedFiats(Context context) {
+    public void initializeHardcodedFiats() {
         resetHardcodedFiats();
-        String fiatJSON = FileUtil.readFile(context, R.raw.asset_fiat_hardcoded);
+        String fiatJSON = FileUtil.readFile(R.raw.asset_fiat_hardcoded);
 
         try {
             JSONObject jsonObject = new JSONObject(fiatJSON);
@@ -41,6 +39,6 @@ public class BaseFiatManager extends FiatManager {
             throw new IllegalStateException(e);
         }
 
-        FiatManagerList.updateFiatManager(context, this);
+        FiatManagerList.updateFiatManager(this);
     }
 }

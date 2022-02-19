@@ -64,11 +64,11 @@ public class CoinManagerView extends CrashTableRow {
                         coinManager.resetCustomCoins();
                     }
 
-                    CoinManagerList.updateCoinManager(getContext(), coinManager);
+                    CoinManagerList.updateCoinManager(coinManager);
 
                     Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(context, setting);
+                    SettingList.saveSetting(setting);
 
                     updateLayout();
                 }
