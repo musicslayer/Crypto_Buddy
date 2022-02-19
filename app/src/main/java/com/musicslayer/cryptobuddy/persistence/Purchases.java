@@ -3,10 +3,15 @@ package com.musicslayer.cryptobuddy.persistence;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class Purchases extends PersistentDataStore {
     public String getName() { return "Purchases"; }
+
+    public boolean canExport() { return false; }
+    public String doExport() { return Exportation.exportData(this, Purchases.class); }
+    public void doImport(String s) { Exportation.importData(this, s, Purchases.class); }
 
     private final static boolean DEFAULT_isRemoveAdsPurchased = false;
     private static boolean isRemoveAdsPurchased;
@@ -121,9 +126,5 @@ public class Purchases extends PersistentDataStore {
 
         editor.clear();
         editor.apply();
-    }
-
-    public boolean canExport() {
-        return false;
     }
 }

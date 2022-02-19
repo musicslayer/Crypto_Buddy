@@ -11,6 +11,10 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class FiatManagerList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "FiatManagerList"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, FiatManagerList.class); }
+    public void doImport(String s) { Exportation.importData(this, s, FiatManagerList.class); }
+
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
@@ -56,11 +60,7 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

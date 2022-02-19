@@ -12,6 +12,10 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class AddressPortfolio extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "AddressPortfolio"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, AddressPortfolio.class); }
+    public void doImport(String s) { Exportation.importData(this, s, AddressPortfolio.class); }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
@@ -129,11 +133,7 @@ public class AddressPortfolio extends PersistentDataStore implements Exportation
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

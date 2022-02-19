@@ -13,6 +13,10 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class AddressHistory extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "AddressHistory"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, AddressHistory.class); }
+    public void doImport(String s) { Exportation.importData(this, s, AddressHistory.class); }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
     final public static int HISTORY_LIMIT = 10;
@@ -97,11 +101,7 @@ public class AddressHistory extends PersistentDataStore implements Exportation.E
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

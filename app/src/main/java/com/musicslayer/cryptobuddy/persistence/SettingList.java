@@ -11,6 +11,10 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class SettingList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "SettingList"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, SettingList.class); }
+    public void doImport(String s) { Exportation.importData(this, s, SettingList.class); }
+
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
@@ -54,11 +58,7 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

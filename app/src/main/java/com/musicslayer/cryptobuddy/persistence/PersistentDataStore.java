@@ -36,7 +36,11 @@ abstract public class PersistentDataStore {
     }
 
     abstract public String getName();
+
     abstract public boolean canExport();
+    abstract public String doExport();
+    abstract public void doImport(String s);
+
     abstract public String getSharedPreferencesKey();
     abstract public void resetAllData(); // Erase all stored and local data.
 
@@ -79,7 +83,7 @@ abstract public class PersistentDataStore {
                 String key = persistentDataStore.getSharedPreferencesKey();
                 if(!dataTypes.contains(key)) { continue; }
 
-                String value = Exportation.exportData(persistentDataStore, PersistentDataStore.class);
+                String value = persistentDataStore.doExport();
                 o.put(key, value, String.class);
             }
             catch(Exception e) {
@@ -110,7 +114,7 @@ abstract public class PersistentDataStore {
                 if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
                 String value = o.get(key, String.class);
-                Exportation.importData(persistentDataStore, value, PersistentDataStore.class);
+                persistentDataStore.doImport(value);
             }
             catch(Exception e) {
                 // If one class's data cannot be imported, skip it and do nothing.

@@ -14,9 +14,12 @@ public class UnknownPersistentDataStore extends PersistentDataStore {
         }
     }
 
+    public boolean canExport() { return false; }
+    public String doExport() { return null; }
+    public void doImport(String s) {}
+
     public String getSharedPreferencesKey() { return null; }
     public void resetAllData() {}
-    public boolean canExport() { return false; }
 
     public static UnknownPersistentDataStore createUnknownPersistentDataStore(String key) {
         return new UnknownPersistentDataStore(key);

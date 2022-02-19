@@ -11,7 +11,12 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class TokenManagerList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "TokenManagerList"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, TokenManagerList.class); }
+    public void doImport(String s) { Exportation.importData(this, s, TokenManagerList.class); }
+
     // Just pick something that would never actually be saved.
+    // TODO Defaults should represent empty token lists, or we need to save data after initializing.
     public final static String DEFAULT = "!UNKNOWN!";
 
     public String getSharedPreferencesKey() {
@@ -56,11 +61,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

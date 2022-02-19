@@ -12,6 +12,10 @@ import java.util.ArrayList;
 public class ExchangePortfolio extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "ExchangePortfolio"; }
 
+    public boolean canExport() { return true; }
+    public String doExport() { return Exportation.exportData(this, ExchangePortfolio.class); }
+    public void doImport(String s) { Exportation.importData(this, s, ExchangePortfolio.class); }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
@@ -129,11 +133,7 @@ public class ExchangePortfolio extends PersistentDataStore implements Exportatio
         editor.apply();
     }
 
-    public boolean canExport() {
-        return true;
-    }
-
-    public String exportationVersion() {
+    public static String exportationVersion() {
         return "1";
     }
 

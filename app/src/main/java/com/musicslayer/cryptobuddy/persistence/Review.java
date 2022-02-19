@@ -2,10 +2,15 @@ package com.musicslayer.cryptobuddy.persistence;
 
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class Review extends PersistentDataStore {
     public String getName() { return "Review"; }
+
+    public boolean canExport() { return false; }
+    public String doExport() { return Exportation.exportData(this, Review.class); }
+    public void doImport(String s) { Exportation.importData(this, s, Review.class); }
 
     // The default value is a dynamic date, so we can't store it here.
     public static long settings_review_time;
@@ -53,9 +58,5 @@ public class Review extends PersistentDataStore {
 
         editor.clear();
         editor.apply();
-    }
-
-    public boolean canExport() {
-        return false;
     }
 }
