@@ -32,6 +32,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -199,7 +200,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                TokenManagerList.saveAllData();
+                PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(newAddressData, AddressData.class));
             }

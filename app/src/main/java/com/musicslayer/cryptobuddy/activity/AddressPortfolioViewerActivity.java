@@ -21,6 +21,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -64,7 +65,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                         ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        AddressPortfolio.addPortfolio(new AddressPortfolioObj(name));
+                        PersistentDataStore.getInstance(AddressPortfolio.class).addPortfolio(new AddressPortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -92,7 +93,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    AddressPortfolio.removePortfolio(currentDeletePortfolioName);
+                    PersistentDataStore.getInstance(AddressPortfolio.class).removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

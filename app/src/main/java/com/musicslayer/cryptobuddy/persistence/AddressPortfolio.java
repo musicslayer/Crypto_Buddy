@@ -9,13 +9,15 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class AddressPortfolio implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class AddressPortfolio extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+    public String getName() { return "AddressPortfolio"; }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
     public static ArrayList<String> settings_address_portfolio_names = new ArrayList<>();
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "address_portfolio_data";
     }
 
@@ -23,7 +25,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         return settings_address_portfolio_names.contains(name);
     }
 
-    public static AddressPortfolioObj getFromName(String name) {
+    public AddressPortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -35,35 +37,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         return Serialization.deserialize(serialString, AddressPortfolioObj.class);
     }
 
-    public static void loadAllData() {
-        // Only load portfolio names. Portfolios themselves are loaded when needed.
-        settings_address_portfolio_names = new ArrayList<>();
-
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        int size = sharedPreferences.getInt("address_portfolio_size", 0);
-
-        for(int i = 0; i < size; i++) {
-            String name;
-            if(sharedPreferences.contains("address_portfolio_names" + i)) {
-                name = sharedPreferences.getString("address_portfolio_names" + i, DEFAULT);
-            }
-            else {
-                // Older installations won't have the name saved.
-                // TODO To Remove!
-                String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
-                AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
-                name = addressPortfolioObj.name;
-
-                // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("address_portfolio_names" + i, name);
-                editor.apply();
-            }
-            settings_address_portfolio_names.add(name);
-        }
-    }
-
-    public static void addPortfolio(AddressPortfolioObj addressPortfolioObj) {
+    public void addPortfolio(AddressPortfolioObj addressPortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_address_portfolio_names.add(addressPortfolioObj.name);
 
@@ -78,7 +52,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void removePortfolio(String addressPortfolioObjName) {
+    public void removePortfolio(String addressPortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObjName);
         settings_address_portfolio_names.remove(idx);
@@ -106,7 +80,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void updatePortfolio(AddressPortfolioObj addressPortfolioObj) {
+    public void updatePortfolio(AddressPortfolioObj addressPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -117,7 +91,35 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static void resetAllData() {
+    public void loadAllData() {
+        // Only load portfolio names. Portfolios themselves are loaded when needed.
+        settings_address_portfolio_names = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("address_portfolio_size", 0);
+
+        for(int i = 0; i < size; i++) {
+            String name;
+            if(sharedPreferences.contains("address_portfolio_names" + i)) {
+                name = sharedPreferences.getString("address_portfolio_names" + i, DEFAULT);
+            }
+            else {
+                // Older installations won't have the name saved.
+                // TODO To Remove!
+                String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
+                AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
+                name = addressPortfolioObj.name;
+
+                // Save the name now so this never has to be done again.
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("address_portfolio_names" + i, name);
+                editor.apply();
+            }
+            settings_address_portfolio_names.add(name);
+        }
+    }
+
+    public void resetAllData() {
         settings_address_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -127,7 +129,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return true;
     }
 
@@ -135,7 +137,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         return "1";
     }
 
-    public static String exportDataToJSON() throws org.json.JSONException {
+    public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
@@ -158,7 +160,7 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
     }
 
 
-    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
+    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -181,6 +183,6 @@ public class AddressPortfolio implements Exportation.ExportableToJSON, Exportati
         editor.apply();
 
         // Reinitialize data.
-        AddressPortfolio.loadAllData();
+        loadAllData();
     }
 }

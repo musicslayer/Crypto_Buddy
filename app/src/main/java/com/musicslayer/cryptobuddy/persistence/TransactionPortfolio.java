@@ -9,13 +9,15 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class TransactionPortfolio implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class TransactionPortfolio extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+    public String getName() { return "TransactionPortfolio"; }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
     public static ArrayList<String> settings_transaction_portfolio_names = new ArrayList<>();
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "transaction_portfolio_data";
     }
 
@@ -23,7 +25,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return settings_transaction_portfolio_names.contains(name);
     }
 
-    public static TransactionPortfolioObj getFromName(String name) {
+    public TransactionPortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -35,7 +37,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
     }
 
-    public static void loadAllData() {
+    public void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_transaction_portfolio_names = new ArrayList<>();
 
@@ -63,7 +65,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         }
     }
 
-    public static void addPortfolio(TransactionPortfolioObj transactionPortfolioObj) {
+    public void addPortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_transaction_portfolio_names.add(transactionPortfolioObj.name);
 
@@ -78,7 +80,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void removePortfolio(String transactionPortfolioObjName) {
+    public void removePortfolio(String transactionPortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObjName);
         settings_transaction_portfolio_names.remove(idx);
@@ -106,7 +108,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void updatePortfolio(TransactionPortfolioObj transactionPortfolioObj) {
+    public void updatePortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -117,7 +119,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         settings_transaction_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -127,7 +129,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return true;
     }
 
@@ -135,7 +137,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return "1";
     }
 
-    public static String exportDataToJSON() throws org.json.JSONException {
+    public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
@@ -157,8 +159,7 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         return o.toStringOrNull();
     }
 
-
-    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
+    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -181,6 +182,6 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         editor.apply();
 
         // Reinitialize data.
-        TransactionPortfolio.loadAllData();
+        loadAllData();
     }
 }

@@ -4,15 +4,17 @@ import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class Review {
+public class Review extends PersistentDataStore {
+    public String getName() { return "Review"; }
+
     // The default value is a dynamic date, so we can't store it here.
     public static long settings_review_time;
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "review_data";
     }
 
-    public static void setReviewTime() {
+    public void setReviewTime() {
         // Set the new date to now.
         settings_review_time = System.currentTimeMillis();
 
@@ -22,7 +24,7 @@ public class Review {
         editor.apply();
     }
 
-    public static void disableReviewTime() {
+    public void disableReviewTime() {
         // Set the new date to a far away date so that the user will never be asked for a review again.
         settings_review_time = Long.MAX_VALUE;
 
@@ -32,7 +34,7 @@ public class Review {
         editor.apply();
     }
 
-    public static void loadAllData() {
+    public void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         // If there is no value in this setting, then immediately store "now" so that in all future calls there will be a value.
@@ -43,7 +45,7 @@ public class Review {
         settings_review_time = sharedPreferences.getLong("review_time", 0);
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         settings_review_time = System.currentTimeMillis();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -53,7 +55,7 @@ public class Review {
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return false;
     }
 }

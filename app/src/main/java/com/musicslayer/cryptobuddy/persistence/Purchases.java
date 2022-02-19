@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class Purchases {
+public class Purchases extends PersistentDataStore {
+    public String getName() { return "Purchases"; }
+
     private final static boolean DEFAULT_isRemoveAdsPurchased = false;
     private static boolean isRemoveAdsPurchased;
 
@@ -15,7 +17,7 @@ public class Purchases {
     private final static int DEFAULT_totalSupportAmount = 0;
     private static int totalSupportAmount; // In Cents
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "purchases_data";
     }
 
@@ -52,7 +54,7 @@ public class Purchases {
         return totalSupportAmount;
     }
 
-    public static void updatePurchase(String sku, boolean isPurchased) {
+    public void updatePurchase(String sku, boolean isPurchased) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -72,7 +74,7 @@ public class Purchases {
                     TokenManager.initialize();
                     if(!isPurchased) {
                         TokenManager.resetAllTokens();
-                        TokenManagerList.resetAllData();
+                        PersistentDataStore.getInstance(TokenManagerList.class).resetAllData();
                     }
                 }
 
@@ -102,14 +104,14 @@ public class Purchases {
         editor.apply();
     }
 
-    public static void loadAllPurchases() {
+    public void loadAllPurchases() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         isRemoveAdsPurchased = sharedPreferences.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
         isUnlockPremiumFeaturesPurchased = sharedPreferences.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);
         totalSupportAmount = sharedPreferences.getInt("purchases_total_support_amount", DEFAULT_totalSupportAmount);
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         isRemoveAdsPurchased = DEFAULT_isRemoveAdsPurchased;
         isUnlockPremiumFeaturesPurchased = DEFAULT_isUnlockPremiumFeaturesPurchased;
         totalSupportAmount = DEFAULT_totalSupportAmount;
@@ -121,7 +123,7 @@ public class Purchases {
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return false;
     }
 }

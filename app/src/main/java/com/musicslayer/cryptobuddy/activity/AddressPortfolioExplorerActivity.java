@@ -38,6 +38,7 @@ import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -89,7 +90,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.addressPortfolioObj = AddressPortfolio.getFromName(getIntent().getStringExtra("AddressPortfolioName"));
+            StateObj.addressPortfolioObj = PersistentDataStore.getInstance(AddressPortfolio.class).getFromName(getIntent().getStringExtra("AddressPortfolioName"));
         }
 
         updateFilter();
@@ -179,7 +180,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                     else {
                         StateObj.addressPortfolioObj.addData(newCryptoAddress);
-                        AddressPortfolio.updatePortfolio(StateObj.addressPortfolioObj);
+                        PersistentDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
 
                         updateFilter();
 
@@ -216,7 +217,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(StateObj.addressDataFilterMap, cryptoAddress);
                     }
 
-                    AddressPortfolio.updatePortfolio(StateObj.addressPortfolioObj);
+                    PersistentDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
 
                     hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
                     hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
@@ -296,7 +297,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     newAddressDataArrayList.add(newAddressData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    TokenManagerList.saveAllData();
+                    PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList, AddressData.class));

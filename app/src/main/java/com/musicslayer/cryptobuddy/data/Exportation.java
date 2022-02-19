@@ -18,22 +18,26 @@ public class Exportation {
 
     // Any class implementing this can be exported and imported with JSON.
     public interface ExportableToJSON {
-        // Classes also need to implement static methods "exportDataToJSON", "importDataFromJSON", and "exportationType".
+        String exportDataToJSON() throws org.json.JSONException;
+        void importDataFromJSON(String s, String version) throws org.json.JSONException;
+
+        // Classes also need to implement a static method "exportationType".
     }
 
     // Any class implementing this supports versioning.
     // This is needed when saving data that may be loaded in a different release.
     public interface Versionable {
-        // Classes also need to implement a static method "exportationVersion"
+        // Classes also need to implement a static method "exportationVersion".
     }
 
-    // Exporting is a static process, so we do not need an object.
-    public static <T> String exportData(Class<T> clazzT) {
+    public static <T> String exportData(T obj, Class<T> clazzT) {
+        if(obj == null) { return null; }
+        ExportableToJSON wrappedObj = wrapObj(obj);
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
 
         String s;
         try {
-            s = ReflectUtil.callStaticMethod(wrappedClass, "exportDataToJSON");
+            s = wrappedObj.exportDataToJSON();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -62,15 +66,16 @@ public class Exportation {
         return s;
     }
 
-    // Importing does not return anything. The class itself must store the data appropriately.
-    public static <T> void importData(String s, Class<T> clazzT) {
+    // Importing does not return anything. The object passed in must store the data appropriately.
+    public static <T> void importData(T obj, String s, Class<T> clazzT) {
         if(s == null) { return; }
+        ExportableToJSON wrappedObj = wrapObj(obj);
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
 
         String version = getVersion(s);
 
         try {
-            ReflectUtil.callStaticMethod(wrappedClass, "importDataFromJSON", s, version);
+            wrappedObj.importDataFromJSON(s, version);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -107,6 +112,19 @@ public class Exportation {
     public static <T> String getTypeForVersion(String version, Class<T> clazz) {
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
         return ReflectUtil.callStaticMethod(wrappedClass, "exportationType", version);
+    }
+
+    // For classes that do not implement ExportableToJSON, we wrap them in classes that define the required methods.
+    public static ExportableToJSON wrapObj(Object obj) {
+        // Converts an arbitrary object into a ExportableToJSON subclass.
+        // Note that obj will always be non-null.
+        if(obj instanceof ExportableToJSON) {
+            return (ExportableToJSON)obj;
+        }
+        else {
+            // Anything else is unsupported.
+            throw new IllegalStateException();
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -55,11 +56,11 @@ public class DeleteCoinsSettingsView extends SettingsView {
                         CoinManager.resetAllCustomCoins();
                     }
 
-                    CoinManagerList.saveAllData();
+                    PersistentDataStore.getInstance(CoinManagerList.class).saveAllData();
 
                     Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(setting);
+                    PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
 
                     ToastUtil.showToast("reset_coins");
                 }

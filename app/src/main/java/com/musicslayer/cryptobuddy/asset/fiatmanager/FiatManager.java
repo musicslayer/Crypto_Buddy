@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -76,7 +77,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             FiatManager fiatManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiatmanager." + fiatManagerName);
 
             // Use the deserialized dummy object to fill in the fiats in this real one.
-            FiatManager copyFiatManager = FiatManagerList.loadData(fiatManager.getSettingsKey());
+            FiatManager copyFiatManager = PersistentDataStore.getInstance(FiatManagerList.class).loadData(fiatManager.getSettingsKey());
 
             // If this is a new FiatManager that wasn't previously saved, then there are no fiats to add.
             if(copyFiatManager != null) {

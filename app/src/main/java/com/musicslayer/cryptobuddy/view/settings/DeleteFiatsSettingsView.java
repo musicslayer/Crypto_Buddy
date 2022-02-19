@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -55,11 +56,11 @@ public class DeleteFiatsSettingsView extends SettingsView {
                         FiatManager.resetAllCustomFiats();
                     }
 
-                    FiatManagerList.saveAllData();
+                    PersistentDataStore.getInstance(FiatManagerList.class).saveAllData();
 
                     Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
                     setting.refreshSetting();
-                    SettingList.saveSetting(setting);
+                    PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
 
                     ToastUtil.showToast("reset_fiats");
                 }

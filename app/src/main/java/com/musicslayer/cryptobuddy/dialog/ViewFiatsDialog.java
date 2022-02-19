@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.view.asset.FiatView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
@@ -105,7 +106,7 @@ public class ViewFiatsDialog extends BaseDialog {
                     fiatManager.removeCustomFiat((Fiat)asset);
                 }
 
-                FiatManagerList.updateFiatManager(fiatManager);
+                PersistentDataStore.getInstance(FiatManagerList.class).updateFiatManager(fiatManager);
 
                 ((FiatManagerActivity)activity).updateLayout();
             }

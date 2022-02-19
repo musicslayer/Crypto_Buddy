@@ -23,6 +23,7 @@ import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ViewTokensDialog;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -76,7 +77,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parseFixed(tokenJSON);
 
-                    TokenManagerList.updateTokenManager(tokenManager);
+                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
@@ -109,7 +110,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parse(tokenJSON);
 
-                    TokenManagerList.updateTokenManager(tokenManager);
+                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
@@ -136,7 +137,7 @@ public class TokenManagerView extends CrashTableRow {
                         tokenManager.resetCustomTokens();
                     }
 
-                    TokenManagerList.updateTokenManager(tokenManager);
+                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }

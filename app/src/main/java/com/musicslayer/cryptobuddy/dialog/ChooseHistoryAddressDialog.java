@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 
 public class ChooseHistoryAddressDialog extends BaseDialog {
     CryptoAddress currentDeleteHistoryCryptoAddress;
@@ -41,7 +42,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAddressHistoryDialog)dialog).isComplete) {
-                    AddressHistory.removeAddressFromHistory(AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
+                    PersistentDataStore.getInstance(AddressHistory.class).removeAddressFromHistory(AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
                     updateLayout();
                 }
             }
@@ -56,7 +57,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             B.setText(addressHistoryObj.toString());
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 public void onClickImpl(View v) {
-                    AddressHistory.addAddressToHistory(addressHistoryObj);
+                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(addressHistoryObj);
                     user_CRYPTOADDRESS = addressHistoryObj.cryptoAddress;
 
                     isComplete = true;

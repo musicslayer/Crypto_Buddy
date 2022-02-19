@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Policy;
 
 public class PrivacyPolicyDialog extends BaseDialog {
@@ -35,7 +36,7 @@ public class PrivacyPolicyDialog extends BaseDialog {
         Button B_AGREEPRIVACYPOLICY = findViewById(R.id.privacy_policy_agreeButton);
         B_AGREEPRIVACYPOLICY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                Policy.setAgreePrivacyPolicy();
+                PersistentDataStore.getInstance(Policy.class).setAgreePrivacyPolicy();
                 dismiss();
             }
         });

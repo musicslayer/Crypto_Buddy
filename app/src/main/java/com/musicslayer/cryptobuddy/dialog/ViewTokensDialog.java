@@ -14,6 +14,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 import com.musicslayer.cryptobuddy.view.asset.TokenView;
@@ -113,7 +114,7 @@ public class ViewTokensDialog extends BaseDialog {
                     tokenManager.removeCustomToken((Token)asset);
                 }
 
-                TokenManagerList.updateTokenManager(tokenManager);
+                PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                 ((TokenManagerActivity)activity).updateLayout();
             }

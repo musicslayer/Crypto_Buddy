@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.dialog.AddTransactionDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
@@ -61,7 +62,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.transactionPortfolioObj = TransactionPortfolio.getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
+            StateObj.transactionPortfolioObj = PersistentDataStore.getInstance(TransactionPortfolio.class).getFromName(getIntent().getStringExtra("TransactionPortfolioName"));
         }
 
         Toolbar toolbar = findViewById(R.id.transaction_portfolio_explorer_toolbar);
@@ -87,7 +88,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             public void onDeleteTransaction(Table table, Transaction transaction) {
                 // Remove the transaction from the portfolio.
                 StateObj.transactionPortfolioObj.removeData(transaction);
-                TransactionPortfolio.updatePortfolio(StateObj.transactionPortfolioObj);
+                PersistentDataStore.getInstance(TransactionPortfolio.class).updatePortfolio(StateObj.transactionPortfolioObj);
             }
         });
 
@@ -97,7 +98,7 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((AddTransactionDialog)dialog).isComplete) {
                     StateObj.transactionPortfolioObj.addData(((AddTransactionDialog) dialog).user_TRANSACTION);
-                    TransactionPortfolio.updatePortfolio(StateObj.transactionPortfolioObj);
+                    PersistentDataStore.getInstance(TransactionPortfolio.class).updatePortfolio(StateObj.transactionPortfolioObj);
 
                     table.addRow(((AddTransactionDialog) dialog).user_TRANSACTION);
                 }

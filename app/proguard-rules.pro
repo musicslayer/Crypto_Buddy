@@ -15,6 +15,7 @@
 -keep public class * extends com.musicslayer.cryptobuddy.asset.network.Network
 -keep public class * extends com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager
 -keep public class * extends com.musicslayer.cryptobuddy.dialog.BaseDialog
+-keep public class * extends com.musicslayer.cryptobuddy.persistence.PersistentDataStore
 -keep public class * extends com.musicslayer.cryptobuddy.settings.category.SettingsCategory
 -keep public class * extends com.musicslayer.cryptobuddy.settings.setting.Setting
 
@@ -24,12 +25,6 @@
 }
 
 # Exportation
--keepclassmembers class * {
-    public static *** exportDataToJSON(...);
-}
--keepclassmembers class * {
-    public static *** importDataFromJSON(...);
-}
 -keepclassmembers class * {
     public static *** exportationType(...);
 }
@@ -58,15 +53,3 @@
 -keepclassmembers class * {
     public static *** serializationVersion(...);
 }
-
-# Persistence
--keepclassmembers class * {
-    public static *** canExport(...);
-}
--keepclassmembers class * {
-    public static *** getSharedPreferencesKey(...);
-}
--keepclassmembers class * {
-    public static *** resetAllData(...);
-}
-

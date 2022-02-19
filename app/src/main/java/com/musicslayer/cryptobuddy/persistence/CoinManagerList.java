@@ -8,15 +8,17 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class CoinManagerList implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class CoinManagerList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+    public String getName() { return "CoinManagerList"; }
+
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "coin_manager_data";
     }
 
-    public static void saveAllData() {
+    public void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -29,7 +31,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
     }
 
-    public static void updateCoinManager(CoinManager coinManager) {
+    public void updateCoinManager(CoinManager coinManager) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -37,7 +39,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
     }
 
-    public static CoinManager loadData(String settingsKey) {
+    public CoinManager loadData(String settingsKey) {
         // CoinManager will create empty objects, but then this method will fill them in with data.
         // If a new CoinManager is introduced later, it will still be created but will get no data from here.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -45,7 +47,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         // Only reset data stored in settings, not the TokenManager class.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -54,7 +56,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return true;
     }
 
@@ -62,7 +64,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         return "1";
     }
 
-    public static String exportDataToJSON() throws org.json.JSONException {
+    public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
@@ -89,7 +91,7 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
     }
 
 
-    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
+    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import coin managers that currently exist.
@@ -109,6 +111,6 @@ public class CoinManagerList implements Exportation.ExportableToJSON, Exportatio
         editor.apply();
 
         // Reinitialize data.
-        CoinManager.initialize();
+        initialize();
     }
 }

@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllTransactionPortfoliosDialog;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -39,7 +40,7 @@ public class DeleteAllTransactionPortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllTransactionPortfoliosDialog)dialog).isComplete) {
-                    TransactionPortfolio.resetAllData();
+                    PersistentDataStore.getInstance(TransactionPortfolio.class).resetAllData();
                     ToastUtil.showToast("reset_transaction_portfolios");
                 }
             }

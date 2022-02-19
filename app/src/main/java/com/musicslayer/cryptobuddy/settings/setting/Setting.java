@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.settings.setting;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -89,7 +90,7 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         setting_names = FileUtil.readFileIntoLines(R.raw.settings_setting);
         for(String settingName : setting_names) {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
-            Setting copySetting = SettingList.loadData(setting.getSettingsKey());
+            Setting copySetting = PersistentDataStore.getInstance(SettingList.class).loadData(setting.getSettingsKey());
 
             String optionName;
             if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashException;
-import com.musicslayer.cryptobuddy.persistence.Persistence;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.ScreenshotUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -152,7 +152,7 @@ public class CrashReporterDialog extends BaseDialog {
         resetAlertDialog.setMessage("Are you sure you want to reset ALL STORED APP DATA? This cannot be reversed.");
         resetAlertDialog.setPositiveButton("Yes", (dialog, which) -> {
             try {
-                boolean isComplete = Persistence.resetAllData();
+                boolean isComplete = PersistentDataStore.resetAllStoredData();
 
                 // Manually show toast because we do not know if the Toast database was correctly initialized.
                 // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.

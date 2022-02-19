@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -67,7 +68,7 @@ public class AddCustomCoinDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomCoinDialog)dialog).isComplete) {
                     chosenCoinManager.addCustomCoin(((ReplaceCustomCoinDialog)dialog).newCoin);
-                    CoinManagerList.updateCoinManager(chosenCoinManager);
+                    PersistentDataStore.getInstance(CoinManagerList.class).updateCoinManager(chosenCoinManager);
 
                     ToastUtil.showToast("custom_coin_added");
                     isComplete = true;
@@ -101,7 +102,7 @@ public class AddCustomCoinDialog extends BaseDialog {
 
                     if(oldCoin == null) {
                         chosenCoinManager.addCustomCoin(newCoin);
-                        CoinManagerList.updateCoinManager(chosenCoinManager);
+                        PersistentDataStore.getInstance(CoinManagerList.class).updateCoinManager(chosenCoinManager);
 
                         ToastUtil.showToast("custom_coin_added");
                         isComplete = true;

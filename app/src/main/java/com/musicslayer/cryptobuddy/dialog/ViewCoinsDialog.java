@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.view.asset.CoinView;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
@@ -105,7 +106,7 @@ public class ViewCoinsDialog extends BaseDialog {
                     coinManager.removeCustomCoin((Coin)asset);
                 }
 
-                CoinManagerList.updateCoinManager(coinManager);
+                PersistentDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
 
                 ((CoinManagerActivity)activity).updateLayout();
             }

@@ -9,13 +9,15 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 
-public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class ExchangePortfolio extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+    public String getName() { return "ExchangePortfolio"; }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
     public static ArrayList<String> settings_exchange_portfolio_names = new ArrayList<>();
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "exchange_portfolio_data";
     }
 
@@ -23,7 +25,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         return settings_exchange_portfolio_names.contains(name);
     }
 
-    public static ExchangePortfolioObj getFromName(String name) {
+    public ExchangePortfolioObj getFromName(String name) {
         if(!isSaved(name)) {
             return null;
         }
@@ -35,7 +37,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         return Serialization.deserialize(serialString, ExchangePortfolioObj.class);
     }
 
-    public static void loadAllData() {
+    public void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_exchange_portfolio_names = new ArrayList<>();
 
@@ -63,7 +65,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         }
     }
 
-    public static void addPortfolio(ExchangePortfolioObj exchangePortfolioObj) {
+    public void addPortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_exchange_portfolio_names.add(exchangePortfolioObj.name);
 
@@ -78,7 +80,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void removePortfolio(String exchangePortfolioObjName) {
+    public void removePortfolio(String exchangePortfolioObjName) {
         // Remove this portfolio, and then shift others to condense.
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObjName);
         settings_exchange_portfolio_names.remove(idx);
@@ -106,7 +108,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void updatePortfolio(ExchangePortfolioObj exchangePortfolioObj) {
+    public void updatePortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -117,7 +119,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         settings_exchange_portfolio_names = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -127,7 +129,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return true;
     }
 
@@ -135,7 +137,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         return "1";
     }
 
-    public static String exportDataToJSON() throws org.json.JSONException {
+    public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
@@ -158,7 +160,7 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
     }
 
 
-    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
+    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -181,6 +183,6 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         editor.apply();
 
         // Reinitialize data.
-        ExchangePortfolio.loadAllData();
+        loadAllData();
     }
 }

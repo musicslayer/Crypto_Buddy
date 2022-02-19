@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.MessageLengthSetting;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
@@ -50,7 +51,7 @@ public class MessageSettingsView extends SettingsView {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 setting.setSetting(pos);
                 prefText.setText(setting.chosenOptionDisplay);
-                SettingList.saveSetting(setting);
+                PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
             }
         });
 

@@ -4,14 +4,16 @@ import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class Policy {
+public class Policy extends PersistentDataStore {
+    public String getName() { return "Policy"; }
+
     public final static boolean DEFAULT_settings_privacy_policy = false;
     public static boolean settings_privacy_policy = false; // Did the user agree to the privacy policy?
 
     public final static boolean DEFAULT_settings_disclaimer = false;
     public static boolean settings_disclaimer = false; // Did the user agree to the disclaimer?
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "policy_data";
     }
 
@@ -19,7 +21,7 @@ public class Policy {
         return settings_privacy_policy && settings_disclaimer;
     }
 
-    public static void setAgreePrivacyPolicy() {
+    public void setAgreePrivacyPolicy() {
         settings_privacy_policy = true;
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -28,7 +30,7 @@ public class Policy {
         editor.apply();
     }
 
-    public static void setAgreeDisclaimer() {
+    public void setAgreeDisclaimer() {
         settings_disclaimer = true;
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -37,13 +39,13 @@ public class Policy {
         editor.apply();
     }
 
-    public static void loadAllData() {
+    public void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         settings_privacy_policy = sharedPreferences.getBoolean("privacy_policy", DEFAULT_settings_privacy_policy);
         settings_disclaimer = sharedPreferences.getBoolean("disclaimer", DEFAULT_settings_disclaimer);
     }
 
-    public static void resetAllData() {
+    public void resetAllData() {
         settings_privacy_policy = DEFAULT_settings_privacy_policy;
         settings_disclaimer = DEFAULT_settings_disclaimer;
 
@@ -54,7 +56,7 @@ public class Policy {
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return false;
     }
 }

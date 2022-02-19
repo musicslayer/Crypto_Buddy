@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -76,7 +77,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             CoinManager coinManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.coinmanager." + coinManagerName);
 
             // Use the deserialized dummy object to fill in the coins in this real one.
-            CoinManager copyCoinManager = CoinManagerList.loadData(coinManager.getSettingsKey());
+            CoinManager copyCoinManager = PersistentDataStore.getInstance(CoinManagerList.class).loadData(coinManager.getSettingsKey());
 
             // If this is a new CoinManager that wasn't previously saved, then there are no coins to add.
             if(copyCoinManager != null) {

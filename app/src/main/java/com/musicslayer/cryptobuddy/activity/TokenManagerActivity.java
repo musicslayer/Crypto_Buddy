@@ -20,6 +20,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -136,7 +137,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                         tokenManagerView.tokenManager.resetDownloadedTokens();
                         tokenManagerView.tokenManager.parseFixed(tokenJSON);
-                        TokenManagerList.updateTokenManager(tokenManagerView.tokenManager);
+                        PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
 
                         tokenManagerView.updateLayout();
                     }
@@ -177,7 +178,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                     tokenManagerView.tokenManager.resetDownloadedTokens();
                     boolean isComplete = tokenManagerView.tokenManager.parse(tokenJSONArrayList.get(i));
-                    TokenManagerList.updateTokenManager(tokenManagerView.tokenManager);
+                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
 
                     tokenManagerView.updateLayout();
                     if(!isComplete) {

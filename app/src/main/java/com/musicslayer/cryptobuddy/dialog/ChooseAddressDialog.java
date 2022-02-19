@@ -14,6 +14,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
@@ -123,7 +124,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
                     user_CRYPTOADDRESS = ((ChooseCryptoDialog)dialog).user_CRYPTOADDRESS;
 
-                    AddressHistory.addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
+                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();
@@ -151,7 +152,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);
-                    AddressHistory.addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
+                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();

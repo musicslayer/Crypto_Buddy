@@ -10,14 +10,16 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class AddressHistory implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class AddressHistory extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+    public String getName() { return "AddressHistory"; }
+
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
     final public static int HISTORY_LIMIT = 10;
 
     public static ArrayList<AddressHistoryObj> settings_address_history = new ArrayList<>();
 
-    public static String getSharedPreferencesKey() {
+    public String getSharedPreferencesKey() {
         return "address_history_data";
     }
 
@@ -25,7 +27,16 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         return settings_address_history.contains(addressHistoryObj);
     }
 
-    public static void addAddressToHistory(AddressHistoryObj addressHistoryObj) {
+    public static AddressHistoryObj getFromCryptoAddress(CryptoAddress cryptoAddress) {
+        for(AddressHistoryObj h : settings_address_history) {
+            if(cryptoAddress.equals(h.cryptoAddress)) {
+                return h;
+            }
+        }
+        return null;
+    }
+
+    public void addAddressToHistory(AddressHistoryObj addressHistoryObj) {
         if(isSaved(addressHistoryObj)) {
             settings_address_history.remove(addressHistoryObj);
             settings_address_history.add(0, addressHistoryObj);
@@ -41,12 +52,12 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         saveAllData();
     }
 
-    public static void removeAddressFromHistory(AddressHistoryObj addressHistoryObj) {
+    public void removeAddressFromHistory(AddressHistoryObj addressHistoryObj) {
         settings_address_history.remove(addressHistoryObj);
         saveAllData();
     }
 
-    public static void saveAllData() {
+    public void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -63,7 +74,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         editor.apply();
     }
 
-    public static void loadAllData() {
+    public void loadAllData() {
         settings_address_history = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -76,16 +87,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         }
     }
 
-    public static AddressHistoryObj getFromCryptoAddress(CryptoAddress cryptoAddress) {
-        for(AddressHistoryObj h : settings_address_history) {
-            if(cryptoAddress.equals(h.cryptoAddress)) {
-                return h;
-            }
-        }
-        return null;
-    }
-
-    public static void resetAllData() {
+    public void resetAllData() {
         settings_address_history = new ArrayList<>();
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -95,7 +97,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         editor.apply();
     }
 
-    public static boolean canExport() {
+    public boolean canExport() {
         return true;
     }
 
@@ -103,7 +105,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         return "1";
     }
 
-    public static String exportDataToJSON() throws org.json.JSONException {
+    public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
@@ -122,7 +124,7 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     }
 
 
-    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
+    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -141,6 +143,6 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
         editor.apply();
 
         // Reinitialize data.
-        AddressHistory.loadAllData();
+        loadAllData();
     }
 }

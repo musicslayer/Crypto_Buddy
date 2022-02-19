@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetSettingsDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ContextUtil;
@@ -44,8 +45,8 @@ public class ResetAllSettingsSettingsView extends SettingsView {
                     Setting.resetAllSettings();
 
                     // Clear out any existing data, and then make sure our recently defaulted settings are saved.
-                    SettingList.resetAllData();
-                    SettingList.saveAllSettings();
+                    PersistentDataStore.getInstance(SettingList.class).resetAllData();
+                    PersistentDataStore.getInstance(SettingList.class).saveAllSettings();
 
                     ContextUtil.getActivityFromContext(context).recreate();
                     ToastUtil.showToast("reset_settings");

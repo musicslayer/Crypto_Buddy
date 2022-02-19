@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -45,7 +46,7 @@ public class StandardSettingsView extends SettingsView {
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
                 setting.setSetting(pos);
                 prefText.setText(setting.chosenOptionDisplay);
-                SettingList.saveSetting(setting);
+                PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
             }
         });
 

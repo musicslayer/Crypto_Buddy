@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.AddressHistory;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
@@ -36,6 +37,7 @@ import java.util.Date;
 //  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
 //  Chart Explorer, Chart Portfolio
 //  Fake trades?
+//  User accounts?
 
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
@@ -61,8 +63,11 @@ public class InitialActivity extends BaseActivity {
         // Set time zone base date.
         TimeZoneManager.nowInstant = new Date().toInstant();
 
+        // Initialize the store of all other persistent data classes.
+        PersistentDataStore.initialize();
+
         // Purchases should be initialized first, as others may depend on this.
-        Purchases.loadAllPurchases();
+        PersistentDataStore.getInstance(Purchases.class).loadAllPurchases();
 
         // Initialize assets here. This will also overwrite hardcoded assets that were loaded from before.
         FiatManager.initialize();
@@ -72,7 +77,7 @@ public class InitialActivity extends BaseActivity {
         TokenManager.initialize();
         if(!Purchases.isUnlockTokensPurchased()) {
             TokenManager.resetAllTokens();
-            TokenManagerList.resetAllData();
+            PersistentDataStore.getInstance(TokenManagerList.class).resetAllData();
         }
 
         Exchange.initialize();
@@ -83,12 +88,12 @@ public class InitialActivity extends BaseActivity {
         InAppPurchase.initialize(); // Requires Purchases
         SettingsCategory.initialize();
         ToastUtil.loadAllToasts();
-        AddressHistory.loadAllData();
-        AddressPortfolio.loadAllData();
-        ExchangePortfolio.loadAllData();
-        TransactionPortfolio.loadAllData();
-        Policy.loadAllData();
-        Review.loadAllData();
+        PersistentDataStore.getInstance(AddressHistory.class).loadAllData();
+        PersistentDataStore.getInstance(AddressPortfolio.class).loadAllData();
+        PersistentDataStore.getInstance(ExchangePortfolio.class).loadAllData();
+        PersistentDataStore.getInstance(TransactionPortfolio.class).loadAllData();
+        PersistentDataStore.getInstance(Policy.class).loadAllData();
+        PersistentDataStore.getInstance(Review.class).loadAllData();
 
         // Settings should be initialized last, as this could theoretically depend on anything.
         Setting.initialize();

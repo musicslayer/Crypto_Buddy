@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
-import com.musicslayer.cryptobuddy.persistence.Persistence;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -52,16 +52,16 @@ public class DataManagementActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        ArrayList<String> dataTypes = Persistence.getAllDataTypes();
+        ArrayList<String> exportableDataTypes = PersistentDataStore.getAllExportableDataTypes();
 
         // Export to File
-        BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
         exportFile_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    String json = Persistence.exportAllToJSON(chosenDataTypes);
+                    String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
 
                     boolean isSuccess = false;
                     if(universalFolder != null) {
@@ -112,7 +112,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    Persistence.importAllFromJSON(chosenDataTypes, fileText);
+                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
                     ToastUtil.showToast("import_file_success");
                 }
             }
@@ -172,7 +172,7 @@ public class DataManagementActivity extends BaseActivity {
         }
 
         // Export to Email
-        BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
         exportEmail_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -180,7 +180,7 @@ public class DataManagementActivity extends BaseActivity {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     ArrayList<File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(chosenDataTypes)));
+                    fileArrayList.add(FileUtil.writeTempFile(PersistentDataStore.exportStoredDataToJSON(chosenDataTypes)));
                     MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
                 }
             }
@@ -196,14 +196,14 @@ public class DataManagementActivity extends BaseActivity {
         });
 
         // Export to Clipboard
-        BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+        BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
         exportClipboard_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText("export_data", Persistence.exportAllToJSON(chosenDataTypes));
+                    ClipboardUtil.exportText("export_data", PersistentDataStore.exportStoredDataToJSON(chosenDataTypes));
                 }
             }
         });
@@ -223,7 +223,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    Persistence.importAllFromJSON(chosenDataTypes, clipboardText);
+                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
                     ToastUtil.showToast("import_clipboard_success");
                 }
             }

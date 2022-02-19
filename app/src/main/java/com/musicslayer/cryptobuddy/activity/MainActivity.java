@@ -31,6 +31,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReviewDialog;
 import com.musicslayer.cryptobuddy.dialog.ShareAppDialog;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
 import com.musicslayer.cryptobuddy.persistence.Review;
@@ -415,10 +416,10 @@ public class MainActivity extends BaseActivity {
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {
                         if(((ReviewDialog)dialog).user_LATER) {
-                            Review.setReviewTime();
+                            PersistentDataStore.getInstance(Review.class).setReviewTime();
                         }
                         else {
-                            Review.disableReviewTime();
+                            PersistentDataStore.getInstance(Review.class).disableReviewTime();
                         }
                     }
                 }

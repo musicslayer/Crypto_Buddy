@@ -13,6 +13,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllAddressPortfoliosDialog;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -39,7 +40,7 @@ public class DeleteAllAddressPortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllAddressPortfoliosDialog)dialog).isComplete) {
-                    AddressPortfolio.resetAllData();
+                    PersistentDataStore.getInstance(AddressPortfolio.class).resetAllData();
                     ToastUtil.showToast("reset_address_portfolios");
                 }
             }

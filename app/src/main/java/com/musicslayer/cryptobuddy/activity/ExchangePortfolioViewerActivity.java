@@ -21,6 +21,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
+import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -64,7 +65,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
                         ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        ExchangePortfolio.addPortfolio(new ExchangePortfolioObj(name));
+                        PersistentDataStore.getInstance(ExchangePortfolio.class).addPortfolio(new ExchangePortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -92,7 +93,7 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    ExchangePortfolio.removePortfolio(currentDeletePortfolioName);
+                    PersistentDataStore.getInstance(ExchangePortfolio.class).removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }
