@@ -23,6 +23,14 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
         return "token_manager_data";
     }
 
+    public void updateTokenManager(TokenManager tokenManager) {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager, TokenManager.class));
+        editor.apply();
+    }
+
     public void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -36,12 +44,9 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
         editor.apply();
     }
 
-    public void updateTokenManager(TokenManager tokenManager) {
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager, TokenManager.class));
-        editor.apply();
+    public void loadAllData() {
+        // For now, do nothing.
+        // TODO Fill in the data for TokenManagers, and then we can decouple the classes.
     }
 
     public TokenManager loadData(String settingsKey) {
@@ -108,7 +113,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
             if(o.has(key)) {
                 String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.validate(value, TokenManager.class));
+                    editor.putString(key, Serialization.cycle(value, TokenManager.class));
                 }
             }
         }

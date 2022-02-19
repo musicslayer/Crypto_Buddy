@@ -95,6 +95,27 @@ public class AddressPortfolio extends PersistentDataStore implements Exportation
         editor.apply();
     }
 
+    public void saveAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.clear();
+
+        int size = settings_address_portfolio_names.size();
+        editor.putInt("address_portfolio_size", size);
+
+        for(int i = 0; i < size; i++) {
+            String name = settings_address_portfolio_names.get(i);
+            editor.putString("address_portfolio_names" + i, name);
+
+            // Portfolios have to be loaded and then saved again.
+            String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
+            editor.putString("address_portfolio" + i, Serialization.cycle(serialString, AddressPortfolioObj.class));
+        }
+
+        editor.apply();
+    }
+
     public void loadAllData() {
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_address_portfolio_names = new ArrayList<>();
@@ -181,7 +202,7 @@ public class AddressPortfolio extends PersistentDataStore implements Exportation
 
             String key = "address_portfolio" + i;
             String value = o.get(key, String.class);
-            editor.putString(key, Serialization.validate(value, AddressPortfolioObj.class));
+            editor.putString(key, Serialization.cycle(value, AddressPortfolioObj.class));
         }
 
         editor.apply();

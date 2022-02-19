@@ -141,7 +141,7 @@ public class AddressHistory extends PersistentDataStore implements Exportation.E
         for(int i = 0; i < size; i++) {
             String key = "address_history" + i;
             String value = o.get(key, String.class);
-            editor.putString(key, Serialization.validate(value, AddressHistoryObj.class));
+            editor.putString(key, Serialization.cycle(value, AddressHistoryObj.class));
         }
 
         editor.apply();

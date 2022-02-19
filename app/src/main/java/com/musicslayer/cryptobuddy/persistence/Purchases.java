@@ -109,7 +109,18 @@ public class Purchases extends PersistentDataStore {
         editor.apply();
     }
 
-    public void loadAllPurchases() {
+    public void saveAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean("purchases_remove_ads", isRemoveAdsPurchased);
+        editor.putBoolean("purchases_unlock_premium_features", isUnlockPremiumFeaturesPurchased);
+        editor.putInt("purchases_total_support_amount", totalSupportAmount);
+
+        editor.apply();
+    }
+
+    public void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         isRemoveAdsPurchased = sharedPreferences.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
         isUnlockPremiumFeaturesPurchased = sharedPreferences.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);

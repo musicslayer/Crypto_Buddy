@@ -44,6 +44,16 @@ public class Policy extends PersistentDataStore {
         editor.apply();
     }
 
+    public void saveAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean("privacy_policy", settings_privacy_policy);
+        editor.putBoolean("disclaimer", settings_disclaimer);
+
+        editor.apply();
+    }
+
     public void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         settings_privacy_policy = sharedPreferences.getBoolean("privacy_policy", DEFAULT_settings_privacy_policy);

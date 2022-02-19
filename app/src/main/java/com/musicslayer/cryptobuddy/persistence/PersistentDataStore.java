@@ -1,7 +1,6 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
@@ -42,6 +41,9 @@ abstract public class PersistentDataStore {
     abstract public void doImport(String s);
 
     abstract public String getSharedPreferencesKey();
+
+    abstract public void saveAllData(); // Write all local data to stored data.
+    abstract public void loadAllData(); // Read all stored data into local data.
     abstract public void resetAllData(); // Erase all stored and local data.
 
     @SuppressWarnings("unchecked")
@@ -158,13 +160,34 @@ abstract public class PersistentDataStore {
         return allDataMap;
     }
 
+    public static void saveAllStoredData() {
+        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+            try {
+                persistentDataStore.saveAllData();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        }
+    }
+
+    public static void loadAllStoredData() {
+        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+            try {
+                persistentDataStore.loadAllData();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+            }
+        }
+    }
+
     public static boolean resetAllStoredData() {
         // Resets all stored persistent data in the app. App should be just like a new install.
         boolean isComplete = true;
 
         for(PersistentDataStore persistentDataStore : persistent_data_stores) {
             try {
-                // This method should erase both active and stored data.
                 persistentDataStore.resetAllData();
             }
             catch(Exception e) {

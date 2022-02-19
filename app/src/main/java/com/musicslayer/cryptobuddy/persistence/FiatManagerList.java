@@ -22,6 +22,14 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
         return "fiat_manager_data";
     }
 
+    public void updateFiatManager(FiatManager fiatManager) {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), Serialization.serialize(fiatManager, FiatManager.class));
+        editor.apply();
+    }
+
     public void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -35,12 +43,9 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
         editor.apply();
     }
 
-    public void updateFiatManager(FiatManager fiatManager) {
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), Serialization.serialize(fiatManager, FiatManager.class));
-        editor.apply();
+    public void loadAllData() {
+        // For now, do nothing.
+        // TODO Fill in the data for FiatManagers, and then we can decouple the classes.
     }
 
     public FiatManager loadData(String settingsKey) {
@@ -107,7 +112,7 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
             if(o.has(key)) {
                 String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.validate(value, FiatManager.class));
+                    editor.putString(key, Serialization.cycle(value, FiatManager.class));
                 }
             }
         }

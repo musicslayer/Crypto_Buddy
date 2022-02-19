@@ -41,34 +41,6 @@ public class TransactionPortfolio extends PersistentDataStore implements Exporta
         return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
     }
 
-    public void loadAllData() {
-        // Only load portfolio names. Portfolios themselves are loaded when needed.
-        settings_transaction_portfolio_names = new ArrayList<>();
-
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        int size = sharedPreferences.getInt("transaction_portfolio_size", 0);
-
-        for(int i = 0; i < size; i++) {
-            String name;
-            if(sharedPreferences.contains("transaction_portfolio_names" + i)) {
-                name = sharedPreferences.getString("transaction_portfolio_names" + i, DEFAULT);
-            }
-            else {
-                // Older installations won't have the name saved.
-                // TODO To Remove!
-                String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
-                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
-                name = transactionPortfolioObj.name;
-
-                // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("transaction_portfolio_names" + i, name);
-                editor.apply();
-            }
-            settings_transaction_portfolio_names.add(name);
-        }
-    }
-
     public void addPortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_transaction_portfolio_names.add(transactionPortfolioObj.name);
@@ -121,6 +93,55 @@ public class TransactionPortfolio extends PersistentDataStore implements Exporta
         editor.putString("transaction_portfolio" + idx, Serialization.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
 
         editor.apply();
+    }
+
+    public void saveAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.clear();
+
+        int size = settings_transaction_portfolio_names.size();
+        editor.putInt("transaction_portfolio_size", size);
+
+        for(int i = 0; i < size; i++) {
+            String name = settings_transaction_portfolio_names.get(i);
+            editor.putString("transaction_portfolio_names" + i, name);
+
+            // Portfolios have to be loaded and then saved again.
+            String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
+            editor.putString("transaction_portfolio" + i, Serialization.cycle(serialString, TransactionPortfolio.class));
+        }
+
+        editor.apply();
+    }
+
+    public void loadAllData() {
+        // Only load portfolio names. Portfolios themselves are loaded when needed.
+        settings_transaction_portfolio_names = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("transaction_portfolio_size", 0);
+
+        for(int i = 0; i < size; i++) {
+            String name;
+            if(sharedPreferences.contains("transaction_portfolio_names" + i)) {
+                name = sharedPreferences.getString("transaction_portfolio_names" + i, DEFAULT);
+            }
+            else {
+                // Older installations won't have the name saved.
+                // TODO To Remove!
+                String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
+                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
+                name = transactionPortfolioObj.name;
+
+                // Save the name now so this never has to be done again.
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("transaction_portfolio_names" + i, name);
+                editor.apply();
+            }
+            settings_transaction_portfolio_names.add(name);
+        }
     }
 
     public void resetAllData() {
@@ -180,7 +201,7 @@ public class TransactionPortfolio extends PersistentDataStore implements Exporta
 
             String key = "transaction_portfolio" + i;
             String value = o.get(key, String.class);
-            editor.putString(key, Serialization.validate(value, TransactionPortfolioObj.class));
+            editor.putString(key, Serialization.cycle(value, TransactionPortfolioObj.class));
         }
 
         editor.apply();

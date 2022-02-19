@@ -14,15 +14,9 @@ import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.AddressHistory;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Policy;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.Review;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
 import com.musicslayer.cryptobuddy.settings.category.SettingsCategory;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -67,7 +61,7 @@ public class InitialActivity extends BaseActivity {
         PersistentDataStore.initialize();
 
         // Purchases should be initialized first, as others may depend on this.
-        PersistentDataStore.getInstance(Purchases.class).loadAllPurchases();
+        PersistentDataStore.getInstance(Purchases.class).loadAllData();
 
         // Initialize assets here. This will also overwrite hardcoded assets that were loaded from before.
         FiatManager.initialize();
@@ -88,15 +82,15 @@ public class InitialActivity extends BaseActivity {
         InAppPurchase.initialize(); // Requires Purchases
         SettingsCategory.initialize();
         ToastUtil.loadAllToasts();
-        PersistentDataStore.getInstance(AddressHistory.class).loadAllData();
-        PersistentDataStore.getInstance(AddressPortfolio.class).loadAllData();
-        PersistentDataStore.getInstance(ExchangePortfolio.class).loadAllData();
-        PersistentDataStore.getInstance(TransactionPortfolio.class).loadAllData();
-        PersistentDataStore.getInstance(Policy.class).loadAllData();
-        PersistentDataStore.getInstance(Review.class).loadAllData();
+
+        PersistentDataStore.loadAllStoredData();
 
         // Settings should be initialized last, as this could theoretically depend on anything.
+        // TODO Should this be before "loadAllStoredData".
         Setting.initialize();
+
+        // Save all persistent data. This makes sure stored data is initialized to something, and helps remove any outdated versions of that data.
+        PersistentDataStore.saveAllStoredData();
 
         App.isAppInitialized = true;
     }

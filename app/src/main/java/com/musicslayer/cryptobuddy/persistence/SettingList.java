@@ -30,7 +30,7 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
         editor.apply();
     }
 
-    public void saveAllSettings() {
+    public void saveAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -39,6 +39,11 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
         }
 
         editor.apply();
+    }
+
+    public void loadAllData() {
+        // For now, do nothing.
+        // TODO Fill in the data for TokenManagers, and then we can decouple the classes.
     }
 
     public Setting loadData(String settingsKey) {
@@ -93,7 +98,7 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
             if(o.has(key)) {
                 String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.validate(value, Setting.class));
+                    editor.putString(key, Serialization.cycle(value, Setting.class));
                 }
             }
         }

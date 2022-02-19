@@ -118,7 +118,7 @@ public class Serialization {
         return ReflectUtil.callStaticMethod(wrappedClass, "serializationType", version);
     }
 
-    public static <T> String validate(String s, Class<T> clazzT) {
+    public static <T> String cycle(String s, Class<T> clazzT) {
         // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
         T dummyObject = deserialize(s, clazzT);
         return serialize(dummyObject, clazzT);

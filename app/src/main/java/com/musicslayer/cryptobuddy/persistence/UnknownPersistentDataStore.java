@@ -19,6 +19,9 @@ public class UnknownPersistentDataStore extends PersistentDataStore {
     public void doImport(String s) {}
 
     public String getSharedPreferencesKey() { return null; }
+
+    public void saveAllData() {}
+    public void loadAllData() {}
     public void resetAllData() {}
 
     public static UnknownPersistentDataStore createUnknownPersistentDataStore(String key) {

@@ -41,34 +41,6 @@ public class ExchangePortfolio extends PersistentDataStore implements Exportatio
         return Serialization.deserialize(serialString, ExchangePortfolioObj.class);
     }
 
-    public void loadAllData() {
-        // Only load portfolio names. Portfolios themselves are loaded when needed.
-        settings_exchange_portfolio_names = new ArrayList<>();
-
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        int size = sharedPreferences.getInt("exchange_portfolio_size", 0);
-
-        for(int i = 0; i < size; i++) {
-            String name;
-            if(sharedPreferences.contains("exchange_portfolio_names" + i)) {
-                name = sharedPreferences.getString("exchange_portfolio_names" + i, DEFAULT);
-            }
-            else {
-                // Older installations won't have the name saved.
-                // TODO To Remove!
-                String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
-                ExchangePortfolioObj exchangePortfolioObj = Serialization.deserialize(serialString, ExchangePortfolioObj.class);
-                name = exchangePortfolioObj.name;
-
-                // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("exchange_portfolio_names" + i, name);
-                editor.apply();
-            }
-            settings_exchange_portfolio_names.add(name);
-        }
-    }
-
     public void addPortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         // Add this portfolio to the end and save data.
         settings_exchange_portfolio_names.add(exchangePortfolioObj.name);
@@ -121,6 +93,55 @@ public class ExchangePortfolio extends PersistentDataStore implements Exportatio
         editor.putString("exchange_portfolio" + idx, Serialization.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
 
         editor.apply();
+    }
+
+    public void saveAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.clear();
+
+        int size = settings_exchange_portfolio_names.size();
+        editor.putInt("exchange_portfolio_size", size);
+
+        for(int i = 0; i < size; i++) {
+            String name = settings_exchange_portfolio_names.get(i);
+            editor.putString("exchange_portfolio_names" + i, name);
+
+            // Portfolios have to be loaded and then saved again.
+            String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
+            editor.putString("exchange_portfolio" + i, Serialization.cycle(serialString, ExchangePortfolioObj.class));
+        }
+
+        editor.apply();
+    }
+
+    public void loadAllData() {
+        // Only load portfolio names. Portfolios themselves are loaded when needed.
+        settings_exchange_portfolio_names = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("exchange_portfolio_size", 0);
+
+        for(int i = 0; i < size; i++) {
+            String name;
+            if(sharedPreferences.contains("exchange_portfolio_names" + i)) {
+                name = sharedPreferences.getString("exchange_portfolio_names" + i, DEFAULT);
+            }
+            else {
+                // Older installations won't have the name saved.
+                // TODO To Remove!
+                String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
+                ExchangePortfolioObj exchangePortfolioObj = Serialization.deserialize(serialString, ExchangePortfolioObj.class);
+                name = exchangePortfolioObj.name;
+
+                // Save the name now so this never has to be done again.
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("exchange_portfolio_names" + i, name);
+                editor.apply();
+            }
+            settings_exchange_portfolio_names.add(name);
+        }
     }
 
     public void resetAllData() {
@@ -181,7 +202,7 @@ public class ExchangePortfolio extends PersistentDataStore implements Exportatio
 
             String key = "exchange_portfolio" + i;
             String value = o.get(key, String.class);
-            editor.putString(key, Serialization.validate(value, ExchangePortfolioObj.class));
+            editor.putString(key, Serialization.cycle(value, ExchangePortfolioObj.class));
         }
 
         editor.apply();

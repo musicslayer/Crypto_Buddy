@@ -46,7 +46,7 @@ public class ResetAllSettingsSettingsView extends SettingsView {
 
                     // Clear out any existing data, and then make sure our recently defaulted settings are saved.
                     PersistentDataStore.getInstance(SettingList.class).resetAllData();
-                    PersistentDataStore.getInstance(SettingList.class).saveAllSettings();
+                    PersistentDataStore.getInstance(SettingList.class).saveAllData();
 
                     ContextUtil.getActivityFromContext(context).recreate();
                     ToastUtil.showToast("reset_settings");
