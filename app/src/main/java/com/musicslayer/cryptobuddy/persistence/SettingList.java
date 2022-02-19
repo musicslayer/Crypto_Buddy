@@ -62,6 +62,10 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
         return "1";
     }
 
+    public static String exportationType(String version) {
+        return "!OBJECT!";
+    }
+
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 

@@ -43,7 +43,7 @@ abstract public class PersistentDataStore {
     @SuppressWarnings("unchecked")
     public static <T extends PersistentDataStore> T getInstance(Class<T> clazz) {
         // Subclasses have many unique methods, so use this to cast the instance.
-        PersistentDataStore instance = null;
+        PersistentDataStore instance = UnknownPersistentDataStore.createUnknownPersistentDataStore(null);
 
         for(PersistentDataStore persistentDataStore : persistent_data_stores) {
             if(clazz.isInstance(persistentDataStore)) {

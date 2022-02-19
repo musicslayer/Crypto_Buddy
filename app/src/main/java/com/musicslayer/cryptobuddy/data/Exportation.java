@@ -10,7 +10,6 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 // Note: Exportation has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 // TODO Apply this to other classes.
-// TODO Persistence Classes need exportationType.
 
 public class Exportation {
     // Keep this short because it will appear on every piece of stored data.

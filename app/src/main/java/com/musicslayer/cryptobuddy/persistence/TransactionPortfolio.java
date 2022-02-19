@@ -137,6 +137,10 @@ public class TransactionPortfolio extends PersistentDataStore implements Exporta
         return "1";
     }
 
+    public static String exportationType(String version) {
+        return "!OBJECT!";
+    }
+
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
