@@ -5,13 +5,12 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class AddressHistory implements Exportation.ExportableToJSON, Exportation.Versionable {
     // This default will cause an error when deserialized. We should never see this value used.
@@ -50,8 +49,8 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     }
 
     public static void saveAllData(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
 
@@ -69,11 +68,11 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     public static void loadAllData(Context context) {
         settings_address_history = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        int size = settings.getInt("address_history_size", 0);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("address_history_size", 0);
 
         for(int i = 0; i < size; i++) {
-            String serialString = settings.getString("address_history" + i, DEFAULT);
+            String serialString = sharedPreferences.getString("address_history" + i, DEFAULT);
             AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
             settings_address_history.add(addressHistoryObj);
         }
@@ -91,8 +90,8 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     public static void resetAllData(Context context) {
         settings_address_history = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -107,17 +106,17 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "address_history_size";
-        int size = settings.getInt(sizeKey, 0);
+        int size = sharedPreferences.getInt(sizeKey, 0);
         o.put(sizeKey, size, Integer.class);
 
         for(int i = 0; i < size; i++) {
             String key = "address_history" + i;
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
             o.put(key, serialString, String.class);
         }
 
@@ -128,8 +127,8 @@ public class AddressHistory implements Exportation.ExportableToJSON, Exportation
     public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String sizeKey = "address_history_size";
         int size = o.get(sizeKey, Integer.class);

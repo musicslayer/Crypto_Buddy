@@ -1,12 +1,10 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
@@ -57,7 +55,7 @@ public class Persistence {
         return dataTypes;
     }
 
-    public static String exportAllToJSON(Context context, ArrayList<String> dataTypes) {
+    public static String exportAllToJSON(ArrayList<String> dataTypes) {
         // Return a JSON representation of all the persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
@@ -87,7 +85,7 @@ public class Persistence {
         return o.toStringOrNull();
     }
 
-    public static void importAllFromJSON(Context context, ArrayList<String> dataTypes, String json) {
+    public static void importAllFromJSON(ArrayList<String> dataTypes, String json) {
         // Each SharedPreferences key maps to its data.
         JSONWithNull.JSONObjectWithNull o;
         try {
@@ -133,7 +131,7 @@ public class Persistence {
                 if(clazz == null) { throw new NullPointerException(); }
 
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
-                HashMap<String, String> value = getDataMap(context, key);
+                HashMap<String, String> value = SharedPreferencesUtil.getDataMap(key);
 
                 allDataMap.put(key, value);
             }
@@ -157,21 +155,6 @@ public class Persistence {
         }
 
         return allDataMap;
-    }
-
-    public static HashMap<String, String> getDataMap(Context context, String name) {
-        // Get all data inside a SharedPreferences instance as a HashMap.
-        HashMap<String, String> hashMap = new HashMap<>();
-
-        SharedPreferences settings = context.getSharedPreferences(name, MODE_PRIVATE);
-        Map<String, ?> settingsMap = settings.getAll();
-        for(String key : settingsMap.keySet()) {
-            Object value = settingsMap.get(key);
-            String valueString = value == null ? "null" : value.toString();
-            hashMap.put(key, valueString);
-        }
-
-        return hashMap;
     }
 
     public static boolean resetAllData(Context context) {

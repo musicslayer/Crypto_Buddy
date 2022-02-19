@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -10,6 +8,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class TokenManagerList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
@@ -20,8 +19,8 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
     }
 
     public static void saveAllData(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
 
@@ -33,8 +32,8 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
     }
 
     public static void updateTokenManager(Context context, TokenManager tokenManager) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager, TokenManager.class));
         editor.apply();
@@ -43,15 +42,15 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
     public static TokenManager loadData(Context context, String settingsKey) {
         // TokenManager will create empty objects, but then this method will fill them in with data.
         // If a new TokenManager is introduced later, it will still be created but will get no data from here.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        String serialString = settings.getString("token_manager_" + settingsKey, DEFAULT);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        String serialString = sharedPreferences.getString("token_manager_" + settingsKey, DEFAULT);
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, TokenManager.class);
     }
 
     public static void resetAllData(Context context) {
         // Only reset data stored in settings, not the TokenManager class.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -66,13 +65,13 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
 
             // We do not want to export downloaded tokens, so let's remove them.
             String newSerialString;
@@ -96,8 +95,8 @@ public class TokenManagerList implements Exportation.ExportableToJSON, Exportati
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import token managers that currently exist.
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();

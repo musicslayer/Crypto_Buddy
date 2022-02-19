@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -9,6 +7,7 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 
@@ -33,8 +32,8 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
 
         int idx = settings_exchange_portfolio_names.indexOf(name);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        String serialString = settings.getString("exchange_portfolio" + idx, DEFAULT);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        String serialString = sharedPreferences.getString("exchange_portfolio" + idx, DEFAULT);
         return Serialization.deserialize(serialString, ExchangePortfolioObj.class);
     }
 
@@ -42,23 +41,23 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_exchange_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        int size = settings.getInt("exchange_portfolio_size", 0);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("exchange_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
             String name;
-            if(settings.contains("exchange_portfolio_names" + i)) {
-                name = settings.getString("exchange_portfolio_names" + i, DEFAULT);
+            if(sharedPreferences.contains("exchange_portfolio_names" + i)) {
+                name = sharedPreferences.getString("exchange_portfolio_names" + i, DEFAULT);
             }
             else {
                 // Older installations won't have the name saved.
                 // TODO To Remove!
-                String serialString = settings.getString("exchange_portfolio" + i, DEFAULT);
+                String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
                 ExchangePortfolioObj exchangePortfolioObj = Serialization.deserialize(serialString, ExchangePortfolioObj.class);
                 name = exchangePortfolioObj.name;
 
                 // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = settings.edit();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("exchange_portfolio_names" + i, name);
                 editor.apply();
             }
@@ -70,8 +69,8 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         // Add this portfolio to the end and save data.
         settings_exchange_portfolio_names.add(exchangePortfolioObj.name);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         int size = settings_exchange_portfolio_names.size();
         editor.putInt("exchange_portfolio_size", size);
@@ -86,14 +85,14 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObjName);
         settings_exchange_portfolio_names.remove(idx);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        int size = settings.getInt("exchange_portfolio_size", 0);
+        int size = sharedPreferences.getInt("exchange_portfolio_size", 0);
 
         for(int i = idx; i < size - 1; i++) {
-            String serialString = settings.getString("exchange_portfolio" + (i + 1), DEFAULT);
-            String name = settings.getString("exchange_portfolio_names" + (i + 1), DEFAULT);
+            String serialString = sharedPreferences.getString("exchange_portfolio" + (i + 1), DEFAULT);
+            String name = sharedPreferences.getString("exchange_portfolio_names" + (i + 1), DEFAULT);
 
             editor.putString("exchange_portfolio" + i, serialString);
             editor.putString("exchange_portfolio_names" + i, name);
@@ -110,8 +109,8 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
     }
 
     public static void updatePortfolio(Context context, ExchangePortfolioObj exchangePortfolioObj) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObj.name);
@@ -123,8 +122,8 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
     public static void resetAllData(Context context) {
         settings_exchange_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -139,21 +138,21 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "exchange_portfolio_size";
-        int size = settings.getInt(sizeKey, 0);
+        int size = sharedPreferences.getInt(sizeKey, 0);
         o.put(sizeKey, size, Integer.class);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "exchange_portfolio_names" + i;
-            String serialNameString = settings.getString(nameKey, DEFAULT);
+            String serialNameString = sharedPreferences.getString(nameKey, DEFAULT);
             o.put(nameKey, serialNameString, String.class);
 
             String key = "exchange_portfolio" + i;
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
             o.put(key, serialString, String.class);
         }
 
@@ -164,8 +163,8 @@ public class ExchangePortfolio implements Exportation.ExportableToJSON, Exportat
     public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String sizeKey = "exchange_portfolio_size";
         int size = o.get(sizeKey, Integer.class);

@@ -61,7 +61,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    String json = Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes);
+                    String json = Persistence.exportAllToJSON(chosenDataTypes);
 
                     boolean isSuccess = false;
                     if(universalFolder != null) {
@@ -112,7 +112,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    Persistence.importAllFromJSON(activity, chosenDataTypes, fileText);
+                    Persistence.importAllFromJSON(chosenDataTypes, fileText);
                     ToastUtil.showToast(activity,"import_file_success");
                 }
             }
@@ -180,7 +180,7 @@ public class DataManagementActivity extends BaseActivity {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     ArrayList<File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes)));
+                    fileArrayList.add(FileUtil.writeTempFile(Persistence.exportAllToJSON(chosenDataTypes)));
                     MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
                 }
             }
@@ -203,7 +203,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(DataManagementActivity.this, chosenDataTypes));
+                    ClipboardUtil.exportText(DataManagementActivity.this, "export_data", Persistence.exportAllToJSON(chosenDataTypes));
                 }
             }
         });
@@ -223,7 +223,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    Persistence.importAllFromJSON(activity, chosenDataTypes, clipboardText);
+                    Persistence.importAllFromJSON(chosenDataTypes, clipboardText);
                     ToastUtil.showToast(activity,"import_clipboard_success");
                 }
             }

@@ -3,13 +3,12 @@ package com.musicslayer.cryptobuddy.persistence;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class SettingList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
@@ -20,16 +19,16 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
     }
 
     public static void saveSetting(Context context, Setting setting) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
         editor.apply();
     }
 
     public static void saveAllSettings(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         for(Setting setting : Setting.settings) {
             editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
@@ -41,15 +40,15 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
     public static Setting loadData(Context context, String settingsKey) {
         // Setting will create empty objects, but then this method will fill them in with data.
         // If a new Setting is introduced later, it will still be created but will get no data from here.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        String serialString = settings.getString("settings_" + settingsKey, DEFAULT);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        String serialString = sharedPreferences.getString("settings_" + settingsKey, DEFAULT);
 
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, Setting.class);
     }
 
     public static void resetAllData(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -64,13 +63,13 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
             o.put(key, serialString, String.class);
         }
 
@@ -82,8 +81,8 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import settings that currently exist.
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();

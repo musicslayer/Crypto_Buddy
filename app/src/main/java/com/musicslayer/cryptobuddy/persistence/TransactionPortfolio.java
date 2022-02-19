@@ -5,12 +5,11 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class TransactionPortfolio implements Exportation.ExportableToJSON, Exportation.Versionable {
     // This default will cause an error when deserialized. We should never see this value used.
@@ -33,8 +32,8 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
 
         int idx = settings_transaction_portfolio_names.indexOf(name);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        String serialString = settings.getString("transaction_portfolio" + idx, DEFAULT);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        String serialString = sharedPreferences.getString("transaction_portfolio" + idx, DEFAULT);
         return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
     }
 
@@ -42,23 +41,23 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         // Only load portfolio names. Portfolios themselves are loaded when needed.
         settings_transaction_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        int size = settings.getInt("transaction_portfolio_size", 0);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        int size = sharedPreferences.getInt("transaction_portfolio_size", 0);
 
         for(int i = 0; i < size; i++) {
             String name;
-            if(settings.contains("transaction_portfolio_names" + i)) {
-                name = settings.getString("transaction_portfolio_names" + i, DEFAULT);
+            if(sharedPreferences.contains("transaction_portfolio_names" + i)) {
+                name = sharedPreferences.getString("transaction_portfolio_names" + i, DEFAULT);
             }
             else {
                 // Older installations won't have the name saved.
                 // TODO To Remove!
-                String serialString = settings.getString("transaction_portfolio" + i, DEFAULT);
+                String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
                 TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
                 name = transactionPortfolioObj.name;
 
                 // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = settings.edit();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("transaction_portfolio_names" + i, name);
                 editor.apply();
             }
@@ -70,8 +69,8 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         // Add this portfolio to the end and save data.
         settings_transaction_portfolio_names.add(transactionPortfolioObj.name);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         int size = settings_transaction_portfolio_names.size();
         editor.putInt("transaction_portfolio_size", size);
@@ -86,14 +85,14 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObjName);
         settings_transaction_portfolio_names.remove(idx);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        int size = settings.getInt("transaction_portfolio_size", 0);
+        int size = sharedPreferences.getInt("transaction_portfolio_size", 0);
 
         for(int i = idx; i < size - 1; i++) {
-            String serialString = settings.getString("transaction_portfolio" + (i + 1), DEFAULT);
-            String name = settings.getString("transaction_portfolio_names" + (i + 1), DEFAULT);
+            String serialString = sharedPreferences.getString("transaction_portfolio" + (i + 1), DEFAULT);
+            String name = sharedPreferences.getString("transaction_portfolio_names" + (i + 1), DEFAULT);
 
             editor.putString("transaction_portfolio" + i, serialString);
             editor.putString("transaction_portfolio_names" + i, name);
@@ -110,8 +109,8 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
     }
 
     public static void updatePortfolio(Context context, TransactionPortfolioObj transactionPortfolioObj) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObj.name);
@@ -123,8 +122,8 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
     public static void resetAllData(Context context) {
         settings_transaction_portfolio_names = new ArrayList<>();
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -139,21 +138,21 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "transaction_portfolio_size";
-        int size = settings.getInt(sizeKey, 0);
+        int size = sharedPreferences.getInt(sizeKey, 0);
         o.put(sizeKey, size, Integer.class);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "transaction_portfolio_names" + i;
-            String serialNameString = settings.getString(nameKey, DEFAULT);
+            String serialNameString = sharedPreferences.getString(nameKey, DEFAULT);
             o.put(nameKey, serialNameString, String.class);
 
             String key = "transaction_portfolio" + i;
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
             o.put(key, serialString, String.class);
         }
 
@@ -164,8 +163,8 @@ public class TransactionPortfolio implements Exportation.ExportableToJSON, Expor
     public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String sizeKey = "transaction_portfolio_size";
         int size = o.get(sizeKey, Integer.class);

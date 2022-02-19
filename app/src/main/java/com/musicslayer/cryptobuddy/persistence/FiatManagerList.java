@@ -1,7 +1,5 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -10,6 +8,7 @@ import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class FiatManagerList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
@@ -20,8 +19,8 @@ public class FiatManagerList implements Exportation.ExportableToJSON, Exportatio
     }
 
     public static void saveAllData(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
 
@@ -33,8 +32,8 @@ public class FiatManagerList implements Exportation.ExportableToJSON, Exportatio
     }
 
     public static void updateFiatManager(Context context, FiatManager fiatManager) {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), Serialization.serialize(fiatManager, FiatManager.class));
         editor.apply();
@@ -43,15 +42,15 @@ public class FiatManagerList implements Exportation.ExportableToJSON, Exportatio
     public static FiatManager loadData(Context context, String settingsKey) {
         // FiatManager will create empty objects, but then this method will fill them in with data.
         // If a new FiatManager is introduced later, it will still be created but will get no data from here.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        String serialString = settings.getString("fiat_manager_" + settingsKey, DEFAULT);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        String serialString = sharedPreferences.getString("fiat_manager_" + settingsKey, DEFAULT);
         return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, FiatManager.class);
     }
 
     public static void resetAllData(Context context) {
         // Only reset data stored in settings, not the TokenManager class.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
@@ -66,13 +65,13 @@ public class FiatManagerList implements Exportation.ExportableToJSON, Exportatio
     }
 
     public static String exportDataToJSON() throws org.json.JSONException {
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
-            String serialString = settings.getString(key, DEFAULT);
+            String serialString = sharedPreferences.getString(key, DEFAULT);
 
             // We do not want to export hardcoded fiats, so let's remove them.
             String newSerialString;
@@ -96,8 +95,8 @@ public class FiatManagerList implements Exportation.ExportableToJSON, Exportatio
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import fiat managers that currently exist.
-        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
