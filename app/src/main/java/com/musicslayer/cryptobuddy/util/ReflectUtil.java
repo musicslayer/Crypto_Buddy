@@ -85,10 +85,10 @@ public class ReflectUtil {
         }
     }
 
-    public static <T> void callImportFromJSON(Class<T> clazz, Context context, String s) {
+    public static <T> void callImportFromJSON(Class<T> clazz, Context context, String s, String version) {
         try {
-            Method m = clazz.getMethod("importFromJSON1", Context.class, String.class);
-            m.invoke(null, context, s);
+            Method m = clazz.getMethod("importFromJSON", Context.class, String.class, String.class);
+            m.invoke(null, context, s, version);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);

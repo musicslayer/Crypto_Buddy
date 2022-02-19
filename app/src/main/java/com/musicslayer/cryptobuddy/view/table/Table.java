@@ -398,7 +398,7 @@ abstract public class Table extends CrashTableLayout {
         //transactionArrayList and Net Transaction Sums.
         ArrayList<Transaction> transactionArrayList = StateObj.transactionArrayList;
         s.append("\n\nTransaction Array List:\n");
-        s.append(Serialization.serializeArrayList(transactionArrayList));
+        s.append(Serialization.serializeArrayList(transactionArrayList, Transaction.class));
 
         HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
         s.append("\n\nNet Transaction Sums:");
@@ -411,7 +411,7 @@ abstract public class Table extends CrashTableLayout {
         //filteredTransactionArrayList and Net Filtered Transaction Sums.
         ArrayList<Transaction> filteredTransactionArrayList = getFilteredTransactionArrayList();
         s.append("\n\nFiltered Transaction Array List:\n");
-        s.append(Serialization.serializeArrayList(filteredTransactionArrayList));
+        s.append(Serialization.serializeArrayList(filteredTransactionArrayList, Transaction.class));
 
         HashMap<Asset, AssetAmount> netFilteredTransactionsMap = Transaction.resolveAssets(filteredTransactionArrayList);
         s.append("\n\nNet Filtered Transaction Sums:");
@@ -423,7 +423,7 @@ abstract public class Table extends CrashTableLayout {
 
         //filterArrayList
         s.append("\n\nFilter Array List:\n");
-        s.append(Serialization.serializeArrayList(filterArrayList));
+        s.append(Serialization.serializeArrayList(filterArrayList, Filter.class));
 
         //sortingColumn
         s.append("\n\nSorting Column: ").append(sortingColumn);

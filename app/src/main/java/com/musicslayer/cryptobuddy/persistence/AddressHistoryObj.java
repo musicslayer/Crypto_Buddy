@@ -24,17 +24,24 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON, Seri
         return (other instanceof AddressHistoryObj) && cryptoAddress.equals(((AddressHistoryObj) other).cryptoAddress);
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("cryptoAddress", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(cryptoAddress)))
+            .put("cryptoAddress", cryptoAddress, CryptoAddress.class)
             .toStringOrNull();
     }
 
-    public static AddressHistoryObj deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static AddressHistoryObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        CryptoAddress cryptoAddress = Serialization.deserialize(o.getJSONObjectString("cryptoAddress"), CryptoAddress.class);
+        CryptoAddress cryptoAddress = o.get("cryptoAddress", CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);
     }
 }

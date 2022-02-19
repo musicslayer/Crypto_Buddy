@@ -89,7 +89,7 @@ public class CryptoConverterDialog extends BaseDialog {
                 CryptoPrice cryptoPrice = new CryptoPrice(assetArrayList, priceFiat);
 
                 PriceData priceData = PriceData.getPriceData(cryptoPrice);
-                ProgressDialogFragment.setValue(Serialization.serialize(priceData));
+                ProgressDialogFragment.setValue(Serialization.serialize(priceData, PriceData.class));
             }
         });
 

@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -74,9 +75,8 @@ public class Persistence {
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
                 if(!dataTypes.contains(key)) { continue; }
 
-                String value = ReflectUtil.callExportToJSON(clazz, context);
-
-                o.put(key, value);
+                String value = Exportation.exportData(clazz);
+                o.put(key, value, String.class);
             }
             catch(Exception e) {
                 // If one class's data cannot be exported, skip it and do nothing.
@@ -109,8 +109,8 @@ public class Persistence {
                 String key = ReflectUtil.callStaticMethod(clazz, "getSharedPreferencesKey");
                 if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
-                String value = o.getString(key);
-                ReflectUtil.callImportFromJSON(clazz, context, value);
+                String value = o.get(key, String.class);
+                Exportation.importData(value, clazz);
             }
             catch(Exception e) {
                 // If one class's data cannot be imported, skip it and do nothing.

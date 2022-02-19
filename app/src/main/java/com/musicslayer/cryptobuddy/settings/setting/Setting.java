@@ -140,21 +140,28 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         }
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.serialize(getKey()))
-            .put("settingsKey", Serialization.serialize(getSettingsKey()))
-            .put("chosenOptionName", Serialization.serialize(chosenOptionName))
+            .put("key", getKey(), String.class)
+            .put("settingsKey", getSettingsKey(), String.class)
+            .put("chosenOptionName", chosenOptionName, String.class)
             .toStringOrNull();
     }
 
-    public static Setting deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Setting deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String settingsKey = Serialization.deserialize(o.getString("settingsKey"), String.class);
-        String chosenOptionName = Serialization.deserialize(o.getString("chosenOptionName"), String.class);
+        String key = o.get("key", String.class);
+        String settingsKey = o.get("settingsKey", String.class);
+        String chosenOptionName = o.get("chosenOptionName", String.class);
 
         // This is a dummy object that only has to hold onto the data.
         Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);

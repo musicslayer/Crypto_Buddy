@@ -81,7 +81,7 @@ public class ExchangeInfoDialog extends BaseDialog {
 
                 PriceData newPriceData = PriceData.getPriceData(cryptoPrice);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newPriceData));
+                ProgressDialogFragment.setValue(Serialization.serialize(newPriceData, PriceData.class));
             }
         });
 

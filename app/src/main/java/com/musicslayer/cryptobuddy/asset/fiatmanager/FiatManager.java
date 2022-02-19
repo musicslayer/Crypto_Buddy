@@ -400,47 +400,78 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String serializationVersion() { return "2"; }
+    public static String serializationVersion() {
+        return "2";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.serialize(getKey()))
-            .put("fiat_type", Serialization.serialize(getFiatType()))
-            .put("hardcoded_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(hardcoded_fiats)))
-            .put("found_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(found_fiats)))
-            .put("custom_fiats", new JSONWithNull.JSONArrayWithNull(Serialization.fiat_serializeArrayList(custom_fiats)))
+            .put("key", getKey(), String.class)
+            .put("fiat_type", getFiatType(), String.class)
+            .putArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
+            .putArrayList("found_fiats", found_fiats, Fiat.class)
+            .putArrayList("custom_fiats", custom_fiats, Fiat.class)
             .toStringOrNull();
     }
 
-    public static FiatManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
-        ArrayList<Fiat> hardcoded_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("hardcoded_fiats"));
-        ArrayList<Fiat> found_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("found_fiats"));
-        ArrayList<Fiat> custom_fiats = fiat_deserializeArrayList1(o.getJSONArrayString("custom_fiats"));
+    public static FiatManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+        FiatManager fiatManager;
 
-        // This is a dummy object that only has to hold onto the fiat array lists.
-        // We don't need to call the proper add* methods here.
-        FiatManager fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
-        fiatManager.hardcoded_fiats = hardcoded_fiats;
-        fiatManager.found_fiats = found_fiats;
-        fiatManager.custom_fiats = custom_fiats;
+        if("2".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String fiat_type = o.get("fiat_type", String.class);
+            ArrayList<Fiat> hardcoded_fiats = o.getArrayList("hardcoded_fiats", Fiat.class);
+            ArrayList<Fiat> found_fiats = o.getArrayList("found_fiats", Fiat.class);
+            ArrayList<Fiat> custom_fiats = o.getArrayList("custom_fiats", Fiat.class);
+
+            // This is a dummy object that only has to hold onto the fiat array lists.
+            // We don't need to call the proper add* methods here.
+            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
+            fiatManager.hardcoded_fiats = hardcoded_fiats;
+            fiatManager.found_fiats = found_fiats;
+            fiatManager.custom_fiats = custom_fiats;
+        }
+        else if("1".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String fiat_type = o.get("fiat_type", String.class);
+
+            // We have to manually deserialize this legacy data.
+            ArrayList<Fiat> hardcoded_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
+            ArrayList<Fiat> found_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("found_fiats"));
+            ArrayList<Fiat> custom_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("custom_fiats"));
+
+            // This is a dummy object that only has to hold onto the fiat array lists.
+            // We don't need to call the proper add* methods here.
+            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
+            fiatManager.hardcoded_fiats = hardcoded_fiats;
+            fiatManager.found_fiats = found_fiats;
+            fiatManager.custom_fiats = custom_fiats;
+        }
+        else {
+            throw new IllegalStateException();
+        }
 
         return fiatManager;
     }
 
-    public static Fiat fiat_deserialize1(String s) {
+    public static Fiat legacy_fiat_deserialize(String s) {
         if(s == null) { return null; }
 
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.deserialize(o.getString("key"), String.class);
-            String name = Serialization.deserialize(o.getString("name"), String.class);
-            String display_name = Serialization.deserialize(o.getString("display_name"), String.class);
-            int scale = Serialization.deserialize(o.getString("scale"), Integer.class);
-            String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
+            String key = o.get("key", String.class);
+            String name = o.get("name", String.class);
+            String display_name = o.get("display_name", String.class);
+            int scale = o.get("scale", Integer.class);
+            String fiat_type = o.get("fiat_type", String.class);
 
             return Fiat.buildFiat(key, name, display_name, scale, fiat_type);
         }
@@ -450,7 +481,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         }
     }
 
-    public static ArrayList<Fiat> fiat_deserializeArrayList1(String s) {
+    public static ArrayList<Fiat> legacy_fiat_deserializeArrayList(String s) {
         if(s == null) { return null; }
 
         try {
@@ -459,7 +490,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
-                arrayList.add(fiat_deserialize1(o));
+                arrayList.add(legacy_fiat_deserialize(o));
             }
 
             return arrayList;
@@ -468,23 +499,5 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
-    }
-
-    public static FiatManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String fiat_type = Serialization.deserialize(o.getString("fiat_type"), String.class);
-        ArrayList<Fiat> hardcoded_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
-        ArrayList<Fiat> found_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("found_fiats"));
-        ArrayList<Fiat> custom_fiats = Serialization.fiat_deserializeArrayList(o.getJSONArrayString("custom_fiats"));
-
-        // This is a dummy object that only has to hold onto the fiat array lists.
-        // We don't need to call the proper add* methods here.
-        FiatManager fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
-        fiatManager.hardcoded_fiats = hardcoded_fiats;
-        fiatManager.found_fiats = found_fiats;
-        fiatManager.custom_fiats = custom_fiats;
-
-        return fiatManager;
     }
 }

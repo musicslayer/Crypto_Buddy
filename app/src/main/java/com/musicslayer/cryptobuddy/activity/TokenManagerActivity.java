@@ -89,7 +89,7 @@ public class TokenManagerActivity extends BaseActivity {
                 ProgressDialogFragment.updateProgressTitle("Downloading All Tokens...");
 
                 String tokenAllJSON = WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenAllJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenAllJSON, String.class));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -162,7 +162,7 @@ public class TokenManagerActivity extends BaseActivity {
                     tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(tokenJSONArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(tokenJSONArrayList, String.class));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {

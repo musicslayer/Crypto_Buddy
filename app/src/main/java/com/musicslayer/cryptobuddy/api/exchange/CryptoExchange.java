@@ -87,19 +87,26 @@ public class CryptoExchange implements Serialization.SerializableToJSON, Seriali
         return "Exchange: " + exchange.toString() + "\nExchangeAPI: " + exchangeAPI.toString() + "\n" + exchangeAPI.getAuthorizationInfo();
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("exchange", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchange)))
-            .put("exchangeAPI", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI)))
+            .put("exchange", exchange, Exchange.class)
+            .put("exchangeAPI", exchangeAPI, ExchangeAPI.class)
             .toStringOrNull();
     }
 
-    public static CryptoExchange deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static CryptoExchange deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Exchange exchange = Serialization.deserialize(o.getJSONObjectString("exchange"), Exchange.class);
-        ExchangeAPI exchangeAPI = Serialization.deserialize(o.getJSONObjectString("exchangeAPI"), ExchangeAPI.class);
+        Exchange exchange = o.get("exchange", Exchange.class);
+        ExchangeAPI exchangeAPI = o.get("exchangeAPI", ExchangeAPI.class);
         return new CryptoExchange(exchange, exchangeAPI);
     }
 }

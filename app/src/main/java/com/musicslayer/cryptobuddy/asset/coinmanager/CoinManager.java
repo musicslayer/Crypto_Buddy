@@ -400,48 +400,79 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public String serializationVersion() { return "2"; }
+    public static String serializationVersion() {
+        return "2";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.serialize(getKey()))
-            .put("coin_type", Serialization.serialize(getCoinType()))
-            .put("hardcoded_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(hardcoded_coins)))
-            .put("found_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(found_coins)))
-            .put("custom_coins", new JSONWithNull.JSONArrayWithNull(Serialization.coin_serializeArrayList(custom_coins)))
+            .put("key", getKey(), String.class)
+            .put("coin_type", getCoinType(), String.class)
+            .putArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
+            .putArrayList("found_coins", found_coins, Coin.class)
+            .putArrayList("custom_coins", custom_coins, Coin.class)
             .toStringOrNull();
     }
 
-    public static CoinManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String coin_type = Serialization.deserialize(o.getString("coin_type"), String.class);
-        ArrayList<Coin> hardcoded_coins = coin_deserializeArrayList1(o.getJSONArrayString("hardcoded_coins"));
-        ArrayList<Coin> found_coins = coin_deserializeArrayList1(o.getJSONArrayString("found_coins"));
-        ArrayList<Coin> custom_coins = coin_deserializeArrayList1(o.getJSONArrayString("custom_coins"));
+    public static CoinManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+        CoinManager coinManager;
 
-        // This is a dummy object that only has to hold onto the coin array lists.
-        // We don't need to call the proper add* methods here.
-        CoinManager coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
-        coinManager.hardcoded_coins = hardcoded_coins;
-        coinManager.found_coins = found_coins;
-        coinManager.custom_coins = custom_coins;
+        if("2".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String coin_type = o.get("coin_type", String.class);
+            ArrayList<Coin> hardcoded_coins = o.getArrayList("hardcoded_coins", Coin.class);
+            ArrayList<Coin> found_coins = o.getArrayList("found_coins", Coin.class);
+            ArrayList<Coin> custom_coins = o.getArrayList("custom_coins", Coin.class);
+
+            // This is a dummy object that only has to hold onto the coin array lists.
+            // We don't need to call the proper add* methods here.
+            coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
+            coinManager.hardcoded_coins = hardcoded_coins;
+            coinManager.found_coins = found_coins;
+            coinManager.custom_coins = custom_coins;
+        }
+        else if("1".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String coin_type = o.get("coin_type", String.class);
+
+            // We have to manually deserialize this legacy data.
+            ArrayList<Coin> hardcoded_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
+            ArrayList<Coin> found_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("found_coins"));
+            ArrayList<Coin> custom_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("custom_coins"));
+
+            // This is a dummy object that only has to hold onto the coin array lists.
+            // We don't need to call the proper add* methods here.
+            coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
+            coinManager.hardcoded_coins = hardcoded_coins;
+            coinManager.found_coins = found_coins;
+            coinManager.custom_coins = custom_coins;
+        }
+        else {
+            throw new IllegalStateException();
+        }
 
         return coinManager;
     }
 
-    public static Coin coin_deserialize1(String s) {
+    public static Coin legacy_coin_deserialize(String s) {
         if(s == null) { return null; }
 
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.deserialize(o.getString("key"), String.class);
-            String name = Serialization.deserialize(o.getString("name"), String.class);
-            String display_name = Serialization.deserialize(o.getString("display_name"), String.class);
-            int scale = Serialization.deserialize(o.getString("scale"), Integer.class);
-            String id = Serialization.deserialize(o.getString("id"), String.class);
-            String coin_type = Serialization.deserialize(o.getString("coin_type"), String.class);
+            String key = o.get("key", String.class);
+            String name = o.get("name", String.class);
+            String display_name = o.get("display_name", String.class);
+            int scale = o.get("scale", Integer.class);
+            String id = o.get("id", String.class);
+            String coin_type = o.get("coin_type", String.class);
 
             return Coin.buildCoin(key, name, display_name, scale, coin_type, id);
         }
@@ -451,7 +482,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         }
     }
 
-    public static ArrayList<Coin> coin_deserializeArrayList1(String s) {
+    public static ArrayList<Coin> legacy_coin_deserializeArrayList(String s) {
         if(s == null) { return null; }
 
         try {
@@ -460,7 +491,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
-                arrayList.add(coin_deserialize1(o));
+                arrayList.add(legacy_coin_deserialize(o));
             }
 
             return arrayList;
@@ -469,23 +500,5 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
-    }
-
-    public static CoinManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String coin_type = Serialization.deserialize(o.getString("coin_type"), String.class);
-        ArrayList<Coin> hardcoded_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
-        ArrayList<Coin> found_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("found_coins"));
-        ArrayList<Coin> custom_coins = Serialization.coin_deserializeArrayList(o.getJSONArrayString("custom_coins"));
-
-        // This is a dummy object that only has to hold onto the coin array lists.
-        // We don't need to call the proper add* methods here.
-        CoinManager coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
-        coinManager.hardcoded_coins = hardcoded_coins;
-        coinManager.found_coins = found_coins;
-        coinManager.custom_coins = custom_coins;
-
-        return coinManager;
     }
 }

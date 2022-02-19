@@ -5,11 +5,13 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
-public class CoinManagerList {
+public class CoinManagerList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
@@ -24,7 +26,7 @@ public class CoinManagerList {
         editor.clear();
 
         for(CoinManager coinManager : CoinManager.coinManagers) {
-            editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager));
+            editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager, CoinManager.class));
         }
 
         editor.apply();
@@ -34,7 +36,7 @@ public class CoinManagerList {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager));
+        editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager, CoinManager.class));
         editor.apply();
     }
 
@@ -55,12 +57,16 @@ public class CoinManagerList {
         editor.apply();
     }
 
-    //public String exportVersion() { return "1"; }
+    public static boolean canExport() {
+        return true;
+    }
 
-    public static boolean canExport() { return true; }
+    public String exportationVersion() {
+        return "1";
+    }
 
-    public static String exportToJSON(Context context) throws org.json.JSONException {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+    public static String exportDataToJSON() throws org.json.JSONException {
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
@@ -72,31 +78,31 @@ public class CoinManagerList {
             String newSerialString;
             try {
                 JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
-                oldJSON.put("hardcoded_coins", new JSONWithNull.JSONArrayWithNull());
+                oldJSON.putJSONArray("hardcoded_coins", new JSONWithNull.JSONArrayWithNull());
                 newSerialString = oldJSON.toStringOrNull();
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
             }
 
-            o.put(key, newSerialString);
+            o.put(key, newSerialString, String.class);
         }
 
         return o.toStringOrNull();
     }
 
 
-    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import coin managers that currently exist.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String key = "coin_manager_" + coinManager.getSettingsKey();
             if(o.has(key)) {
-                String value = o.getString(key);
+                String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
                     editor.putString(key, Serialization.validate(value, CoinManager.class));
                 }
@@ -106,6 +112,6 @@ public class CoinManagerList {
         editor.apply();
 
         // Reinitialize data.
-        CoinManager.initialize(context);
+        CoinManager.initialize(App.applicationContext);
     }
 }

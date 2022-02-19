@@ -60,7 +60,7 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getFixedJSON();
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON, String.class));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -93,7 +93,7 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getJSON();
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON));
+                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON, String.class));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {

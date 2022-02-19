@@ -7,10 +7,12 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
-public class AddressPortfolio {
+public class AddressPortfolio implements Exportation.ExportableToJSON, Exportation.Versionable {
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
 
@@ -73,7 +75,7 @@ public class AddressPortfolio {
 
         int size = settings_address_portfolio_names.size();
         editor.putInt("address_portfolio_size", size);
-        editor.putString("address_portfolio" + (size - 1), Serialization.serialize(addressPortfolioObj));
+        editor.putString("address_portfolio" + (size - 1), Serialization.serialize(addressPortfolioObj, AddressPortfolioObj.class));
         editor.putString("address_portfolio_names" + (size - 1), addressPortfolioObj.name);
 
         editor.apply();
@@ -113,7 +115,7 @@ public class AddressPortfolio {
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
-        editor.putString("address_portfolio" + idx, Serialization.serialize(addressPortfolioObj));
+        editor.putString("address_portfolio" + idx, Serialization.serialize(addressPortfolioObj, AddressPortfolioObj.class));
 
         editor.apply();
     }
@@ -128,56 +130,60 @@ public class AddressPortfolio {
         editor.apply();
     }
 
-    //public String exportVersion() { return "1"; }
+    public static boolean canExport() {
+        return true;
+    }
 
-    public static boolean canExport() { return true; }
+    public String exportationVersion() {
+        return "1";
+    }
 
-    public static String exportToJSON(Context context) throws org.json.JSONException {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+    public static String exportDataToJSON() throws org.json.JSONException {
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         String sizeKey = "address_portfolio_size";
         int size = settings.getInt(sizeKey, 0);
-        o.put(sizeKey, Serialization.serialize(size));
+        o.put(sizeKey, size, Integer.class);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "address_portfolio_names" + i;
             String serialNameString = settings.getString(nameKey, DEFAULT);
-            o.put(nameKey, serialNameString);
+            o.put(nameKey, serialNameString, String.class);
 
             String key = "address_portfolio" + i;
             String serialString = settings.getString(key, DEFAULT);
-            o.put(key, serialString);
+            o.put(key, serialString, String.class);
         }
 
         return o.toStringOrNull();
     }
 
 
-    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         String sizeKey = "address_portfolio_size";
-        int size = Serialization.deserialize(o.getString(sizeKey), Integer.class);
+        int size = o.get(sizeKey, Integer.class);
         editor.putInt(sizeKey, size);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "address_portfolio_names" + i;
-            String nameValue = o.getString(nameKey);
+            String nameValue = o.get(nameKey, String.class);
             editor.putString(nameKey, nameValue);
 
             String key = "address_portfolio" + i;
-            String value = o.getString(key);
+            String value = o.get(key, String.class);
             editor.putString(key, Serialization.validate(value, AddressPortfolioObj.class));
         }
 
         editor.apply();
 
         // Reinitialize data.
-        AddressPortfolio.loadAllData(context);
+        AddressPortfolio.loadAllData(App.applicationContext);
     }
 }

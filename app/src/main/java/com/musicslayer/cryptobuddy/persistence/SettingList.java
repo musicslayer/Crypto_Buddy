@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import com.musicslayer.cryptobuddy.app.App;
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
-import com.musicslayer.cryptobuddy.util.ContextUtil;
 
-public class SettingList {
+public class SettingList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
@@ -22,7 +23,7 @@ public class SettingList {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting));
+        editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
         editor.apply();
     }
 
@@ -31,7 +32,7 @@ public class SettingList {
         SharedPreferences.Editor editor = settings.edit();
 
         for(Setting setting : Setting.settings) {
-            editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting));
+            editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
         }
 
         editor.apply();
@@ -54,37 +55,40 @@ public class SettingList {
         editor.apply();
     }
 
-    // TODO New interface???
-    //public String exportationVersion() { return "1"; }
+    public static boolean canExport() {
+        return true;
+    }
 
-    public static boolean canExport() { return true; }
+    public String exportationVersion() {
+        return "1";
+    }
 
-    public static String exportToJSON(Context context) throws org.json.JSONException {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+    public static String exportDataToJSON() throws org.json.JSONException {
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
             String serialString = settings.getString(key, DEFAULT);
-            o.put(key, serialString);
+            o.put(key, serialString, String.class);
         }
 
         return o.toStringOrNull();
     }
 
 
-    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import settings that currently exist.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
             if(o.has(key)) {
-                String value = o.getString(key);
+                String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
                     editor.putString(key, Serialization.validate(value, Setting.class));
                 }
@@ -94,7 +98,9 @@ public class SettingList {
         editor.apply();
 
         // Reinitialize data. Some settings need to recreate the activity, so do it unconditionally just to be safe.
-        Setting.initialize(context);
-        ContextUtil.getActivityFromContext(context).recreate();
+        Setting.initialize(App.applicationContext);
+
+        // TODO How to get the real activity.
+        //ContextUtil.getActivityFromContext(context).recreate();
     }
 }

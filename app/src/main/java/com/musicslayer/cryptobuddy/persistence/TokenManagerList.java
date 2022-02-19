@@ -5,11 +5,13 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
-public class TokenManagerList {
+public class TokenManagerList implements Exportation.ExportableToJSON, Exportation.Versionable {
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
 
@@ -24,7 +26,7 @@ public class TokenManagerList {
         editor.clear();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager));
+            editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager, TokenManager.class));
         }
 
         editor.apply();
@@ -34,7 +36,7 @@ public class TokenManagerList {
         SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager));
+        editor.putString("token_manager_" + tokenManager.getSettingsKey(), Serialization.serialize(tokenManager, TokenManager.class));
         editor.apply();
     }
 
@@ -55,12 +57,16 @@ public class TokenManagerList {
         editor.apply();
     }
 
-    //public String exportVersion() { return "1"; }
+    public static boolean canExport() {
+        return true;
+    }
 
-    public static boolean canExport() { return true; }
+    public String exportationVersion() {
+        return "1";
+    }
 
-    public static String exportToJSON(Context context) throws org.json.JSONException {
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+    public static String exportDataToJSON() throws org.json.JSONException {
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
 
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
@@ -72,31 +78,31 @@ public class TokenManagerList {
             String newSerialString;
             try {
                 JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
-                oldJSON.put("downloaded_tokens", new JSONWithNull.JSONArrayWithNull());
+                oldJSON.putJSONArray("downloaded_tokens", new JSONWithNull.JSONArrayWithNull());
                 newSerialString = oldJSON.toStringOrNull();
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
             }
 
-            o.put(key, newSerialString);
+            o.put(key, newSerialString, String.class);
         }
 
         return o.toStringOrNull();
     }
 
 
-    public static void importFromJSON1(Context context, String s) throws org.json.JSONException {
+    public static void importDataFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
 
         // Only import token managers that currently exist.
-        SharedPreferences settings = context.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
+        SharedPreferences settings = App.applicationContext.getSharedPreferences(getSharedPreferencesKey(), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
             if(o.has(key)) {
-                String value = o.getString(key);
+                String value = o.get(key, String.class);
                 if(!DEFAULT.equals(value)) {
                     editor.putString(key, Serialization.validate(value, TokenManager.class));
                 }
@@ -106,6 +112,6 @@ public class TokenManagerList {
         editor.apply();
 
         // Reinitialize data.
-        TokenManager.initialize(context);
+        TokenManager.initialize(App.applicationContext);
     }
 }

@@ -23,8 +23,8 @@ import java.util.ArrayList;
 public class UniversalFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(Serialization.serialize(file));
-        out.writeString(Serialization.serialize(documentFile));
+        out.writeString(Serialization.serialize(file, File.class));
+        out.writeString(Serialization.serialize(documentFile, DocumentFile.class));
     }
 
     public static final Parcelable.Creator<UniversalFile> CREATOR = new Parcelable.Creator<UniversalFile>() {

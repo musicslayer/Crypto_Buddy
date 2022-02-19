@@ -279,25 +279,32 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
         HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("action", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(action)))
-            .put("actionedAssetQuantity", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(actionedAssetQuantity)))
-            .put("otherAssetQuantity", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(otherAssetQuantity)))
-            .put("timestamp", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp)))
-            .put("info", Serialization.serialize(info))
+            .put("action", action, Action.class)
+            .put("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
+            .put("otherAssetQuantity", otherAssetQuantity, AssetQuantity.class)
+            .put("timestamp", timestamp, Timestamp.class)
+            .put("info", info, String.class)
             .toStringOrNull();
     }
 
-    public static Transaction deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Transaction deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Action action = Serialization.deserialize(o.getJSONObjectString("action"), Action.class);
-        AssetQuantity actionedAssetQuantity = Serialization.deserialize(o.getJSONObjectString("actionedAssetQuantity"), AssetQuantity.class);
-        AssetQuantity otherAssetQuantity = Serialization.deserialize(o.getJSONObjectString("otherAssetQuantity"), AssetQuantity.class);
-        Timestamp timestamp = Serialization.deserialize(o.getJSONObjectString("timestamp"), Timestamp.class);
-        String info = Serialization.deserialize(o.getString("info"), String.class);
+        Action action = o.get("action", Action.class);
+        AssetQuantity actionedAssetQuantity = o.get("actionedAssetQuantity", AssetQuantity.class);
+        AssetQuantity otherAssetQuantity = o.get("otherAssetQuantity", AssetQuantity.class);
+        Timestamp timestamp = o.get("timestamp", Timestamp.class);
+        String info = o.get("info", String.class);
         return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }
 }

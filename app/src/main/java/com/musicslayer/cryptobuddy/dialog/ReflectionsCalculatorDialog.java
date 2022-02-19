@@ -131,7 +131,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(activity);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(reflectionsAddressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(reflectionsAddressData, AddressData.class));
             }
         });
         reflectionsProgressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {

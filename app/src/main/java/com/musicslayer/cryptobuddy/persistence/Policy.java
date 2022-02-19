@@ -55,5 +55,7 @@ public class Policy {
         editor.apply();
     }
 
-    public static boolean canExport() { return false; }
+    public static boolean canExport() {
+        return false;
+    }
 }

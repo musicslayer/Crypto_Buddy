@@ -65,7 +65,7 @@ public class CryptoPricesDialog extends BaseDialog {
                 CryptoPrice cryptoPrice = new CryptoPrice(assetArrayList, priceFiat);
 
                 PriceData priceData = PriceData.getAllData(cryptoPrice);
-                ProgressDialogFragment.setValue(Serialization.serialize(priceData));
+                ProgressDialogFragment.setValue(Serialization.serialize(priceData, PriceData.class));
             }
         });
 

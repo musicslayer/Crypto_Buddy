@@ -42,17 +42,24 @@ public class Timestamp implements Serialization.SerializableToJSON, Serializatio
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("date", Serialization.serialize(date))
+            .put("date", date, Date.class)
             .toStringOrNull();
     }
 
-    public static Timestamp deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Timestamp deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Date date = Serialization.deserialize(o.getString("date"), Date.class);
+        Date date = o.get("date", Date.class);
         return new Timestamp(date);
     }
 }

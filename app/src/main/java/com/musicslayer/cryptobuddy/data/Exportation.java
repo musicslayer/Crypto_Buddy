@@ -9,46 +9,48 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 // Note: Exportation has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
+// TODO Apply this to other classes.
+
 public class Exportation {
     // Keep this short because it will appear on every piece of stored data.
     public final static String EXPORTATION_VERSION_MARKER = "!V!";
 
     // Any class implementing this can be exported and imported with JSON.
     public interface ExportableToJSON {
-        // "exportDataToJSON" is always assumed to be the latest version for that class.
-        String exportDataToJSON() throws org.json.JSONException;
-
-        // Classes also need to implement a static method "importDataFromJSON".
+        // Classes also need to implement static methods "exportDataToJSON", "importDataFromJSON", and "exportationType".
     }
 
     // Any class implementing this supports versioning.
     // This is needed when saving data that may be loaded in a different release.
     public interface Versionable {
-        // Can be different for every individual class that implements this interface.
-        String exportationVersion();
-
-        // Classes also need to implement a static method "importDataFromJSON" + VERSION for each version they support.
+        // Classes also need to implement a static method "exportationVersion"
     }
 
-    // Methods for objects that implement "ExportableToJSON".
-    public static <T extends ExportableToJSON> String exportData(T obj) {
-        if(obj == null) { return null; }
-
+    // Exporting is a static process, so we do not need an object.
+    public static <T> String exportData(Class<T> clazzT) {
         String s;
         try {
-            s = obj.exportDataToJSON();
+            s = ReflectUtil.callStaticMethod(clazzT, "exportDataToJSON");
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
 
-        if(obj instanceof Versionable) {
+        // TODO Use clazz instead of object.
+        //if(wrappedObj instanceof Versionable) {
+        if(false) {
             // Add the version to every individual object that we serialize, or error if we cannot.
+            // Currently, only type !OBJECT! supports a version marker.
             try {
-                JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-                o.put(EXPORTATION_VERSION_MARKER, ((Versionable)obj).exportationVersion());
-                s = o.toStringOrNull();
+                String version = Exportation.getVersion(clazzT);
+                String type = Exportation.getType(clazzT);
+
+                if("!OBJECT!".equals(type)) {
+                    JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+                    o.put(EXPORTATION_VERSION_MARKER, version, String.class);
+                    s = o.toStringOrNull();
+                }
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
@@ -59,31 +61,49 @@ public class Exportation {
         return s;
     }
 
-    public static <T extends ExportableToJSON> void importData(String s, Class<T> clazzT) {
+    // Importing does not return anything. The class itself must store the data appropriately.
+    public static <T> void importData(String s, Class<T> clazzT) {
         if(s == null) { return; }
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
 
-        // First try to get the version number. If none is present, then the data was not versioned.
         String version;
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            version = o.getString(EXPORTATION_VERSION_MARKER);
+            version = o.get(EXPORTATION_VERSION_MARKER, String.class);
         }
-        catch(Exception e) {
-            version = null;
+        catch(Exception ignored) {
+            // If there is no version, just call it "version zero".
+            version = "0";
         }
 
-        // Call the appropriate deserialization method for the version number.
         try {
-            if(version == null) {
-                ReflectUtil.callStaticMethod(clazzT, "importDataFromJSON", s);
-            }
-            else {
-                ReflectUtil.callStaticMethod(clazzT, "importDataFromJSON" + version, s);
-            }
+            ReflectUtil.callStaticMethod(wrappedClass, "importDataFromJSON", s, version);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> String getVersion(Class<T> clazz) {
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
+        return ReflectUtil.callStaticMethod(wrappedClass, "exportationVersion");
+    }
+
+    public static <T> String getType(Class<T> clazz) {
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
+        return ReflectUtil.callStaticMethod(wrappedClass, "exportationType");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Class<? extends ExportableToJSON> wrapClass(Class<?> clazz) {
+        // Converts an arbitrary class into a ExportableToJSON class.
+        if(ExportableToJSON.class.isAssignableFrom(clazz)) {
+            return (Class<? extends ExportableToJSON>)clazz;
+        }
+        else {
+            // Anything else is unsupported.
+            throw new IllegalStateException();
         }
     }
 }

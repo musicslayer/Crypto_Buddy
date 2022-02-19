@@ -14,16 +14,16 @@ public class DateFilter extends Filter {
 
     public String serializeToJSON_sub() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("filterType", Serialization.serialize(getFilterType()))
-            .put("user_startDate", Serialization.serialize(user_startDate))
-            .put("user_endDate", Serialization.serialize(user_endDate))
+            .put("filterType", getFilterType(), String.class)
+            .put("user_startDate", user_startDate, Date.class)
+            .put("user_endDate", user_endDate, Date.class)
             .toStringOrNull();
     }
 
     public static DateFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Date user_startDate = Serialization.deserialize(o.getString("user_startDate"), Date.class);
-        Date user_endDate = Serialization.deserialize(o.getString("user_endDate"), Date.class);
+        Date user_startDate = o.get("user_startDate", Date.class);
+        Date user_endDate = o.get("user_endDate", Date.class);
 
         DateFilter dateFilter = new DateFilter();
         dateFilter.user_startDate = user_startDate;

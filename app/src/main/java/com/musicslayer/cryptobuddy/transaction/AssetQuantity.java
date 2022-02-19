@@ -75,19 +75,26 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
         Collections.sort(assetQuantityArrayList, (a, b) -> compare(a, b));
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("assetAmount", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(assetAmount)))
-            .put("asset", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(asset)))
+            .put("assetAmount", assetAmount, AssetAmount.class)
+            .put("asset", asset, Asset.class)
             .toStringOrNull();
     }
 
-    public static AssetQuantity deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static AssetQuantity deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        AssetAmount assetAmount = Serialization.deserialize(o.getJSONObjectString("assetAmount"), AssetAmount.class);
-        Asset asset = Serialization.deserialize(o.getJSONObjectString("asset"), Asset.class);
+        AssetAmount assetAmount = o.get("assetAmount", AssetAmount.class);
+        Asset asset = o.get("asset", Asset.class);
         return new AssetQuantity(assetAmount, asset);
     }
 }

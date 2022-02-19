@@ -42,13 +42,18 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     // Each subclass is serialized and deserialized differently.
     abstract public String serializeToJSON_sub() throws org.json.JSONException;
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return serializeToJSON_sub();
     }
 
-    public static Filter deserializeFromJSON(String s) throws org.json.JSONException {
+    public static Filter deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String filterType = Serialization.deserialize(o.getString("filterType"), String.class);
+        String filterType = o.get("filterType", String.class);
         if("!DISCRETE!".equals(filterType)) {
             return DiscreteFilter.deserializeFromJSON_sub(s);
         }

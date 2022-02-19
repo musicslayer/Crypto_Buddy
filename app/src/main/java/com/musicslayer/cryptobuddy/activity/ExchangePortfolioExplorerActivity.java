@@ -36,6 +36,7 @@ import com.musicslayer.cryptobuddy.dialog.RemoveExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
+import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -284,7 +285,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     TokenManagerList.saveAllData(ExchangePortfolioExplorerActivity.this);
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newExchangeDataArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newExchangeDataArrayList, ExchangeData.class));
             }
         });
 
@@ -446,7 +447,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "ExchangePortfolio";
             StateObj.tableInfo = table.getInfo();
-            StateObj.filterInfo = Serialization.serialize(exchangeFilter);
+            StateObj.filterInfo = Serialization.serialize(exchangeFilter, Filter.class);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangePortfolioExplorerActivity.this, "feedback");
             return true;
         }

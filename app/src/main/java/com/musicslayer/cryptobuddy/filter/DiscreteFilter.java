@@ -13,10 +13,10 @@ public class DiscreteFilter extends Filter {
 
     public String serializeToJSON_sub() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("filterType", Serialization.serialize(getFilterType()))
-            .put("choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(choices)))
-            .put("user_choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(user_choices)))
-            .put("user_not_choices", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(user_not_choices)))
+            .put("filterType", getFilterType(), String.class)
+            .putArrayList("choices", choices, String.class)
+            .putArrayList("user_choices", user_choices, String.class)
+            .putArrayList("user_not_choices", user_not_choices, String.class)
             .toStringOrNull();
     }
 

@@ -106,17 +106,24 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Seri
         Collections.sort(exchangeArrayList, (a, b) -> compare(a, b));
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-                .put("key", Serialization.serialize(getKey()))
+                .put("key", getKey(), String.class)
                 .toStringOrNull();
     }
 
-    public static Exchange deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Exchange deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
+        String key = o.get("key", String.class);
         return Exchange.getExchangeFromKey(key);
     }
 }

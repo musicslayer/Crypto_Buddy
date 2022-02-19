@@ -30,27 +30,32 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public TransactionData transactionData;
     final public AssetQuantityData discrepancyData;
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("cryptoExchange", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(cryptoExchange)))
-            .put("exchangeAPI_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI_currentBalance)))
-            .put("exchangeAPI_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(exchangeAPI_transactions)))
-            .put("currentBalanceArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(currentBalanceArrayList)))
-            .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
-            .put("timestamp_currentBalance", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_currentBalance)))
-            .put("timestamp_transactions", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(timestamp_transactions)))
+            .put("cryptoExchange", cryptoExchange, CryptoExchange.class)
+            .put("exchangeAPI_currentBalance", exchangeAPI_currentBalance, ExchangeAPI.class)
+            .put("exchangeAPI_transactions", exchangeAPI_transactions, ExchangeAPI.class)
+            .putArrayList("currentBalanceArrayList", currentBalanceArrayList, AssetQuantity.class)
+            .putArrayList("transactionArrayList", transactionArrayList, Transaction.class)
+            .put("timestamp_currentBalance", timestamp_currentBalance, Timestamp.class)
+            .put("timestamp_transactions", timestamp_transactions, Timestamp.class)
             .toStringOrNull();
     }
 
-    public static ExchangeData deserializeFromJSON(String s) throws org.json.JSONException {
+    public static ExchangeData deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        CryptoExchange cryptoExchange = Serialization.deserialize(o.getJSONObjectString("cryptoExchange"), CryptoExchange.class);
-        ExchangeAPI exchangeAPI_currentBalance = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_currentBalance"), ExchangeAPI.class);
-        ExchangeAPI exchangeAPI_transactions = Serialization.deserialize(o.getJSONObjectString("exchangeAPI_transactions"), ExchangeAPI.class);
-        ArrayList<AssetQuantity> currentBalanceArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("currentBalanceArrayList"), AssetQuantity.class);
-        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
-        Timestamp timestamp_currentBalance = Serialization.deserialize(o.getJSONObjectString("timestamp_currentBalance"), Timestamp.class);
-        Timestamp timestamp_transactions = Serialization.deserialize(o.getJSONObjectString("timestamp_transactions"), Timestamp.class);
+        CryptoExchange cryptoExchange = o.get("cryptoExchange", CryptoExchange.class);
+        ExchangeAPI exchangeAPI_currentBalance = o.get("exchangeAPI_currentBalance", ExchangeAPI.class);
+        ExchangeAPI exchangeAPI_transactions = o.get("exchangeAPI_transactions", ExchangeAPI.class);
+        ArrayList<AssetQuantity> currentBalanceArrayList = o.getArrayList("currentBalanceArrayList", AssetQuantity.class);
+        ArrayList<Transaction> transactionArrayList = o.getArrayList("transactionArrayList", Transaction.class);
+        Timestamp timestamp_currentBalance = o.get("timestamp_currentBalance", Timestamp.class);
+        Timestamp timestamp_transactions = o.get("timestamp_transactions", Timestamp.class);
         return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList, timestamp_currentBalance, timestamp_transactions);
     }
 

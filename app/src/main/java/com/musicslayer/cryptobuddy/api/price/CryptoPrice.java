@@ -14,7 +14,7 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
     @Override
     public void writeToParcel(Parcel out, int flags) {
         // Writing a List directly requires a higher Android API.
-        out.writeString(Serialization.serializeArrayList(assetArrayList));
+        out.writeString(Serialization.serializeArrayList(assetArrayList, Asset.class));
         out.writeParcelable(fiat, flags);
     }
 
@@ -53,19 +53,26 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
             ((fiat == null && ((CryptoPrice)other).fiat == null) || (fiat != null && ((CryptoPrice) other).fiat != null && fiat.equals(((CryptoPrice) other).fiat)));
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("assetArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(assetArrayList)))
-            .put("fiat", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(fiat)))
+            .putArrayList("assetArrayList", assetArrayList, Asset.class)
+            .put("fiat", fiat, Fiat.class)
             .toStringOrNull();
     }
 
-    public static CryptoPrice deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static CryptoPrice deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        ArrayList<Asset> assetArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("assetArrayList"), Asset.class);
-        Fiat fiat = Serialization.deserialize(o.getJSONObjectString("fiat"), Fiat.class);
+        ArrayList<Asset> assetArrayList = o.getArrayList("assetArrayList", Asset.class);
+        Fiat fiat = o.get("fiat", Fiat.class);
         return new CryptoPrice(assetArrayList, fiat);
     }
 }

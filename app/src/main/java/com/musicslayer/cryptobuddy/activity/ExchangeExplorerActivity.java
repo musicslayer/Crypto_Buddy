@@ -190,7 +190,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(ExchangeExplorerActivity.this);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData));
+                ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData, ExchangeData.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {

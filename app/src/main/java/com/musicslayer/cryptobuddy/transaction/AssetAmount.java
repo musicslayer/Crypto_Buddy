@@ -195,21 +195,28 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
         }
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("amount", Serialization.serialize(amount))
-            .put("isLoss", Serialization.serialize(isLoss))
-            .put("isInfinity", Serialization.serialize(isInfinity))
+            .put("amount", amount, BigDecimal.class)
+            .put("isLoss", isLoss, Boolean.class)
+            .put("isInfinity", isInfinity, Boolean.class)
             .toStringOrNull();
     }
 
-    public static AssetAmount deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static AssetAmount deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        BigDecimal amount = Serialization.deserialize(o.getString("amount"), BigDecimal.class);
-        boolean isLoss = Serialization.deserialize(o.getString("isLoss"), Boolean.class);
-        boolean isInfinity = Serialization.deserialize(o.getString("isInfinity"), Boolean.class);
+        BigDecimal amount = o.get("amount", BigDecimal.class);
+        boolean isLoss = o.get("isLoss", Boolean.class);
+        boolean isInfinity = o.get("isInfinity", Boolean.class);
 
         AssetAmount a = new AssetAmount(amount);
         a.isLoss = isLoss;

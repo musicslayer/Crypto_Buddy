@@ -433,49 +433,81 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         }
     }
 
-    public String serializationVersion() { return "2"; }
+    public static String serializationVersion() {
+        return "2";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.serialize(getKey()))
-            .put("token_type", Serialization.serialize(getTokenType()))
-            .put("downloaded_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(downloaded_tokens)))
-            .put("found_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(found_tokens)))
-            .put("custom_tokens", new JSONWithNull.JSONArrayWithNull(Serialization.token_serializeArrayList(custom_tokens)))
+            .put("key", getKey(), String.class)
+            .put("token_type", getTokenType(), String.class)
+            .putArrayList("downloaded_tokens", downloaded_tokens, Token.class)
+            .putArrayList("found_tokens", found_tokens, Token.class)
+            .putArrayList("custom_tokens", custom_tokens, Token.class)
             .toStringOrNull();
     }
 
-    public static TokenManager deserializeFromJSON1(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String token_type = Serialization.deserialize(o.getString("token_type"), String.class);
-        ArrayList<Token> downloaded_tokens = token_deserializeArrayList1(o.getJSONArrayString("downloaded_tokens"));
-        ArrayList<Token> found_tokens = token_deserializeArrayList1(o.getJSONArrayString("found_tokens"));
-        ArrayList<Token> custom_tokens = token_deserializeArrayList1(o.getJSONArrayString("custom_tokens"));
+    public static TokenManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+        TokenManager tokenManager;
 
-        // This is a dummy object that only has to hold onto the token array lists.
-        // We don't need to call the proper add* methods here.
-        TokenManager tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
-        tokenManager.downloaded_tokens = downloaded_tokens;
-        tokenManager.found_tokens = found_tokens;
-        tokenManager.custom_tokens = custom_tokens;
+        if("2".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String token_type = o.get("token_type", String.class);
+            ArrayList<Token> downloaded_tokens = o.getArrayList("downloaded_tokens", Token.class);
+            ArrayList<Token> found_tokens = o.getArrayList("found_tokens", Token.class);
+            ArrayList<Token> custom_tokens = o.getArrayList("custom_tokens", Token.class);
+
+            // This is a dummy object that only has to hold onto the token array lists.
+            // We don't need to call the proper add* methods here.
+            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+            tokenManager.downloaded_tokens = downloaded_tokens;
+            tokenManager.found_tokens = found_tokens;
+            tokenManager.custom_tokens = custom_tokens;
+        }
+        else if("1".equals(version)) {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            String key = o.get("key", String.class);
+            String token_type = o.get("token_type", String.class);
+
+            // We have to manually deserialize this legacy data.
+            ArrayList<Token> downloaded_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));
+            ArrayList<Token> found_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("found_tokens"));
+            ArrayList<Token> custom_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("custom_tokens"));
+
+            // This is a dummy object that only has to hold onto the token array lists.
+            // We don't need to call the proper add* methods here.
+            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+            tokenManager.downloaded_tokens = downloaded_tokens;
+            tokenManager.found_tokens = found_tokens;
+            tokenManager.custom_tokens = custom_tokens;
+
+        }
+        else {
+            throw new IllegalStateException();
+        }
 
         return tokenManager;
     }
 
-    public static Token token_deserialize1(String s) {
+    public static Token legacy_token_deserialize(String s) {
         if(s == null) { return null; }
 
         try {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = Serialization.deserialize(o.getString("key"), String.class);
-            String name = Serialization.deserialize(o.getString("name"), String.class);
-            String display_name = Serialization.deserialize(o.getString("display_name"), String.class);
-            int scale = Serialization.deserialize(o.getString("scale"), Integer.class);
-            String id = Serialization.deserialize(o.getString("id"), String.class);
-            String blockchain_id = Serialization.deserialize(o.getString("blockchain_id"), String.class);
-            String token_type = Serialization.deserialize(o.getString("token_type"), String.class);
+            String key = o.get("key", String.class);
+            String name = o.get("name", String.class);
+            String display_name = o.get("display_name", String.class);
+            int scale = o.get("scale", Integer.class);
+            String id = o.get("id", String.class);
+            String blockchain_id = o.get("blockchain_id", String.class);
+            String token_type = o.get("token_type", String.class);
 
             return Token.buildToken(key, name, display_name, scale, token_type, id, blockchain_id);
         }
@@ -485,7 +517,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         }
     }
 
-    public static ArrayList<Token> token_deserializeArrayList1(String s) {
+    public static ArrayList<Token> legacy_token_deserializeArrayList(String s) {
         if(s == null) { return null; }
 
         try {
@@ -494,7 +526,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
             for(int i = 0; i < a.length(); i++) {
                 String o = a.getString(i);
-                arrayList.add(token_deserialize1(o));
+                arrayList.add(legacy_token_deserialize(o));
             }
 
             return arrayList;
@@ -503,23 +535,5 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
-    }
-
-    public static TokenManager deserializeFromJSON2(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
-        String token_type = Serialization.deserialize(o.getString("token_type"), String.class);
-        ArrayList<Token> downloaded_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));
-        ArrayList<Token> found_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("found_tokens"));
-        ArrayList<Token> custom_tokens = Serialization.token_deserializeArrayList(o.getJSONArrayString("custom_tokens"));
-
-        // This is a dummy object that only has to hold onto the token array lists.
-        // We don't need to call the proper add* methods here.
-        TokenManager tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
-        tokenManager.downloaded_tokens = downloaded_tokens;
-        tokenManager.found_tokens = found_tokens;
-        tokenManager.custom_tokens = custom_tokens;
-
-        return tokenManager;
     }
 }

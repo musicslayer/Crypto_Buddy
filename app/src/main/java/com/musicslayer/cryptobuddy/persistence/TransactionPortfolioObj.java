@@ -27,19 +27,26 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
         transactionArrayList.remove(transaction);
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.serialize(name))
-            .put("transactionArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(transactionArrayList)))
+            .put("name", name, String.class)
+            .putArrayList("transactionArrayList", transactionArrayList, Transaction.class)
             .toStringOrNull();
     }
 
-    public static TransactionPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static TransactionPortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.deserialize(o.getString("name"), String.class);
-        ArrayList<Transaction> transactionArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("transactionArrayList"), Transaction.class);
+        String name = o.get("name", String.class);
+        ArrayList<Transaction> transactionArrayList = o.getArrayList("transactionArrayList", Transaction.class);
 
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
         transactionPortfolioObj.transactionArrayList = transactionArrayList;

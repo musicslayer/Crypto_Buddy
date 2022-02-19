@@ -201,7 +201,7 @@ public class AddressExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 TokenManagerList.saveAllData(AddressExplorerActivity.this);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData));
+                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData, AddressData.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {

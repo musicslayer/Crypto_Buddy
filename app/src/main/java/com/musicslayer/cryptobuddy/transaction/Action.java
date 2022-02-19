@@ -114,17 +114,24 @@ public class Action implements Serialization.SerializableToJSON, Serialization.V
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("actionString", Serialization.serialize(actionString))
+            .put("actionString", actionString, String.class)
             .toStringOrNull();
     }
 
-    public static Action deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Action deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String actionString = Serialization.deserialize(o.getString("actionString"), String.class);
+        String actionString = o.get("actionString", String.class);
         return new Action(actionString);
     }
 }

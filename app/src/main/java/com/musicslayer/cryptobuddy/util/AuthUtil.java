@@ -83,7 +83,7 @@ public class AuthUtil {
                     }
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serialize(oAuthToken));
+                ProgressDialogFragment.setValue(Serialization.serialize(oAuthToken, OAuthToken.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -187,17 +187,21 @@ public class AuthUtil {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
 
+        public static String serializationType() {
+            return "!OBJECT!";
+        }
+
         public String serializeToJSON() throws org.json.JSONException {
             return new JSONWithNull.JSONObjectWithNull()
-                    .put("token_e", Serialization.serializeArray(toObjectArray(token_e)))
-                    .put("expiryTime", Serialization.serialize(expiryTime))
+                    .putArray("token_e", toObjectArray(token_e), Byte.class)
+                    .put("expiryTime", expiryTime, Long.class)
                     .toStringOrNull();
         }
 
-        public static OAuthToken deserializeFromJSON(String s) throws org.json.JSONException {
+        public static OAuthToken deserializeFromJSON(String s, String version) throws org.json.JSONException {
             JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            byte[] token_e = toPrimitiveArray(Serialization.deserializeArray(o.getString("token_e"), Byte.class));
-            long expiryTime = Serialization.deserialize(o.getString("expiryTime"), Long.class);
+            byte[] token_e = toPrimitiveArray(o.getArray("token_e", Byte.class));
+            long expiryTime = o.get("expiryTime", Long.class);
             return new OAuthToken(token_e, expiryTime);
         }
 

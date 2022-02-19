@@ -36,19 +36,26 @@ public class ExchangePortfolioObj implements Serialization.SerializableToJSON, S
         return false;
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.serialize(name))
-            .put("cryptoExchangeArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoExchangeArrayList)))
+            .put("name", name, String.class)
+            .putArrayList("cryptoExchangeArrayList", cryptoExchangeArrayList, CryptoExchange.class)
             .toStringOrNull();
     }
 
-    public static ExchangePortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static ExchangePortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.deserialize(o.getString("name"), String.class);
-        ArrayList<CryptoExchange> cryptoExchangeArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoExchangeArrayList"), CryptoExchange.class);
+        String name = o.get("name", String.class);
+        ArrayList<CryptoExchange> cryptoExchangeArrayList = o.getArrayList("cryptoExchangeArrayList", CryptoExchange.class);
 
         ExchangePortfolioObj exchangePortfolioObj = new ExchangePortfolioObj(name);
         exchangePortfolioObj.cryptoExchangeArrayList = cryptoExchangeArrayList;

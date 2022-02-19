@@ -37,19 +37,26 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON, Se
         return false;
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("name", Serialization.serialize(name))
-            .put("cryptoAddressArrayList", new JSONWithNull.JSONArrayWithNull(Serialization.serializeArrayList(cryptoAddressArrayList)))
+            .put("name", name, String.class)
+            .putArrayList("cryptoAddressArrayList", cryptoAddressArrayList, CryptoAddress.class)
             .toStringOrNull();
     }
 
-    public static AddressPortfolioObj deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static AddressPortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = Serialization.deserialize(o.getString("name"), String.class);
-        ArrayList<CryptoAddress> cryptoAddressArrayList = Serialization.deserializeArrayList(o.getJSONArrayString("cryptoAddressArrayList"), CryptoAddress.class);
+        String name = o.get("name", String.class);
+        ArrayList<CryptoAddress> cryptoAddressArrayList = o.getArrayList("cryptoAddressArrayList", CryptoAddress.class);
 
         AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
         addressPortfolioObj.cryptoAddressArrayList = cryptoAddressArrayList;

@@ -132,17 +132,24 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("key", Serialization.serialize(getKey()))
+            .put("key", getKey(), String.class)
             .toStringOrNull();
     }
 
-    public static Network deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static Network deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = Serialization.deserialize(o.getString("key"), String.class);
+        String key = o.get("key", String.class);
         return Network.getNetworkFromKey(key);
     }
 }

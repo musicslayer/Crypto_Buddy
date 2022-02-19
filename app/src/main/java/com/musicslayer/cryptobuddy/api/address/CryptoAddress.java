@@ -157,21 +157,28 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
         return cryptoAddressArrayList;
     }
 
-    public String serializationVersion() { return "1"; }
+    public static String serializationVersion() {
+        return "1";
+    }
 
+    public static String serializationType() {
+        return "!OBJECT!";
+    }
+
+    @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new JSONWithNull.JSONObjectWithNull()
-            .put("address", Serialization.serialize(address))
-            .put("network", new JSONWithNull.JSONObjectWithNull(Serialization.serialize(network)))
-            .put("includeTokens", Serialization.serialize(includeTokens))
+            .put("address", address, String.class)
+            .put("network", network, Network.class)
+            .put("includeTokens", includeTokens, Boolean.class)
             .toStringOrNull();
     }
 
-    public static CryptoAddress deserializeFromJSON1(String s) throws org.json.JSONException {
+    public static CryptoAddress deserializeFromJSON(String s, String version) throws org.json.JSONException {
         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String address = Serialization.deserialize(o.getString("address"), String.class);
-        Network network = Serialization.deserialize(o.getJSONObjectString("network"), Network.class);
-        boolean includeTokens = Serialization.deserialize(o.getString("includeTokens"), Boolean.class);
+        String address = o.get("address", String.class);
+        Network network = o.get("network", Network.class);
+        boolean includeTokens = o.get("includeTokens", Boolean.class);
         return new CryptoAddress(address, network, includeTokens);
     }
 }

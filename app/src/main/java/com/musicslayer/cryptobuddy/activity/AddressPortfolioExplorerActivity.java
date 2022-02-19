@@ -30,6 +30,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.RemoveAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
+import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
@@ -298,7 +299,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     TokenManagerList.saveAllData(AddressPortfolioExplorerActivity.this);
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList));
+                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList, AddressData.class));
             }
         });
 
@@ -460,7 +461,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "AddressPortfolio";
             StateObj.tableInfo = table.getInfo();
-            StateObj.filterInfo = Serialization.serialize(addressFilter);
+            StateObj.filterInfo = Serialization.serialize(addressFilter, Filter.class);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
             return true;
         }

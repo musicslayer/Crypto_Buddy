@@ -29,7 +29,7 @@ public class TransactionData {
         }
         else {
             s.appendRich("Transactions:");
-            s.appendRich("\n").appendRich(Serialization.serializeArrayList(transactionArrayList));
+            s.appendRich("\n").appendRich(Serialization.serializeArrayList(transactionArrayList, Transaction.class));
 
             s.appendRich("\n\n").appendRich("Net Transaction Sums:");
 
