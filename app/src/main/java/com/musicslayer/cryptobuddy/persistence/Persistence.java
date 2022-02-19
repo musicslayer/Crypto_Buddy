@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-// TODO Update Proguard rules for export/import functions.
-
 // Methods to quickly manipulate all persistent app data on a user's device.
 public class Persistence {
     // All classes with persistent data.
