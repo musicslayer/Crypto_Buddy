@@ -13,8 +13,6 @@ public class OrientationSetting extends Setting {
     public String getDisplayName() { return "Orientation"; }
     public String getSettingsKey() { return "orientation"; }
 
-    public boolean needsRecreate() { return true; }
-
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
         optionNames.add("Match System");

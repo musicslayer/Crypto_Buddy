@@ -13,8 +13,6 @@ public class DarkModeSetting extends Setting {
     public String getDisplayName() { return "Dark Mode"; }
     public String getSettingsKey() { return "dark"; }
 
-    public boolean needsRecreate() { return true; }
-
     public ArrayList<String> getOptionNames() {
         ArrayList<String> optionNames = new ArrayList<>();
         optionNames.add("Match System");

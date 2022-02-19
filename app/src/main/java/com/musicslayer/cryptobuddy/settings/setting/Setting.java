@@ -63,9 +63,6 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         return (T)getOptionValues().get(idx);
     }
 
-    // Usually this is not the case, but when some settings are changed we must recreate the Activity.
-    public boolean needsRecreate() { return false; }
-
     // Can be used to modify how we display options with extra data that we don't want to store (like the time zone offset).
     // This does not affect the option name itself, merely how it is displayed.
     public String modifyOptionName(String optionName) { return optionName; }

@@ -96,8 +96,5 @@ public class SettingList implements Exportation.ExportableToJSON, Exportation.Ve
 
         // Reinitialize data. Some settings need to recreate the activity, so do it unconditionally just to be safe.
         Setting.initialize();
-
-        // TODO How to get the real activity.
-        //ContextUtil.getActivityFromContext(context).recreate();
     }
 }

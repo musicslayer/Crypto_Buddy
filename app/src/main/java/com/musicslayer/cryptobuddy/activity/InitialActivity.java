@@ -40,10 +40,7 @@ import java.util.Date;
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
-
 // TODO Importing still obliterates everything.
-// TODO Stop passing in context when we could use the Application context.
-// TODO Create SharedPreferencesUtil?
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

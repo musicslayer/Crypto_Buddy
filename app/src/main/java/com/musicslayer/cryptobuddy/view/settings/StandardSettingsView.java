@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
-import com.musicslayer.cryptobuddy.util.ContextUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 
 public class StandardSettingsView extends SettingsView {
@@ -44,16 +43,9 @@ public class StandardSettingsView extends SettingsView {
         bsv.spinner.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(context) {
             public void onNothingSelectedImpl(AdapterView<?> parent){}
             public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                String oldSetting = setting.chosenOptionName;
                 setting.setSetting(pos);
-                String newSetting = setting.chosenOptionName;
-
                 prefText.setText(setting.chosenOptionDisplay);
                 SettingList.saveSetting(setting);
-
-                if(!oldSetting.equals(newSetting) && setting.needsRecreate()) {
-                    ContextUtil.getActivityFromContext(context).recreate();
-                }
             }
         });
 
