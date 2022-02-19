@@ -41,7 +41,7 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON, Se
         return "1";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

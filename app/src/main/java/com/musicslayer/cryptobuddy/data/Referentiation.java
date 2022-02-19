@@ -32,6 +32,7 @@ public class Referentiation {
     public static <T> String reference(T obj, Class<T> clazzT) {
         if(obj == null) { return null; }
         ReferenceableToJSON wrappedObj = wrapObj(obj);
+        Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazzT);
 
         String s;
         try {
@@ -42,11 +43,11 @@ public class Referentiation {
             throw new IllegalStateException(e);
         }
 
-        if(obj instanceof Versionable) {
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             try {
-                String version = Referentiation.getVersion(clazzT);
-                String type = Referentiation.getType(clazzT);
+                String version = Referentiation.getCurrentVersion(wrappedClass);
+                String type = Referentiation.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
@@ -67,17 +68,8 @@ public class Referentiation {
         if(s == null) { return null; }
         Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazzT);
 
-        String version;
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            version = o.get(REFERENTIATION_VERSION_MARKER, String.class);
-        }
-        catch(Exception ignored) {
-            // If there is no version, just call it "version zero".
-            version = "0";
-        }
+        String version = getVersion(s);
 
-        // Call the appropriate method for the version number.
         try {
             return ReflectUtil.callStaticMethod(wrappedClass, "dereferenceFromJSON", s, version);
         }
@@ -87,14 +79,35 @@ public class Referentiation {
         }
     }
 
-    public static <T> String getVersion(Class<T> clazz) {
+    public static <T> String getCurrentVersion(Class<T> clazz) {
         Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "referentiationVersion");
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
+            return ReflectUtil.callStaticMethod(wrappedClass, "referentiationVersion");
+        }
+        else {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
     }
 
-    public static <T> String getType(Class<T> clazz) {
+    public static String getVersion(String s) {
+        try {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            return o.get(REFERENTIATION_VERSION_MARKER, String.class);
+        }
+        catch(Exception ignored) {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
+    }
+
+    public static <T> String getCurrentType(Class<T> clazz) {
+        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    }
+
+    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
         Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "referentiationType");
+        return ReflectUtil.callStaticMethod(wrappedClass, "referentiationType", version);
     }
 
     // For classes that do not implement SerializableToJSON, we wrap them in classes that define the required methods.

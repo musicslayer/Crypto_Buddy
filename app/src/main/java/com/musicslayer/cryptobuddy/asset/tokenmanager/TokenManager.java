@@ -435,7 +435,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         return "2";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

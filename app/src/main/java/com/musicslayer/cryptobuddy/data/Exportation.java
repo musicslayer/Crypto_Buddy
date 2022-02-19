@@ -10,6 +10,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 // Note: Exportation has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 // TODO Apply this to other classes.
+// TODO Persistence Classes need exportationType.
 
 public class Exportation {
     // Keep this short because it will appear on every piece of stored data.
@@ -28,23 +29,23 @@ public class Exportation {
 
     // Exporting is a static process, so we do not need an object.
     public static <T> String exportData(Class<T> clazzT) {
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
+
         String s;
         try {
-            s = ReflectUtil.callStaticMethod(clazzT, "exportDataToJSON");
+            s = ReflectUtil.callStaticMethod(wrappedClass, "exportDataToJSON");
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
 
-        // TODO Use clazz instead of object.
-        //if(wrappedObj instanceof Versionable) {
-        if(false) {
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             // Currently, only type !OBJECT! supports a version marker.
             try {
-                String version = Exportation.getVersion(clazzT);
-                String type = Exportation.getType(clazzT);
+                String version = Exportation.getCurrentVersion(wrappedClass);
+                String type = Exportation.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
@@ -66,15 +67,7 @@ public class Exportation {
         if(s == null) { return; }
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
 
-        String version;
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            version = o.get(EXPORTATION_VERSION_MARKER, String.class);
-        }
-        catch(Exception ignored) {
-            // If there is no version, just call it "version zero".
-            version = "0";
-        }
+        String version = getVersion(s);
 
         try {
             ReflectUtil.callStaticMethod(wrappedClass, "importDataFromJSON", s, version);
@@ -85,14 +78,35 @@ public class Exportation {
         }
     }
 
-    public static <T> String getVersion(Class<T> clazz) {
+    public static <T> String getCurrentVersion(Class<T> clazz) {
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "exportationVersion");
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
+            return ReflectUtil.callStaticMethod(wrappedClass, "exportationVersion");
+        }
+        else {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
     }
 
-    public static <T> String getType(Class<T> clazz) {
+    public static String getVersion(String s) {
+        try {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            return o.get(EXPORTATION_VERSION_MARKER, String.class);
+        }
+        catch(Exception ignored) {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
+    }
+
+    public static <T> String getCurrentType(Class<T> clazz) {
+        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    }
+
+    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
         Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "exportationType");
+        return ReflectUtil.callStaticMethod(wrappedClass, "exportationType", version);
     }
 
     @SuppressWarnings("unchecked")

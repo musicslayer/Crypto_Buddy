@@ -21,7 +21,7 @@ public class PriceData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_price;
     final public Timestamp timestamp_marketCap;
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

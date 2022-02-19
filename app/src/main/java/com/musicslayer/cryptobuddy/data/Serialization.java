@@ -40,6 +40,7 @@ public class Serialization {
     public static <T> String serialize(T obj, Class<T> clazzT) {
         if(obj == null) { return null; }
         SerializableToJSON wrappedObj = wrapObj(obj);
+        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
 
         String s;
         try {
@@ -50,11 +51,11 @@ public class Serialization {
             throw new IllegalStateException(e);
         }
 
-        if(wrappedObj instanceof Versionable) {
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             try {
-                String version = Serialization.getVersion(clazzT);
-                String type = Serialization.getType(clazzT);
+                String version = Serialization.getCurrentVersion(wrappedClass);
+                String type = Serialization.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
@@ -75,17 +76,8 @@ public class Serialization {
         if(s == null) { return null; }
         Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
 
-        String version;
-        try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            version = o.get(SERIALIZATION_VERSION_MARKER, String.class);
-        }
-        catch(Exception ignored) {
-            // If there is no version, just call it "version zero".
-            version = "0";
-        }
+        String version = getVersion(s);
 
-        // Call the appropriate method for the version number.
         try {
             return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSON", s, version);
         }
@@ -95,14 +87,35 @@ public class Serialization {
         }
     }
 
-    public static <T> String getVersion(Class<T> clazz) {
+    public static <T> String getCurrentVersion(Class<T> clazz) {
         Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "serializationVersion");
+        if(Versionable.class.isAssignableFrom(wrappedClass)) {
+            return ReflectUtil.callStaticMethod(wrappedClass, "serializationVersion");
+        }
+        else {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
     }
 
-    public static <T> String getType(Class<T> clazz) {
+    public static String getVersion(String s) {
+        try {
+            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            return o.get(SERIALIZATION_VERSION_MARKER, String.class);
+        }
+        catch(Exception ignored) {
+            // If there is no version, just call it "version zero".
+            return "0";
+        }
+    }
+
+    public static <T> String getCurrentType(Class<T> clazz) {
+        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    }
+
+    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
         Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazz);
-        return ReflectUtil.callStaticMethod(wrappedClass, "serializationType");
+        return ReflectUtil.callStaticMethod(wrappedClass, "serializationType", version);
     }
 
     public static <T> String validate(String s, Class<T> clazzT) {
@@ -318,7 +331,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -338,7 +351,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -358,7 +371,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -378,7 +391,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -398,7 +411,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -418,7 +431,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -438,7 +451,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -458,8 +471,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        // TODO This should accept the version number?
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!STRING!";
         }
 
@@ -479,7 +491,7 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!OBJECT!";
         }
 

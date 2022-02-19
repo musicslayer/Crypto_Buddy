@@ -127,7 +127,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         return "4";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 
@@ -216,7 +216,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         return "1";
     }
 
-    public static String referentiationType() {
+    public static String referentiationType(String version) {
         return "!OBJECT!";
     }
 

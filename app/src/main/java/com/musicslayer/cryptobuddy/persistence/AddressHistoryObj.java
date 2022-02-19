@@ -28,7 +28,7 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON, Seri
         return "1";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

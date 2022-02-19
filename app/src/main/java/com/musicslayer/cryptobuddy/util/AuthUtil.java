@@ -187,7 +187,7 @@ public class AuthUtil {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
 
-        public static String serializationType() {
+        public static String serializationType(String version) {
             return "!OBJECT!";
         }
 

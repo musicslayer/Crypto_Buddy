@@ -31,7 +31,7 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
         return "1";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

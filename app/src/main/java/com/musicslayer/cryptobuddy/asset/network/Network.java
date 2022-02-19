@@ -135,7 +135,7 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
         return "1";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

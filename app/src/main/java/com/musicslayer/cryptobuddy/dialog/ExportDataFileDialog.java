@@ -202,7 +202,7 @@ public class ExportDataFileDialog extends BaseDialog {
                 }
                 else {
                     if(universalFile.exists()) {
-                        // TODO This always triggers even for a new file.
+                        // Since the document browser may create the file before returning, we may end up here even for a "new file".
                         confirmFileOverwriteDialogFragment.show(activity, "overwrite");
                     }
                     else {

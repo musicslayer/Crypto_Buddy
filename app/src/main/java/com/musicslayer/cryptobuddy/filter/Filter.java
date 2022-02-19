@@ -42,7 +42,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     // Each subclass is serialized and deserialized differently.
     abstract public String serializeToJSON_sub() throws org.json.JSONException;
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

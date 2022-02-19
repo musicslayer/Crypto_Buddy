@@ -402,7 +402,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return "2";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

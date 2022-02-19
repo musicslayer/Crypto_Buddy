@@ -20,7 +20,7 @@ abstract public class API implements Serialization.SerializableToJSON, Serializa
         return "1";
     }
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

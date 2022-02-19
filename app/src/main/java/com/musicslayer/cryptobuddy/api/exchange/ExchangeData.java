@@ -30,7 +30,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     final public TransactionData transactionData;
     final public AssetQuantityData discrepancyData;
 
-    public static String serializationType() {
+    public static String serializationType(String version) {
         return "!OBJECT!";
     }
 

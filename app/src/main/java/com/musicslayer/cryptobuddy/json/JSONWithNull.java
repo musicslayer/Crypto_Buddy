@@ -37,7 +37,15 @@ public class JSONWithNull {
         }
 
         public <T> T get(String key, Class<T> clazzT) throws org.json.JSONException {
-            String type = Serialization.getType(clazzT);
+            String version;
+            try {
+                version = Serialization.getVersion(getJSONObjectString(key));
+            }
+            catch(Exception ignored) {
+                version = "0";
+            }
+
+            String type = Serialization.getTypeForVersion(version, clazzT);
             String s;
 
             if("!STRING!".equals(type)) {
@@ -90,7 +98,7 @@ public class JSONWithNull {
         }
 
         public <T> JSONObjectWithNull put(String key, T obj, Class<T> clazzT) throws org.json.JSONException {
-            String type = Serialization.getType(clazzT);
+            String type = Serialization.getCurrentType(clazzT);
             String s = Serialization.serialize(obj, clazzT);
 
             if("!STRING!".equals(type)) {
@@ -197,7 +205,15 @@ public class JSONWithNull {
         }
 
         public <T> T get(int i, Class<T> clazzT) throws org.json.JSONException {
-            String type = Serialization.getType(clazzT);
+            String version;
+            try {
+                version = Serialization.getVersion(getJSONObjectString(i));
+            }
+            catch(Exception ignored) {
+                version = "0";
+            }
+
+            String type = Serialization.getTypeForVersion(version, clazzT);
             String s;
 
             if("!STRING!".equals(type)) {
@@ -232,7 +248,7 @@ public class JSONWithNull {
         }
 
         public <T> JSONArrayWithNull put(T obj, Class<T> clazzT) throws org.json.JSONException {
-            String type = Serialization.getType(clazzT);
+            String type = Serialization.getCurrentType(clazzT);
             String s = Serialization.serialize(obj, clazzT);
 
             if("!STRING!".equals(type)) {
