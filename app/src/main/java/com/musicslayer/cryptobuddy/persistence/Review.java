@@ -51,13 +51,8 @@ public class Review extends PersistentDataStore {
     public void loadAllData() {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        // If there is no value in this setting, then immediately store "now" so that in all future calls there will be a value.
-        // We cannot rely on a default value because it would not be fixed in time.
-        // TODO Do we need this since we call save data at the start now?
-        if(!sharedPreferences.contains("review_time")) {
-            setReviewTime();
-        }
-        settings_review_time = sharedPreferences.getLong("review_time", 0);
+        // If there is no value in this setting, then use "now" as the default.
+        settings_review_time = sharedPreferences.getLong("review_time", System.currentTimeMillis());
     }
 
     public void resetAllData() {
