@@ -3,9 +3,9 @@ package com.musicslayer.cryptobuddy.settings.setting;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.SettingList;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -148,18 +148,18 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("key", getKey(), String.class)
-            .put("settingsKey", getSettingsKey(), String.class)
-            .put("chosenOptionName", chosenOptionName, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("key", getKey(), String.class)
+            .serialize("settingsKey", getSettingsKey(), String.class)
+            .serialize("chosenOptionName", chosenOptionName, String.class)
             .toStringOrNull();
     }
 
     public static Setting deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String key = o.get("key", String.class);
-        String settingsKey = o.get("settingsKey", String.class);
-        String chosenOptionName = o.get("chosenOptionName", String.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        String key = o.deserialize("key", String.class);
+        String settingsKey = o.deserialize("settingsKey", String.class);
+        String chosenOptionName = o.deserialize("chosenOptionName", String.class);
 
         // This is a dummy object that only has to hold onto the data.
         Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);

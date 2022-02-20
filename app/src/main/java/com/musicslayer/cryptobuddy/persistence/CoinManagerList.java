@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -76,7 +77,7 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
 
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String key = "coin_manager_" + coinManager.getSettingsKey();
@@ -93,7 +94,7 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
                 throw new IllegalStateException(e);
             }
 
-            o.put(key, newSerialString, String.class);
+            o.serialize(key, newSerialString, String.class);
         }
 
         return o.toStringOrNull();
@@ -101,7 +102,7 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
 
 
     public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
 
         // Only import coin managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -110,7 +111,7 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String key = "coin_manager_" + coinManager.getSettingsKey();
             if(o.has(key)) {
-                String value = o.get(key, String.class);
+                String value = o.deserialize(key, String.class);
                 if(!DEFAULT.equals(value)) {
                     editor.putString(key, Serialization.cycle(value, CoinManager.class));
                 }

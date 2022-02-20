@@ -6,7 +6,7 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -85,16 +85,16 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("assetAmount", assetAmount, AssetAmount.class)
-            .put("asset", asset, Asset.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("assetAmount", assetAmount, AssetAmount.class)
+            .serialize("asset", asset, Asset.class)
             .toStringOrNull();
     }
 
     public static AssetQuantity deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        AssetAmount assetAmount = o.get("assetAmount", AssetAmount.class);
-        Asset asset = o.get("asset", Asset.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
+        Asset asset = o.deserialize("asset", Asset.class);
         return new AssetQuantity(assetAmount, asset);
     }
 }

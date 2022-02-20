@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.api.exchange;
 
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -36,26 +36,26 @@ public class ExchangeData implements Serialization.SerializableToJSON {
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("cryptoExchange", cryptoExchange, CryptoExchange.class)
-            .put("exchangeAPI_currentBalance", exchangeAPI_currentBalance, ExchangeAPI.class)
-            .put("exchangeAPI_transactions", exchangeAPI_transactions, ExchangeAPI.class)
-            .putArrayList("currentBalanceArrayList", currentBalanceArrayList, AssetQuantity.class)
-            .putArrayList("transactionArrayList", transactionArrayList, Transaction.class)
-            .put("timestamp_currentBalance", timestamp_currentBalance, Timestamp.class)
-            .put("timestamp_transactions", timestamp_transactions, Timestamp.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("cryptoExchange", cryptoExchange, CryptoExchange.class)
+            .serialize("exchangeAPI_currentBalance", exchangeAPI_currentBalance, ExchangeAPI.class)
+            .serialize("exchangeAPI_transactions", exchangeAPI_transactions, ExchangeAPI.class)
+            .serializeArrayList("currentBalanceArrayList", currentBalanceArrayList, AssetQuantity.class)
+            .serializeArrayList("transactionArrayList", transactionArrayList, Transaction.class)
+            .serialize("timestamp_currentBalance", timestamp_currentBalance, Timestamp.class)
+            .serialize("timestamp_transactions", timestamp_transactions, Timestamp.class)
             .toStringOrNull();
     }
 
     public static ExchangeData deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        CryptoExchange cryptoExchange = o.get("cryptoExchange", CryptoExchange.class);
-        ExchangeAPI exchangeAPI_currentBalance = o.get("exchangeAPI_currentBalance", ExchangeAPI.class);
-        ExchangeAPI exchangeAPI_transactions = o.get("exchangeAPI_transactions", ExchangeAPI.class);
-        ArrayList<AssetQuantity> currentBalanceArrayList = o.getArrayList("currentBalanceArrayList", AssetQuantity.class);
-        ArrayList<Transaction> transactionArrayList = o.getArrayList("transactionArrayList", Transaction.class);
-        Timestamp timestamp_currentBalance = o.get("timestamp_currentBalance", Timestamp.class);
-        Timestamp timestamp_transactions = o.get("timestamp_transactions", Timestamp.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        CryptoExchange cryptoExchange = o.deserialize("cryptoExchange", CryptoExchange.class);
+        ExchangeAPI exchangeAPI_currentBalance = o.deserialize("exchangeAPI_currentBalance", ExchangeAPI.class);
+        ExchangeAPI exchangeAPI_transactions = o.deserialize("exchangeAPI_transactions", ExchangeAPI.class);
+        ArrayList<AssetQuantity> currentBalanceArrayList = o.deserializeArrayList("currentBalanceArrayList", AssetQuantity.class);
+        ArrayList<Transaction> transactionArrayList = o.deserializeArrayList("transactionArrayList", Transaction.class);
+        Timestamp timestamp_currentBalance = o.deserialize("timestamp_currentBalance", Timestamp.class);
+        Timestamp timestamp_transactions = o.deserialize("timestamp_transactions", Timestamp.class);
         return new ExchangeData(cryptoExchange, exchangeAPI_currentBalance, exchangeAPI_transactions, currentBalanceArrayList, transactionArrayList, timestamp_currentBalance, timestamp_transactions);
     }
 

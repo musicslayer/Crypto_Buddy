@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
@@ -27,26 +27,26 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("cryptoPrice", cryptoPrice, CryptoPrice.class)
-            .put("priceAPI_price", priceAPI_price, PriceAPI.class)
-            .put("priceAPI_marketCap", priceAPI_marketCap, PriceAPI.class)
-            .putHashMap("priceHashMap", priceHashMap, Asset.class, AssetQuantity.class)
-            .putHashMap("marketCapHashMap", marketCapHashMap, Asset.class, AssetQuantity.class)
-            .put("timestamp_price", timestamp_price, Timestamp.class)
-            .put("timestamp_marketCap", timestamp_marketCap, Timestamp.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
+            .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
+            .serialize("priceAPI_marketCap", priceAPI_marketCap, PriceAPI.class)
+            .serializeHashMap("priceHashMap", priceHashMap, Asset.class, AssetQuantity.class)
+            .serializeHashMap("marketCapHashMap", marketCapHashMap, Asset.class, AssetQuantity.class)
+            .serialize("timestamp_price", timestamp_price, Timestamp.class)
+            .serialize("timestamp_marketCap", timestamp_marketCap, Timestamp.class)
             .toStringOrNull();
     }
 
     public static PriceData deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        CryptoPrice cryptoPrice = o.get("cryptoPrice", CryptoPrice.class);
-        PriceAPI priceAPI_price = o.get("priceAPI_price", PriceAPI.class);
-        PriceAPI priceAPI_marketCap = o.get("priceAPI_marketCap", PriceAPI.class);
-        HashMap<Asset, AssetQuantity> priceHashMap = o.getHashMap("priceHashMap", Asset.class, AssetQuantity.class);
-        HashMap<Asset, AssetQuantity> marketCapHashMap = o.getHashMap("marketCapHashMap", Asset.class, AssetQuantity.class);
-        Timestamp timestamp_price = o.get("timestamp_price", Timestamp.class);
-        Timestamp timestamp_marketCap = o.get("timestamp_marketCap", Timestamp.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
+        PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
+        PriceAPI priceAPI_marketCap = o.deserialize("priceAPI_marketCap", PriceAPI.class);
+        HashMap<Asset, AssetQuantity> priceHashMap = o.deserializeHashMap("priceHashMap", Asset.class, AssetQuantity.class);
+        HashMap<Asset, AssetQuantity> marketCapHashMap = o.deserializeHashMap("marketCapHashMap", Asset.class, AssetQuantity.class);
+        Timestamp timestamp_price = o.deserialize("timestamp_price", Timestamp.class);
+        Timestamp timestamp_marketCap = o.deserialize("timestamp_marketCap", Timestamp.class);
         return new PriceData(cryptoPrice, priceAPI_price, priceAPI_marketCap, priceHashMap, marketCapHashMap, timestamp_price, timestamp_marketCap);
     }
 

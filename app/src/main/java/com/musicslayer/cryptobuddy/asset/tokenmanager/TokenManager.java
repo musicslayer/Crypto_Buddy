@@ -4,6 +4,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
@@ -443,12 +444,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("key", getKey(), String.class)
-            .put("token_type", getTokenType(), String.class)
-            .putArrayList("downloaded_tokens", downloaded_tokens, Token.class)
-            .putArrayList("found_tokens", found_tokens, Token.class)
-            .putArrayList("custom_tokens", custom_tokens, Token.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("key", getKey(), String.class)
+            .serialize("token_type", getTokenType(), String.class)
+            .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
+            .serializeArrayList("found_tokens", found_tokens, Token.class)
+            .serializeArrayList("custom_tokens", custom_tokens, Token.class)
             .toStringOrNull();
     }
 
@@ -456,12 +457,12 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         TokenManager tokenManager;
 
         if("2".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String token_type = o.get("token_type", String.class);
-            ArrayList<Token> downloaded_tokens = o.getArrayList("downloaded_tokens", Token.class);
-            ArrayList<Token> found_tokens = o.getArrayList("found_tokens", Token.class);
-            ArrayList<Token> custom_tokens = o.getArrayList("custom_tokens", Token.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String token_type = o.deserialize("token_type", String.class);
+            ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
+            ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
+            ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
 
             // This is a dummy object that only has to hold onto the token array lists.
             // We don't need to call the proper add* methods here.
@@ -471,9 +472,9 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             tokenManager.custom_tokens = custom_tokens;
         }
         else if("1".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String token_type = o.get("token_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String token_type = o.deserialize("token_type", String.class);
 
             // We have to manually deserialize this legacy data.
             ArrayList<Token> downloaded_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));
@@ -499,14 +500,14 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         if(s == null) { return null; }
 
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String display_name = o.get("display_name", String.class);
-            int scale = o.get("scale", Integer.class);
-            String id = o.get("id", String.class);
-            String blockchain_id = o.get("blockchain_id", String.class);
-            String token_type = o.get("token_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String display_name = o.deserialize("display_name", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String id = o.deserialize("id", String.class);
+            String blockchain_id = o.deserialize("blockchain_id", String.class);
+            String token_type = o.deserialize("token_type", String.class);
 
             return Token.buildToken(key, name, display_name, scale, token_type, id, blockchain_id);
         }

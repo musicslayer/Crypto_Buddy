@@ -4,8 +4,8 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -165,20 +165,20 @@ public class AddressPortfolio extends PersistentDataStore implements Exportation
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
 
         String sizeKey = "address_portfolio_size";
         int size = sharedPreferences.getInt(sizeKey, 0);
-        o.put(sizeKey, size, Integer.class);
+        o.serialize(sizeKey, size, Integer.class);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "address_portfolio_names" + i;
             String serialNameString = sharedPreferences.getString(nameKey, DEFAULT);
-            o.put(nameKey, serialNameString, String.class);
+            o.serialize(nameKey, serialNameString, String.class);
 
             String key = "address_portfolio" + i;
             String serialString = sharedPreferences.getString(key, DEFAULT);
-            o.put(key, serialString, String.class);
+            o.serialize(key, serialString, String.class);
         }
 
         return o.toStringOrNull();
@@ -186,22 +186,22 @@ public class AddressPortfolio extends PersistentDataStore implements Exportation
 
 
     public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String sizeKey = "address_portfolio_size";
-        int size = o.get(sizeKey, Integer.class);
+        int size = o.deserialize(sizeKey, Integer.class);
         editor.putInt(sizeKey, size);
 
         for(int i = 0; i < size; i++) {
             String nameKey = "address_portfolio_names" + i;
-            String nameValue = o.get(nameKey, String.class);
+            String nameValue = o.deserialize(nameKey, String.class);
             editor.putString(nameKey, nameValue);
 
             String key = "address_portfolio" + i;
-            String value = o.get(key, String.class);
+            String value = o.deserialize(key, String.class);
             editor.putString(key, Serialization.cycle(value, AddressPortfolioObj.class));
         }
 

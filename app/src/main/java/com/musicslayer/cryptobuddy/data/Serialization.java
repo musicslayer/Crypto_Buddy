@@ -5,7 +5,6 @@ import android.net.Uri;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.app.App;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -19,6 +18,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
+
+// TODO serialization should also be static, so we can handle null values.
 
 public class Serialization {
     // Keep this short because it will appear on every piece of stored data.
@@ -58,8 +59,8 @@ public class Serialization {
                 String type = Serialization.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
-                    JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-                    o.put(SERIALIZATION_VERSION_MARKER, version, String.class);
+                    DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+                    o.serialize(SERIALIZATION_VERSION_MARKER, version, String.class);
                     s = o.toStringOrNull();
                 }
             }
@@ -100,8 +101,8 @@ public class Serialization {
 
     public static String getVersion(String s) {
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            return o.get(SERIALIZATION_VERSION_MARKER, String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            return o.deserialize(SERIALIZATION_VERSION_MARKER, String.class);
         }
         catch(Exception ignored) {
             // If there is no version, just call it "version zero".
@@ -128,9 +129,9 @@ public class Serialization {
         if(array == null) { return null; }
 
         try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
             for(T t : array) {
-                a.put(t, clazzT);
+                a.serialize(t, clazzT);
             }
 
             return a.toStringOrNull();
@@ -145,13 +146,13 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
 
             @SuppressWarnings("unchecked")
             T[] array = (T[])Array.newInstance(clazzT, a.length());
 
             for(int i = 0; i < a.length(); i++) {
-                array[i] = a.get(i, clazzT);
+                array[i] = a.deserialize(i, clazzT);
             }
 
             return array;
@@ -166,9 +167,9 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull();
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
             for(T t : arrayList) {
-                a.put(t, clazzT);
+                a.serialize(t, clazzT);
             }
 
             return a.toStringOrNull();
@@ -185,9 +186,9 @@ public class Serialization {
         try {
             ArrayList<T> arrayList = new ArrayList<>();
 
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
             for(int i = 0; i < a.length(); i++) {
-                arrayList.add(a.get(i, clazzT));
+                arrayList.add(a.deserialize(i, clazzT));
             }
 
             return arrayList;
@@ -209,9 +210,9 @@ public class Serialization {
         }
 
         try {
-            return new JSONWithNull.JSONObjectWithNull()
-                .putArrayList("keys", keyArrayList, clazzT)
-                .putArrayList("values", valueArrayList, clazzU)
+            return new DataBridge.JSONObjectDataBridge()
+                .serializeArrayList("keys", keyArrayList, clazzT)
+                .serializeArrayList("values", valueArrayList, clazzU)
                 .toStringOrNull();
         }
         catch(Exception e) {
@@ -224,10 +225,10 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
 
-            ArrayList<T> arrayListT = o.getArrayList("keys", clazzT);
-            ArrayList<U> arrayListU = o.getArrayList("values", clazzU);
+            ArrayList<T> arrayListT = o.deserializeArrayList("keys", clazzT);
+            ArrayList<U> arrayListU = o.deserializeArrayList("values", clazzU);
 
             if(arrayListT == null || arrayListU == null || arrayListT.size() != arrayListU.size()) {
                 return null;
@@ -497,16 +498,16 @@ public class Serialization {
 
         @Override
         public String serializeToJSON() throws JSONException {
-            return new JSONWithNull.JSONObjectWithNull()
-                    .put("class", obj.getClass().getSimpleName(), String.class)
-                    .put("uri", obj.getUri().toString(), String.class)
+            return new DataBridge.JSONObjectDataBridge()
+                    .serialize("class", obj.getClass().getSimpleName(), String.class)
+                    .serialize("uri", obj.getUri().toString(), String.class)
                     .toStringOrNull();
         }
 
         public static DocumentFile deserializeFromJSON(String s, String version) throws JSONException {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String clazz = o.get("class", String.class);
-            Uri uri = Uri.parse(o.get("uri", String.class));
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String clazz = o.deserialize("class", String.class);
+            Uri uri = Uri.parse(o.deserialize("uri", String.class));
 
             if("TreeDocumentFile".equals(clazz)) {
                 return DocumentFile.fromTreeUri(App.applicationContext, uri);

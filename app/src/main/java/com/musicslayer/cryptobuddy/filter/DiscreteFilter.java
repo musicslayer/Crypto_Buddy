@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.filter;
 
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -12,16 +12,16 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("filterType", getFilterType(), String.class)
-            .putArrayList("choices", choices, String.class)
-            .putArrayList("user_choices", user_choices, String.class)
-            .putArrayList("user_not_choices", user_not_choices, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("filterType", getFilterType(), String.class)
+            .serializeArrayList("choices", choices, String.class)
+            .serializeArrayList("user_choices", user_choices, String.class)
+            .serializeArrayList("user_not_choices", user_not_choices, String.class)
             .toStringOrNull();
     }
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
         ArrayList<String> choices = Serialization.deserializeArrayList(o.getJSONArrayString("choices"), String.class);
         ArrayList<String> user_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_choices"), String.class);
         ArrayList<String> user_not_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_not_choices"), String.class);

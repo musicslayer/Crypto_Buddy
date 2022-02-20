@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.persistence;
 
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.transaction.Transaction;
 
 import java.util.ArrayList;
 
@@ -37,16 +37,16 @@ public class TransactionPortfolioObj implements Serialization.SerializableToJSON
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("name", name, String.class)
-            .putArrayList("transactionArrayList", transactionArrayList, Transaction.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("name", name, String.class)
+            .serializeArrayList("transactionArrayList", transactionArrayList, Transaction.class)
             .toStringOrNull();
     }
 
     public static TransactionPortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = o.get("name", String.class);
-        ArrayList<Transaction> transactionArrayList = o.getArrayList("transactionArrayList", Transaction.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        String name = o.deserialize("name", String.class);
+        ArrayList<Transaction> transactionArrayList = o.deserializeArrayList("transactionArrayList", Transaction.class);
 
         TransactionPortfolioObj transactionPortfolioObj = new TransactionPortfolioObj(name);
         transactionPortfolioObj.transactionArrayList = transactionArrayList;

@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.asset.coinmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -410,12 +411,12 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("key", getKey(), String.class)
-            .put("coin_type", getCoinType(), String.class)
-            .putArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
-            .putArrayList("found_coins", found_coins, Coin.class)
-            .putArrayList("custom_coins", custom_coins, Coin.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("key", getKey(), String.class)
+            .serialize("coin_type", getCoinType(), String.class)
+            .serializeArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
+            .serializeArrayList("found_coins", found_coins, Coin.class)
+            .serializeArrayList("custom_coins", custom_coins, Coin.class)
             .toStringOrNull();
     }
 
@@ -423,12 +424,12 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         CoinManager coinManager;
 
         if("2".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String coin_type = o.get("coin_type", String.class);
-            ArrayList<Coin> hardcoded_coins = o.getArrayList("hardcoded_coins", Coin.class);
-            ArrayList<Coin> found_coins = o.getArrayList("found_coins", Coin.class);
-            ArrayList<Coin> custom_coins = o.getArrayList("custom_coins", Coin.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String coin_type = o.deserialize("coin_type", String.class);
+            ArrayList<Coin> hardcoded_coins = o.deserializeArrayList("hardcoded_coins", Coin.class);
+            ArrayList<Coin> found_coins = o.deserializeArrayList("found_coins", Coin.class);
+            ArrayList<Coin> custom_coins = o.deserializeArrayList("custom_coins", Coin.class);
 
             // This is a dummy object that only has to hold onto the coin array lists.
             // We don't need to call the proper add* methods here.
@@ -438,9 +439,9 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coinManager.custom_coins = custom_coins;
         }
         else if("1".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String coin_type = o.get("coin_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String coin_type = o.deserialize("coin_type", String.class);
 
             // We have to manually deserialize this legacy data.
             ArrayList<Coin> hardcoded_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
@@ -465,13 +466,13 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String display_name = o.get("display_name", String.class);
-            int scale = o.get("scale", Integer.class);
-            String id = o.get("id", String.class);
-            String coin_type = o.get("coin_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String display_name = o.deserialize("display_name", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String id = o.deserialize("id", String.class);
+            String coin_type = o.deserialize("coin_type", String.class);
 
             return Coin.buildCoin(key, name, display_name, scale, coin_type, id);
         }

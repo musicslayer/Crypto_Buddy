@@ -9,8 +9,8 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Referentiation;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
@@ -135,14 +135,14 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String serializeToJSON() throws org.json.JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
-        return new JSONWithNull.JSONObjectWithNull()
-                .put("assetKind", getAssetKind(), String.class)
-                .put("key", getOriginalKey(), String.class)
-                .put("name", getOriginalName(), String.class)
-                .put("displayName", getOriginalDisplayName(), String.class)
-                .put("scale", getOriginalScale(), Integer.class)
-                .put("assetType", getOriginalAssetType(), String.class)
-                .putHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+                .serialize("assetKind", getAssetKind(), String.class)
+                .serialize("key", getOriginalKey(), String.class)
+                .serialize("name", getOriginalName(), String.class)
+                .serialize("displayName", getOriginalDisplayName(), String.class)
+                .serialize("scale", getOriginalScale(), Integer.class)
+                .serialize("assetType", getOriginalAssetType(), String.class)
+                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
                 .toStringOrNull();
     }
 
@@ -151,47 +151,47 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
         if("4".equals(version)) {
             // Reconstruct the asset from the deserialized info.
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String assetKind = o.get("assetKind", String.class);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String displayName = o.get("displayName", String.class);
-            int scale = o.get("scale", Integer.class);
-            String assetType = o.get("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.getHashMap("additionalInfo", String.class, String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String assetKind = o.deserialize("assetKind", String.class);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String displayName = o.deserialize("displayName", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String assetType = o.deserialize("assetType", String.class);
+            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
 
             asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }
         else if("3".equals(version)) {
             // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
             // In older versions, serialization was performing the role of referentiation.
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String assetKind = o.get("assetKind", String.class);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String displayName = o.get("displayName", String.class);
-            int scale = o.get("scale", Integer.class);
-            String assetType = o.get("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.getHashMap("additionalInfo", String.class, String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String assetKind = o.deserialize("assetKind", String.class);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String displayName = o.deserialize("displayName", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String assetType = o.deserialize("assetType", String.class);
+            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
 
             asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }
         else if("2".equals(version)) {
             // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
             // In older versions, serialization was performing the role of referentiation.
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String assetKind = o.get("assetKind", String.class);
-            String assetType = o.get("assetType", String.class);
-            String key = o.get("key", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String assetKind = o.deserialize("assetKind", String.class);
+            String assetType = o.deserialize("assetType", String.class);
+            String key = o.deserialize("key", String.class);
 
             asset = lookupAsset(assetKind, assetType, key);
         }
         else if("1".equals(version)) {
             // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
             // In older versions, serialization was performing the role of referentiation.
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String assetType = o.get("assetType", String.class);
-            String key = o.get("key", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String assetType = o.deserialize("assetType", String.class);
+            String key = o.deserialize("key", String.class);
 
             String assetKind;
             if("!FIAT!".equals(assetType) || "!COIN!".equals(assetType)) {
@@ -224,14 +224,14 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String referenceToJSON() throws org.json.JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
-        return new JSONWithNull.JSONObjectWithNull()
-                .put("assetKind", getAssetKind(), String.class)
-                .put("key", getOriginalKey(), String.class)
-                .put("name", getOriginalName(), String.class)
-                .put("displayName", getOriginalDisplayName(), String.class)
-                .put("scale", getOriginalScale(), Integer.class)
-                .put("assetType", getOriginalAssetType(), String.class)
-                .putHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+                .serialize("assetKind", getAssetKind(), String.class)
+                .serialize("key", getOriginalKey(), String.class)
+                .serialize("name", getOriginalName(), String.class)
+                .serialize("displayName", getOriginalDisplayName(), String.class)
+                .serialize("scale", getOriginalScale(), Integer.class)
+                .serialize("assetType", getOriginalAssetType(), String.class)
+                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
                 .toStringOrNull();
     }
 
@@ -240,14 +240,14 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
         if("1".equals(version)) {
             // When we dereference, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String assetKind = o.get("assetKind", String.class);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String displayName = o.get("displayName", String.class);
-            int scale = o.get("scale", Integer.class);
-            String assetType = o.get("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.getHashMap("additionalInfo", String.class, String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String assetKind = o.deserialize("assetKind", String.class);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String displayName = o.deserialize("displayName", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String assetType = o.deserialize("assetType", String.class);
+            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
 
             asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }

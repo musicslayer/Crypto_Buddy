@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
@@ -205,18 +205,18 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("amount", amount, BigDecimal.class)
-            .put("isLoss", isLoss, Boolean.class)
-            .put("isInfinity", isInfinity, Boolean.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("amount", amount, BigDecimal.class)
+            .serialize("isLoss", isLoss, Boolean.class)
+            .serialize("isInfinity", isInfinity, Boolean.class)
             .toStringOrNull();
     }
 
     public static AssetAmount deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        BigDecimal amount = o.get("amount", BigDecimal.class);
-        boolean isLoss = o.get("isLoss", Boolean.class);
-        boolean isInfinity = o.get("isInfinity", Boolean.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        BigDecimal amount = o.deserialize("amount", BigDecimal.class);
+        boolean isLoss = o.deserialize("isLoss", Boolean.class);
+        boolean isInfinity = o.deserialize("isInfinity", Boolean.class);
 
         AssetAmount a = new AssetAmount(amount);
         a.isLoss = isLoss;

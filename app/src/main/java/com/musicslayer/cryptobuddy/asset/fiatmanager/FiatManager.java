@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.asset.fiatmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -410,12 +411,12 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("key", getKey(), String.class)
-            .put("fiat_type", getFiatType(), String.class)
-            .putArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
-            .putArrayList("found_fiats", found_fiats, Fiat.class)
-            .putArrayList("custom_fiats", custom_fiats, Fiat.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("key", getKey(), String.class)
+            .serialize("fiat_type", getFiatType(), String.class)
+            .serializeArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
+            .serializeArrayList("found_fiats", found_fiats, Fiat.class)
+            .serializeArrayList("custom_fiats", custom_fiats, Fiat.class)
             .toStringOrNull();
     }
 
@@ -423,12 +424,12 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         FiatManager fiatManager;
 
         if("2".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String fiat_type = o.get("fiat_type", String.class);
-            ArrayList<Fiat> hardcoded_fiats = o.getArrayList("hardcoded_fiats", Fiat.class);
-            ArrayList<Fiat> found_fiats = o.getArrayList("found_fiats", Fiat.class);
-            ArrayList<Fiat> custom_fiats = o.getArrayList("custom_fiats", Fiat.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String fiat_type = o.deserialize("fiat_type", String.class);
+            ArrayList<Fiat> hardcoded_fiats = o.deserializeArrayList("hardcoded_fiats", Fiat.class);
+            ArrayList<Fiat> found_fiats = o.deserializeArrayList("found_fiats", Fiat.class);
+            ArrayList<Fiat> custom_fiats = o.deserializeArrayList("custom_fiats", Fiat.class);
 
             // This is a dummy object that only has to hold onto the fiat array lists.
             // We don't need to call the proper add* methods here.
@@ -438,9 +439,9 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiatManager.custom_fiats = custom_fiats;
         }
         else if("1".equals(version)) {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String fiat_type = o.get("fiat_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String fiat_type = o.deserialize("fiat_type", String.class);
 
             // We have to manually deserialize this legacy data.
             ArrayList<Fiat> hardcoded_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
@@ -465,12 +466,12 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            String key = o.get("key", String.class);
-            String name = o.get("name", String.class);
-            String display_name = o.get("display_name", String.class);
-            int scale = o.get("scale", Integer.class);
-            String fiat_type = o.get("fiat_type", String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String display_name = o.deserialize("display_name", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String fiat_type = o.deserialize("fiat_type", String.class);
 
             return Fiat.buildFiat(key, name, display_name, scale, fiat_type);
         }

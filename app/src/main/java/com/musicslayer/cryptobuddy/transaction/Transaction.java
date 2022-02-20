@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
@@ -289,22 +289,22 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("action", action, Action.class)
-            .put("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
-            .put("otherAssetQuantity", otherAssetQuantity, AssetQuantity.class)
-            .put("timestamp", timestamp, Timestamp.class)
-            .put("info", info, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("action", action, Action.class)
+            .serialize("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
+            .serialize("otherAssetQuantity", otherAssetQuantity, AssetQuantity.class)
+            .serialize("timestamp", timestamp, Timestamp.class)
+            .serialize("info", info, String.class)
             .toStringOrNull();
     }
 
     public static Transaction deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Action action = o.get("action", Action.class);
-        AssetQuantity actionedAssetQuantity = o.get("actionedAssetQuantity", AssetQuantity.class);
-        AssetQuantity otherAssetQuantity = o.get("otherAssetQuantity", AssetQuantity.class);
-        Timestamp timestamp = o.get("timestamp", Timestamp.class);
-        String info = o.get("info", String.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        Action action = o.deserialize("action", Action.class);
+        AssetQuantity actionedAssetQuantity = o.deserialize("actionedAssetQuantity", AssetQuantity.class);
+        AssetQuantity otherAssetQuantity = o.deserialize("otherAssetQuantity", AssetQuantity.class);
+        Timestamp timestamp = o.deserialize("timestamp", Timestamp.class);
+        String info = o.deserialize("info", String.class);
         return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }
 }

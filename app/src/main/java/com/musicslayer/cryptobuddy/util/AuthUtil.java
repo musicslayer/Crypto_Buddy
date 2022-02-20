@@ -7,12 +7,12 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import org.json.JSONObject;
@@ -192,16 +192,16 @@ public class AuthUtil {
         }
 
         public String serializeToJSON() throws org.json.JSONException {
-            return new JSONWithNull.JSONObjectWithNull()
-                    .putArray("token_e", toObjectArray(token_e), Byte.class)
-                    .put("expiryTime", expiryTime, Long.class)
+            return new DataBridge.JSONObjectDataBridge()
+                    .serializeArray("token_e", toObjectArray(token_e), Byte.class)
+                    .serialize("expiryTime", expiryTime, Long.class)
                     .toStringOrNull();
         }
 
         public static OAuthToken deserializeFromJSON(String s, String version) throws org.json.JSONException {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            byte[] token_e = toPrimitiveArray(o.getArray("token_e", Byte.class));
-            long expiryTime = o.get("expiryTime", Long.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
+            long expiryTime = o.deserialize("expiryTime", Long.class);
             return new OAuthToken(token_e, expiryTime);
         }
 

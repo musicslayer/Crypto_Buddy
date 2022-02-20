@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.api;
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 abstract public class API implements Serialization.SerializableToJSON, Serialization.Versionable {
@@ -27,17 +27,17 @@ abstract public class API implements Serialization.SerializableToJSON, Serializa
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("apiType", getAPIType(), String.class)
-            .put("key", getKey(), String.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("apiType", getAPIType(), String.class)
+            .serialize("key", getKey(), String.class)
             .toStringOrNull();
     }
 
     public static API deserializeFromJSON(String s, String version) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String apiType = o.get("apiType", String.class);
-        String key = o.get("key", String.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        String apiType = o.deserialize("apiType", String.class);
+        String key = o.deserialize("key", String.class);
         return API.getAPI(apiType, key);
     }
 

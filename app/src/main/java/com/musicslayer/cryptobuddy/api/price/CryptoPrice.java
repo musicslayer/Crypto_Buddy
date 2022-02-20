@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -63,16 +63,16 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .putArrayList("assetArrayList", assetArrayList, Asset.class)
-            .put("fiat", fiat, Fiat.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serializeArrayList("assetArrayList", assetArrayList, Asset.class)
+            .serialize("fiat", fiat, Fiat.class)
             .toStringOrNull();
     }
 
     public static CryptoPrice deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        ArrayList<Asset> assetArrayList = o.getArrayList("assetArrayList", Asset.class);
-        Fiat fiat = o.get("fiat", Fiat.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        ArrayList<Asset> assetArrayList = o.deserializeArrayList("assetArrayList", Asset.class);
+        Fiat fiat = o.deserialize("fiat", Fiat.class);
         return new CryptoPrice(assetArrayList, fiat);
     }
 }

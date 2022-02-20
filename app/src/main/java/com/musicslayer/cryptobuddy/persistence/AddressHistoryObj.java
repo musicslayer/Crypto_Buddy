@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 public class AddressHistoryObj implements Serialization.SerializableToJSON, Serialization.Versionable {
@@ -34,14 +34,14 @@ public class AddressHistoryObj implements Serialization.SerializableToJSON, Seri
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("cryptoAddress", cryptoAddress, CryptoAddress.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("cryptoAddress", cryptoAddress, CryptoAddress.class)
             .toStringOrNull();
     }
 
     public static AddressHistoryObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        CryptoAddress cryptoAddress = o.get("cryptoAddress", CryptoAddress.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        CryptoAddress cryptoAddress = o.deserialize("cryptoAddress", CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);
     }
 }

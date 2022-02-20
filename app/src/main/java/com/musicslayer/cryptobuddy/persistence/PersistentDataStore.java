@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -9,6 +9,8 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+// TODO Replace other @supress checks with casting.
 
 // Methods to quickly manipulate all persistent app data on a user's device.
 abstract public class PersistentDataStore {
@@ -46,18 +48,15 @@ abstract public class PersistentDataStore {
     abstract public void loadAllData(); // Read all stored data into local data.
     abstract public void resetAllData(); // Erase all stored and local data.
 
-    @SuppressWarnings("unchecked")
     public static <T extends PersistentDataStore> T getInstance(Class<T> clazz) {
         // Subclasses have many unique methods, so use this to cast the instance.
-        PersistentDataStore instance = UnknownPersistentDataStore.createUnknownPersistentDataStore(null);
-
         for(PersistentDataStore persistentDataStore : persistent_data_stores) {
             if(clazz.isInstance(persistentDataStore)) {
-                instance = persistentDataStore;
+                return clazz.cast(persistentDataStore);
             }
         }
 
-        return (T)instance;
+        return null; // Don't use UnknownPersistentDataStore here.
     }
 
     public static ArrayList<String> getAllExportableDataTypes() {
@@ -77,7 +76,7 @@ abstract public class PersistentDataStore {
         // Export a JSON representation of persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
 
         // Individually, try to export each piece of data.
         for(PersistentDataStore persistentDataStore : persistent_data_stores) {
@@ -85,8 +84,9 @@ abstract public class PersistentDataStore {
                 String key = persistentDataStore.getSharedPreferencesKey();
                 if(!dataTypes.contains(key)) { continue; }
 
+                // TODO can I call export directly?
                 String value = persistentDataStore.doExport();
-                o.put(key, value, String.class);
+                o.serialize(key, value, String.class);
             }
             catch(Exception e) {
                 // If one class's data cannot be exported, skip it and do nothing.
@@ -101,9 +101,9 @@ abstract public class PersistentDataStore {
         // Import a JSON representation of persistent data into the app.
 
         // Each SharedPreferences key maps to its data.
-        JSONWithNull.JSONObjectWithNull o;
+        DataBridge.JSONObjectDataBridge o;
         try {
-            o = new JSONWithNull.JSONObjectWithNull(json);
+            o = new DataBridge.JSONObjectDataBridge(json);
         }
         catch(Exception e) {
             throw new IllegalStateException(e);
@@ -115,7 +115,8 @@ abstract public class PersistentDataStore {
                 String key = persistentDataStore.getSharedPreferencesKey();
                 if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
-                String value = o.get(key, String.class);
+                // TODO can I call import directly?
+                String value = o.deserialize(key, String.class);
                 persistentDataStore.doImport(value);
             }
             catch(Exception e) {

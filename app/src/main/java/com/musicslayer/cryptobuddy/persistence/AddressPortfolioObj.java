@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.persistence;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -47,16 +47,16 @@ public class AddressPortfolioObj implements Serialization.SerializableToJSON, Se
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("name", name, String.class)
-            .putArrayList("cryptoAddressArrayList", cryptoAddressArrayList, CryptoAddress.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("name", name, String.class)
+            .serializeArrayList("cryptoAddressArrayList", cryptoAddressArrayList, CryptoAddress.class)
             .toStringOrNull();
     }
 
     public static AddressPortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String name = o.get("name", String.class);
-        ArrayList<CryptoAddress> cryptoAddressArrayList = o.getArrayList("cryptoAddressArrayList", CryptoAddress.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        String name = o.deserialize("name", String.class);
+        ArrayList<CryptoAddress> cryptoAddressArrayList = o.deserializeArrayList("cryptoAddressArrayList", CryptoAddress.class);
 
         AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
         addressPortfolioObj.cryptoAddressArrayList = cryptoAddressArrayList;

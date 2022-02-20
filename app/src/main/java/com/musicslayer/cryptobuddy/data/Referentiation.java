@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.data;
 
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -50,8 +49,8 @@ public class Referentiation {
                 String type = Referentiation.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
-                    JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-                    o.put(REFERENTIATION_VERSION_MARKER, version, String.class);
+                    DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+                    o.serialize(REFERENTIATION_VERSION_MARKER, version, String.class);
                     s = o.toStringOrNull();
                 }
             }
@@ -92,8 +91,8 @@ public class Referentiation {
 
     public static String getVersion(String s) {
         try {
-            JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-            return o.get(REFERENTIATION_VERSION_MARKER, String.class);
+            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            return o.deserialize(REFERENTIATION_VERSION_MARKER, String.class);
         }
         catch(Exception ignored) {
             // If there is no version, just call it "version zero".

@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.persistence;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
@@ -16,7 +17,6 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
     public void doImport(String s) { Exportation.importData(this, s, TokenManagerList.class); }
 
     // Just pick something that would never actually be saved.
-    // TODO Defaults should represent empty token lists, or we need to save data after initializing.
     public final static String DEFAULT = "!UNKNOWN!";
 
     public String getSharedPreferencesKey() {
@@ -77,7 +77,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
@@ -94,7 +94,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
                 throw new IllegalStateException(e);
             }
 
-            o.put(key, newSerialString, String.class);
+            o.serialize(key, newSerialString, String.class);
         }
 
         return o.toStringOrNull();
@@ -102,7 +102,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
 
 
     public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
 
         // Only import token managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -111,7 +111,7 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
             if(o.has(key)) {
-                String value = o.get(key, String.class);
+                String value = o.deserialize(key, String.class);
                 if(!DEFAULT.equals(value)) {
                     editor.putString(key, Serialization.cycle(value, TokenManager.class));
                 }

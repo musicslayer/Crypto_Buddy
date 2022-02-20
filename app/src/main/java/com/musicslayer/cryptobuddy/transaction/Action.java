@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -124,14 +124,14 @@ public class Action implements Serialization.SerializableToJSON, Serialization.V
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("actionString", actionString, String.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("actionString", actionString, String.class)
             .toStringOrNull();
     }
 
     public static Action deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        String actionString = o.get("actionString", String.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        String actionString = o.deserialize("actionString", String.class);
         return new Action(actionString);
     }
 }

@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.filter;
 
+import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
 import java.util.ArrayList;
@@ -12,17 +12,17 @@ public class DateFilter extends Filter {
     public Date user_endDate;
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new JSONWithNull.JSONObjectWithNull()
-            .put("filterType", getFilterType(), String.class)
-            .put("user_startDate", user_startDate, Date.class)
-            .put("user_endDate", user_endDate, Date.class)
+        return new DataBridge.JSONObjectDataBridge()
+            .serialize("filterType", getFilterType(), String.class)
+            .serialize("user_startDate", user_startDate, Date.class)
+            .serialize("user_endDate", user_endDate, Date.class)
             .toStringOrNull();
     }
 
     public static DateFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(s);
-        Date user_startDate = o.get("user_startDate", Date.class);
-        Date user_endDate = o.get("user_endDate", Date.class);
+        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        Date user_startDate = o.deserialize("user_startDate", Date.class);
+        Date user_endDate = o.deserialize("user_endDate", Date.class);
 
         DateFilter dateFilter = new DateFilter();
         dateFilter.user_startDate = user_startDate;
