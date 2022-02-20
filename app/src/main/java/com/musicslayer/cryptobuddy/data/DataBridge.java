@@ -35,8 +35,17 @@ public class DataBridge {
 
         ///////////
         // These are needed for non-standard workflows.
+        public String getJSONObjectString(String key) throws org.json.JSONException {
+            return jsonObjectWithNull.getJSONObject(key).toStringOrNull();
+        }
+
         public String getJSONArrayString(String key) throws org.json.JSONException {
             return jsonObjectWithNull.getJSONArray(key).toStringOrNull();
+        }
+
+        public JSONObjectDataBridge putJSONObjectString(String key, String s) throws org.json.JSONException {
+            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
+            return this;
         }
         ///////////
 
@@ -58,6 +67,27 @@ public class DataBridge {
                 throw new IllegalStateException();
             }
 
+            return this;
+        }
+
+        public <T> JSONObjectDataBridge serializeArray(String key, T[] obj, Class<T> clazzT) throws org.json.JSONException {
+            // Array always uses type !ARRAY!.
+            String s = Serialization.serializeArray(obj, clazzT);
+            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
+            return this;
+        }
+
+        public <T> JSONObjectDataBridge serializeArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
+            // ArrayList always uses type !ARRAY!.
+            String s = Serialization.serializeArrayList(obj, clazzT);
+            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
+            return this;
+        }
+
+        public <T, U> JSONObjectDataBridge serializeHashMap(String key, HashMap<T, U> obj, Class<T> clazzT, Class<U> clazzU) throws org.json.JSONException {
+            // HashMap always uses type !OBJECT!.
+            String s = Serialization.serializeHashMap(obj, clazzT, clazzU);
+            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
             return this;
         }
 
@@ -103,6 +133,13 @@ public class DataBridge {
             return this;
         }
 
+        public <T> JSONObjectDataBridge referenceArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
+            // ArrayList always uses type !ARRAY!.
+            String s = Referentiation.referenceArrayList(obj, clazzT);
+            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
+            return this;
+        }
+
         public <T> T deserialize(String key, Class<T> clazzT) throws JSONException {
             String version;
             try {
@@ -130,6 +167,24 @@ public class DataBridge {
             }
 
             return Serialization.deserialize(s, clazzT);
+        }
+
+        public <T> T[] deserializeArray(String key, Class<T> clazzT) throws JSONException {
+            // Array always uses type !ARRAY!.
+            String s = jsonObjectWithNull.getJSONArrayString(key);
+            return Serialization.deserializeArray(s, clazzT);
+        }
+
+        public <T> ArrayList<T> deserializeArrayList(String key, Class<T> clazzT) throws JSONException {
+            // ArrayList always uses type !ARRAY!.
+            String s = jsonObjectWithNull.getJSONArrayString(key);
+            return Serialization.deserializeArrayList(s, clazzT);
+        }
+
+        public <T, U> HashMap<T, U> deserializeHashMap(String key, Class<T> clazzT, Class<U> clazzU) throws JSONException {
+            // HashMap always uses type !OBJECT!.
+            String s = jsonObjectWithNull.getJSONObjectString(key);
+            return Serialization.deserializeHashMap(s, clazzT, clazzU);
         }
 
         public <T> void importData(T obj, String key, Class<T> clazzT) throws JSONException {
@@ -190,43 +245,10 @@ public class DataBridge {
             return Referentiation.dereference(s, clazzT);
         }
 
-        public <T> JSONObjectDataBridge serializeArray(String key, T[] obj, Class<T> clazzT) throws org.json.JSONException {
-            // Array always uses type !ARRAY!.
-            String s = Serialization.serializeArray(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge serializeArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
-            // ArrayList always uses type !ARRAY!.
-            String s = Serialization.serializeArrayList(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            return this;
-        }
-
-        public <T, U> JSONObjectDataBridge serializeHashMap(String key, HashMap<T, U> obj, Class<T> clazzT, Class<U> clazzU) throws org.json.JSONException {
-            // HashMap always uses type !OBJECT!.
-            String s = Serialization.serializeHashMap(obj, clazzT, clazzU);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            return this;
-        }
-
-        public <T> T[] deserializeArray(String key, Class<T> clazzT) throws JSONException {
-            // Array always uses type !ARRAY!.
-            String s = jsonObjectWithNull.getJSONArrayString(key);
-            return Serialization.deserializeArray(s, clazzT);
-        }
-
-        public <T> ArrayList<T> deserializeArrayList(String key, Class<T> clazzT) throws JSONException {
+        public <T> ArrayList<T> dereferenceArrayList(String key, Class<T> clazzT) throws JSONException {
             // ArrayList always uses type !ARRAY!.
             String s = jsonObjectWithNull.getJSONArrayString(key);
-            return Serialization.deserializeArrayList(s, clazzT);
-        }
-
-        public <T, U> HashMap<T, U> deserializeHashMap(String key, Class<T> clazzT, Class<U> clazzU) throws JSONException {
-            // HashMap always uses type !OBJECT!.
-            String s = jsonObjectWithNull.getJSONObjectString(key);
-            return Serialization.deserializeHashMap(s, clazzT, clazzU);
+            return Referentiation.dereferenceArrayList(s, clazzT);
         }
     }
 
@@ -301,6 +323,56 @@ public class DataBridge {
             }
 
             return Serialization.deserialize(s, clazzT);
+        }
+
+        public <T> JSONArrayDataBridge reference(T obj, Class<T> clazzT) throws JSONException {
+            String type = Referentiation.getCurrentType(clazzT);
+            String s = Referentiation.reference(obj, clazzT);
+
+            if("!STRING!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putString(s);
+            }
+            else if("!OBJECT!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putJSONObjectString(s);
+            }
+            else if("!ARRAY!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putJSONArrayString(s);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
+            return this;
+        }
+
+        public <T> T dereference(int i, Class<T> clazzT) throws JSONException {
+            String version;
+            try {
+                version = Referentiation.getVersion(jsonArrayWithNull.getJSONObjectString(i));
+            }
+            catch(Exception ignored) {
+                version = "0";
+            }
+
+            String type = Referentiation.getTypeForVersion(version, clazzT);
+            String s;
+
+            if("!STRING!".equals(type)) {
+                s = jsonArrayWithNull.getString(i);
+            }
+            else if("!OBJECT!".equals(type)) {
+                s = jsonArrayWithNull.getJSONObjectString(i);
+            }
+            else if("!ARRAY!".equals(type)) {
+                s = jsonArrayWithNull.getJSONArrayString(i);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
+            return Referentiation.dereference(s, clazzT);
         }
     }
 }

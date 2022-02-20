@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.Referentiation;
 import com.musicslayer.cryptobuddy.data.Serialization;
 
 import java.util.ArrayList;
@@ -14,15 +15,15 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
     @Override
     public void writeToParcel(Parcel out, int flags) {
         // Writing a List directly requires a higher Android API.
-        out.writeString(Serialization.serializeArrayList(assetArrayList, Asset.class));
-        out.writeParcelable(fiat, flags);
+        out.writeString(Referentiation.referenceArrayList(assetArrayList, Asset.class));
+        out.writeString(Referentiation.reference(fiat, Fiat.class));
     }
 
     public static final Creator<CryptoPrice> CREATOR = new Creator<CryptoPrice>() {
         @Override
         public CryptoPrice createFromParcel(Parcel in) {
-            ArrayList<Asset> assetArrayList = Serialization.deserializeArrayList(in.readString(), Asset.class);
-            Fiat fiat = in.readParcelable(Fiat.class.getClassLoader());
+            ArrayList<Asset> assetArrayList = Referentiation.dereferenceArrayList(in.readString(), Asset.class);
+            Fiat fiat = Referentiation.dereference(in.readString(), Fiat.class);
             return new CryptoPrice(assetArrayList, fiat);
         }
 
@@ -64,15 +65,15 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         return new DataBridge.JSONObjectDataBridge()
-            .serializeArrayList("assetArrayList", assetArrayList, Asset.class)
-            .serialize("fiat", fiat, Fiat.class)
+            .referenceArrayList("assetArrayList", assetArrayList, Asset.class)
+            .reference("fiat", fiat, Fiat.class)
             .toStringOrNull();
     }
 
     public static CryptoPrice deserializeFromJSON(String s, String version) throws org.json.JSONException {
         DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
-        ArrayList<Asset> assetArrayList = o.deserializeArrayList("assetArrayList", Asset.class);
-        Fiat fiat = o.deserialize("fiat", Fiat.class);
+        ArrayList<Asset> assetArrayList = o.dereferenceArrayList("assetArrayList", Asset.class);
+        Fiat fiat = o.dereference("fiat", Fiat.class);
         return new CryptoPrice(assetArrayList, fiat);
     }
 }

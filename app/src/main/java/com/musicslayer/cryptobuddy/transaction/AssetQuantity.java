@@ -87,14 +87,14 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
     public String serializeToJSON() throws org.json.JSONException {
         return new DataBridge.JSONObjectDataBridge()
             .serialize("assetAmount", assetAmount, AssetAmount.class)
-            .serialize("asset", asset, Asset.class)
+            .reference("asset", asset, Asset.class)
             .toStringOrNull();
     }
 
     public static AssetQuantity deserializeFromJSON(String s, String version) throws org.json.JSONException {
         DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
         AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
-        Asset asset = o.deserialize("asset", Asset.class);
+        Asset asset = o.dereference("asset", Asset.class);
         return new AssetQuantity(assetAmount, asset);
     }
 }

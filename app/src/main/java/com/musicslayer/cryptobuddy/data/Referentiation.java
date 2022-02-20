@@ -3,13 +3,12 @@ package com.musicslayer.cryptobuddy.data;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import java.util.ArrayList;
+
 // The difference between Serialization and Referentiation is that an object serializes itself so it can be rebuilt completely,
 // whereas an object creates references to lookup the object later from another place that has the information.
 
 // Note: Referentiation has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
-
-// TODO Apply this to other classes.
-// TODO - HashMap has two classes. What if I want to serialize on, and reference another?
 
 public class Referentiation {
     // Keep this short because it will appear on every piece of stored data.
@@ -72,6 +71,42 @@ public class Referentiation {
 
         try {
             return ReflectUtil.callStaticMethod(wrappedClass, "dereferenceFromJSON", s, version);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> String referenceArrayList(ArrayList<T> arrayList, Class<T> clazzT) {
+        if(arrayList == null) { return null; }
+
+        try {
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
+            for(T t : arrayList) {
+                a.reference(t, clazzT);
+            }
+
+            return a.toStringOrNull();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> ArrayList<T> dereferenceArrayList(String s, Class<T> clazzT) {
+        if(s == null) { return null; }
+
+        try {
+            ArrayList<T> arrayList = new ArrayList<>();
+
+            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
+            for(int i = 0; i < a.length(); i++) {
+                arrayList.add(a.dereference(i, clazzT));
+            }
+
+            return arrayList;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
