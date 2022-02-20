@@ -2,9 +2,7 @@ package com.musicslayer.cryptobuddy.data;
 
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +19,6 @@ public class DataBridge {
             jsonObjectWithNull = new JSONWithNull.JSONObjectWithNull(s);
         }
 
-        public JSONObjectDataBridge(JSONObject jsonObject) {
-            jsonObjectWithNull = new JSONWithNull.JSONObjectWithNull(jsonObject);
-        }
-
         public String toStringOrNull() {
             return jsonObjectWithNull.toStringOrNull();
         }
@@ -36,11 +30,11 @@ public class DataBridge {
         ///////////
         // These are needed for non-standard workflows.
         public String getJSONObjectString(String key) throws org.json.JSONException {
-            return jsonObjectWithNull.getJSONObject(key).toStringOrNull();
+            return jsonObjectWithNull.getJSONObjectString(key);
         }
 
         public String getJSONArrayString(String key) throws org.json.JSONException {
-            return jsonObjectWithNull.getJSONArray(key).toStringOrNull();
+            return jsonObjectWithNull.getJSONArrayString(key);
         }
 
         public JSONObjectDataBridge putJSONObjectString(String key, String s) throws org.json.JSONException {
@@ -261,10 +255,6 @@ public class DataBridge {
 
         public JSONArrayDataBridge(String s) throws JSONException {
             this.jsonArrayWithNull = new JSONWithNull.JSONArrayWithNull(s);
-        }
-
-        public JSONArrayDataBridge(JSONArray jsonArray) {
-            this.jsonArrayWithNull = new JSONWithNull.JSONArrayWithNull(jsonArray);
         }
 
         public int length() {

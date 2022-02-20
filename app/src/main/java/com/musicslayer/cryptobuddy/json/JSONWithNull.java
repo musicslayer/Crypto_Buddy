@@ -41,8 +41,6 @@ public class JSONWithNull {
             return getJSONObject(key).toStringOrNull();
         }
 
-        // TODO Make Private
-        // Must be public right now so it can be used by FiatManager/CoinManager/TokenManager.
         public String getJSONArrayString(String key) throws org.json.JSONException {
             return getJSONArray(key).toStringOrNull();
         }
@@ -64,17 +62,6 @@ public class JSONWithNull {
             return this;
         }
 
-        // TODO Remove
-        // We need this so it can be used by FiatManagerList/CoinManagerList/TokenManagerList.
-        public JSONObjectWithNull putJSONArray(String key, JSONArrayWithNull arr) throws org.json.JSONException {
-            jsonObject = arr.jsonArray == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, arr.jsonArray);
-            return this;
-        }
-
-        public void remove(String key) {
-            jsonObject.remove(key);
-        }
-
         public ArrayList<String> keys() {
             ArrayList<String> keys = new ArrayList<>();
             Iterator<String> it = jsonObject.keys();
@@ -84,11 +71,11 @@ public class JSONWithNull {
             return keys;
         }
 
-        public JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
+        private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
             return new JSONObjectWithNull((JSONObject)(jsonObject.get(key) instanceof JSONObject ? jsonObject.get(key) : null));
         }
 
-        public JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
+        private JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
             return new JSONArrayWithNull((JSONArray)(jsonObject.get(key) instanceof JSONArray ? jsonObject.get(key) : null));
         }
     }
@@ -117,8 +104,6 @@ public class JSONWithNull {
             return jsonArray == null ? null : jsonArray.toString();
         }
 
-        // TODO Make Private
-        // Must be public right now so it can be used by FiatManager/CoinManager/TokenManager.
         public String getString(int i) throws org.json.JSONException {
             return jsonArray.get(i) instanceof String ? (String)jsonArray.get(i) : null;
         }
@@ -148,11 +133,11 @@ public class JSONWithNull {
             return this;
         }
 
-        public JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
+        private JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
             return new JSONObjectWithNull((JSONObject)(jsonArray.get(i) instanceof JSONObject ? jsonArray.get(i) : null));
         }
 
-        public JSONArrayWithNull getJSONArray(int i) throws org.json.JSONException {
+        private JSONArrayWithNull getJSONArray(int i) throws org.json.JSONException {
             return new JSONArrayWithNull((JSONArray)(jsonArray.get(i) instanceof JSONArray ? jsonArray.get(i) : null));
         }
     }
