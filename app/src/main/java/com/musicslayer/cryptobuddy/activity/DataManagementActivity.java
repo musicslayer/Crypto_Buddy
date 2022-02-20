@@ -11,12 +11,12 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.PersistentDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
-import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -53,7 +53,7 @@ public class DataManagementActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        ArrayList<String> exportableDataTypes = PersistentUserDataStore.getAllExportableDataTypes();
+        ArrayList<String> exportableDataTypes = PersistentDataStore.getAllExportableDataTypes();
         Collections.sort(exportableDataTypes);
 
         // Export to File
@@ -63,7 +63,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    String json = PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes);
+                    String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
 
                     boolean isSuccess = false;
                     if(universalFolder != null) {
@@ -114,7 +114,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentUserDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
+                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
                     ToastUtil.showToast("import_file_success");
                 }
             }
@@ -145,6 +145,7 @@ public class DataManagementActivity extends BaseActivity {
 
                         JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(fileText);
                         dataTypes = o.keys();
+                        Collections.sort(dataTypes);
                     }
                     catch(Exception ignored) {
                         ToastUtil.showToast("import_file_failed");
@@ -182,7 +183,7 @@ public class DataManagementActivity extends BaseActivity {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     ArrayList<File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(FileUtil.writeTempFile(PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes)));
+                    fileArrayList.add(FileUtil.writeTempFile(PersistentDataStore.exportStoredDataToJSON(chosenDataTypes)));
                     MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
                 }
             }
@@ -205,7 +206,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText("export_data", PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes));
+                    ClipboardUtil.exportText("export_data", PersistentDataStore.exportStoredDataToJSON(chosenDataTypes));
                 }
             }
         });
@@ -225,7 +226,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentUserDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
+                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
                     ToastUtil.showToast("import_clipboard_success");
                 }
             }
@@ -240,8 +241,10 @@ public class DataManagementActivity extends BaseActivity {
                 try {
                     // Check if clipboard text can be parsed as JSON. If so, store the data type keys that are present.
                     clipboardText = String.valueOf(ClipboardUtil.importText());
+
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(clipboardText);
                     dataTypes = o.keys();
+                    Collections.sort(dataTypes);
                 }
                 catch(Exception ignored) {
                     ToastUtil.showToast("import_clipboard_not_from_app");

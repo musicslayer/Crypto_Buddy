@@ -75,11 +75,12 @@ public class InitialActivity extends BaseActivity {
         Setting.initialize();
         ToastUtil.initialize();
 
-        // Load all the stored data into local memory and then save it again.
-        // This makes sure the stored data is initialized and helps remove data with outdated versions.
+        // Load all the stored data into local memory.
         PersistentAppDataStore.loadAllStoredData();
         PersistentUserDataStore.loadAllStoredData();
 
+        // Save all the stored data right after loading it.
+        // This makes sure the stored data is initialized and helps remove data with outdated versions.
         PersistentAppDataStore.saveAllStoredData();
         PersistentUserDataStore.saveAllStoredData();
 

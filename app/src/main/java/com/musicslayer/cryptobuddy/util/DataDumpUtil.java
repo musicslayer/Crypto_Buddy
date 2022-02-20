@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Environment;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 
 import java.util.ArrayList;
@@ -28,16 +29,39 @@ public class DataDumpUtil {
         s.append("\n\nDevice Data:");
         s.append(getInfoAboutDevice(activity));
 
-        // Add all persistent data.
-        s.append("\n\nPersistent Data:");
+        // Add persistent app data.
+        s.append("\n\nPersistent App Data:");
 
-        HashMap<String, HashMap<String, String>> allDataMap = PersistentUserDataStore.getAllStoredData();
-        ArrayList<String> allDataKeys = new ArrayList<>(allDataMap.keySet());
-        for(String allDataKey : allDataKeys) {
+        HashMap<String, HashMap<String, String>> appDataMap = PersistentAppDataStore.getAllStoredData();
+        ArrayList<String> appDataKeys = new ArrayList<>(appDataMap.keySet());
+        for(String appDataKey : appDataKeys) {
             s.append("\n\n");
-            s.append(allDataKey).append(":");
+            s.append(appDataKey).append(":");
 
-            HashMap<String, String> hashMap = allDataMap.get(allDataKey);
+            HashMap<String, String> hashMap = appDataMap.get(appDataKey);
+
+            // If we have no data at all, not even error data, then just skip this map.
+            if(hashMap == null) {
+                continue;
+            }
+
+            // Append data, including error data.
+            ArrayList<String> keys = new ArrayList<>(hashMap.keySet());
+            for(String key : keys) {
+                s.append("\n  ").append(key).append(" = ").append(hashMap.get(key));
+            }
+        }
+
+        // Add persistent user data.
+        s.append("\n\nPersistent User Data:");
+
+        HashMap<String, HashMap<String, String>> userDataMap = PersistentUserDataStore.getAllStoredData();
+        ArrayList<String> userDataKeys = new ArrayList<>(userDataMap.keySet());
+        for(String userDataKey : userDataKeys) {
+            s.append("\n\n");
+            s.append(userDataKey).append(":");
+
+            HashMap<String, String> hashMap = userDataMap.get(userDataKey);
 
             // If we have no data at all, not even error data, then just skip this map.
             if(hashMap == null) {
