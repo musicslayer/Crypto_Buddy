@@ -70,7 +70,7 @@ public class RichStringBuilder {
         str = Html.escapeHtml(str);
 
         // Handle certain whitespace characters.
-        str = str.replace("\n", "<br/>"); // Don't bother with \r here.
+        str = str.replace("&#10;", "<br/>"); // "\n" (Don't bother with "\r" here).
         str = str.replace(" ", "&nbsp;");
         return str;
     }
