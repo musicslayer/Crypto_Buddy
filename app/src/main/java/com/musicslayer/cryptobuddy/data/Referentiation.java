@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 // Note: Referentiation has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
 // TODO Apply this to other classes.
+// TODO - HashMap has two classes. What if I want to serialize on, and reference another?
 
 public class Referentiation {
     // Keep this short because it will appear on every piece of stored data.
@@ -78,8 +79,8 @@ public class Referentiation {
         }
     }
 
-    public static <T> String getCurrentVersion(Class<T> clazz) {
-        Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getCurrentVersion(Class<T> clazzT) {
+        Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazzT);
         if(Versionable.class.isAssignableFrom(wrappedClass)) {
             return ReflectUtil.callStaticMethod(wrappedClass, "referentiationVersion");
         }
@@ -100,12 +101,12 @@ public class Referentiation {
         }
     }
 
-    public static <T> String getCurrentType(Class<T> clazz) {
-        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    public static <T> String getCurrentType(Class<T> clazzT) {
+        return getTypeForVersion(getCurrentVersion(clazzT), clazzT);
     }
 
-    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
-        Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getTypeForVersion(String version, Class<T> clazzT) {
+        Class<? extends ReferenceableToJSON> wrappedClass = wrapClass(clazzT);
         return ReflectUtil.callStaticMethod(wrappedClass, "referentiationType", version);
     }
 

@@ -81,8 +81,8 @@ public class Exportation {
         }
     }
 
-    public static <T> String getCurrentVersion(Class<T> clazz) {
-        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getCurrentVersion(Class<T> clazzT) {
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
         if(Versionable.class.isAssignableFrom(wrappedClass)) {
             return ReflectUtil.callStaticMethod(wrappedClass, "exportationVersion");
         }
@@ -103,12 +103,12 @@ public class Exportation {
         }
     }
 
-    public static <T> String getCurrentType(Class<T> clazz) {
-        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    public static <T> String getCurrentType(Class<T> clazzT) {
+        return getTypeForVersion(getCurrentVersion(clazzT), clazzT);
     }
 
-    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
-        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getTypeForVersion(String version, Class<T> clazzT) {
+        Class<? extends ExportableToJSON> wrappedClass = wrapClass(clazzT);
         return ReflectUtil.callStaticMethod(wrappedClass, "exportationType", version);
     }
 

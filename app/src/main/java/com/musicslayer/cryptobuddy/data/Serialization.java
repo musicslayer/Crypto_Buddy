@@ -86,8 +86,8 @@ public class Serialization {
         }
     }
 
-    public static <T> String getCurrentVersion(Class<T> clazz) {
-        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getCurrentVersion(Class<T> clazzT) {
+        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
         if(Versionable.class.isAssignableFrom(wrappedClass)) {
             return ReflectUtil.callStaticMethod(wrappedClass, "serializationVersion");
         }
@@ -108,12 +108,12 @@ public class Serialization {
         }
     }
 
-    public static <T> String getCurrentType(Class<T> clazz) {
-        return getTypeForVersion(getCurrentVersion(clazz), clazz);
+    public static <T> String getCurrentType(Class<T> clazzT) {
+        return getTypeForVersion(getCurrentVersion(clazzT), clazzT);
     }
 
-    public static <T> String getTypeForVersion(String version, Class<T> clazz) {
-        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazz);
+    public static <T> String getTypeForVersion(String version, Class<T> clazzT) {
+        Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
         return ReflectUtil.callStaticMethod(wrappedClass, "serializationType", version);
     }
 
@@ -245,7 +245,6 @@ public class Serialization {
         }
     }
 
-    // For classes that do not implement SerializableToJSON, we wrap them in classes that define the required methods.
     public static SerializableToJSON wrapObj(Object obj) {
         // Converts an arbitrary object into a SerializableToJSON subclass.
         // Note that obj will always be non-null.
