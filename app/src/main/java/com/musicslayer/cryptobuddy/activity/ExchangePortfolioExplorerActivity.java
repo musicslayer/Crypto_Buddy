@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ChooseExchangeDialog;
@@ -37,10 +38,10 @@ import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -89,7 +90,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.exchangePortfolioObj = PersistentDataStore.getInstance(ExchangePortfolio.class).getFromName(getIntent().getStringExtra("ExchangePortfolioName"));
+            StateObj.exchangePortfolioObj = PersistentUserDataStore.getInstance(ExchangePortfolio.class).getFromName(getIntent().getStringExtra("ExchangePortfolioName"));
         }
 
         updateFilter();
@@ -166,7 +167,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     }
                     else {
                         StateObj.exchangePortfolioObj.addData(newCryptoExchange);
-                        PersistentDataStore.getInstance(ExchangePortfolio.class).updatePortfolio(StateObj.exchangePortfolioObj);
+                        PersistentUserDataStore.getInstance(ExchangePortfolio.class).updatePortfolio(StateObj.exchangePortfolioObj);
 
                         updateFilter();
 
@@ -203,7 +204,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(StateObj.exchangeDataFilterMap, exchange);
                     }
 
-                    PersistentDataStore.getInstance(ExchangePortfolio.class).updatePortfolio(StateObj.exchangePortfolioObj);
+                    PersistentUserDataStore.getInstance(ExchangePortfolio.class).updatePortfolio(StateObj.exchangePortfolioObj);
 
                     hasDiscrepancy = ExchangeData.hasDiscrepancy(new ArrayList<>(StateObj.exchangeDataMap.values()));
                     hasProblem = ExchangeData.hasProblem(new ArrayList<>(StateObj.exchangeDataMap.values()));
@@ -283,7 +284,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     newExchangeDataArrayList.add(newExchangeData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newExchangeDataArrayList, ExchangeData.class));

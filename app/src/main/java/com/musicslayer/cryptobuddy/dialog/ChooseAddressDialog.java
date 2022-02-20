@@ -12,10 +12,10 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.AddressHistory;
-import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressHistory;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressHistoryObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -124,7 +124,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
                     user_CRYPTOADDRESS = ((ChooseCryptoDialog)dialog).user_CRYPTOADDRESS;
 
-                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
+                    PersistentUserDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();
@@ -152,7 +152,7 @@ public class ChooseAddressDialog extends BaseDialog {
                 }
                 else if(cryptoAddressArrayList.size() == 1) {
                     user_CRYPTOADDRESS = cryptoAddressArrayList.get(0);
-                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
+                    PersistentUserDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
                     isComplete = true;
                     dismiss();

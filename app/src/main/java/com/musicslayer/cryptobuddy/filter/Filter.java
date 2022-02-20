@@ -3,9 +3,9 @@ package com.musicslayer.cryptobuddy.filter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 

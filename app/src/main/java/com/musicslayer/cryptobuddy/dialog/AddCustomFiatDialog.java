@@ -14,8 +14,8 @@ import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -68,7 +68,7 @@ public class AddCustomFiatDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomFiatDialog)dialog).isComplete) {
                     chosenFiatManager.addCustomFiat(((ReplaceCustomFiatDialog)dialog).newFiat);
-                    PersistentDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
+                    PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
 
                     ToastUtil.showToast("custom_fiat_added");
                     isComplete = true;
@@ -99,7 +99,7 @@ public class AddCustomFiatDialog extends BaseDialog {
 
                     if(oldFiat == null) {
                         chosenFiatManager.addCustomFiat(newFiat);
-                        PersistentDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
+                        PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
 
                         ToastUtil.showToast("custom_fiat_added");
                         isComplete = true;

@@ -1,10 +1,10 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 public class AddressHistoryObj implements Serialization.SerializableToJSON, Serialization.Versionable {
     public CryptoAddress cryptoAddress;

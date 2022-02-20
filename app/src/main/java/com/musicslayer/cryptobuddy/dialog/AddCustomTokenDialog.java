@@ -14,8 +14,8 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -69,7 +69,7 @@ public class AddCustomTokenDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
                     chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
-                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
 
                     ToastUtil.showToast("custom_token_added");
                     isComplete = true;
@@ -100,7 +100,7 @@ public class AddCustomTokenDialog extends BaseDialog {
 
                     if(oldToken == null) {
                         chosenTokenManager.addCustomToken(newToken);
-                        PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
+                        PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
 
                         ToastUtil.showToast("custom_token_added");
                         isComplete = true;

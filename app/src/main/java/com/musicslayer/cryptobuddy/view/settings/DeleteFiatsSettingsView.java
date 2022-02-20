@@ -13,12 +13,13 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
-import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -56,11 +57,11 @@ public class DeleteFiatsSettingsView extends SettingsView {
                         FiatManager.resetAllCustomFiats();
                     }
 
-                    PersistentDataStore.getInstance(FiatManagerList.class).saveAllData();
+                    PersistentAppDataStore.getInstance(FiatManagerList.class).saveAllData();
 
                     Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
                     setting.refreshSetting();
-                    PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
+                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
 
                     ToastUtil.showToast("reset_fiats");
                 }

@@ -13,11 +13,11 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -58,7 +58,7 @@ public class DeleteTokensSettingsView extends SettingsView {
                         TokenManager.resetAllCustomTokens();
                     }
 
-                    PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
                     ToastUtil.showToast("reset_tokens");
                 }
             }

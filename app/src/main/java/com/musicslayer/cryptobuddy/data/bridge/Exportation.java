@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.data;
+package com.musicslayer.cryptobuddy.data.bridge;
 
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;

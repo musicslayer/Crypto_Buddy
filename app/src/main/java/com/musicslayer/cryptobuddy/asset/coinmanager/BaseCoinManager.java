@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.asset.coinmanager;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.CoinManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -41,6 +41,6 @@ public class BaseCoinManager extends CoinManager {
             throw new IllegalStateException(e);
         }
 
-        PersistentDataStore.getInstance(CoinManagerList.class).updateCoinManager(this);
+        PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(this);
     }
 }

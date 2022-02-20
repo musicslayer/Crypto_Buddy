@@ -15,13 +15,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -65,7 +65,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
                         ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        PersistentDataStore.getInstance(AddressPortfolio.class).addPortfolio(new AddressPortfolioObj(name));
+                        PersistentUserDataStore.getInstance(AddressPortfolio.class).addPortfolio(new AddressPortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -93,7 +93,7 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    PersistentDataStore.getInstance(AddressPortfolio.class).removePortfolio(currentDeletePortfolioName);
+                    PersistentUserDataStore.getInstance(AddressPortfolio.class).removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

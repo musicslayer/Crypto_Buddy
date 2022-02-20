@@ -3,8 +3,8 @@ package com.musicslayer.cryptobuddy.api;
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 abstract public class API implements Serialization.SerializableToJSON, Serialization.Versionable {
     // For now, just use the name as the key.

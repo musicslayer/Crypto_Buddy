@@ -12,9 +12,9 @@ import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
-import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.settings.category.SettingsCategory;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -37,6 +37,9 @@ import java.util.Date;
 // TODO Importing still obliterates everything.
 
 // TODO Exporting takes a long time.
+// TODO Better reset data.
+// TODO Only exporting should be a premium feature.
+// TODO Export/Import app data vs. user data.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -58,7 +61,8 @@ public class InitialActivity extends BaseActivity {
         TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Initialize all the local app objects.
-        PersistentDataStore.initialize();
+        PersistentAppDataStore.initialize();
+        PersistentUserDataStore.initialize();
         FiatManager.initialize();
         CoinManager.initialize();
         TokenManager.initialize();
@@ -73,8 +77,11 @@ public class InitialActivity extends BaseActivity {
 
         // Load all the stored data into local memory and then save it again.
         // This makes sure the stored data is initialized and helps remove data with outdated versions.
-        PersistentDataStore.loadAllStoredData();
-        PersistentDataStore.saveAllStoredData();
+        PersistentAppDataStore.loadAllStoredData();
+        PersistentUserDataStore.loadAllStoredData();
+
+        PersistentAppDataStore.saveAllStoredData();
+        PersistentUserDataStore.saveAllStoredData();
 
         App.isAppInitialized = true;
     }

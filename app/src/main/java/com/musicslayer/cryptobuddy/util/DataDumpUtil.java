@@ -5,7 +5,7 @@ import android.content.res.Configuration;
 import android.os.Environment;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +31,7 @@ public class DataDumpUtil {
         // Add all persistent data.
         s.append("\n\nPersistent Data:");
 
-        HashMap<String, HashMap<String, String>> allDataMap = PersistentDataStore.getAllStoredData();
+        HashMap<String, HashMap<String, String>> allDataMap = PersistentUserDataStore.getAllStoredData();
         ArrayList<String> allDataKeys = new ArrayList<>(allDataMap.keySet());
         for(String allDataKey : allDataKeys) {
             s.append("\n\n");

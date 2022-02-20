@@ -1,16 +1,16 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Exportation;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class AddressHistory extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class AddressHistory extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "AddressHistory"; }
 
     public boolean canExport() { return true; }

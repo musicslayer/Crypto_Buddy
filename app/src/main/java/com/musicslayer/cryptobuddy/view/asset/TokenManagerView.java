@@ -16,6 +16,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -23,9 +24,8 @@ import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ViewTokensDialog;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parseFixed(tokenJSON);
 
-                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
@@ -110,7 +110,7 @@ public class TokenManagerView extends CrashTableRow {
                     tokenManager.resetDownloadedTokens();
                     isComplete = tokenManager.parse(tokenJSON);
 
-                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }
@@ -137,7 +137,7 @@ public class TokenManagerView extends CrashTableRow {
                         tokenManager.resetCustomTokens();
                     }
 
-                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     updateLayout();
                 }

@@ -15,10 +15,10 @@ import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.data.Serialization;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
-import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;

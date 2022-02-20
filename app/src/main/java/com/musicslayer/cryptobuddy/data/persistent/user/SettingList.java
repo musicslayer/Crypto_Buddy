@@ -1,14 +1,14 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Exportation;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class SettingList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class SettingList extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "SettingList"; }
 
     public boolean canExport() { return true; }

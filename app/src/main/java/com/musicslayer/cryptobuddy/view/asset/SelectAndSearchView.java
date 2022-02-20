@@ -30,7 +30,7 @@ import com.musicslayer.cryptobuddy.crash.CrashPopupMenu;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SearchDialog;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultCoinSetting;
 import com.musicslayer.cryptobuddy.settings.setting.DefaultFiatSetting;

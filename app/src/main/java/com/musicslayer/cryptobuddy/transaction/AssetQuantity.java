@@ -6,8 +6,8 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 import java.util.Collections;

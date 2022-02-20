@@ -1,13 +1,13 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.Exportation;
+import com.musicslayer.cryptobuddy.data.bridge.Exportation;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class Purchases extends PersistentDataStore {
+public class Purchases extends PersistentAppDataStore {
     public String getName() { return "Purchases"; }
 
     public boolean canExport() { return false; }
@@ -80,7 +80,7 @@ public class Purchases extends PersistentDataStore {
                     TokenManager.initialize();
                     if(!isPurchased) {
                         TokenManager.resetAllTokens();
-                        PersistentDataStore.getInstance(TokenManagerList.class).resetAllData();
+                        PersistentAppDataStore.getInstance(TokenManagerList.class).resetAllData();
                     }
                 }
 

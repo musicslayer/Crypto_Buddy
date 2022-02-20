@@ -31,7 +31,7 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;

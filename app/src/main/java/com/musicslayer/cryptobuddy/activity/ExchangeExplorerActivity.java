@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
@@ -32,9 +33,8 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -189,7 +189,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 }
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData, ExchangeData.class));
             }

@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -53,7 +53,7 @@ public class DataManagementActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        ArrayList<String> exportableDataTypes = PersistentDataStore.getAllExportableDataTypes();
+        ArrayList<String> exportableDataTypes = PersistentUserDataStore.getAllExportableDataTypes();
         Collections.sort(exportableDataTypes);
 
         // Export to File
@@ -63,7 +63,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
+                    String json = PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes);
 
                     boolean isSuccess = false;
                     if(universalFolder != null) {
@@ -114,7 +114,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
+                    PersistentUserDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
                     ToastUtil.showToast("import_file_success");
                 }
             }
@@ -182,7 +182,7 @@ public class DataManagementActivity extends BaseActivity {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     ArrayList<File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(FileUtil.writeTempFile(PersistentDataStore.exportStoredDataToJSON(chosenDataTypes)));
+                    fileArrayList.add(FileUtil.writeTempFile(PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes)));
                     MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
                 }
             }
@@ -205,7 +205,7 @@ public class DataManagementActivity extends BaseActivity {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     // Create temp file with exported data and email it.
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText("export_data", PersistentDataStore.exportStoredDataToJSON(chosenDataTypes));
+                    ClipboardUtil.exportText("export_data", PersistentUserDataStore.exportStoredDataToJSON(chosenDataTypes));
                 }
             }
         });
@@ -225,7 +225,7 @@ public class DataManagementActivity extends BaseActivity {
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
                     ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
+                    PersistentUserDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
                     ToastUtil.showToast("import_clipboard_success");
                 }
             }

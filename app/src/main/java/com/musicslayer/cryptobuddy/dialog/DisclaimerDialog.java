@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Policy;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.Policy;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 
 public class DisclaimerDialog extends BaseDialog {
@@ -36,7 +36,7 @@ public class DisclaimerDialog extends BaseDialog {
         Button B_AGREEDISCLAIMER = findViewById(R.id.disclaimer_agreeButton);
         B_AGREEDISCLAIMER.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                PersistentDataStore.getInstance(Policy.class).setAgreeDisclaimer();
+                PersistentAppDataStore.getInstance(Policy.class).setAgreeDisclaimer();
                 dismiss();
             }
         });

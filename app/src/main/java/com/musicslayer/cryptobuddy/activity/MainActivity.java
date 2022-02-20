@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ChooseExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
@@ -31,10 +32,9 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReviewDialog;
 import com.musicslayer.cryptobuddy.dialog.ShareAppDialog;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Policy;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.Review;
+import com.musicslayer.cryptobuddy.data.persistent.app.Policy;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.Review;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -416,10 +416,10 @@ public class MainActivity extends BaseActivity {
                 public void onDismissImpl(DialogInterface dialog) {
                     if(((ReviewDialog)dialog).isComplete) {
                         if(((ReviewDialog)dialog).user_LATER) {
-                            PersistentDataStore.getInstance(Review.class).setReviewTime();
+                            PersistentAppDataStore.getInstance(Review.class).setReviewTime();
                         }
                         else {
-                            PersistentDataStore.getInstance(Review.class).disableReviewTime();
+                            PersistentAppDataStore.getInstance(Review.class).disableReviewTime();
                         }
                     }
                 }

@@ -1,8 +1,8 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 

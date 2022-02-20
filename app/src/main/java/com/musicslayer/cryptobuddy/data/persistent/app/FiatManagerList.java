@@ -1,14 +1,14 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Exportation;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class FiatManagerList extends PersistentDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class FiatManagerList extends PersistentAppDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
     public String getName() { return "FiatManagerList"; }
 
     public boolean canExport() { return true; }

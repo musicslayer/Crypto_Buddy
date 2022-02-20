@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.asset.fiatmanager;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -40,6 +40,6 @@ public class BaseFiatManager extends FiatManager {
             throw new IllegalStateException(e);
         }
 
-        PersistentDataStore.getInstance(FiatManagerList.class).updateFiatManager(this);
+        PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(this);
     }
 }

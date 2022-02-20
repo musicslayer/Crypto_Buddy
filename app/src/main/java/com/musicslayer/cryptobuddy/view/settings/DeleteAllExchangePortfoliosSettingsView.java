@@ -12,8 +12,8 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteAllExchangePortfoliosDialog;
-import com.musicslayer.cryptobuddy.persistence.ExchangePortfolio;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -40,7 +40,7 @@ public class DeleteAllExchangePortfoliosSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAllExchangePortfoliosDialog)dialog).isComplete) {
-                    PersistentDataStore.getInstance(ExchangePortfolio.class).resetAllData();
+                    PersistentUserDataStore.getInstance(ExchangePortfolio.class).resetAllData();
                     ToastUtil.showToast("reset_exchange_portfolios");
                 }
             }

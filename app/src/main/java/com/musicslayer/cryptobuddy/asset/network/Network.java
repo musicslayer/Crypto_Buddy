@@ -6,10 +6,10 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 import java.util.HashMap;

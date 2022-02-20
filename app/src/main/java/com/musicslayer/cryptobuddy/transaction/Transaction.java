@@ -1,9 +1,9 @@
 package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;

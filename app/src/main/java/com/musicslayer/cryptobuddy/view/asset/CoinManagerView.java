@@ -16,13 +16,14 @@ import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.ViewCoinsDialog;
-import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.SettingList;
+import com.musicslayer.cryptobuddy.data.persistent.app.CoinManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 
 import java.util.ArrayList;
@@ -65,11 +66,11 @@ public class CoinManagerView extends CrashTableRow {
                         coinManager.resetCustomCoins();
                     }
 
-                    PersistentDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
+                    PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
 
                     Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
                     setting.refreshSetting();
-                    PersistentDataStore.getInstance(SettingList.class).saveSetting(setting);
+                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
 
                     updateLayout();
                 }

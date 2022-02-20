@@ -1,9 +1,9 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;

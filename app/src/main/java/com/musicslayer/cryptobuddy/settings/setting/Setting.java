@@ -3,10 +3,8 @@ package com.musicslayer.cryptobuddy.settings.setting;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.SettingList;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;

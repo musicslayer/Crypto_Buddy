@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.data;
+package com.musicslayer.cryptobuddy.data.bridge;
 
 import android.net.Uri;
 

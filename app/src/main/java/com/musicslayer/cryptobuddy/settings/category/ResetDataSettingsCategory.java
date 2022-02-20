@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.settings.category;
 
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 
 import java.util.ArrayList;

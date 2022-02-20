@@ -16,9 +16,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolio;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -65,7 +65,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
                         ToastUtil.showToast("portfolio_name_used");
                     }
                     else {
-                        PersistentDataStore.getInstance(TransactionPortfolio.class).addPortfolio(new TransactionPortfolioObj(name));
+                        PersistentUserDataStore.getInstance(TransactionPortfolio.class).addPortfolio(new TransactionPortfolioObj(name));
                         updateLayout();
                     }
                 }
@@ -93,7 +93,7 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeletePortfolioDialog)dialog).isComplete) {
-                    PersistentDataStore.getInstance(TransactionPortfolio.class).removePortfolio(currentDeletePortfolioName);
+                    PersistentUserDataStore.getInstance(TransactionPortfolio.class).removePortfolio(currentDeletePortfolioName);
                     updateLayout();
                 }
             }

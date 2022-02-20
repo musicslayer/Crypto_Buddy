@@ -13,9 +13,9 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.AddressHistory;
-import com.musicslayer.cryptobuddy.persistence.AddressHistoryObj;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressHistory;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressHistoryObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 
 public class ChooseHistoryAddressDialog extends BaseDialog {
     CryptoAddress currentDeleteHistoryCryptoAddress;
@@ -42,7 +42,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteAddressHistoryDialog)dialog).isComplete) {
-                    PersistentDataStore.getInstance(AddressHistory.class).removeAddressFromHistory(AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
+                    PersistentUserDataStore.getInstance(AddressHistory.class).removeAddressFromHistory(AddressHistory.getFromCryptoAddress(currentDeleteHistoryCryptoAddress));
                     updateLayout();
                 }
             }
@@ -57,7 +57,7 @@ public class ChooseHistoryAddressDialog extends BaseDialog {
             B.setText(addressHistoryObj.toString());
             B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
                 public void onClickImpl(View v) {
-                    PersistentDataStore.getInstance(AddressHistory.class).addAddressToHistory(addressHistoryObj);
+                    PersistentUserDataStore.getInstance(AddressHistory.class).addAddressToHistory(addressHistoryObj);
                     user_CRYPTOADDRESS = addressHistoryObj.cryptoAddress;
 
                     isComplete = true;

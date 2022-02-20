@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.filter;
 
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 

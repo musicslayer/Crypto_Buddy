@@ -1,0 +1,6 @@
+CoinManagerList
+FiatManagerList
+Policy
+Purchases
+Review
+TokenManagerList

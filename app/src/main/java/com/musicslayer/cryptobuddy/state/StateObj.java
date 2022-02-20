@@ -6,9 +6,9 @@ import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolioObj;
-import com.musicslayer.cryptobuddy.persistence.ExchangePortfolioObj;
-import com.musicslayer.cryptobuddy.persistence.TransactionPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.transaction.TransactionData;
 

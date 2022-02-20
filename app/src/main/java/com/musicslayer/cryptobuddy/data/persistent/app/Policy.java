@@ -1,11 +1,11 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.data.Exportation;
+import com.musicslayer.cryptobuddy.data.bridge.Exportation;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class Policy extends PersistentDataStore {
+public class Policy extends PersistentAppDataStore {
     public String getName() { return "Policy"; }
 
     public boolean canExport() { return false; }

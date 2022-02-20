@@ -1,8 +1,8 @@
 package com.musicslayer.cryptobuddy.filter;
 
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 

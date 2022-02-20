@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
@@ -31,20 +32,20 @@ import com.musicslayer.cryptobuddy.dialog.RemoveAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.persistence.AddressPortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolio;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
@@ -90,7 +91,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         confirmBackDialogFragment.restoreListeners(this, "back");
 
         if(savedInstanceState == null) {
-            StateObj.addressPortfolioObj = PersistentDataStore.getInstance(AddressPortfolio.class).getFromName(getIntent().getStringExtra("AddressPortfolioName"));
+            StateObj.addressPortfolioObj = PersistentUserDataStore.getInstance(AddressPortfolio.class).getFromName(getIntent().getStringExtra("AddressPortfolioName"));
         }
 
         updateFilter();
@@ -180,7 +181,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     }
                     else {
                         StateObj.addressPortfolioObj.addData(newCryptoAddress);
-                        PersistentDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
+                        PersistentUserDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
 
                         updateFilter();
 
@@ -217,7 +218,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                         HashMapUtil.removeValueFromMap(StateObj.addressDataFilterMap, cryptoAddress);
                     }
 
-                    PersistentDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
+                    PersistentUserDataStore.getInstance(AddressPortfolio.class).updatePortfolio(StateObj.addressPortfolioObj);
 
                     hasDiscrepancy = AddressData.hasDiscrepancy(new ArrayList<>(StateObj.addressDataMap.values()));
                     hasProblem = AddressData.hasProblem(new ArrayList<>(StateObj.addressDataMap.values()));
@@ -297,7 +298,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     newAddressDataArrayList.add(newAddressData);
 
                     // Save found tokens, potentially from multiple TokenManagers.
-                    PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
                 }
 
                 ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList, AddressData.class));

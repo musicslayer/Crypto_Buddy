@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashActivity;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 

@@ -15,7 +15,8 @@
 -keep public class * extends com.musicslayer.cryptobuddy.asset.network.Network
 -keep public class * extends com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager
 -keep public class * extends com.musicslayer.cryptobuddy.dialog.BaseDialog
--keep public class * extends com.musicslayer.cryptobuddy.persistence.PersistentDataStore
+-keep public class * extends com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore
+-keep public class * extends com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore
 -keep public class * extends com.musicslayer.cryptobuddy.settings.category.SettingsCategory
 -keep public class * extends com.musicslayer.cryptobuddy.settings.setting.Setting
 

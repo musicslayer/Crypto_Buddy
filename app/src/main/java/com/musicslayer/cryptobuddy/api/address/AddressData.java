@@ -3,14 +3,14 @@ package com.musicslayer.cryptobuddy.api.address;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 

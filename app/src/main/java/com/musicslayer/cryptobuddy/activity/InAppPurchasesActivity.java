@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.math.BigDecimal;

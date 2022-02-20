@@ -9,7 +9,7 @@ import android.provider.DocumentsContract;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.UriUtil;
 

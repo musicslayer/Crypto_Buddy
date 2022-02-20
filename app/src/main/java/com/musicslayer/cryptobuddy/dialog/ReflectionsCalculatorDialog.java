@@ -21,10 +21,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
@@ -93,7 +93,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 // If any new tokens are found, save them here.
                 // Then, when the layout is updated, they will be added to the available options.
                 AddressData.getAllData(cryptoAddress);
-                PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
@@ -130,7 +130,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 AddressData reflectionsAddressData = AddressData.getSingleAllData(cryptoAddress, (Crypto)ssv.getChosenAsset());
 
                 // Save found tokens, potentially from multiple TokenManagers.
-                PersistentDataStore.getInstance(TokenManagerList.class).saveAllData();
+                PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
 
                 ProgressDialogFragment.setValue(Serialization.serialize(reflectionsAddressData, AddressData.class));
             }

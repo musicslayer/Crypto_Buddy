@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetEverythingDialog;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -39,7 +39,7 @@ public class ResetEverythingSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetEverythingDialog)dialog).isComplete) {
-                    boolean isComplete = PersistentDataStore.resetAllStoredData();
+                    boolean isComplete = PersistentUserDataStore.resetAllStoredData();
                     if(isComplete) {
                         ToastUtil.showToast("reset_everything");
                     }

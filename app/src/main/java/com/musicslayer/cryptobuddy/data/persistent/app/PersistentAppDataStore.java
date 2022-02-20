@@ -1,31 +1,31 @@
-package com.musicslayer.cryptobuddy.persistence;
+package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 // Methods to quickly manipulate all persistent app data on a user's device.
-abstract public class PersistentDataStore {
-    public static ArrayList<PersistentDataStore> persistent_data_stores;
-    public static HashMap<String, PersistentDataStore> persistent_data_store_map;
-    public static ArrayList<String> persistent_data_store_names;
+abstract public class PersistentAppDataStore {
+    public static ArrayList<PersistentAppDataStore> persistent_app_data_stores;
+    public static HashMap<String, PersistentAppDataStore> persistent_app_data_store_map;
+    public static ArrayList<String> persistent_app_data_store_names;
 
     public static void initialize() {
-        persistent_data_store_names = FileUtil.readFileIntoLines(R.raw.persistent_data_store);
+        persistent_app_data_store_names = FileUtil.readFileIntoLines(R.raw.data_persistent_app);
 
-        persistent_data_stores = new ArrayList<>();
-        persistent_data_store_map = new HashMap<>();
+        persistent_app_data_stores = new ArrayList<>();
+        persistent_app_data_store_map = new HashMap<>();
 
-        for(String persistentDataStoreName : persistent_data_store_names) {
-            PersistentDataStore persistentDataStore = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.persistence." + persistentDataStoreName);
-            persistent_data_stores.add(persistentDataStore);
-            persistent_data_store_map.put(persistentDataStoreName, persistentDataStore);
+        for(String persistentAppDataStoreName : persistent_app_data_store_names) {
+            PersistentAppDataStore persistentAppDataStore = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.data.persistent.app." + persistentAppDataStoreName);
+            persistent_app_data_stores.add(persistentAppDataStore);
+            persistent_app_data_store_map.put(persistentAppDataStoreName, persistentAppDataStore);
         }
     }
 
@@ -46,11 +46,11 @@ abstract public class PersistentDataStore {
     abstract public void loadAllData(); // Read all stored data into local data.
     abstract public void resetAllData(); // Erase all stored and local data.
 
-    public static <T extends PersistentDataStore> T getInstance(Class<T> clazz) {
+    public static <T extends PersistentAppDataStore> T getInstance(Class<T> clazz) {
         // Subclasses have many unique methods, so use this to cast the instance.
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
-            if(clazz.isInstance(persistentDataStore)) {
-                return clazz.cast(persistentDataStore);
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
+            if(clazz.isInstance(persistentAppDataStore)) {
+                return clazz.cast(persistentAppDataStore);
             }
         }
 
@@ -62,9 +62,9 @@ abstract public class PersistentDataStore {
         // Return all the possible data types that we can export.
         ArrayList<String> dataTypes = new ArrayList<>();
 
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
-            if(persistentDataStore.canExport()) {
-                dataTypes.add(persistentDataStore.getSharedPreferencesKey());
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
+            if(persistentAppDataStore.canExport()) {
+                dataTypes.add(persistentAppDataStore.getSharedPreferencesKey());
             }
         }
 
@@ -78,12 +78,12 @@ abstract public class PersistentDataStore {
         DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
 
         // Individually, try to export each piece of data.
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                String key = persistentDataStore.getSharedPreferencesKey();
+                String key = persistentAppDataStore.getSharedPreferencesKey();
                 if(!dataTypes.contains(key)) { continue; }
 
-                String value = persistentDataStore.doExport();
+                String value = persistentAppDataStore.doExport();
                 o.serialize(key, value, String.class);
             }
             catch(Exception e) {
@@ -108,13 +108,13 @@ abstract public class PersistentDataStore {
         }
 
         // Individually, try to import each piece of data.
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                String key = persistentDataStore.getSharedPreferencesKey();
+                String key = persistentAppDataStore.getSharedPreferencesKey();
                 if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
                 String value = o.deserialize(key, String.class);
-                persistentDataStore.doImport(value);
+                persistentAppDataStore.doImport(value);
             }
             catch(Exception e) {
                 // If one class's data cannot be imported, skip it and do nothing.
@@ -128,9 +128,9 @@ abstract public class PersistentDataStore {
         HashMap<String, HashMap<String, String>> allDataMap = new HashMap<>();
 
         // Individually, try to add each piece of data.
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                String key = persistentDataStore.getSharedPreferencesKey();
+                String key = persistentAppDataStore.getSharedPreferencesKey();
                 HashMap<String, String> value = SharedPreferencesUtil.getDataMap(key);
                 allDataMap.put(key, value);
             }
@@ -138,7 +138,7 @@ abstract public class PersistentDataStore {
                 ThrowableUtil.processThrowable(e);
 
                 try {
-                    String clazzString = persistentDataStore.getClass().getSimpleName();
+                    String clazzString = persistentAppDataStore.getClass().getSimpleName();
 
                     // Put a default entry in here, and then try to replace with error information.
                     // If this code errors, then just give up!
@@ -159,9 +159,9 @@ abstract public class PersistentDataStore {
     }
 
     public static void saveAllStoredData() {
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                persistentDataStore.saveAllData();
+                persistentAppDataStore.saveAllData();
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
@@ -170,9 +170,9 @@ abstract public class PersistentDataStore {
     }
 
     public static void loadAllStoredData() {
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                persistentDataStore.loadAllData();
+                persistentAppDataStore.loadAllData();
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
@@ -184,9 +184,9 @@ abstract public class PersistentDataStore {
         // Resets all stored persistent data in the app. App should be just like a new install.
         boolean isComplete = true;
 
-        for(PersistentDataStore persistentDataStore : persistent_data_stores) {
+        for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                persistentDataStore.resetAllData();
+                persistentAppDataStore.resetAllData();
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);

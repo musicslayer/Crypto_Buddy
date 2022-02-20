@@ -19,8 +19,8 @@ import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.musicslayer.cryptobuddy.app.App;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -232,7 +232,7 @@ public class InAppPurchase {
     }
 
     private static void grantPurchase(String id) {
-        PersistentDataStore.getInstance(Purchases.class).updatePurchase(id, true);
+        PersistentAppDataStore.getInstance(Purchases.class).updatePurchase(id, true);
 
         if(InAppPurchase.inAppPurchaseListener != null) {
             InAppPurchase.inAppPurchaseListener.onInAppPurchase();
@@ -240,7 +240,7 @@ public class InAppPurchase {
     }
 
     private static void revokePurchase(String id) {
-        PersistentDataStore.getInstance(Purchases.class).updatePurchase(id, false);
+        PersistentAppDataStore.getInstance(Purchases.class).updatePurchase(id, false);
 
         if(InAppPurchase.inAppPurchaseListener != null) {
             InAppPurchase.inAppPurchaseListener.onInAppPurchase();

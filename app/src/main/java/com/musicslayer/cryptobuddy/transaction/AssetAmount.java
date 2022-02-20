@@ -2,9 +2,9 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
 import java.math.BigDecimal;

@@ -7,13 +7,13 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
-import com.musicslayer.cryptobuddy.data.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import org.json.JSONObject;
 

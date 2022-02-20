@@ -15,14 +15,14 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.Serialization;
+import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
+import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
@@ -137,7 +137,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                         tokenManagerView.tokenManager.resetDownloadedTokens();
                         tokenManagerView.tokenManager.parseFixed(tokenJSON);
-                        PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
+                        PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
 
                         tokenManagerView.updateLayout();
                     }
@@ -178,7 +178,7 @@ public class TokenManagerActivity extends BaseActivity {
 
                     tokenManagerView.tokenManager.resetDownloadedTokens();
                     boolean isComplete = tokenManagerView.tokenManager.parse(tokenJSONArrayList.get(i));
-                    PersistentDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManagerView.tokenManager);
 
                     tokenManagerView.updateLayout();
                     if(!isComplete) {
