@@ -38,7 +38,7 @@ public class ETH_Testnet_Goerli extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Goerli";
+        return "Ethereum Testnet Goerli";
     }
 
     public boolean isValid(String address) {

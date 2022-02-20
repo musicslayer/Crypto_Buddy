@@ -38,7 +38,7 @@ public class BCH_Testnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Script (p2sh)";
+        return "Bitcoin Cash Testnet Script (p2sh)";
     }
 
     public boolean isValid(String address) {

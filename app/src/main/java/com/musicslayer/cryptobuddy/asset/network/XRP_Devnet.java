@@ -38,7 +38,7 @@ public class XRP_Devnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Devnet";
+        return "XRP Devnet";
     }
 
     public boolean isValid(String address) {

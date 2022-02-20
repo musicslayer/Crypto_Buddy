@@ -38,7 +38,7 @@ public class XLM_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Stellar Lumens Testnet";
     }
 
     public boolean isValid(String address) {

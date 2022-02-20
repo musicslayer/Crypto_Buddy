@@ -39,7 +39,7 @@ public class TRX_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Tron Mainnet";
     }
 
     public boolean isValid(String address) {

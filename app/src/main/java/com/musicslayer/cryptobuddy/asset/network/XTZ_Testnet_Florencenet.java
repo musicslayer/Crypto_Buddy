@@ -37,7 +37,7 @@ public class XTZ_Testnet_Florencenet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Florencenet";
+        return "Tezos Testnet Florencenet";
     }
 
     public boolean isValid(String address) {

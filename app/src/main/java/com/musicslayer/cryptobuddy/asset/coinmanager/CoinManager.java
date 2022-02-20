@@ -4,10 +4,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.persistence.CoinManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -76,16 +74,6 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         coinManagers_names = FileUtil.readFileIntoLines(R.raw.asset_coinmanager);
         for(String coinManagerName : coinManagers_names) {
             CoinManager coinManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.coinmanager." + coinManagerName);
-
-            // Use the deserialized dummy object to fill in the coins in this real one.
-            CoinManager copyCoinManager = PersistentDataStore.getInstance(CoinManagerList.class).loadData(coinManager.getSettingsKey());
-
-            // If this is a new CoinManager that wasn't previously saved, then there are no coins to add.
-            if(copyCoinManager != null) {
-                coinManager.addHardcodedCoin(copyCoinManager.hardcoded_coins);
-                coinManager.addFoundCoin(copyCoinManager.found_coins);
-                coinManager.addCustomCoin(copyCoinManager.custom_coins);
-            }
 
             coinManagers.add(coinManager);
             coinManagers_map.put(coinManager.getKey(), coinManager);

@@ -38,7 +38,7 @@ public class LTC_Mainnet_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Pubkey (p2pkh)";
+        return "Litecoin Mainnet Pubkey (p2pkh)";
     }
 
     public String getPrefix() {

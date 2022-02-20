@@ -38,7 +38,7 @@ public class ETH_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Ethereum Mainnet";
     }
 
     public boolean isValid(String address) {

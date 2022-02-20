@@ -38,7 +38,7 @@ public class BTC_Mainnet_SegWit extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Segwit (p2wphk)";
+        return "Bitcoin Mainnet Segwit (p2wphk)";
     }
 
     public boolean isValid(String address) {

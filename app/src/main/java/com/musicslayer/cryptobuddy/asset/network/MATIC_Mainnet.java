@@ -38,7 +38,7 @@ public class MATIC_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Polygon Mainnet";
     }
 
     public boolean isValid(String address) {

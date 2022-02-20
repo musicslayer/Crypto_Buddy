@@ -38,7 +38,7 @@ public class ETH_Testnet_Ropsten extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Ropsten";
+        return "Ethereum Testnet Ropsten";
     }
 
     public boolean isValid(String address) {

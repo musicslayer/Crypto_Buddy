@@ -38,7 +38,7 @@ public class SOL_Devnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Devnet";
+        return "Solana Devnet";
     }
 
     public boolean isValid(String address) {

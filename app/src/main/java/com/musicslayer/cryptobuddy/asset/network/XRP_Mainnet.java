@@ -38,7 +38,7 @@ public class XRP_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "XRP Mainnet";
     }
 
     public boolean isValid(String address) {

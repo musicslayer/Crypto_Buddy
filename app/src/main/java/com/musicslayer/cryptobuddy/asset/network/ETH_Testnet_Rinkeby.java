@@ -38,7 +38,7 @@ public class ETH_Testnet_Rinkeby extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Rinkeby";
+        return "Ethereum Testnet Rinkeby";
     }
 
     public boolean isValid(String address) {

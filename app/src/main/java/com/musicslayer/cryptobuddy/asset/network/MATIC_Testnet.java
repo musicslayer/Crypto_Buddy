@@ -38,7 +38,7 @@ public class MATIC_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Mumbai";
+        return "Polygon Testnet Mumbai";
     }
 
     public boolean isValid(String address) {

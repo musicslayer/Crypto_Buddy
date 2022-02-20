@@ -38,7 +38,7 @@ public class ADA_Mainnet_Shelley extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Shelley (Shelley Era)";
+        return "Cardano Mainnet Shelley (Shelley Era)";
     }
 
     public boolean isValid(String address) {

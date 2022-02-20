@@ -38,7 +38,7 @@ public class LTC_Mainnet_SegWit extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Segwit (p2wphk)";
+        return "Litecoin Mainnet Segwit (p2wphk)";
     }
 
     public boolean isValid(String address) {

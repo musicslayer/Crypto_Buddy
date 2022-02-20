@@ -54,7 +54,8 @@ abstract public class PersistentDataStore {
             }
         }
 
-        return null; // Don't use UnknownPersistentDataStore here.
+        // Do not use null or UnknownPersistentDataStore here. The input class must exist.
+        throw new IllegalStateException();
     }
 
     public static ArrayList<String> getAllExportableDataTypes() {

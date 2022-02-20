@@ -37,7 +37,7 @@ public class ADA_Mainnet_Daedalus extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Daedalus (Byron Era)";
+        return "Cardano Mainnet Daedalus (Byron Era)";
     }
 
     public boolean isValid(String address) {

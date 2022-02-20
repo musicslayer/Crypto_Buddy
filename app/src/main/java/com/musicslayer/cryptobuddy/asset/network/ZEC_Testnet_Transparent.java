@@ -37,7 +37,7 @@ public class ZEC_Testnet_Transparent extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet (Transparent Address)";
+        return "Zcash Testnet (Transparent Address)";
     }
 
     public String getPrefix() {

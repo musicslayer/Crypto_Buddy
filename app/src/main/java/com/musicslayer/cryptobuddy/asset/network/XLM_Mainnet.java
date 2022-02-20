@@ -38,7 +38,7 @@ public class XLM_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet (Public Network)";
+        return "Stellar Lumens Mainnet (Public Network)";
     }
 
     public boolean isValid(String address) {

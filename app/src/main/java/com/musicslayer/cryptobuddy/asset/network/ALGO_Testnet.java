@@ -38,7 +38,7 @@ public class ALGO_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Algorand Testnet";
     }
 
     public String getPrefix() {

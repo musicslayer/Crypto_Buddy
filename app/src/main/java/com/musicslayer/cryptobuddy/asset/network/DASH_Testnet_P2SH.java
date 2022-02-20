@@ -38,7 +38,7 @@ public class DASH_Testnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Script (p2sh)";
+        return "Dash Testnet Script (p2sh)";
     }
 
     public String getPrefix() {

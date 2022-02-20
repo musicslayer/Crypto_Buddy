@@ -38,7 +38,7 @@ public class DOGE_Mainnet_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Pubkey (p2pkh)";
+        return "Dogecoin Mainnet Pubkey (p2pkh)";
     }
 
     public String getPrefix() {

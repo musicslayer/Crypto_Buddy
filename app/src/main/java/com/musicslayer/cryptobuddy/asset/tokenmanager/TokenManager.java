@@ -6,9 +6,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -86,16 +84,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         tokenManagers_names = FileUtil.readFileIntoLines(R.raw.asset_tokenmanager);
         for(String tokenManagerName : tokenManagers_names) {
             TokenManager tokenManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.tokenmanager." + tokenManagerName);
-
-            // Use the deserialized dummy object to fill in the tokens in this real one.
-            TokenManager copyTokenManager = PersistentDataStore.getInstance(TokenManagerList.class).loadData(tokenManager.getSettingsKey());
-
-            // If this is a new TokenManager that wasn't previously saved, then there are no tokens to add.
-            if(copyTokenManager != null) {
-                tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
-                tokenManager.addFoundToken(copyTokenManager.found_tokens);
-                tokenManager.addCustomToken(copyTokenManager.custom_tokens);
-            }
 
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);

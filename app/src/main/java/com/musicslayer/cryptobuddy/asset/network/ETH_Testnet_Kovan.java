@@ -38,7 +38,7 @@ public class ETH_Testnet_Kovan extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Kovan";
+        return "Ethereum Testnet Kovan";
     }
 
     public boolean isValid(String address) {

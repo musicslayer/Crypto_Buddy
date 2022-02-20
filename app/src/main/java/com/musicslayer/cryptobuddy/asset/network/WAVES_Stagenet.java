@@ -38,7 +38,7 @@ public class WAVES_Stagenet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Stagenet";
+        return "Waves Stagenet";
     }
 
     public boolean isValid(String address) {

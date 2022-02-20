@@ -37,7 +37,7 @@ public class XTZ_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Tezos Mainnet";
     }
 
     public boolean isValid(String address) {

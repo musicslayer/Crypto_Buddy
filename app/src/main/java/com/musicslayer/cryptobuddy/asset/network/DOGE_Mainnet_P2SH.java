@@ -38,7 +38,7 @@ public class DOGE_Mainnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Script (p2sh)";
+        return "Dogecoin Mainnet Script (p2sh)";
     }
 
     public String getPrefix() {

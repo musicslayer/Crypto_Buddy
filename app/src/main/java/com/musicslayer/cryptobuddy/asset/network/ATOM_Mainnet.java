@@ -38,7 +38,7 @@ public class ATOM_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Cosmos Mainnet";
     }
 
     public boolean isValid(String address) {

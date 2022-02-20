@@ -38,7 +38,7 @@ public class SOL_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Solana Testnet";
     }
 
     public boolean isValid(String address) {

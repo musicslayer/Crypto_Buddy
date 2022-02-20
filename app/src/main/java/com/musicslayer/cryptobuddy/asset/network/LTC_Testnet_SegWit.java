@@ -38,7 +38,7 @@ public class LTC_Testnet_SegWit extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Segwit (p2wphk)";
+        return "Litecoin Testnet Segwit (p2wphk)";
     }
 
     public boolean isValid(String address) {

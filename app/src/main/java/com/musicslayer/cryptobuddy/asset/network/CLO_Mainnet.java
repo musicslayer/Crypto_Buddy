@@ -38,7 +38,7 @@ public class CLO_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Callisto Mainnet";
     }
 
     public boolean isValid(String address) {

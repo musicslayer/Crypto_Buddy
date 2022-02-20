@@ -39,7 +39,7 @@ public class TRX_Testnet_Nile extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Nile";
+        return "Tron Testnet Nile";
     }
 
     public boolean isValid(String address) {

@@ -37,7 +37,7 @@ public class ADA_Mainnet_Icarus extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Icarus (Byron Era)";
+        return "Cardano Mainnet Icarus (Byron Era)";
     }
 
     public boolean isValid(String address) {

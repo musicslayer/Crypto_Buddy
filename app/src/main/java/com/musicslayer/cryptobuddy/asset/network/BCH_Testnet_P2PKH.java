@@ -38,7 +38,7 @@ public class BCH_Testnet_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Pubkey (p2pkh)";
+        return "Bitcoin Cash Testnet Pubkey (p2pkh)";
     }
 
     public boolean isValid(String address) {

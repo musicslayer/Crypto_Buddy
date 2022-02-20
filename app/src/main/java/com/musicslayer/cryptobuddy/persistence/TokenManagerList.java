@@ -44,16 +44,18 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
     }
 
     public void loadAllData() {
-        // For now, do nothing.
-        // TODO Fill in the data for TokenManagers, and then we can decouple the classes.
-    }
+        // For each TokenManager, look for any stored data to fill in.
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+            String serialString = sharedPreferences.getString("token_manager_" + tokenManager.getSettingsKey(), DEFAULT);
 
-    public TokenManager loadData(String settingsKey) {
-        // TokenManager will create empty objects, but then this method will fill them in with data.
-        // If a new TokenManager is introduced later, it will still be created but will get no data from here.
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        String serialString = sharedPreferences.getString("token_manager_" + settingsKey, DEFAULT);
-        return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, TokenManager.class);
+            TokenManager copyTokenManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, TokenManager.class);
+            if(copyTokenManager != null) {
+                tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
+                tokenManager.addFoundToken(copyTokenManager.found_tokens);
+                tokenManager.addCustomToken(copyTokenManager.custom_tokens);
+            }
+        }
     }
 
     public void resetAllData() {
@@ -85,9 +87,9 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
             // We do not want to export downloaded tokens, so let's remove them.
             String newSerialString;
             try {
-                TokenManager dummyTokenManager = Serialization.deserialize(serialString, TokenManager.class);
-                dummyTokenManager.resetDownloadedTokens();
-                newSerialString = Serialization.serialize(dummyTokenManager, TokenManager.class);
+                TokenManager copyTokenManager = Serialization.deserialize(serialString, TokenManager.class);
+                copyTokenManager.resetDownloadedTokens();
+                newSerialString = Serialization.serialize(copyTokenManager, TokenManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);

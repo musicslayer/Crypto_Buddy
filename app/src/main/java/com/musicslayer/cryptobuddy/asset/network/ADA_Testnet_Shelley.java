@@ -38,7 +38,7 @@ public class ADA_Testnet_Shelley extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Shelley (Shelley Era)";
+        return "Cardano Testnet Shelley (Shelley Era)";
     }
 
     public boolean isValid(String address) {

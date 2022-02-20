@@ -38,7 +38,7 @@ public class WAVES_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Waves Testnet";
     }
 
     public boolean isValid(String address) {

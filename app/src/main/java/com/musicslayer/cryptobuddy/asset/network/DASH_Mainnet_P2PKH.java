@@ -38,7 +38,7 @@ public class DASH_Mainnet_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Pubkey (p2pkh)";
+        return "Dash Mainnet Pubkey (p2pkh)";
     }
 
     public String getPrefix() {

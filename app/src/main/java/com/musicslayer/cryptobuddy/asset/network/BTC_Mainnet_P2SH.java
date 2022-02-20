@@ -38,7 +38,7 @@ public class BTC_Mainnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Script (p2sh)";
+        return "Bitcoin Mainnet Script (p2sh)";
     }
 
     public String getPrefix() {

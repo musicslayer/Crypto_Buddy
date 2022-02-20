@@ -39,7 +39,7 @@ public class BNBc_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Binance Coin Testnet";
     }
 
     public boolean isValid(String address) {

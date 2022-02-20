@@ -38,7 +38,7 @@ public class XRP_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "XRP Testnet";
     }
 
     public boolean isValid(String address) {

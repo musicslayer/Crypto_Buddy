@@ -39,7 +39,7 @@ public class TOMO_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "TomoChain Mainnet";
     }
 
     public boolean isValid(String address) {

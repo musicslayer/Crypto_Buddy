@@ -38,7 +38,7 @@ public class ALGO_Betanet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Betanet";
+        return "Algorand Betanet";
     }
 
     public String getPrefix() {

@@ -37,7 +37,7 @@ public class BCH_Testnet_CashAddr_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet CashAddr Script (p2sh)";
+        return "Bitcoin Cash Testnet CashAddr Script (p2sh)";
     }
 
     public String getPrefix() {

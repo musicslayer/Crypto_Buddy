@@ -40,7 +40,7 @@ public class VET_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "VeChain Testnet";
     }
 
     public boolean isValid(String address) {

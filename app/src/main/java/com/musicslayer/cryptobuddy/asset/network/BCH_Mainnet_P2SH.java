@@ -38,7 +38,7 @@ public class BCH_Mainnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet Script (p2sh)";
+        return "Bitcoin Cash Mainnet Script (p2sh)";
     }
 
     public boolean isValid(String address) {

@@ -37,7 +37,7 @@ public class ZEC_Mainnet_Transparent extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet (Transparent Address)";
+        return "Zcash Mainnet (Transparent Address)";
     }
 
     public String getPrefix() {

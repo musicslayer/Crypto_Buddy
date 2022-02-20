@@ -39,7 +39,7 @@ public class TRX_Testnet_Shasta extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Shasta";
+        return "Tron Testnet Shasta";
     }
 
     public boolean isValid(String address) {

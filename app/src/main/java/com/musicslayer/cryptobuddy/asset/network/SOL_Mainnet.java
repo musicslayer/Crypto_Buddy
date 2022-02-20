@@ -38,7 +38,7 @@ public class SOL_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet (Beta)";
+        return "Solana Mainnet (Beta)";
     }
 
     public boolean isValid(String address) {

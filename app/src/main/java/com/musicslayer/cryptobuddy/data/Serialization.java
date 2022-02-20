@@ -119,8 +119,8 @@ public class Serialization {
 
     public static <T> String cycle(String s, Class<T> clazzT) {
         // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
-        T dummyObject = deserialize(s, clazzT);
-        return serialize(dummyObject, clazzT);
+        T obj = deserialize(s, clazzT);
+        return serialize(obj, clazzT);
     }
 
     public static <T> String serializeArray(T[] array, Class<T> clazzT) {

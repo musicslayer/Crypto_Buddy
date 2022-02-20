@@ -4,10 +4,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.data.DataBridge;
-import com.musicslayer.cryptobuddy.persistence.FiatManagerList;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
-import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -76,16 +74,6 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         fiatManagers_names = FileUtil.readFileIntoLines(R.raw.asset_fiatmanager);
         for(String fiatManagerName : fiatManagers_names) {
             FiatManager fiatManager = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.asset.fiatmanager." + fiatManagerName);
-
-            // Use the deserialized dummy object to fill in the fiats in this real one.
-            FiatManager copyFiatManager = PersistentDataStore.getInstance(FiatManagerList.class).loadData(fiatManager.getSettingsKey());
-
-            // If this is a new FiatManager that wasn't previously saved, then there are no fiats to add.
-            if(copyFiatManager != null) {
-                fiatManager.addHardcodedFiat(copyFiatManager.hardcoded_fiats);
-                fiatManager.addFoundFiat(copyFiatManager.found_fiats);
-                fiatManager.addCustomFiat(copyFiatManager.custom_fiats);
-            }
 
             fiatManagers.add(fiatManager);
             fiatManagers_map.put(fiatManager.getKey(), fiatManager);

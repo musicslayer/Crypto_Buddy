@@ -38,7 +38,7 @@ public class CLO_Testnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet";
+        return "Callisto Testnet";
     }
 
     public boolean isValid(String address) {

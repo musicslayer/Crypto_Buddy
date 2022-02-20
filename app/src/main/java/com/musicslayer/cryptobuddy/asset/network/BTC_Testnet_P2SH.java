@@ -38,7 +38,7 @@ public class BTC_Testnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Script (p2sh)";
+        return "Bitcoin Testnet Script (p2sh)";
     }
 
     public String getPrefix() {

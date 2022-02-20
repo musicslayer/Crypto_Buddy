@@ -44,16 +44,20 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
     }
 
     public void loadAllData() {
-        // For now, do nothing.
-        // TODO Fill in the data for FiatManagers, and then we can decouple the classes.
-    }
+        // For each FiatManager, look for any stored data to fill in.
+        for(FiatManager fiatManager : FiatManager.fiatManagers) {
+            SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+            String serialString = sharedPreferences.getString("fiat_manager_" + fiatManager.getSettingsKey(), DEFAULT);
 
-    public FiatManager loadData(String settingsKey) {
-        // FiatManager will create empty objects, but then this method will fill them in with data.
-        // If a new FiatManager is introduced later, it will still be created but will get no data from here.
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        String serialString = sharedPreferences.getString("fiat_manager_" + settingsKey, DEFAULT);
-        return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, FiatManager.class);
+            FiatManager copyFiatManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, FiatManager.class);
+            if(copyFiatManager != null) {
+                fiatManager.addHardcodedFiat(copyFiatManager.hardcoded_fiats);
+                fiatManager.addFoundFiat(copyFiatManager.found_fiats);
+                fiatManager.addCustomFiat(copyFiatManager.custom_fiats);
+            }
+
+            fiatManager.initializeHardcodedFiats();
+        }
     }
 
     public void resetAllData() {
@@ -85,9 +89,9 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
             // We do not want to export hardcoded fiats, so let's remove them.
             String newSerialString;
             try {
-                FiatManager dummyFiatManager = Serialization.deserialize(serialString, FiatManager.class);
-                dummyFiatManager.resetHardcodedFiats();
-                newSerialString = Serialization.serialize(dummyFiatManager, FiatManager.class);
+                FiatManager copyFiatManager = Serialization.deserialize(serialString, FiatManager.class);
+                copyFiatManager.resetHardcodedFiats();
+                newSerialString = Serialization.serialize(copyFiatManager, FiatManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);

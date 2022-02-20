@@ -44,16 +44,20 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
     }
 
     public void loadAllData() {
-        // For now, do nothing.
-        // TODO Fill in the data for CoinManagers, and then we can decouple the classes.
-    }
+        // For each CoinManager, look for any stored data to fill in.
+        for(CoinManager coinManager : CoinManager.coinManagers) {
+            SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+            String serialString = sharedPreferences.getString("coin_manager_" + coinManager.getSettingsKey(), DEFAULT);
 
-    public CoinManager loadData(String settingsKey) {
-        // CoinManager will create empty objects, but then this method will fill them in with data.
-        // If a new CoinManager is introduced later, it will still be created but will get no data from here.
-        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        String serialString = sharedPreferences.getString("coin_manager_" + settingsKey, DEFAULT);
-        return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);
+            CoinManager copyCoinManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);
+            if(copyCoinManager != null) {
+                coinManager.addHardcodedCoin(copyCoinManager.hardcoded_coins);
+                coinManager.addFoundCoin(copyCoinManager.found_coins);
+                coinManager.addCustomCoin(copyCoinManager.custom_coins);
+            }
+
+            coinManager.initializeHardcodedCoins();
+        }
     }
 
     public void resetAllData() {
@@ -85,9 +89,9 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
             // We do not want to export hardcoded coins, so let's remove them.
             String newSerialString;
             try {
-                CoinManager dummyCoinManager = Serialization.deserialize(serialString, CoinManager.class);
-                dummyCoinManager.resetHardcodedCoins();
-                newSerialString = Serialization.serialize(dummyCoinManager, CoinManager.class);
+                CoinManager copyCoinManager = Serialization.deserialize(serialString, CoinManager.class);
+                copyCoinManager.resetHardcodedCoins();
+                newSerialString = Serialization.serialize(copyCoinManager, CoinManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);

@@ -37,7 +37,7 @@ public class BCH_Mainnet_CashAddr_P2PKH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet CashAddr Pubkey (p2pkh)";
+        return "Bitcoin Cash Mainnet CashAddr Pubkey (p2pkh)";
     }
 
     public String getPrefix() {

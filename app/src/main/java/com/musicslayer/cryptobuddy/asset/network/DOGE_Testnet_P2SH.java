@@ -38,7 +38,7 @@ public class DOGE_Testnet_P2SH extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Testnet Script (p2sh)";
+        return "Dogecoin Testnet Script (p2sh)";
     }
 
     public String getPrefix() {

@@ -38,7 +38,7 @@ public class BNBs_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Binance Coin (Smart Chain) Mainnet";
     }
 
     public boolean isValid(String address) {

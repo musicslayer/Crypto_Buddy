@@ -38,7 +38,7 @@ public class ALGO_Mainnet extends Network {
     }
 
     public String getDisplayName() {
-        return this.getPrimaryCoin().getDisplayName() + " Mainnet";
+        return "Algorand Mainnet";
     }
 
     public String getPrefix() {
