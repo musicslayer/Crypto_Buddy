@@ -90,17 +90,6 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         setting_names = FileUtil.readFileIntoLines(R.raw.settings_setting);
         for(String settingName : setting_names) {
             Setting setting = ReflectUtil.constructClassInstanceFromName("com.musicslayer.cryptobuddy.settings.setting." + settingName);
-            Setting copySetting = PersistentDataStore.getInstance(SettingList.class).loadData(setting.getSettingsKey());
-
-            String optionName;
-            if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {
-                optionName = copySetting.chosenOptionName;
-            }
-            else {
-                optionName = setting.getDefaultOptionName();
-            }
-
-            setting.setSetting(optionName);
 
             settings.add(setting);
             setting_map.put(settingName, setting);

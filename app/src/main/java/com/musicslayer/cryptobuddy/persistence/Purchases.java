@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.Exportation;
+import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class Purchases extends PersistentDataStore {
@@ -125,6 +126,9 @@ public class Purchases extends PersistentDataStore {
         isRemoveAdsPurchased = sharedPreferences.getBoolean("purchases_remove_ads", DEFAULT_isRemoveAdsPurchased);
         isUnlockPremiumFeaturesPurchased = sharedPreferences.getBoolean("purchases_unlock_premium_features", DEFAULT_isUnlockPremiumFeaturesPurchased);
         totalSupportAmount = sharedPreferences.getInt("purchases_total_support_amount", DEFAULT_totalSupportAmount);
+
+        // Initialize the billing client, which may update these stored values if purchases were made/refunded while the app was closed.
+        InAppPurchase.initialize();
     }
 
     public void resetAllData() {

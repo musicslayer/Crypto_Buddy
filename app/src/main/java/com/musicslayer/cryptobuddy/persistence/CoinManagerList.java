@@ -44,9 +44,10 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
     }
 
     public void loadAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+
         // For each CoinManager, look for any stored data to fill in.
         for(CoinManager coinManager : CoinManager.coinManagers) {
-            SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
             String serialString = sharedPreferences.getString("coin_manager_" + coinManager.getSettingsKey(), DEFAULT);
 
             CoinManager copyCoinManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);

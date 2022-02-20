@@ -15,8 +15,6 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.persistence.PersistentDataStore;
-import com.musicslayer.cryptobuddy.persistence.Purchases;
-import com.musicslayer.cryptobuddy.persistence.TokenManagerList;
 import com.musicslayer.cryptobuddy.settings.category.SettingsCategory;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
@@ -38,6 +36,8 @@ import java.util.Date;
 // TODO Finish the getSingleAllData Implementations.
 // TODO Importing still obliterates everything.
 
+// TODO Exporting takes a long time.
+
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
@@ -57,39 +57,23 @@ public class InitialActivity extends BaseActivity {
         // Set time zone base date.
         TimeZoneManager.nowInstant = new Date().toInstant();
 
-        // Initialize the store of all other persistent data classes.
+        // Initialize all the local app objects.
         PersistentDataStore.initialize();
-
-        // Purchases should be initialized first, as others may depend on this.
-        PersistentDataStore.getInstance(Purchases.class).loadAllData();
-
-        // Initialize assets here. This will also overwrite hardcoded assets that were loaded from before.
         FiatManager.initialize();
         CoinManager.initialize();
-
-        // If the user has not purchased (or has refunded) "Unlock Tokens", we reset the token lists.
         TokenManager.initialize();
-        if(!Purchases.isUnlockTokensPurchased()) {
-            TokenManager.resetAllTokens();
-            PersistentDataStore.getInstance(TokenManagerList.class).resetAllData();
-        }
-
         Exchange.initialize();
-        Network.initialize(); // Requires CoinManagers and TokenManagers to have loaded first.
+        Network.initialize();
         AddressAPI.initialize();
         ExchangeAPI.initialize();
         PriceAPI.initialize();
-        InAppPurchase.initialize(); // Requires Purchases
         SettingsCategory.initialize();
-        ToastUtil.loadAllToasts();
-
-        PersistentDataStore.loadAllStoredData();
-
-        // Settings should be initialized last, as this could theoretically depend on anything.
-        // TODO Should this be before "loadAllStoredData".
         Setting.initialize();
+        ToastUtil.initialize();
 
-        // Save all persistent data. This makes sure stored data is initialized to something, and helps remove any outdated versions of that data.
+        // Load all the stored data into local memory and then save it again.
+        // This makes sure the stored data is initialized and helps remove data with outdated versions.
+        PersistentDataStore.loadAllStoredData();
         PersistentDataStore.saveAllStoredData();
 
         App.isAppInitialized = true;

@@ -44,9 +44,10 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
     }
 
     public void loadAllData() {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
+
         // For each TokenManager, look for any stored data to fill in.
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
             String serialString = sharedPreferences.getString("token_manager_" + tokenManager.getSettingsKey(), DEFAULT);
 
             TokenManager copyTokenManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, TokenManager.class);

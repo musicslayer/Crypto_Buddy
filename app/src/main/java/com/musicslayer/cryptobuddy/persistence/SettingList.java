@@ -42,17 +42,23 @@ public class SettingList extends PersistentDataStore implements Exportation.Expo
     }
 
     public void loadAllData() {
-        // For now, do nothing.
-        // TODO Fill in the data for TokenManagers, and then we can decouple the classes.
-    }
-
-    public Setting loadData(String settingsKey) {
-        // Setting will create empty objects, but then this method will fill them in with data.
-        // If a new Setting is introduced later, it will still be created but will get no data from here.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
-        String serialString = sharedPreferences.getString("settings_" + settingsKey, DEFAULT);
 
-        return DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, Setting.class);
+        // For each Setting, look for any stored data to fill in.
+        for(Setting setting : Setting.settings) {
+            String serialString = sharedPreferences.getString("settings_" + setting.getSettingsKey(), DEFAULT);
+
+            String optionName;
+            Setting copySetting = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, Setting.class);
+            if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {
+                optionName = copySetting.chosenOptionName;
+            }
+            else {
+                optionName = setting.getDefaultOptionName();
+            }
+
+            setting.setSetting(optionName);
+        }
     }
 
     public void resetAllData() {

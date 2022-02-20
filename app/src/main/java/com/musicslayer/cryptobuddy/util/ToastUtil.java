@@ -15,7 +15,7 @@ public class ToastUtil {
     final static HashMap<String, Toast> toastMap = new HashMap<>();
 
     @SuppressLint({"ShowToast"})
-    public static void loadAllToasts() {
+    public static void initialize() {
         Context context = App.applicationContext;
         // Use a dummy value for the duration. When the toast is shown, we will set it according to the setting.
         int duration = Toast.LENGTH_SHORT;
