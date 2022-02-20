@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -86,9 +85,9 @@ public class TokenManagerList extends PersistentDataStore implements Exportation
             // We do not want to export downloaded tokens, so let's remove them.
             String newSerialString;
             try {
-                JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
-                oldJSON.putJSONArray("downloaded_tokens", new JSONWithNull.JSONArrayWithNull());
-                newSerialString = oldJSON.toStringOrNull();
+                TokenManager dummyTokenManager = Serialization.deserialize(serialString, TokenManager.class);
+                dummyTokenManager.resetDownloadedTokens();
+                newSerialString = Serialization.serialize(dummyTokenManager, TokenManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);

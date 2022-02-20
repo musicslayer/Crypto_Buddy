@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -86,10 +85,9 @@ public class FiatManagerList extends PersistentDataStore implements Exportation.
             // We do not want to export hardcoded fiats, so let's remove them.
             String newSerialString;
             try {
-                // TODO deserialize, remove tokens, and then serialize.
-                JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
-                oldJSON.putJSONArray("hardcoded_fiats", new JSONWithNull.JSONArrayWithNull());
-                newSerialString = oldJSON.toStringOrNull();
+                FiatManager dummyFiatManager = Serialization.deserialize(serialString, FiatManager.class);
+                dummyFiatManager.resetHardcodedFiats();
+                newSerialString = Serialization.serialize(dummyFiatManager, FiatManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);

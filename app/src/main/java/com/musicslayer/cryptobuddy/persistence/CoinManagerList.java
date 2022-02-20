@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.data.DataBridge;
 import com.musicslayer.cryptobuddy.data.Exportation;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -86,9 +85,9 @@ public class CoinManagerList extends PersistentDataStore implements Exportation.
             // We do not want to export hardcoded coins, so let's remove them.
             String newSerialString;
             try {
-                JSONWithNull.JSONObjectWithNull oldJSON = new JSONWithNull.JSONObjectWithNull(serialString);
-                oldJSON.putJSONArray("hardcoded_coins", new JSONWithNull.JSONArrayWithNull());
-                newSerialString = oldJSON.toStringOrNull();
+                CoinManager dummyCoinManager = Serialization.deserialize(serialString, CoinManager.class);
+                dummyCoinManager.resetHardcodedCoins();
+                newSerialString = Serialization.serialize(dummyCoinManager, CoinManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
