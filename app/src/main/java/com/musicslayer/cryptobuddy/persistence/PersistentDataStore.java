@@ -10,8 +10,6 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO Replace other @supress checks with casting.
-
 // Methods to quickly manipulate all persistent app data on a user's device.
 abstract public class PersistentDataStore {
     public static ArrayList<PersistentDataStore> persistent_data_stores;
@@ -84,7 +82,6 @@ abstract public class PersistentDataStore {
                 String key = persistentDataStore.getSharedPreferencesKey();
                 if(!dataTypes.contains(key)) { continue; }
 
-                // TODO can I call export directly?
                 String value = persistentDataStore.doExport();
                 o.serialize(key, value, String.class);
             }
@@ -115,7 +112,6 @@ abstract public class PersistentDataStore {
                 String key = persistentDataStore.getSharedPreferencesKey();
                 if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
-                // TODO can I call import directly?
                 String value = o.deserialize(key, String.class);
                 persistentDataStore.doImport(value);
             }
