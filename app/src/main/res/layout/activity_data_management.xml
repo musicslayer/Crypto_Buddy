@@ -41,14 +41,14 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_exportButton"
+                android:id="@+id/data_management_exportFileButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Export\n(File)"
                 app:drawableLeftCompat="@drawable/ic_baseline_insert_drive_file_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_importButton"
+                android:id="@+id/data_management_importFileButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Import\n(File)"
@@ -61,14 +61,14 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_copyButton"
+                android:id="@+id/data_management_exportClipboardButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Export\n(Clipboard)"
                 app:drawableLeftCompat="@drawable/ic_baseline_content_copy_24" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_pasteButton"
+                android:id="@+id/data_management_importClipboardButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Import\n(Clipboard)"
@@ -81,7 +81,7 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_emailButton"
+                android:id="@+id/data_management_exportEmailButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Export\n(Email)"

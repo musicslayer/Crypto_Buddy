@@ -49,7 +49,7 @@ public class Purchases extends PersistentAppDataStore {
         return isUnlockPremiumFeaturesPurchased;
     }
 
-    public static boolean isUnlockDataManagementPurchased() {
+    public static boolean isUnlockImportExportPurchased() {
         // Currently, this is only sold as a premium feature.
         return isUnlockPremiumFeaturesPurchased;
     }

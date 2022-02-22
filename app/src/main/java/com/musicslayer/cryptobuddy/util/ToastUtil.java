@@ -111,8 +111,8 @@ public class ToastUtil {
         toastMap.put("support_developers_purchase", Toast.makeText(context, "Thank you for your support!", duration));
 
         // Purchase Required
-        toastMap.put("unlock_data_management_required", Toast.makeText(context, "In-app purchase required to unlock data management.", duration));
         toastMap.put("unlock_exchange_integration_required", Toast.makeText(context, "In-app purchase required to unlock exchange integration.", duration));
+        toastMap.put("unlock_import_export_required", Toast.makeText(context, "In-app purchase required to import or export data.", duration));
         toastMap.put("unlock_reflections_calculator_required", Toast.makeText(context, "In-app purchase required to unlock reflections calculator.", duration));
         toastMap.put("unlock_tokens_required", Toast.makeText(context, "In-app purchase required to unlock tokens.", duration));
 
