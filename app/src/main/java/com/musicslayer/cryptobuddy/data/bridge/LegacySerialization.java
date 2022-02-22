@@ -25,7 +25,7 @@ public class LegacySerialization {
 
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
-        String legacy_serializeToJSON() throws org.json.JSONException;
+        String legacy_serializeToJSON() throws JSONException, JSONException, JSONException;
 
         // Classes also need to implement static methods "legacy_deserializeFromJSON" and "legacy_serializationType".
     }

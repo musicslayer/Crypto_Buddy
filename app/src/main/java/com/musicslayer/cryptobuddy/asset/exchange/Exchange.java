@@ -12,6 +12,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,13 +118,13 @@ abstract public class Exchange implements LegacySerialization.SerializableToJSON
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("key", getKey(), String.class)
                 .toStringOrNull();
     }
 
-    public static Exchange legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Exchange legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
         return Exchange.getExchangeFromKey(key);

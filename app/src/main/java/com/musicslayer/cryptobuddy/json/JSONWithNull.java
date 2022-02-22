@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.json;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class JSONWithNull {
             jsonObject = new JSONObject();
         }
 
-        public JSONObjectWithNull(String s) throws org.json.JSONException {
+        public JSONObjectWithNull(String s) throws JSONException {
             jsonObject = s == null ? null : new JSONObject(s);
         }
 
@@ -33,30 +34,30 @@ public class JSONWithNull {
             return jsonObject.has(key);
         }
 
-        public String getString(String key) throws org.json.JSONException {
+        public String getString(String key) throws JSONException {
             return (String)(jsonObject.get(key) instanceof String ? jsonObject.get(key) : null);
         }
 
-        public String getJSONObjectString(String key) throws org.json.JSONException {
+        public String getJSONObjectString(String key) throws JSONException {
             return getJSONObject(key).toStringOrNull();
         }
 
-        public String getJSONArrayString(String key) throws org.json.JSONException {
+        public String getJSONArrayString(String key) throws JSONException {
             return getJSONArray(key).toStringOrNull();
         }
 
-        public JSONObjectWithNull putString(String key, String s) throws org.json.JSONException {
+        public JSONObjectWithNull putString(String key, String s) throws JSONException {
             jsonObject = s == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, s);
             return this;
         }
 
-        public JSONObjectWithNull putJSONObjectString(String key, String s) throws org.json.JSONException {
+        public JSONObjectWithNull putJSONObjectString(String key, String s) throws JSONException {
             JSONObjectWithNull obj = new JSONObjectWithNull(s);
             jsonObject = obj.jsonObject == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, obj.jsonObject);
             return this;
         }
 
-        public JSONObjectWithNull putJSONArrayString(String key, String s) throws org.json.JSONException {
+        public JSONObjectWithNull putJSONArrayString(String key, String s) throws JSONException {
             JSONArrayWithNull arr = new JSONArrayWithNull(s);
             jsonObject = arr.jsonArray == null ? jsonObject.put(key, JSONObject.NULL) : jsonObject.put(key, arr.jsonArray);
             return this;
@@ -71,11 +72,11 @@ public class JSONWithNull {
             return keys;
         }
 
-        private JSONObjectWithNull getJSONObject(String key) throws org.json.JSONException {
+        private JSONObjectWithNull getJSONObject(String key) throws JSONException {
             return new JSONObjectWithNull((JSONObject)(jsonObject.get(key) instanceof JSONObject ? jsonObject.get(key) : null));
         }
 
-        private JSONArrayWithNull getJSONArray(String key) throws org.json.JSONException {
+        private JSONArrayWithNull getJSONArray(String key) throws JSONException {
             return new JSONArrayWithNull((JSONArray)(jsonObject.get(key) instanceof JSONArray ? jsonObject.get(key) : null));
         }
     }
@@ -88,7 +89,7 @@ public class JSONWithNull {
             jsonArray = new JSONArray();
         }
 
-        public JSONArrayWithNull(String s) throws org.json.JSONException {
+        public JSONArrayWithNull(String s) throws JSONException {
             jsonArray = s == null ? null : new JSONArray(s);
         }
 
@@ -104,15 +105,15 @@ public class JSONWithNull {
             return jsonArray == null ? null : jsonArray.toString();
         }
 
-        public String getString(int i) throws org.json.JSONException {
+        public String getString(int i) throws JSONException {
             return jsonArray.get(i) instanceof String ? (String)jsonArray.get(i) : null;
         }
 
-        public String getJSONObjectString(int i) throws org.json.JSONException {
+        public String getJSONObjectString(int i) throws JSONException {
             return getJSONObject(i).toStringOrNull();
         }
 
-        public String getJSONArrayString(int i) throws org.json.JSONException {
+        public String getJSONArrayString(int i) throws JSONException {
             return getJSONArray(i).toStringOrNull();
         }
 
@@ -121,23 +122,23 @@ public class JSONWithNull {
             return this;
         }
 
-        public JSONArrayWithNull putJSONObjectString(String s) throws org.json.JSONException {
+        public JSONArrayWithNull putJSONObjectString(String s) throws JSONException {
             JSONObjectWithNull obj = new JSONObjectWithNull(s);
             jsonArray = obj.jsonObject == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(obj.jsonObject);
             return this;
         }
 
-        public JSONArrayWithNull putJSONArrayString(String s) throws org.json.JSONException {
+        public JSONArrayWithNull putJSONArrayString(String s) throws JSONException {
             JSONArrayWithNull arr = new JSONArrayWithNull(s);
             jsonArray = arr.jsonArray == null ? jsonArray.put(JSONObject.NULL) : jsonArray.put(arr.jsonArray);
             return this;
         }
 
-        private JSONObjectWithNull getJSONObject(int i) throws org.json.JSONException {
+        private JSONObjectWithNull getJSONObject(int i) throws JSONException {
             return new JSONObjectWithNull((JSONObject)(jsonArray.get(i) instanceof JSONObject ? jsonArray.get(i) : null));
         }
 
-        private JSONArrayWithNull getJSONArray(int i) throws org.json.JSONException {
+        private JSONArrayWithNull getJSONArray(int i) throws JSONException {
             return new JSONArrayWithNull((JSONArray)(jsonArray.get(i) instanceof JSONArray ? jsonArray.get(i) : null));
         }
     }

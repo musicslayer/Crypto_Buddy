@@ -8,6 +8,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -42,7 +44,7 @@ abstract public class Filter implements LegacySerialization.SerializableToJSON, 
     abstract public String getFilterType();
 
     // Each subclass is serialized and deserialized differently.
-    abstract public String legacy_serializeToJSON_sub() throws org.json.JSONException;
+    abstract public String legacy_serializeToJSON_sub() throws JSONException;
     abstract public void serializeToJSON_sub(DataBridge.Writer o) throws IOException;
 
     public static String legacy_serializationType(String version) {
@@ -50,11 +52,11 @@ abstract public class Filter implements LegacySerialization.SerializableToJSON, 
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return legacy_serializeToJSON_sub();
     }
 
-    public static Filter legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Filter legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String filterType = o.deserialize("filterType", String.class);
         if("!DISCRETE!".equals(filterType)) {

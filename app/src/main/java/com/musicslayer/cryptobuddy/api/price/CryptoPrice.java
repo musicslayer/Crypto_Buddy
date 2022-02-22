@@ -9,6 +9,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -64,14 +66,14 @@ public class CryptoPrice implements LegacySerialization.SerializableToJSON, Lega
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .referenceArrayList("assetArrayList", assetArrayList, Asset.class)
             .reference("fiat", fiat, Fiat.class)
             .toStringOrNull();
     }
 
-    public static CryptoPrice legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CryptoPrice legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         ArrayList<Asset> assetArrayList = o.dereferenceArrayList("assetArrayList", Asset.class);
         Fiat fiat = o.dereference("fiat", Fiat.class);

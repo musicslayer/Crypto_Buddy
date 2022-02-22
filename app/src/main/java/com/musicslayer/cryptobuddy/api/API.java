@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 abstract public class API implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
@@ -28,7 +30,7 @@ abstract public class API implements LegacySerialization.SerializableToJSON, Leg
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         // We have to do this based on type, rather than just the properties.
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("apiType", getAPIType(), String.class)
@@ -36,7 +38,7 @@ abstract public class API implements LegacySerialization.SerializableToJSON, Leg
             .toStringOrNull();
     }
 
-    public static API legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static API legacy_deserializeFromJSON(String s, String version) throws JSONException {
         // We have to do this based on type, rather than just the properties.
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String apiType = o.deserialize("apiType", String.class);

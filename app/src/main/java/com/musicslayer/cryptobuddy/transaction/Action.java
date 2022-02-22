@@ -6,6 +6,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -125,13 +127,13 @@ public class Action implements LegacySerialization.SerializableToJSON, LegacySer
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("actionString", actionString, String.class)
             .toStringOrNull();
     }
 
-    public static Action legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Action legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String actionString = o.deserialize("actionString", String.class);
         return new Action(actionString);

@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -53,13 +55,13 @@ public class Timestamp implements LegacySerialization.SerializableToJSON, Legacy
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("date", date, Date.class)
             .toStringOrNull();
     }
 
-    public static Timestamp legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Timestamp legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Date date = o.deserialize("date", Date.class);
         return new Timestamp(date);

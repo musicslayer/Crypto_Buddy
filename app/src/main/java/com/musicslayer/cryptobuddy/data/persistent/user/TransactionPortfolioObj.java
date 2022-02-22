@@ -5,6 +5,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,14 +40,14 @@ public class TransactionPortfolioObj implements LegacySerialization.Serializable
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("name", name, String.class)
             .serializeArrayList("transactionArrayList", transactionArrayList, Transaction.class)
             .toStringOrNull();
     }
 
-    public static TransactionPortfolioObj legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static TransactionPortfolioObj legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String name = o.deserialize("name", String.class);
         ArrayList<Transaction> transactionArrayList = o.deserializeArrayList("transactionArrayList", Transaction.class);

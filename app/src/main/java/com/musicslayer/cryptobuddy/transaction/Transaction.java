@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -290,7 +292,7 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("action", action, Action.class)
             .serialize("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
@@ -300,7 +302,7 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
             .toStringOrNull();
     }
 
-    public static Transaction legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Transaction legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Action action = o.deserialize("action", Action.class);
         AssetQuantity actionedAssetQuantity = o.deserialize("actionedAssetQuantity", AssetQuantity.class);

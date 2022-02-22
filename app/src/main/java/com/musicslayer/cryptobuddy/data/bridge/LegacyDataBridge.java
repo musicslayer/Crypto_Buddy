@@ -29,15 +29,15 @@ public class LegacyDataBridge {
 
         ///////////
         // These are needed for non-standard workflows.
-        public String getJSONObjectString(String key) throws org.json.JSONException {
+        public String getJSONObjectString(String key) throws JSONException {
             return jsonObjectWithNull.getJSONObjectString(key);
         }
 
-        public String getJSONArrayString(String key) throws org.json.JSONException {
+        public String getJSONArrayString(String key) throws JSONException {
             return jsonObjectWithNull.getJSONArrayString(key);
         }
 
-        public JSONObjectDataBridge putJSONObjectString(String key, String s) throws org.json.JSONException {
+        public JSONObjectDataBridge putJSONObjectString(String key, String s) throws JSONException {
             jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
             return this;
         }
@@ -64,21 +64,21 @@ public class LegacyDataBridge {
             return this;
         }
 
-        public <T> JSONObjectDataBridge serializeArray(String key, T[] obj, Class<T> clazzT) throws org.json.JSONException {
+        public <T> JSONObjectDataBridge serializeArray(String key, T[] obj, Class<T> clazzT) throws JSONException {
             // Array always uses type !ARRAY!.
             String s = LegacySerialization.serializeArray(obj, clazzT);
             jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
             return this;
         }
 
-        public <T> JSONObjectDataBridge serializeArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
+        public <T> JSONObjectDataBridge serializeArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws JSONException {
             // ArrayList always uses type !ARRAY!.
             String s = LegacySerialization.serializeArrayList(obj, clazzT);
             jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
             return this;
         }
 
-        public <T, U> JSONObjectDataBridge serializeHashMap(String key, HashMap<T, U> obj, Class<T> clazzT, Class<U> clazzU) throws org.json.JSONException {
+        public <T, U> JSONObjectDataBridge serializeHashMap(String key, HashMap<T, U> obj, Class<T> clazzT, Class<U> clazzU) throws JSONException {
             // HashMap always uses type !OBJECT!.
             String s = LegacySerialization.serializeHashMap(obj, clazzT, clazzU);
             jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
@@ -91,7 +91,7 @@ public class LegacyDataBridge {
             return this;
         }
 
-        public <T> JSONObjectDataBridge referenceArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
+        public <T> JSONObjectDataBridge referenceArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws JSONException {
             // ArrayList always uses type !ARRAY!.
             String s = DataBridge.referenceArrayList(obj, clazzT);
             jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);

@@ -13,6 +13,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -168,7 +170,7 @@ public class CryptoAddress implements LegacySerialization.SerializableToJSON, Le
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("address", address, String.class)
             .serialize("network", network, Network.class)
@@ -176,7 +178,7 @@ public class CryptoAddress implements LegacySerialization.SerializableToJSON, Le
             .toStringOrNull();
     }
 
-    public static CryptoAddress legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CryptoAddress legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String address = o.deserialize("address", String.class);
         Network network = o.deserialize("network", Network.class);

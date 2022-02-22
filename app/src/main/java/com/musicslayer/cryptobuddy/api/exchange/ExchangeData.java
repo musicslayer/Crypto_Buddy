@@ -14,6 +14,8 @@ import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class ExchangeData implements LegacySerialization.SerializableToJSON, Dat
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("cryptoExchange", cryptoExchange, CryptoExchange.class)
             .serialize("exchangeAPI_currentBalance", exchangeAPI_currentBalance, ExchangeAPI.class)
@@ -49,7 +51,7 @@ public class ExchangeData implements LegacySerialization.SerializableToJSON, Dat
             .toStringOrNull();
     }
 
-    public static ExchangeData legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static ExchangeData legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoExchange cryptoExchange = o.deserialize("cryptoExchange", CryptoExchange.class);
         ExchangeAPI exchangeAPI_currentBalance = o.deserialize("exchangeAPI_currentBalance", ExchangeAPI.class);

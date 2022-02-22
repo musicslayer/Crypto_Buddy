@@ -8,6 +8,8 @@ import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -206,7 +208,7 @@ public class AssetAmount implements LegacySerialization.SerializableToJSON, Lega
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("amount", amount, BigDecimal.class)
             .serialize("isLoss", isLoss, Boolean.class)
@@ -214,7 +216,7 @@ public class AssetAmount implements LegacySerialization.SerializableToJSON, Lega
             .toStringOrNull();
     }
 
-    public static AssetAmount legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AssetAmount legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         BigDecimal amount = o.deserialize("amount", BigDecimal.class);
         boolean isLoss = o.deserialize("isLoss", Boolean.class);

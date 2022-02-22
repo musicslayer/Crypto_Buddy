@@ -11,6 +11,8 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 import com.musicslayer.cryptobuddy.view.settings.StandardSettingsView;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,7 +147,7 @@ abstract public class Setting implements LegacySerialization.SerializableToJSON,
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("settingsKey", getSettingsKey(), String.class)
@@ -153,7 +155,7 @@ abstract public class Setting implements LegacySerialization.SerializableToJSON,
             .toStringOrNull();
     }
 
-    public static Setting legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Setting legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
         String settingsKey = o.deserialize("settingsKey", String.class);

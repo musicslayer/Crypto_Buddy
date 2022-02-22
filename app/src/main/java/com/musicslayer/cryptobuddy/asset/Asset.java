@@ -14,6 +14,8 @@ import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,7 +135,7 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
         return new LegacyDataBridge.JSONObjectDataBridge()
@@ -147,7 +149,7 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
                 .toStringOrNull();
     }
 
-    public static Asset legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Asset legacy_deserializeFromJSON(String s, String version) throws JSONException {
         Asset asset;
 
         if("4".equals(version)) {

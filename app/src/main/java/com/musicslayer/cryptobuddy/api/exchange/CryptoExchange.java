@@ -10,6 +10,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -98,14 +100,14 @@ public class CryptoExchange implements LegacySerialization.SerializableToJSON, L
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("exchange", exchange, Exchange.class)
             .serialize("exchangeAPI", exchangeAPI, ExchangeAPI.class)
             .toStringOrNull();
     }
 
-    public static CryptoExchange legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CryptoExchange legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Exchange exchange = o.deserialize("exchange", Exchange.class);
         ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);

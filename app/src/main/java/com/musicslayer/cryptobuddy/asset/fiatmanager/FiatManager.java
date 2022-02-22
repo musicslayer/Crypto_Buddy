@@ -12,6 +12,8 @@ import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -411,7 +413,7 @@ abstract public class FiatManager implements LegacySerialization.SerializableToJ
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
@@ -422,7 +424,7 @@ abstract public class FiatManager implements LegacySerialization.SerializableToJ
             .toStringOrNull();
     }
 
-    public static FiatManager legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static FiatManager legacy_deserializeFromJSON(String s, String version) throws JSONException {
         FiatManager fiatManager;
 
         if("2".equals(version)) {

@@ -16,6 +16,7 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -194,14 +195,14 @@ public class AuthUtil {
         }
 
         @Override
-        public String legacy_serializeToJSON() throws org.json.JSONException {
+        public String legacy_serializeToJSON() throws JSONException {
             return new LegacyDataBridge.JSONObjectDataBridge()
                     .serializeArray("token_e", toObjectArray(token_e), Byte.class)
                     .serialize("expiryTime", expiryTime, Long.class)
                     .toStringOrNull();
         }
 
-        public static OAuthToken legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+        public static OAuthToken legacy_deserializeFromJSON(String s, String version) throws JSONException {
             LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
             long expiryTime = o.deserialize("expiryTime", Long.class);

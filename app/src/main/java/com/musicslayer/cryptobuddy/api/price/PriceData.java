@@ -31,7 +31,7 @@ public class PriceData implements LegacySerialization.SerializableToJSON, DataBr
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
                 .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
@@ -59,7 +59,7 @@ public class PriceData implements LegacySerialization.SerializableToJSON, DataBr
                 .toStringOrNull();
     }
 
-    public static PriceData legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static PriceData legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
         PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
@@ -71,7 +71,7 @@ public class PriceData implements LegacySerialization.SerializableToJSON, DataBr
         return new PriceData(cryptoPrice, priceAPI_price, priceAPI_marketCap, priceHashMap, marketCapHashMap, timestamp_price, timestamp_marketCap);
     }
 
-    public static HashMap<Asset, AssetQuantity> combineHashMap(String s) throws org.json.JSONException {
+    public static HashMap<Asset, AssetQuantity> combineHashMap(String s) throws JSONException {
         // Combine HashMaps so Assets are dereferenced but AssetQuantities are deserialized.
         if(s == null) { return null; }
 

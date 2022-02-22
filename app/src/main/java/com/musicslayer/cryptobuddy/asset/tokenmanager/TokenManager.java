@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -444,7 +445,7 @@ abstract public class TokenManager implements LegacySerialization.SerializableTo
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("token_type", getTokenType(), String.class)
@@ -454,7 +455,7 @@ abstract public class TokenManager implements LegacySerialization.SerializableTo
             .toStringOrNull();
     }
 
-    public static TokenManager legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static TokenManager legacy_deserializeFromJSON(String s, String version) throws JSONException {
         TokenManager tokenManager;
 
         if("2".equals(version)) {

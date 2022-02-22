@@ -7,6 +7,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 public class AddressHistoryObj implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
@@ -36,13 +38,13 @@ public class AddressHistoryObj implements LegacySerialization.SerializableToJSON
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("cryptoAddress", cryptoAddress, CryptoAddress.class)
             .toStringOrNull();
     }
 
-    public static AddressHistoryObj legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AddressHistoryObj legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoAddress cryptoAddress = o.deserialize("cryptoAddress", CryptoAddress.class);
         return new AddressHistoryObj(cryptoAddress);

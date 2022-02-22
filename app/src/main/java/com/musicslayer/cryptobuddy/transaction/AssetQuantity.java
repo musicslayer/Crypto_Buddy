@@ -10,6 +10,8 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,14 +88,14 @@ public class AssetQuantity implements LegacySerialization.SerializableToJSON, Le
     }
 
     @Override
-    public String legacy_serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("assetAmount", assetAmount, AssetAmount.class)
             .reference("asset", asset, Asset.class)
             .toStringOrNull();
     }
 
-    public static AssetQuantity legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AssetQuantity legacy_deserializeFromJSON(String s, String version) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
         Asset asset = o.dereference("asset", Asset.class);
