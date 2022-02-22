@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
@@ -205,7 +205,7 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("amount", amount, BigDecimal.class)
             .serialize("isLoss", isLoss, Boolean.class)
             .serialize("isInfinity", isInfinity, Boolean.class)
@@ -213,7 +213,7 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
     }
 
     public static AssetAmount deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         BigDecimal amount = o.deserialize("amount", BigDecimal.class);
         boolean isLoss = o.deserialize("isLoss", Boolean.class);
         boolean isInfinity = o.deserialize("isInfinity", Boolean.class);

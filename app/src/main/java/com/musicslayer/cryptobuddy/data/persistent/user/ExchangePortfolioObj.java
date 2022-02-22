@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
@@ -46,14 +46,14 @@ public class ExchangePortfolioObj implements Serialization.SerializableToJSON, S
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("name", name, String.class)
             .serializeArrayList("cryptoExchangeArrayList", cryptoExchangeArrayList, CryptoExchange.class)
             .toStringOrNull();
     }
 
     public static ExchangePortfolioObj deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String name = o.deserialize("name", String.class);
         ArrayList<CryptoExchange> cryptoExchangeArrayList = o.deserializeArrayList("cryptoExchangeArrayList", CryptoExchange.class);
 

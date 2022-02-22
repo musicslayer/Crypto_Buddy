@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.api.address;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -37,7 +37,7 @@ public class AddressData implements Serialization.SerializableToJSON {
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("cryptoAddress", cryptoAddress, CryptoAddress.class)
             .serialize("addressAPI_currentBalance", addressAPI_currentBalance, AddressAPI.class)
             .serialize("addressAPI_transactions", addressAPI_transactions, AddressAPI.class)
@@ -49,7 +49,7 @@ public class AddressData implements Serialization.SerializableToJSON {
     }
 
     public static AddressData deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoAddress cryptoAddress = o.deserialize("cryptoAddress", CryptoAddress.class);
         AddressAPI addressAPI_currentBalance = o.deserialize("addressAPI_currentBalance", AddressAPI.class);
         AddressAPI addressAPI_transactions = o.deserialize("addressAPI_transactions", AddressAPI.class);

@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.filter;
 
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
@@ -12,7 +12,7 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("filterType", getFilterType(), String.class)
             .serializeArrayList("choices", choices, String.class)
             .serializeArrayList("user_choices", user_choices, String.class)
@@ -21,7 +21,7 @@ public class DiscreteFilter extends Filter {
     }
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         ArrayList<String> choices = Serialization.deserializeArrayList(o.getJSONArrayString("choices"), String.class);
         ArrayList<String> user_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_choices"), String.class);
         ArrayList<String> user_not_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_not_choices"), String.class);

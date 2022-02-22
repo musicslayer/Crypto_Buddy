@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
@@ -167,7 +167,7 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("address", address, String.class)
             .serialize("network", network, Network.class)
             .serialize("includeTokens", includeTokens, Boolean.class)
@@ -175,7 +175,7 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
     }
 
     public static CryptoAddress deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String address = o.deserialize("address", String.class);
         Network network = o.deserialize("network", Network.class);
         boolean includeTokens = o.deserialize("includeTokens", Boolean.class);

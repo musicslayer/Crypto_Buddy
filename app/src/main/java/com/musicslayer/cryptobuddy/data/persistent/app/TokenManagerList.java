@@ -2,10 +2,11 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
+import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.StreamDataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class TokenManagerList extends PersistentAppDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
@@ -26,7 +27,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("token_manager_" + tokenManager.getSettingsKey(), StreamDataBridge.serialize(tokenManager, TokenManager.class));
+        editor.putString("token_manager_" + tokenManager.getSettingsKey(), DataBridge.serialize(tokenManager, TokenManager.class));
         editor.apply();
     }
 
@@ -37,7 +38,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
         editor.clear();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            editor.putString("token_manager_" + tokenManager.getSettingsKey(), StreamDataBridge.serialize(tokenManager, TokenManager.class));
+            editor.putString("token_manager_" + tokenManager.getSettingsKey(), DataBridge.serialize(tokenManager, TokenManager.class));
         }
 
         editor.apply();
@@ -50,7 +51,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String serialString = sharedPreferences.getString("token_manager_" + tokenManager.getSettingsKey(), DEFAULT);
 
-            TokenManager copyTokenManager = DEFAULT.equals(serialString) ? null : StreamDataBridge.deserialize(serialString, TokenManager.class);
+            TokenManager copyTokenManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, TokenManager.class);
             if(copyTokenManager != null) {
                 tokenManager.addDownloadedToken(copyTokenManager.downloaded_tokens);
                 tokenManager.addFoundToken(copyTokenManager.found_tokens);
@@ -79,7 +80,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
@@ -88,9 +89,9 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
             // We do not want to export downloaded tokens, so let's remove them.
             String newSerialString;
             try {
-                TokenManager copyTokenManager = StreamDataBridge.deserialize(serialString, TokenManager.class);
+                TokenManager copyTokenManager = DataBridge.deserialize(serialString, TokenManager.class);
                 copyTokenManager.resetDownloadedTokens();
-                newSerialString = StreamDataBridge.serialize(copyTokenManager, TokenManager.class);
+                newSerialString = DataBridge.serialize(copyTokenManager, TokenManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
@@ -104,7 +105,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
 
 
     public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
 
         // Only import token managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
@@ -115,7 +116,7 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
             if(o.has(key)) {
                 String value = o.deserialize(key, String.class);
                 if(!DEFAULT.equals(value)) {
-                    editor.putString(key, StreamDataBridge.cycle(value, TokenManager.class));
+                    editor.putString(key, DataBridge.cycleSerialization(value, TokenManager.class));
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -289,7 +289,7 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("action", action, Action.class)
             .serialize("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
             .serialize("otherAssetQuantity", otherAssetQuantity, AssetQuantity.class)
@@ -299,7 +299,7 @@ public class Transaction implements Serialization.SerializableToJSON, Serializat
     }
 
     public static Transaction deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Action action = o.deserialize("action", Action.class);
         AssetQuantity actionedAssetQuantity = o.deserialize("actionedAssetQuantity", AssetQuantity.class);
         AssetQuantity otherAssetQuantity = o.deserialize("otherAssetQuantity", AssetQuantity.class);

@@ -49,7 +49,7 @@ public class Referentiation {
                 String type = Referentiation.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
-                    DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+                    LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
                     o.serialize(REFERENTIATION_VERSION_MARKER, version, String.class);
                     s = o.toStringOrNull();
                 }
@@ -82,7 +82,7 @@ public class Referentiation {
         if(arrayList == null) { return null; }
 
         try {
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge();
             for(T t : arrayList) {
                 a.reference(t, clazzT);
             }
@@ -101,7 +101,7 @@ public class Referentiation {
         try {
             ArrayList<T> arrayList = new ArrayList<>();
 
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge(s);
             for(int i = 0; i < a.length(); i++) {
                 arrayList.add(a.dereference(i, clazzT));
             }
@@ -127,7 +127,7 @@ public class Referentiation {
 
     public static String getVersion(String s) {
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             return o.deserialize(REFERENTIATION_VERSION_MARKER, String.class);
         }
         catch(Exception ignored) {

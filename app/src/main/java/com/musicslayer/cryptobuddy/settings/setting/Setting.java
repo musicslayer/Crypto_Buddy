@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.settings.setting;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -135,7 +135,7 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("settingsKey", getSettingsKey(), String.class)
             .serialize("chosenOptionName", chosenOptionName, String.class)
@@ -143,7 +143,7 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
     }
 
     public static Setting deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
         String settingsKey = o.deserialize("settingsKey", String.class);
         String chosenOptionName = o.deserialize("chosenOptionName", String.class);

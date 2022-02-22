@@ -27,7 +27,7 @@ public class Serialization {
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
         String serializeToJSON() throws org.json.JSONException;
-        default void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {}
+        default void serializeToJSONX(DataBridge.Writer o) throws IOException {}
 
         // Classes also need to implement static methods "deserializeFromJSON" and "serializationType".
     }
@@ -59,7 +59,7 @@ public class Serialization {
                 String type = Serialization.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
-                    DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+                    LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
                     o.serialize(SERIALIZATION_VERSION_MARKER, version, String.class);
                     s = o.toStringOrNull();
                 }
@@ -101,7 +101,7 @@ public class Serialization {
 
     public static String getVersion(String s) {
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             return o.deserialize(SERIALIZATION_VERSION_MARKER, String.class);
         }
         catch(Exception ignored) {
@@ -129,7 +129,7 @@ public class Serialization {
         if(array == null) { return null; }
 
         try {
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge();
             for(T t : array) {
                 a.serialize(t, clazzT);
             }
@@ -146,7 +146,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge(s);
 
             @SuppressWarnings("unchecked")
             T[] array = (T[])Array.newInstance(clazzT, a.length());
@@ -167,7 +167,7 @@ public class Serialization {
         if(arrayList == null) { return null; }
 
         try {
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge();
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge();
             for(T t : arrayList) {
                 a.serialize(t, clazzT);
             }
@@ -186,7 +186,7 @@ public class Serialization {
         try {
             ArrayList<T> arrayList = new ArrayList<>();
 
-            DataBridge.JSONArrayDataBridge a = new DataBridge.JSONArrayDataBridge(s);
+            LegacyDataBridge.JSONArrayDataBridge a = new LegacyDataBridge.JSONArrayDataBridge(s);
             for(int i = 0; i < a.length(); i++) {
                 arrayList.add(a.deserialize(i, clazzT));
             }
@@ -210,7 +210,7 @@ public class Serialization {
         }
 
         try {
-            return new DataBridge.JSONObjectDataBridge()
+            return new LegacyDataBridge.JSONObjectDataBridge()
                 .serializeArrayList("keys", keyArrayList, clazzT)
                 .serializeArrayList("values", valueArrayList, clazzU)
                 .toStringOrNull();
@@ -225,7 +225,7 @@ public class Serialization {
         if(s == null) { return null; }
 
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
 
             ArrayList<T> arrayListT = o.deserializeArrayList("keys", clazzT);
             ArrayList<U> arrayListU = o.deserializeArrayList("values", clazzU);
@@ -340,7 +340,7 @@ public class Serialization {
             return obj;
         }
 
-        public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        public void serializeToJSONX(DataBridge.Writer o) throws IOException {
             o.jsonWriter.value(obj);
         }
 
@@ -348,7 +348,7 @@ public class Serialization {
             return s;
         }
 
-        public static String deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        public static String deserializeFromJSONX(DataBridge.Reader o) throws IOException {
             return o.getString();
         }
     }
@@ -408,7 +408,7 @@ public class Serialization {
             return Integer.toString(obj);
         }
 
-        public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        public void serializeToJSONX(DataBridge.Writer o) throws IOException {
             o.jsonWriter.value(Integer.toString(obj));
         }
 
@@ -416,7 +416,7 @@ public class Serialization {
             return Integer.parseInt(s);
         }
 
-        public static int deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        public static int deserializeFromJSONX(DataBridge.Reader o) throws IOException {
             return Integer.parseInt(o.getString());
         }
     }
@@ -513,14 +513,14 @@ public class Serialization {
 
         @Override
         public String serializeToJSON() throws JSONException {
-            return new DataBridge.JSONObjectDataBridge()
+            return new LegacyDataBridge.JSONObjectDataBridge()
                     .serialize("class", obj.getClass().getSimpleName(), String.class)
                     .serialize("uri", obj.getUri().toString(), String.class)
                     .toStringOrNull();
         }
 
         public static DocumentFile deserializeFromJSON(String s, String version) throws JSONException {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String clazz = o.deserialize("class", String.class);
             Uri uri = Uri.parse(o.deserialize("uri", String.class));
 

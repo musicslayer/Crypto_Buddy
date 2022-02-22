@@ -37,6 +37,8 @@ import java.util.Date;
 // TODO Importing still obliterates everything.
 
 // TODO Exporting takes a long time.
+// TODO Export Progress Dialog
+// TODO Can we export downloaded tokens now? It is much faster.
 // TODO Better reset data.
 // TODO Only exporting should be a premium feature.
 

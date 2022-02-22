@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.filter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
@@ -52,7 +52,7 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     }
 
     public static Filter deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String filterType = o.deserialize("filterType", String.class);
         if("!DISCRETE!".equals(filterType)) {
             return DiscreteFilter.deserializeFromJSON_sub(s);

@@ -4,8 +4,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.StreamDataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
@@ -433,7 +433,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        String s = new DataBridge.JSONObjectDataBridge()
+        String s = new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("token_type", getTokenType(), String.class)
             .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
@@ -444,7 +444,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         return s;
     }
 
-    public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+    public void serializeToJSONX(DataBridge.Writer o) throws IOException {
         o.beginObject()
                 .serialize("!V!", "2", String.class)
                 .serialize("key", getKey(), String.class)
@@ -455,11 +455,10 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
                 .endObject();
     }
 
-    public static TokenManager deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+    public static TokenManager deserializeFromJSONX(DataBridge.Reader o) throws IOException {
         o.beginObject();
 
         String version = o.deserialize("!V!", String.class);
-        //String version = "2";
         TokenManager tokenManager;
 
         if("2".equals(version)) {
@@ -468,9 +467,6 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
             ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
             ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
-            //o.finish();
-
-            //o.deserialize("!V!", String.class);
 
             o.endObject();
 
@@ -492,7 +488,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         TokenManager tokenManager;
 
         if("2".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String token_type = o.deserialize("token_type", String.class);
             ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
@@ -507,7 +503,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             tokenManager.custom_tokens = custom_tokens;
         }
         else if("1".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String token_type = o.deserialize("token_type", String.class);
 
@@ -535,7 +531,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         if(s == null) { return null; }
 
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
             String display_name = o.deserialize("display_name", String.class);

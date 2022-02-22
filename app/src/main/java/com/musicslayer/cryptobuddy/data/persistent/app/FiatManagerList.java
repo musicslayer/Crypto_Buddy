@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Exportation;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
@@ -81,7 +81,7 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
     public String exportDataToJSON() throws org.json.JSONException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
@@ -106,7 +106,7 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
 
 
     public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
 
         // Only import fiat managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());

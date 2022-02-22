@@ -7,7 +7,7 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
@@ -192,14 +192,14 @@ public class AuthUtil {
         }
 
         public String serializeToJSON() throws org.json.JSONException {
-            return new DataBridge.JSONObjectDataBridge()
+            return new LegacyDataBridge.JSONObjectDataBridge()
                     .serializeArray("token_e", toObjectArray(token_e), Byte.class)
                     .serialize("expiryTime", expiryTime, Long.class)
                     .toStringOrNull();
         }
 
         public static OAuthToken deserializeFromJSON(String s, String version) throws org.json.JSONException {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
             long expiryTime = o.deserialize("expiryTime", Long.class);
             return new OAuthToken(token_e, expiryTime);

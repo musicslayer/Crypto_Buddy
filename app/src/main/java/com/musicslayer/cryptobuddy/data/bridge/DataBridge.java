@@ -1,368 +1,275 @@
 package com.musicslayer.cryptobuddy.data.bridge;
 
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
+import android.util.JsonReader;
+import android.util.JsonToken;
+import android.util.JsonWriter;
 
-import org.json.JSONException;
+import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataBridge {
-    public static class JSONObjectDataBridge {
-        JSONWithNull.JSONObjectWithNull jsonObjectWithNull;
+    public static <T> String serialize(T obj, Class<T> clazzT) {
+        if(obj == null) { return null; }
 
-        public JSONObjectDataBridge() {
-            jsonObjectWithNull = new JSONWithNull.JSONObjectWithNull();
+        Writer writer = new Writer();
+
+        try {
+            writer.serialize(null, obj, clazzT);
+            writer.safeFlushAndClose();
+            return writer.stringWriter.toString();
         }
-
-        public JSONObjectDataBridge(String s) throws JSONException {
-            jsonObjectWithNull = new JSONWithNull.JSONObjectWithNull(s);
-        }
-
-        public String toStringOrNull() {
-            return jsonObjectWithNull.toStringOrNull();
-        }
-
-        public boolean has(String key) {
-            return jsonObjectWithNull.has(key);
-        }
-
-        ///////////
-        // These are needed for non-standard workflows.
-        public String getJSONObjectString(String key) throws org.json.JSONException {
-            return jsonObjectWithNull.getJSONObjectString(key);
-        }
-
-        public String getJSONArrayString(String key) throws org.json.JSONException {
-            return jsonObjectWithNull.getJSONArrayString(key);
-        }
-
-        public JSONObjectDataBridge putJSONObjectString(String key, String s) throws org.json.JSONException {
-            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            return this;
-        }
-        ///////////
-
-        public <T> JSONObjectDataBridge serialize(String key, T obj, Class<T> clazzT) throws JSONException {
-            String type = Serialization.getCurrentType(clazzT);
-            String s = Serialization.serialize(obj, clazzT);
-
-            if("!STRING!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putString(key, s);
-            }
-            else if("!OBJECT!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            }
-            else if("!ARRAY!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge serializeArray(String key, T[] obj, Class<T> clazzT) throws org.json.JSONException {
-            // Array always uses type !ARRAY!.
-            String s = Serialization.serializeArray(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge serializeArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
-            // ArrayList always uses type !ARRAY!.
-            String s = Serialization.serializeArrayList(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            return this;
-        }
-
-        public <T, U> JSONObjectDataBridge serializeHashMap(String key, HashMap<T, U> obj, Class<T> clazzT, Class<U> clazzU) throws org.json.JSONException {
-            // HashMap always uses type !OBJECT!.
-            String s = Serialization.serializeHashMap(obj, clazzT, clazzU);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge exportData(String key, T obj, Class<T> clazzT) throws JSONException {
-            String type = Exportation.getCurrentType(clazzT);
-            String s = Exportation.exportData(obj, clazzT);
-
-            if("!STRING!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putString(key, s);
-            }
-            else if("!OBJECT!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            }
-            else if("!ARRAY!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge reference(String key, T obj, Class<T> clazzT) throws JSONException {
-            String type = Referentiation.getCurrentType(clazzT);
-            String s = Referentiation.reference(obj, clazzT);
-
-            if("!STRING!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putString(key, s);
-            }
-            else if("!OBJECT!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
-            }
-            else if("!ARRAY!".equals(type)) {
-                jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return this;
-        }
-
-        public <T> JSONObjectDataBridge referenceArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws org.json.JSONException {
-            // ArrayList always uses type !ARRAY!.
-            String s = Referentiation.referenceArrayList(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
-            return this;
-        }
-
-        public <T> T deserialize(String key, Class<T> clazzT) throws JSONException {
-            String version;
-            try {
-                version = Serialization.getVersion(jsonObjectWithNull.getJSONObjectString(key));
-            }
-            catch(Exception ignored) {
-                version = "0";
-            }
-
-            String type = Serialization.getTypeForVersion(version, clazzT);
-            String s;
-
-            if("!STRING!".equals(type)) {
-                s = jsonObjectWithNull.getString(key);
-            }
-            else if("!OBJECT!".equals(type)) {
-                s = jsonObjectWithNull.getJSONObjectString(key);
-            }
-            else if("!ARRAY!".equals(type)) {
-                s = jsonObjectWithNull.getJSONArrayString(key);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return Serialization.deserialize(s, clazzT);
-        }
-
-        public <T> T[] deserializeArray(String key, Class<T> clazzT) throws JSONException {
-            // Array always uses type !ARRAY!.
-            String s = jsonObjectWithNull.getJSONArrayString(key);
-            return Serialization.deserializeArray(s, clazzT);
-        }
-
-        public <T> ArrayList<T> deserializeArrayList(String key, Class<T> clazzT) throws JSONException {
-            // ArrayList always uses type !ARRAY!.
-            String s = jsonObjectWithNull.getJSONArrayString(key);
-            return Serialization.deserializeArrayList(s, clazzT);
-        }
-
-        public <T, U> HashMap<T, U> deserializeHashMap(String key, Class<T> clazzT, Class<U> clazzU) throws JSONException {
-            // HashMap always uses type !OBJECT!.
-            String s = jsonObjectWithNull.getJSONObjectString(key);
-            return Serialization.deserializeHashMap(s, clazzT, clazzU);
-        }
-
-        public <T> void importData(T obj, String key, Class<T> clazzT) throws JSONException {
-            String version;
-            try {
-                version = Exportation.getVersion(jsonObjectWithNull.getJSONObjectString(key));
-            }
-            catch(Exception ignored) {
-                version = "0";
-            }
-
-            String type = Exportation.getTypeForVersion(version, clazzT);
-            String s;
-
-            if("!STRING!".equals(type)) {
-                s = jsonObjectWithNull.getString(key);
-            }
-            else if("!OBJECT!".equals(type)) {
-                s = jsonObjectWithNull.getJSONObjectString(key);
-            }
-            else if("!ARRAY!".equals(type)) {
-                s = jsonObjectWithNull.getJSONArrayString(key);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            Exportation.importData(obj, s, clazzT);
-        }
-
-        public <T> T dereference(String key, Class<T> clazzT) throws JSONException {
-            String version;
-            try {
-                version = Referentiation.getVersion(jsonObjectWithNull.getJSONObjectString(key));
-            }
-            catch(Exception ignored) {
-                version = "0";
-            }
-
-            String type = Referentiation.getTypeForVersion(version, clazzT);
-            String s;
-
-            if("!STRING!".equals(type)) {
-                s = jsonObjectWithNull.getString(key);
-            }
-            else if("!OBJECT!".equals(type)) {
-                s = jsonObjectWithNull.getJSONObjectString(key);
-            }
-            else if("!ARRAY!".equals(type)) {
-                s = jsonObjectWithNull.getJSONArrayString(key);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return Referentiation.dereference(s, clazzT);
-        }
-
-        public <T> ArrayList<T> dereferenceArrayList(String key, Class<T> clazzT) throws JSONException {
-            // ArrayList always uses type !ARRAY!.
-            String s = jsonObjectWithNull.getJSONArrayString(key);
-            return Referentiation.dereferenceArrayList(s, clazzT);
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            writer.safeFlushAndClose();
+            throw new IllegalStateException(e);
         }
     }
 
-    public static class JSONArrayDataBridge {
-        JSONWithNull.JSONArrayWithNull jsonArrayWithNull;
+    public static <T> T deserialize(String s, Class<T> clazzT) {
+        if(s == null) { return null; }
 
-        public JSONArrayDataBridge() {
-            this.jsonArrayWithNull = new JSONWithNull.JSONArrayWithNull();
+        Reader reader = new Reader(s);
+        try {
+            T t = reader.deserialize(null, clazzT);
+            reader.safeClose();
+            return t;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            reader.safeClose();
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> String cycleSerialization(String s, Class<T> clazzT) {
+        // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
+        T obj = deserialize(s, clazzT);
+        return serialize(obj, clazzT);
+    }
+
+    public static class Writer {
+        public JsonWriter jsonWriter;
+        public StringWriter stringWriter;
+
+        public Writer() {
+            stringWriter = new StringWriter();
+            jsonWriter = new JsonWriter(stringWriter);
         }
 
-        public JSONArrayDataBridge(String s) throws JSONException {
-            this.jsonArrayWithNull = new JSONWithNull.JSONArrayWithNull(s);
-        }
-
-        public int length() {
-            return jsonArrayWithNull.length();
-        }
-
-        public String toStringOrNull() {
-            return jsonArrayWithNull.toStringOrNull();
-        }
-
-        public <T> JSONArrayDataBridge serialize(T obj, Class<T> clazzT) throws JSONException {
-            String type = Serialization.getCurrentType(clazzT);
-            String s = Serialization.serialize(obj, clazzT);
-
-            if("!STRING!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putString(s);
+        public void safeFlushAndClose() {
+            try {
+                jsonWriter.flush();
+                jsonWriter.close();
             }
-            else if("!OBJECT!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putJSONObjectString(s);
+            catch(Exception ignored) {
             }
-            else if("!ARRAY!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putJSONArrayString(s);
+        }
+
+        public Writer beginObject() throws IOException {
+            jsonWriter.beginObject();
+            return this;
+        }
+
+        public Writer endObject() throws IOException {
+            jsonWriter.endObject();
+            return this;
+        }
+
+        public Writer beginArray() throws IOException {
+            jsonWriter.beginArray();
+            return this;
+        }
+
+        public Writer endArray() throws IOException {
+            jsonWriter.endArray();
+            return this;
+        }
+
+        public <T> Writer serialize(String key, T obj, Class<T> clazzT) throws IOException {
+            if(key != null) {
+                jsonWriter.name(key);
+            }
+
+            if(obj == null) {
+                jsonWriter.nullValue();
             }
             else {
-                // Other types are not supported.
-                throw new IllegalStateException();
+                Serialization.wrapObj(obj).serializeToJSONX(this);
             }
 
             return this;
         }
 
-        public <T> T deserialize(int i, Class<T> clazzT) throws JSONException {
-            String version;
-            try {
-                version = Serialization.getVersion(jsonArrayWithNull.getJSONObjectString(i));
-            }
-            catch(Exception ignored) {
-                version = "0";
+        public <T> Writer serializeArrayList(String key, ArrayList<T> arrayList, Class<T> clazzT) throws IOException {
+            if(key != null) {
+                jsonWriter.name(key);
             }
 
-            String type = Serialization.getTypeForVersion(version, clazzT);
-            String s;
-
-            if("!STRING!".equals(type)) {
-                s = jsonArrayWithNull.getString(i);
-            }
-            else if("!OBJECT!".equals(type)) {
-                s = jsonArrayWithNull.getJSONObjectString(i);
-            }
-            else if("!ARRAY!".equals(type)) {
-                s = jsonArrayWithNull.getJSONArrayString(i);
+            if(arrayList == null) {
+                jsonWriter.nullValue();
             }
             else {
-                // Other types are not supported.
-                throw new IllegalStateException();
-            }
-
-            return Serialization.deserialize(s, clazzT);
-        }
-
-        public <T> JSONArrayDataBridge reference(T obj, Class<T> clazzT) throws JSONException {
-            String type = Referentiation.getCurrentType(clazzT);
-            String s = Referentiation.reference(obj, clazzT);
-
-            if("!STRING!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putString(s);
-            }
-            else if("!OBJECT!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putJSONObjectString(s);
-            }
-            else if("!ARRAY!".equals(type)) {
-                jsonArrayWithNull = jsonArrayWithNull.putJSONArrayString(s);
-            }
-            else {
-                // Other types are not supported.
-                throw new IllegalStateException();
+                jsonWriter.beginArray();
+                for(T t : arrayList) {
+                    serialize(null, t, clazzT);
+                }
+                jsonWriter.endArray();
             }
 
             return this;
         }
 
-        public <T> T dereference(int i, Class<T> clazzT) throws JSONException {
-            String version;
-            try {
-                version = Referentiation.getVersion(jsonArrayWithNull.getJSONObjectString(i));
-            }
-            catch(Exception ignored) {
-                version = "0";
+        public <T, U> Writer serializeHashMap(String key, HashMap<T, U> hashMap, Class<T> clazzT, Class<U> clazzU) throws IOException {
+            if(key != null) {
+                jsonWriter.name(key);
             }
 
-            String type = Referentiation.getTypeForVersion(version, clazzT);
-            String s;
-
-            if("!STRING!".equals(type)) {
-                s = jsonArrayWithNull.getString(i);
-            }
-            else if("!OBJECT!".equals(type)) {
-                s = jsonArrayWithNull.getJSONObjectString(i);
-            }
-            else if("!ARRAY!".equals(type)) {
-                s = jsonArrayWithNull.getJSONArrayString(i);
+            if(hashMap == null) {
+                jsonWriter.nullValue();
             }
             else {
-                // Other types are not supported.
-                throw new IllegalStateException();
+                ArrayList<T> keyArrayList = new ArrayList<>(hashMap.keySet());
+                ArrayList<U> valueArrayList = new ArrayList<>();
+                for(T keyT : keyArrayList) {
+                    valueArrayList.add(hashMap.get(keyT));
+                }
+
+                jsonWriter.beginObject();
+                serializeArrayList("keys", keyArrayList, clazzT);
+                serializeArrayList("values", valueArrayList, clazzU);
+                jsonWriter.endObject();
             }
 
-            return Referentiation.dereference(s, clazzT);
+            return this;
+        }
+    }
+
+    public static class Reader {
+        public JsonReader jsonReader;
+        public StringReader stringReader;
+
+        public Reader(String s) {
+            stringReader = new StringReader(s);
+            jsonReader = new JsonReader(stringReader);
+        }
+
+        public void safeClose() {
+            try {
+                jsonReader.close();
+            }
+            catch(Exception ignored) {
+            }
+        }
+
+        public String getName() throws IOException {
+            return jsonReader.nextName().replace("\"", "\\\"");
+        }
+
+        public String getString() throws IOException {
+            return jsonReader.nextString().replace("\"", "\\\"");
+        }
+
+        public Reader beginObject() throws IOException {
+            jsonReader.beginObject();
+            return this;
+        }
+
+        public Reader endObject() throws IOException {
+            jsonReader.endObject();
+            return this;
+        }
+
+        public Reader beginArray() throws IOException {
+            jsonReader.beginArray();
+            return this;
+        }
+
+        public Reader endArray() throws IOException {
+            jsonReader.endArray();
+            return this;
+        }
+
+        public <T> T deserialize(String key, Class<T> clazzT) throws IOException {
+            if(key != null) {
+                String nextKey = getName();
+                if(!key.equals(nextKey)) {
+                    // Expected key was not found.
+                    throw new IllegalStateException();
+                }
+            }
+
+            if(jsonReader.peek() == JsonToken.NULL) {
+                jsonReader.nextNull();
+                return null;
+            }
+            else {
+                Class<? extends Serialization.SerializableToJSON> wrappedClass = Serialization.wrapClass(clazzT);
+                return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSONX", this);
+            }
+        }
+
+        public <T> ArrayList<T> deserializeArrayList(String key, Class<T> clazzT) throws IOException {
+            if(key != null) {
+                String nextKey = getName();
+                if(!key.equals(nextKey)) {
+                    // Expected key was not found.
+                    throw new IllegalStateException();
+                }
+            }
+
+            if(jsonReader.peek() == JsonToken.NULL) {
+                jsonReader.nextNull();
+                return null;
+            }
+            else {
+                ArrayList<T> arrayList = new ArrayList<>();
+
+                jsonReader.beginArray();
+                while(jsonReader.hasNext()) {
+                    arrayList.add(deserialize(null, clazzT));
+                }
+                jsonReader.endArray();
+
+                return arrayList;
+            }
+        }
+
+        public <T, U> HashMap<T, U> deserializeHashMap(String key, Class<T> clazzT, Class<U> clazzU) throws IOException {
+            if(key != null) {
+                String nextKey = getName();
+                if(!key.equals(nextKey)) {
+                    // Expected key was not found.
+                    throw new IllegalStateException();
+                }
+            }
+
+            if(jsonReader.peek() == JsonToken.NULL) {
+                jsonReader.nextNull();
+                return null;
+            }
+            else {
+                jsonReader.beginObject();
+                ArrayList<T> arrayListT = deserializeArrayList("keys", clazzT);
+                ArrayList<U> arrayListU = deserializeArrayList("values", clazzU);
+                jsonReader.endObject();
+
+                if(arrayListT == null || arrayListU == null || arrayListT.size() != arrayListU.size()) {
+                    return null;
+                }
+
+                HashMap<T, U> hashMap = new HashMap<>();
+                for(int i = 0; i < arrayListT.size(); i++) {
+                    hashMap.put(arrayListT.get(i), arrayListU.get(i));
+                }
+
+                return hashMap;
+            }
         }
     }
 }

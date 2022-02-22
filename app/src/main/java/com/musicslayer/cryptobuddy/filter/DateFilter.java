@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.filter;
 
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 
@@ -12,7 +12,7 @@ public class DateFilter extends Filter {
     public Date user_endDate;
 
     public String serializeToJSON_sub() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("filterType", getFilterType(), String.class)
             .serialize("user_startDate", user_startDate, Date.class)
             .serialize("user_endDate", user_endDate, Date.class)
@@ -20,7 +20,7 @@ public class DateFilter extends Filter {
     }
 
     public static DateFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Date user_startDate = o.deserialize("user_startDate", Date.class);
         Date user_endDate = o.deserialize("user_endDate", Date.class);
 

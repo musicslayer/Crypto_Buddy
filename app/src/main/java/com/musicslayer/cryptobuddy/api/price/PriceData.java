@@ -1,7 +1,7 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
@@ -30,7 +30,7 @@ public class PriceData implements Serialization.SerializableToJSON {
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
                 .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
                 .serialize("priceAPI_marketCap", priceAPI_marketCap, PriceAPI.class)
@@ -51,14 +51,14 @@ public class PriceData implements Serialization.SerializableToJSON {
             valueArrayList.add(hashMap.get(key));
         }
 
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
                 .referenceArrayList("keys", keyArrayList, Asset.class)
                 .serializeArrayList("values", valueArrayList, AssetQuantity.class)
                 .toStringOrNull();
     }
 
     public static PriceData deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
         PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
         PriceAPI priceAPI_marketCap = o.deserialize("priceAPI_marketCap", PriceAPI.class);
@@ -73,7 +73,7 @@ public class PriceData implements Serialization.SerializableToJSON {
         // Combine HashMaps so Assets are dereferenced but AssetQuantities are deserialized.
         if(s == null) { return null; }
 
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
 
         ArrayList<Asset> arrayListT = o.dereferenceArrayList("keys", Asset.class);
         ArrayList<AssetQuantity> arrayListU = o.deserializeArrayList("values", AssetQuantity.class);

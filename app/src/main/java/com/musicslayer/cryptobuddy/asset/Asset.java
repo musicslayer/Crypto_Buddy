@@ -9,10 +9,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Referentiation;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
-import com.musicslayer.cryptobuddy.data.bridge.StreamDataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
 import java.io.IOException;
@@ -137,7 +137,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String serializeToJSON() throws org.json.JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("assetKind", getAssetKind(), String.class)
                 .serialize("key", getOriginalKey(), String.class)
                 .serialize("name", getOriginalName(), String.class)
@@ -148,7 +148,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
                 .toStringOrNull();
     }
 
-    public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+    public void serializeToJSONX(DataBridge.Writer o) throws IOException {
         o.beginObject()
                 .serialize("!V!", serializationVersion(), String.class)
                 .serialize("assetKind", getAssetKind(), String.class)
@@ -161,11 +161,10 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
                 .endObject();
     }
 
-    public static Asset deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+    public static Asset deserializeFromJSONX(DataBridge.Reader o) throws IOException {
         o.beginObject();
 
         String version = o.deserialize("!V!", String.class);
-        //String version = "4";
         Asset asset;
 
         if("4".equals(version)) {
@@ -176,10 +175,6 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
             int scale = o.deserialize("scale", Integer.class);
             String assetType = o.deserialize("assetType", String.class);
             HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-            //o.finish();
-
-            //o.deserialize("!V!", String.class);
-
             o.endObject();
 
             asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
@@ -196,7 +191,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
         if("4".equals(version)) {
             // Reconstruct the asset from the deserialized info.
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String assetKind = o.deserialize("assetKind", String.class);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
@@ -210,7 +205,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         else if("3".equals(version)) {
             // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
             // In older versions, serialization was performing the role of referentiation.
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String assetKind = o.deserialize("assetKind", String.class);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
@@ -224,7 +219,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         else if("2".equals(version)) {
             // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
             // In older versions, serialization was performing the role of referentiation.
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String assetKind = o.deserialize("assetKind", String.class);
             String assetType = o.deserialize("assetType", String.class);
             String key = o.deserialize("key", String.class);
@@ -234,7 +229,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         else if("1".equals(version)) {
             // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
             // In older versions, serialization was performing the role of referentiation.
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String assetType = o.deserialize("assetType", String.class);
             String key = o.deserialize("key", String.class);
 
@@ -269,7 +264,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
     public String referenceToJSON() throws org.json.JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("assetKind", getAssetKind(), String.class)
                 .serialize("key", getOriginalKey(), String.class)
                 .serialize("name", getOriginalName(), String.class)
@@ -285,7 +280,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
 
         if("1".equals(version)) {
             // When we dereference, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String assetKind = o.deserialize("assetKind", String.class);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);

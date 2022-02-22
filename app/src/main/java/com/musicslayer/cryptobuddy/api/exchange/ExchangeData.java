@@ -2,7 +2,7 @@ package com.musicslayer.cryptobuddy.api.exchange;
 
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
@@ -36,7 +36,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("cryptoExchange", cryptoExchange, CryptoExchange.class)
             .serialize("exchangeAPI_currentBalance", exchangeAPI_currentBalance, ExchangeAPI.class)
             .serialize("exchangeAPI_transactions", exchangeAPI_transactions, ExchangeAPI.class)
@@ -48,7 +48,7 @@ public class ExchangeData implements Serialization.SerializableToJSON {
     }
 
     public static ExchangeData deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoExchange cryptoExchange = o.deserialize("cryptoExchange", CryptoExchange.class);
         ExchangeAPI exchangeAPI_currentBalance = o.deserialize("exchangeAPI_currentBalance", ExchangeAPI.class);
         ExchangeAPI exchangeAPI_transactions = o.deserialize("exchangeAPI_transactions", ExchangeAPI.class);

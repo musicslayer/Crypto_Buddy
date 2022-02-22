@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
@@ -97,14 +97,14 @@ public class CryptoExchange implements Serialization.SerializableToJSON, Seriali
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("exchange", exchange, Exchange.class)
             .serialize("exchangeAPI", exchangeAPI, ExchangeAPI.class)
             .toStringOrNull();
     }
 
     public static CryptoExchange deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Exchange exchange = o.deserialize("exchange", Exchange.class);
         ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);
         return new CryptoExchange(exchange, exchangeAPI);

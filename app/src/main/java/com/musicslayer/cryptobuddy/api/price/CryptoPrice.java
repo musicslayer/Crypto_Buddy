@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Referentiation;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
@@ -64,14 +64,14 @@ public class CryptoPrice implements Serialization.SerializableToJSON, Serializat
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .referenceArrayList("assetArrayList", assetArrayList, Asset.class)
             .reference("fiat", fiat, Fiat.class)
             .toStringOrNull();
     }
 
     public static CryptoPrice deserializeFromJSON(String s, String version) throws org.json.JSONException {
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         ArrayList<Asset> assetArrayList = o.dereferenceArrayList("assetArrayList", Asset.class);
         Fiat fiat = o.dereference("fiat", Fiat.class);
         return new CryptoPrice(assetArrayList, fiat);

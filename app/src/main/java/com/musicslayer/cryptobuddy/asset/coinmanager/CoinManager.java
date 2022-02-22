@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.asset.coinmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -399,7 +399,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("coin_type", getCoinType(), String.class)
             .serializeArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
@@ -412,7 +412,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         CoinManager coinManager;
 
         if("2".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String coin_type = o.deserialize("coin_type", String.class);
             ArrayList<Coin> hardcoded_coins = o.deserializeArrayList("hardcoded_coins", Coin.class);
@@ -427,7 +427,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             coinManager.custom_coins = custom_coins;
         }
         else if("1".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String coin_type = o.deserialize("coin_type", String.class);
 
@@ -454,7 +454,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
             String display_name = o.deserialize("display_name", String.class);

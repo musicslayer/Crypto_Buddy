@@ -3,7 +3,7 @@ package com.musicslayer.cryptobuddy.asset.fiatmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -399,7 +399,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     @Override
     public String serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
-        return new DataBridge.JSONObjectDataBridge()
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("fiat_type", getFiatType(), String.class)
             .serializeArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
@@ -412,7 +412,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         FiatManager fiatManager;
 
         if("2".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String fiat_type = o.deserialize("fiat_type", String.class);
             ArrayList<Fiat> hardcoded_fiats = o.deserializeArrayList("hardcoded_fiats", Fiat.class);
@@ -427,7 +427,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             fiatManager.custom_fiats = custom_fiats;
         }
         else if("1".equals(version)) {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String fiat_type = o.deserialize("fiat_type", String.class);
 
@@ -454,7 +454,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         if(s == null) { return null; }
 
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
             String display_name = o.deserialize("display_name", String.class);

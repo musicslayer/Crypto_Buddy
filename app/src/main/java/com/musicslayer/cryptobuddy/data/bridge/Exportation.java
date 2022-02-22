@@ -48,7 +48,7 @@ public class Exportation {
                 String type = Exportation.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
-                    DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+                    LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
                     o.serialize(EXPORTATION_VERSION_MARKER, version, String.class);
                     s = o.toStringOrNull();
                 }
@@ -92,7 +92,7 @@ public class Exportation {
 
     public static String getVersion(String s) {
         try {
-            DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge(s);
+            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             return o.deserialize(EXPORTATION_VERSION_MARKER, String.class);
         }
         catch(Exception ignored) {

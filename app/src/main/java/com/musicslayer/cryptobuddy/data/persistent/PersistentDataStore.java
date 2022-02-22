@@ -1,6 +1,6 @@
 package com.musicslayer.cryptobuddy.data.persistent;
 
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -32,7 +32,7 @@ abstract public class PersistentDataStore {
         // Export a JSON representation of persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
-        DataBridge.JSONObjectDataBridge o = new DataBridge.JSONObjectDataBridge();
+        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
 
         // Individually, try to export each piece of data.
         for(PersistentAppDataStore persistentAppDataStore : PersistentAppDataStore.persistent_app_data_stores) {
@@ -70,9 +70,9 @@ abstract public class PersistentDataStore {
         // Import a JSON representation of persistent data into the app.
 
         // Each SharedPreferences key maps to its data.
-        DataBridge.JSONObjectDataBridge o;
+        LegacyDataBridge.JSONObjectDataBridge o;
         try {
-            o = new DataBridge.JSONObjectDataBridge(json);
+            o = new LegacyDataBridge.JSONObjectDataBridge(json);
         }
         catch(Exception e) {
             throw new IllegalStateException(e);
