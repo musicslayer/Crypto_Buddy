@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.i18n.TimeZoneManager;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
@@ -39,8 +40,6 @@ import java.util.Date;
 // TODO Export Progress Dialog
 // TODO Better reset data.
 // TODO Only exporting should be a premium feature.
-
-// TODO Flip to new Serialization.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
@@ -79,6 +78,10 @@ public class InitialActivity extends BaseActivity {
         // Load all the stored data into local memory.
         PersistentAppDataStore.loadAllStoredData();
         PersistentUserDataStore.loadAllStoredData();
+
+        // REMOVE
+        // At this point, everyone should use newer Serialization.
+        DataBridge.setIsLegacy(false);
 
         // Save all the stored data right after loading it.
         // This makes sure the stored data is initialized and helps remove data with outdated versions.

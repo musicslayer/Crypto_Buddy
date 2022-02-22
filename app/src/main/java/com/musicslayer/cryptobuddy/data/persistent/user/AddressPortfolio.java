@@ -129,7 +129,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements DataBri
             }
             else {
                 // Older installations won't have the name saved.
-                // TODO To Remove!
+                // REMOVE
                 String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
                 AddressPortfolioObj addressPortfolioObj = DataBridge.deserialize(serialString, AddressPortfolioObj.class);
                 name = addressPortfolioObj.name;

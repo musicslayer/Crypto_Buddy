@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.data.bridge;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.JsonReader;
 import android.util.JsonToken;
@@ -9,6 +10,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
+import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.io.File;
@@ -21,6 +23,21 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class DataBridge {
+    public static final String LEGACY_SHARED_PREFERENCES_KEY = "LEGACY_SERIALIZATION_DATA";
+    public static final String LEGACY_KEY = "LEGACY_SERIALIZATION_VALUE";
+    public static boolean getIsLegacy() {
+        // Default is true, since existing users must start out with legacy serialization.
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(LEGACY_SHARED_PREFERENCES_KEY);
+        return sharedPreferences.getBoolean(LEGACY_KEY, true);
+    }
+
+    public static void setIsLegacy(boolean b) {
+        SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(LEGACY_SHARED_PREFERENCES_KEY);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(LEGACY_KEY, b);
+        editor.apply();
+    }
+
     public interface SerializableToJSON {
         void serializeToJSON(DataBridge.Writer o) throws IOException;
         // Classes also need to implement static method "deserializeFromJSON".
@@ -58,6 +75,11 @@ public class DataBridge {
     }
 
     public static <T> String serializeValue(T obj, Class<T> clazzT) {
+        // REMOVE
+        if(getIsLegacy()) {
+            return LegacySerialization.serialize(obj, clazzT);
+        }
+
         // JSON doesn't allow direct Strings as top-level values, so directly handle value ourselves.
         if(obj == null) { return null; }
 
@@ -87,6 +109,11 @@ public class DataBridge {
     }
 
     public static <T> String serialize(T obj, Class<T> clazzT) {
+        // REMOVE
+        if(getIsLegacy()) {
+            return LegacySerialization.serialize(obj, clazzT);
+        }
+
         if(obj == null) { return null; }
 
         Writer writer = new Writer();
@@ -104,6 +131,11 @@ public class DataBridge {
     }
 
     public static <T> String serializeArrayList(ArrayList<T> arrayList, Class<T> clazzT) {
+        // REMOVE
+        if(getIsLegacy()) {
+            return LegacySerialization.serializeArrayList(arrayList, clazzT);
+        }
+
         if(arrayList == null) { return null; }
 
         Writer writer = new Writer();
@@ -172,6 +204,11 @@ public class DataBridge {
     }
 
     public static <T> T deserializeValue(String s, Class<T> clazzT) {
+        // REMOVE
+        if(getIsLegacy()) {
+            return LegacySerialization.deserialize(s, clazzT);
+        }
+
         // JSON doesn't allow direct Strings as top-level values, so directly handle value ourselves.
         if(s == null) { return null; }
 
@@ -201,6 +238,10 @@ public class DataBridge {
     }
 
     public static <T> T deserialize(String s, Class<T> clazzT) {
+        if(getIsLegacy()) {
+            return LegacySerialization.deserialize(s, clazzT);
+        }
+
         if(s == null) { return null; }
 
         Reader reader = new Reader(s);
@@ -217,6 +258,10 @@ public class DataBridge {
     }
 
     public static <T> ArrayList<T> deserializeArrayList(String s, Class<T> clazzT) {
+        if(getIsLegacy()) {
+            return LegacySerialization.deserializeArrayList(s, clazzT);
+        }
+
         if(s == null) { return null; }
 
         Reader reader = new Reader(s);

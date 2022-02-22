@@ -129,7 +129,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Dat
             }
             else {
                 // Older installations won't have the name saved.
-                // TODO To Remove!
+                // REMOVE
                 String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
                 TransactionPortfolioObj transactionPortfolioObj = DataBridge.deserialize(serialString, TransactionPortfolioObj.class);
                 name = transactionPortfolioObj.name;

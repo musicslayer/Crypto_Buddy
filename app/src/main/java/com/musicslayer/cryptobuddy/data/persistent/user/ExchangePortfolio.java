@@ -129,7 +129,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements DataBr
             }
             else {
                 // Older installations won't have the name saved.
-                // TODO To Remove!
+                // REMOVE
                 String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
                 ExchangePortfolioObj exchangePortfolioObj = DataBridge.deserialize(serialString, ExchangePortfolioObj.class);
                 name = exchangePortfolioObj.name;
