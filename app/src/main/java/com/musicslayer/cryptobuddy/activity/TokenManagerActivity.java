@@ -90,13 +90,13 @@ public class TokenManagerActivity extends BaseActivity {
                 ProgressDialogFragment.updateProgressTitle("Downloading All Tokens...");
 
                 String tokenAllJSON = WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
-                ProgressDialogFragment.setValue(DataBridge.serialize(tokenAllJSON, String.class));
+                ProgressDialogFragment.setValue(DataBridge.serializeValue(tokenAllJSON, String.class));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenAllJSON = DataBridge.deserialize(ProgressDialogFragment.getValue(), String.class);
+                String tokenAllJSON = DataBridge.deserializeValue(ProgressDialogFragment.getValue(), String.class);
 
                 if(tokenAllJSON == null) {
                     ToastUtil.showToast("tokens_not_downloaded");

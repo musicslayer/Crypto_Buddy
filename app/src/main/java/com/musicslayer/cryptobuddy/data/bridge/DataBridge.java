@@ -36,6 +36,56 @@ public class DataBridge {
         // Classes also need to implement static method "dereferenceFromJSON".
     }
 
+    public static void safeFlushAndClose(Writer writer) {
+        try {
+            if(writer != null) {
+                writer.jsonWriter.flush();
+                writer.jsonWriter.close();
+            }
+        }
+        catch(Exception ignored) {
+        }
+    }
+
+    public static void safeClose(Reader reader) {
+        try {
+            if(reader != null) {
+                reader.jsonReader.close();
+            }
+        }
+        catch(Exception ignored) {
+        }
+    }
+
+    public static <T> String serializeValue(T obj, Class<T> clazzT) {
+        // JSON doesn't allow direct Strings as top-level values, so directly handle value ourselves.
+        if(obj == null) { return null; }
+
+        Writer writer = new Writer();
+        Reader reader = null;
+
+        try {
+            writer.beginArray();
+            writer.serialize(null, obj, clazzT);
+            writer.endArray();
+            safeFlushAndClose(writer);
+
+            reader = new Reader(writer.stringWriter.toString());
+            reader.beginArray();
+            String s = reader.getString();
+            reader.endArray();
+            safeClose(reader);
+
+            return s;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            safeFlushAndClose(writer);
+            safeClose(reader);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static <T> String serialize(T obj, Class<T> clazzT) {
         if(obj == null) { return null; }
 
@@ -43,12 +93,12 @@ public class DataBridge {
 
         try {
             writer.serialize(null, obj, clazzT);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             return writer.stringWriter.toString();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             throw new IllegalStateException(e);
         }
     }
@@ -60,12 +110,12 @@ public class DataBridge {
 
         try {
             writer.serializeArrayList(null, arrayList, clazzT);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             return writer.stringWriter.toString();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             throw new IllegalStateException(e);
         }
     }
@@ -77,12 +127,12 @@ public class DataBridge {
 
         try {
             writer.exportData(null, obj, clazzT);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             return writer.stringWriter.toString();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             throw new IllegalStateException(e);
         }
     }
@@ -94,12 +144,12 @@ public class DataBridge {
 
         try {
             writer.reference(null, obj, clazzT);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             return writer.stringWriter.toString();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             throw new IllegalStateException(e);
         }
     }
@@ -111,12 +161,41 @@ public class DataBridge {
 
         try {
             writer.referenceArrayList(null, arrayList, clazzT);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
             return writer.stringWriter.toString();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            writer.safeFlushAndClose();
+            safeFlushAndClose(writer);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T> T deserializeValue(String s, Class<T> clazzT) {
+        // JSON doesn't allow direct Strings as top-level values, so directly handle value ourselves.
+        if(s == null) { return null; }
+
+        Writer writer = new Writer();
+        Reader reader = null;
+
+        try {
+            writer.beginArray();
+            writer.putString(s);
+            writer.endArray();
+            safeFlushAndClose(writer);
+
+            reader = new Reader(writer.stringWriter.toString());
+            reader.beginArray();
+            T obj = reader.deserialize(null, clazzT);
+            reader.endArray();
+            safeClose(reader);
+
+            return obj;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            safeFlushAndClose(writer);
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -127,12 +206,12 @@ public class DataBridge {
         Reader reader = new Reader(s);
         try {
             T obj = reader.deserialize(null, clazzT);
-            reader.safeClose();
+            safeClose(reader);
             return obj;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            reader.safeClose();
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -143,12 +222,12 @@ public class DataBridge {
         Reader reader = new Reader(s);
         try {
             ArrayList<T> arrayList = reader.deserializeArrayList(null, clazzT);
-            reader.safeClose();
+            safeClose(reader);
             return arrayList;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            reader.safeClose();
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -159,11 +238,11 @@ public class DataBridge {
         Reader reader = new Reader(s);
         try {
             reader.importData(null, obj, clazzT);
-            reader.safeClose();
+            safeClose(reader);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            reader.safeClose();
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -174,12 +253,12 @@ public class DataBridge {
         Reader reader = new Reader(s);
         try {
             T obj = reader.dereference(null, clazzT);
-            reader.safeClose();
+            safeClose(reader);
             return obj;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            reader.safeClose();
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -190,12 +269,12 @@ public class DataBridge {
         Reader reader = new Reader(s);
         try {
             ArrayList<T> arrayList = reader.dereferenceArrayList(null, clazzT);
-            reader.safeClose();
+            safeClose(reader);
             return arrayList;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
-            reader.safeClose();
+            safeClose(reader);
             throw new IllegalStateException(e);
         }
     }
@@ -213,15 +292,6 @@ public class DataBridge {
         public Writer() {
             stringWriter = new StringWriter();
             jsonWriter = new JsonWriter(stringWriter);
-        }
-
-        public void safeFlushAndClose() {
-            try {
-                jsonWriter.flush();
-                jsonWriter.close();
-            }
-            catch(Exception ignored) {
-            }
         }
 
         public Writer putName(String s) throws IOException {
@@ -420,20 +490,12 @@ public class DataBridge {
             jsonReader = new JsonReader(stringReader);
         }
 
-        public void safeClose() {
-            try {
-                jsonReader.close();
-            }
-            catch(Exception ignored) {
-            }
-        }
-
         public String getName() throws IOException {
-            return jsonReader.nextName().replace("\"", "\\\"");
+            return jsonReader.nextName();
         }
 
         public String getString() throws IOException {
-            return jsonReader.nextString().replace("\"", "\\\"");
+            return jsonReader.nextString();
         }
 
         public <T> T getNull() throws IOException {
