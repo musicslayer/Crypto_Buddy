@@ -128,6 +128,6 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
         o.endObject();
 
         // Reinitialize data.
-        initialize();
+        loadAllData();
     }
 }

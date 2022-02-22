@@ -116,6 +116,6 @@ public class SettingList extends PersistentUserDataStore implements DataBridge.E
         o.endObject();
 
         // Reinitialize data.
-        initialize();
+        loadAllData();
     }
 }

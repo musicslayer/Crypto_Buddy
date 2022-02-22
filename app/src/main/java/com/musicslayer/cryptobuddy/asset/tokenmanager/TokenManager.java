@@ -92,7 +92,7 @@ abstract public class TokenManager implements LegacySerialization.SerializableTo
 
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
-            tokenManagers_settings_map.put(tokenManager.getKey(), tokenManager);
+            tokenManagers_settings_map.put(tokenManager.getSettingsKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
             tokenManagers_token_types.add(tokenManager.getTokenType());
         }

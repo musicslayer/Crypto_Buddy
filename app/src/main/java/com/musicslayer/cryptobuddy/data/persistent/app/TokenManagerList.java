@@ -126,6 +126,6 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
         o.endObject();
 
         // Reinitialize data.
-        initialize();
+        loadAllData();
     }
 }

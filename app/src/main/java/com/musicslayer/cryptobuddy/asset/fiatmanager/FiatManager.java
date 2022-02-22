@@ -83,7 +83,7 @@ abstract public class FiatManager implements LegacySerialization.SerializableToJ
 
             fiatManagers.add(fiatManager);
             fiatManagers_map.put(fiatManager.getKey(), fiatManager);
-            fiatManagers_settings_map.put(fiatManager.getKey(), fiatManager);
+            fiatManagers_settings_map.put(fiatManager.getSettingsKey(), fiatManager);
             fiatManagers_fiat_type_map.put(fiatManager.getFiatType(), fiatManager);
             fiatManagers_fiat_types.add(fiatManager.getFiatType());
 
