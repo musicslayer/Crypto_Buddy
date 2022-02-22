@@ -7,16 +7,18 @@ import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -83,13 +85,13 @@ public class AuthUtil {
                     }
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serialize(oAuthToken, OAuthToken.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(oAuthToken, OAuthToken.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                OAuthToken oAuthToken = Serialization.deserialize(ProgressDialogFragment.getValue(), OAuthToken.class);
+                OAuthToken oAuthToken = DataBridge.deserialize(ProgressDialogFragment.getValue(), OAuthToken.class);
 
                 if(oAuthToken != null && oAuthToken.isAuthorized()) {
                     ToastUtil.showToast("authorization_successful");
@@ -183,25 +185,43 @@ public class AuthUtil {
         }
     }
 
-    public static class OAuthToken implements Serialization.SerializableToJSON {
+    public static class OAuthToken implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!OBJECT!";
         }
 
-        public String serializeToJSON() throws org.json.JSONException {
+        @Override
+        public String legacy_serializeToJSON() throws org.json.JSONException {
             return new LegacyDataBridge.JSONObjectDataBridge()
                     .serializeArray("token_e", toObjectArray(token_e), Byte.class)
                     .serialize("expiryTime", expiryTime, Long.class)
                     .toStringOrNull();
         }
 
-        public static OAuthToken deserializeFromJSON(String s, String version) throws org.json.JSONException {
+        public static OAuthToken legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
             LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
             long expiryTime = o.deserialize("expiryTime", Long.class);
+            return new OAuthToken(token_e, expiryTime);
+        }
+
+        @Override
+        public void serializeToJSON(DataBridge.Writer o) throws IOException {
+            o.beginObject()
+                    .serializeArray("token_e", toObjectArray(token_e), Byte.class)
+                    .serialize("expiryTime", expiryTime, Long.class)
+                    .endObject();
+        }
+
+        public static OAuthToken deserializeFromJSON(DataBridge.Reader o) throws IOException {
+            o.beginObject();
+            byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
+            long expiryTime = o.deserialize("expiryTime", Long.class);
+            o.endObject();
+
             return new OAuthToken(token_e, expiryTime);
         }
 

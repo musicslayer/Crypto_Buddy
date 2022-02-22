@@ -3,17 +3,18 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.UnknownFiatManager;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class FiatManagerList extends PersistentAppDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+import java.io.IOException;
+
+public class FiatManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "FiatManagerList"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, FiatManagerList.class); }
-    public void doImport(String s) { Exportation.importData(this, s, FiatManagerList.class); }
+    public String doExport() { return DataBridge.exportData(this, FiatManagerList.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, FiatManagerList.class); }
 
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
@@ -26,7 +27,7 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), Serialization.serialize(fiatManager, FiatManager.class));
+        editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), DataBridge.serialize(fiatManager, FiatManager.class));
         editor.apply();
     }
 
@@ -37,7 +38,7 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
         editor.clear();
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
-            editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), Serialization.serialize(fiatManager, FiatManager.class));
+            editor.putString("fiat_manager_" + fiatManager.getSettingsKey(), DataBridge.serialize(fiatManager, FiatManager.class));
         }
 
         editor.apply();
@@ -50,7 +51,7 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String serialString = sharedPreferences.getString("fiat_manager_" + fiatManager.getSettingsKey(), DEFAULT);
 
-            FiatManager copyFiatManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, FiatManager.class);
+            FiatManager copyFiatManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, FiatManager.class);
             if(copyFiatManager != null) {
                 fiatManager.addHardcodedFiat(copyFiatManager.hardcoded_fiats);
                 fiatManager.addFoundFiat(copyFiatManager.found_fiats);
@@ -70,18 +71,12 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
             String key = "fiat_manager_" + fiatManager.getSettingsKey();
@@ -90,9 +85,9 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
             // We do not want to export hardcoded fiats, so let's remove them.
             String newSerialString;
             try {
-                FiatManager copyFiatManager = Serialization.deserialize(serialString, FiatManager.class);
+                FiatManager copyFiatManager = DataBridge.deserialize(serialString, FiatManager.class);
                 copyFiatManager.resetHardcodedFiats();
-                newSerialString = Serialization.serialize(copyFiatManager, FiatManager.class);
+                newSerialString = DataBridge.serialize(copyFiatManager, FiatManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
@@ -101,28 +96,36 @@ public class FiatManagerList extends PersistentAppDataStore implements Exportati
             o.serialize(key, newSerialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         // Only import fiat managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        for(FiatManager fiatManager : FiatManager.fiatManagers) {
-            String key = "fiat_manager_" + fiatManager.getSettingsKey();
-            if(o.has(key)) {
-                String value = o.deserialize(key, String.class);
-                if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.cycle(value, FiatManager.class));
-                }
+        while(o.jsonReader.hasNext()) {
+            String key = o.getName();
+            String value = o.getString();
+            String settings_key = key.replace("fiat_manager_", "");
+
+            FiatManager fiatManager = FiatManager.getFiatManagerFromSettingsKey(settings_key);
+            if(!(fiatManager instanceof UnknownFiatManager) && !DEFAULT.equals(value)) {
+                editor.putString(key, DataBridge.cycleSerialization(value, FiatManager.class));
             }
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         initialize();

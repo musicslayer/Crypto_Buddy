@@ -9,7 +9,7 @@ import android.provider.DocumentsContract;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.UriUtil;
 
@@ -23,16 +23,16 @@ import java.util.ArrayList;
 public class UniversalFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(Serialization.serialize(file, File.class));
-        out.writeString(Serialization.serialize(documentFile, DocumentFile.class));
+        out.writeString(DataBridge.serialize(file, File.class));
+        out.writeString(DataBridge.serialize(documentFile, DocumentFile.class));
     }
 
     public static final Parcelable.Creator<UniversalFile> CREATOR = new Parcelable.Creator<UniversalFile>() {
         @SuppressLint("NewApi")
         @Override
         public UniversalFile createFromParcel(Parcel in) {
-            File file = Serialization.deserialize(in.readString(), File.class);
-            DocumentFile documentFile = Serialization.deserialize(in.readString(), DocumentFile.class);
+            File file = DataBridge.deserialize(in.readString(), File.class);
+            DocumentFile documentFile = DataBridge.deserialize(in.readString(), DocumentFile.class);
 
             if(file != null) {
                 return fromFile(file);

@@ -6,13 +6,15 @@ import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AssetQuantity implements Serialization.SerializableToJSON, Serialization.Versionable {
+public class AssetQuantity implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     public AssetAmount assetAmount;
     public Asset asset;
 
@@ -75,26 +77,54 @@ public class AssetQuantity implements Serialization.SerializableToJSON, Serializ
         Collections.sort(assetQuantityArrayList, (a, b) -> compare(a, b));
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("assetAmount", assetAmount, AssetAmount.class)
             .reference("asset", asset, Asset.class)
             .toStringOrNull();
     }
 
-    public static AssetQuantity deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AssetQuantity legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
         Asset asset = o.dereference("asset", Asset.class);
         return new AssetQuantity(assetAmount, asset);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("assetAmount", assetAmount, AssetAmount.class)
+                .reference("asset", asset, Asset.class)
+                .endObject();
+    }
+
+    public static AssetQuantity deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        AssetQuantity assetQuantity;
+
+        if("2".equals(version)) {
+            AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
+            Asset asset = o.dereference("asset", Asset.class);
+            o.endObject();
+
+            assetQuantity = new AssetQuantity(assetAmount, asset);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return assetQuantity;
     }
 }

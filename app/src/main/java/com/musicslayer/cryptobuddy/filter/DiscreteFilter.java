@@ -1,9 +1,10 @@
 package com.musicslayer.cryptobuddy.filter;
 
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DiscreteFilter extends Filter {
@@ -11,7 +12,8 @@ public class DiscreteFilter extends Filter {
     public ArrayList<String> user_choices = new ArrayList<>();
     public ArrayList<String> user_not_choices = new ArrayList<>();
 
-    public String serializeToJSON_sub() throws org.json.JSONException {
+    @Override
+    public String legacy_serializeToJSON_sub() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("filterType", getFilterType(), String.class)
             .serializeArrayList("choices", choices, String.class)
@@ -22,9 +24,32 @@ public class DiscreteFilter extends Filter {
 
     public static DiscreteFilter deserializeFromJSON_sub(String s) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        ArrayList<String> choices = Serialization.deserializeArrayList(o.getJSONArrayString("choices"), String.class);
-        ArrayList<String> user_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_choices"), String.class);
-        ArrayList<String> user_not_choices = Serialization.deserializeArrayList(o.getJSONArrayString("user_not_choices"), String.class);
+        ArrayList<String> choices = o.deserializeArrayList("choices", String.class);
+        ArrayList<String> user_choices = o.deserializeArrayList("user_choices", String.class);
+        ArrayList<String> user_not_choices = o.deserializeArrayList("user_not_choices", String.class);
+
+        DiscreteFilter discreteFilter = new DiscreteFilter();
+        discreteFilter.choices = choices;
+        discreteFilter.user_choices = user_choices;
+        discreteFilter.user_not_choices = user_not_choices;
+        return discreteFilter;
+    }
+
+    @Override
+    public void serializeToJSON_sub(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("filterType", getFilterType(), String.class)
+                .serializeArrayList("choices", choices, String.class)
+                .serializeArrayList("user_choices", user_choices, String.class)
+                .serializeArrayList("user_not_choices", user_not_choices, String.class)
+                .endObject();
+    }
+
+    public static DiscreteFilter deserializeFromJSON_sub(DataBridge.Reader o) throws IOException {
+        ArrayList<String> choices = o.deserializeArrayList("choices", String.class);
+        ArrayList<String> user_choices = o.deserializeArrayList("user_choices", String.class);
+        ArrayList<String> user_not_choices = o.deserializeArrayList("user_not_choices", String.class);
+        o.endObject();
 
         DiscreteFilter discreteFilter = new DiscreteFilter();
         discreteFilter.choices = choices;

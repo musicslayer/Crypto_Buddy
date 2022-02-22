@@ -15,7 +15,7 @@ import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolioObj;
 import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
@@ -131,7 +131,7 @@ public class ReportFeedbackDialog extends BaseDialog {
         }
         else if(activity instanceof TransactionPortfolioExplorerActivity) {
             s.append("\n\nTransactionPortfolioExplorerActivity");
-            s.append("\n\n").append("Transaction Portfolio:\n\n").append(Serialization.serialize(StateObj.transactionPortfolioObj, TransactionPortfolioObj.class));
+            s.append("\n\n").append("Transaction Portfolio:\n\n").append(DataBridge.serialize(StateObj.transactionPortfolioObj, TransactionPortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
         else if(activity instanceof AddressExplorerActivity) {
@@ -154,7 +154,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             s.append("\n\n").append(AddressData.getRawFullInfoString(new ArrayList<>(StateObj.addressDataFilterMap.values())));
 
             s.append("\n\nAddress Filter:\n\n").append(StateObj.filterInfo);
-            s.append("\n\nAddress Portfolio:\n\n").append(Serialization.serialize(StateObj.addressPortfolioObj, AddressPortfolioObj.class));
+            s.append("\n\nAddress Portfolio:\n\n").append(DataBridge.serialize(StateObj.addressPortfolioObj, AddressPortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
         else if(activity instanceof ExchangeExplorerActivity) {
@@ -177,7 +177,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             s.append("\n\n").append(ExchangeData.getRawFullInfoString(new ArrayList<>(StateObj.exchangeDataFilterMap.values())));
 
             s.append("\n\nExchange Filter:\n\n").append(StateObj.filterInfo);
-            s.append("\n\nExchange Portfolio:\n\n").append(Serialization.serialize(StateObj.exchangePortfolioObj, ExchangePortfolioObj.class));
+            s.append("\n\nExchange Portfolio:\n\n").append(DataBridge.serialize(StateObj.exchangePortfolioObj, ExchangePortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
         else {

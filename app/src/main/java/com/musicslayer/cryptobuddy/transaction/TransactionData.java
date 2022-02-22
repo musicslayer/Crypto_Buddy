@@ -2,8 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class TransactionData {
         }
         else {
             s.appendRich("Transactions:");
-            s.appendRich("\n").appendRich(Serialization.serializeArrayList(transactionArrayList, Transaction.class));
+            s.appendRich("\n").appendRich(DataBridge.serializeArrayList(transactionArrayList, Transaction.class));
 
             s.appendRich("\n\n").appendRich("Net Transaction Sums:");
 

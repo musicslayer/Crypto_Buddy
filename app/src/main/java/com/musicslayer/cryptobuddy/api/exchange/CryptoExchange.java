@@ -6,12 +6,14 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class CryptoExchange implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
+public class CryptoExchange implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeParcelable(exchange, flags);
@@ -87,26 +89,53 @@ public class CryptoExchange implements Serialization.SerializableToJSON, Seriali
         return "Exchange: " + exchange.toString() + "\nExchangeAPI: " + exchangeAPI.toString() + "\n" + exchangeAPI.getAuthorizationInfo();
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("exchange", exchange, Exchange.class)
             .serialize("exchangeAPI", exchangeAPI, ExchangeAPI.class)
             .toStringOrNull();
     }
 
-    public static CryptoExchange deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CryptoExchange legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Exchange exchange = o.deserialize("exchange", Exchange.class);
         ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);
         return new CryptoExchange(exchange, exchangeAPI);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("exchange", exchange, Exchange.class)
+                .serialize("exchangeAPI", exchangeAPI, ExchangeAPI.class)
+                .endObject();
+    }
+
+    public static CryptoExchange deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        CryptoExchange cryptoExchange;
+
+        if("2".equals(version)) {
+            Exchange exchange = o.deserialize("exchange", Exchange.class);
+            ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);
+            cryptoExchange = new CryptoExchange(exchange, exchangeAPI);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return cryptoExchange;
     }
 }

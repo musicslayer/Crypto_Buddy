@@ -2,19 +2,18 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class TransactionPortfolio extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class TransactionPortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "TransactionPortfolio"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, TransactionPortfolio.class); }
-    public void doImport(String s) { Exportation.importData(this, s, TransactionPortfolio.class); }
+    public String doExport() { return DataBridge.exportData(this, TransactionPortfolio.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, TransactionPortfolio.class); }
 
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
@@ -38,7 +37,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         String serialString = sharedPreferences.getString("transaction_portfolio" + idx, DEFAULT);
-        return Serialization.deserialize(serialString, TransactionPortfolioObj.class);
+        return DataBridge.deserialize(serialString, TransactionPortfolioObj.class);
     }
 
     public void addPortfolio(TransactionPortfolioObj transactionPortfolioObj) {
@@ -50,7 +49,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
 
         int size = settings_transaction_portfolio_names.size();
         editor.putInt("transaction_portfolio_size", size);
-        editor.putString("transaction_portfolio" + (size - 1), Serialization.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
+        editor.putString("transaction_portfolio" + (size - 1), DataBridge.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
         editor.putString("transaction_portfolio_names" + (size - 1), transactionPortfolioObj.name);
 
         editor.apply();
@@ -90,7 +89,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObj.name);
-        editor.putString("transaction_portfolio" + idx, Serialization.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
+        editor.putString("transaction_portfolio" + idx, DataBridge.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
 
         editor.apply();
     }
@@ -110,7 +109,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
-            editor.putString("transaction_portfolio" + i, Serialization.cycle(serialString, TransactionPortfolio.class));
+            editor.putString("transaction_portfolio" + i, DataBridge.cycleSerialization(serialString, TransactionPortfolio.class));
         }
 
         editor.apply();
@@ -132,7 +131,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
                 // Older installations won't have the name saved.
                 // TODO To Remove!
                 String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
-                TransactionPortfolioObj transactionPortfolioObj = Serialization.deserialize(serialString, TransactionPortfolioObj.class);
+                TransactionPortfolioObj transactionPortfolioObj = DataBridge.deserialize(serialString, TransactionPortfolioObj.class);
                 name = transactionPortfolioObj.name;
 
                 // Save the name now so this never has to be done again.
@@ -154,18 +153,12 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         String sizeKey = "transaction_portfolio_size";
         int size = sharedPreferences.getInt(sizeKey, 0);
@@ -181,11 +174,17 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
             o.serialize(key, serialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -201,10 +200,12 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Exp
 
             String key = "transaction_portfolio" + i;
             String value = o.deserialize(key, String.class);
-            editor.putString(key, Serialization.cycle(value, TransactionPortfolioObj.class));
+            editor.putString(key, DataBridge.cycleSerialization(value, TransactionPortfolioObj.class));
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         loadAllData();

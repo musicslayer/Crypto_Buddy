@@ -2,19 +2,19 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
+import com.musicslayer.cryptobuddy.asset.tokenmanager.UnknownTokenManager;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class TokenManagerList extends PersistentAppDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+import java.io.IOException;
+
+public class TokenManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "TokenManagerList"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, TokenManagerList.class); }
-    public void doImport(String s) { Exportation.importData(this, s, TokenManagerList.class); }
+    public String doExport() { return DataBridge.exportData(this, TokenManagerList.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, TokenManagerList.class); }
 
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
@@ -69,18 +69,12 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
             String key = "token_manager_" + tokenManager.getSettingsKey();
@@ -100,28 +94,36 @@ public class TokenManagerList extends PersistentAppDataStore implements Exportat
             o.serialize(key, newSerialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         // Only import token managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            String key = "token_manager_" + tokenManager.getSettingsKey();
-            if(o.has(key)) {
-                String value = o.deserialize(key, String.class);
-                if(!DEFAULT.equals(value)) {
-                    editor.putString(key, DataBridge.cycleSerialization(value, TokenManager.class));
-                }
+        while(o.jsonReader.hasNext()) {
+            String key = o.getName();
+            String value = o.getString();
+            String settings_key = key.replace("token_manager_", "");
+
+            TokenManager tokenManager = TokenManager.getTokenManagerFromSettingsKey(settings_key);
+            if(!(tokenManager instanceof UnknownTokenManager) && !DEFAULT.equals(value)) {
+                editor.putString(key, DataBridge.cycleSerialization(value, TokenManager.class));
             }
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         initialize();

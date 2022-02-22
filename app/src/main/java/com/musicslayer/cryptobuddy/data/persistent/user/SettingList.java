@@ -2,18 +2,19 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
+import com.musicslayer.cryptobuddy.settings.setting.UnknownSetting;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class SettingList extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+import java.io.IOException;
+
+public class SettingList extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "SettingList"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, SettingList.class); }
-    public void doImport(String s) { Exportation.importData(this, s, SettingList.class); }
+    public String doExport() { return DataBridge.exportData(this, SettingList.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, SettingList.class); }
 
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
@@ -26,7 +27,7 @@ public class SettingList extends PersistentUserDataStore implements Exportation.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
+        editor.putString("settings_" + setting.getSettingsKey(), DataBridge.serialize(setting, Setting.class));
         editor.apply();
     }
 
@@ -35,7 +36,7 @@ public class SettingList extends PersistentUserDataStore implements Exportation.
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         for(Setting setting : Setting.settings) {
-            editor.putString("settings_" + setting.getSettingsKey(), Serialization.serialize(setting, Setting.class));
+            editor.putString("settings_" + setting.getSettingsKey(), DataBridge.serialize(setting, Setting.class));
         }
 
         editor.apply();
@@ -49,7 +50,7 @@ public class SettingList extends PersistentUserDataStore implements Exportation.
             String serialString = sharedPreferences.getString("settings_" + setting.getSettingsKey(), DEFAULT);
 
             String optionName;
-            Setting copySetting = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, Setting.class);
+            Setting copySetting = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, Setting.class);
             if(copySetting != null && setting.getOptionNames().contains(copySetting.chosenOptionName)) {
                 optionName = copySetting.chosenOptionName;
             }
@@ -69,18 +70,12 @@ public class SettingList extends PersistentUserDataStore implements Exportation.
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         for(Setting setting : Setting.settings) {
             String key = "settings_" + setting.getSettingsKey();
@@ -88,28 +83,37 @@ public class SettingList extends PersistentUserDataStore implements Exportation.
             o.serialize(key, serialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         // Only import settings that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        for(Setting setting : Setting.settings) {
-            String key = "settings_" + setting.getSettingsKey();
-            if(o.has(key)) {
-                String value = o.deserialize(key, String.class);
-                if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.cycle(value, Setting.class));
-                }
+        while(o.jsonReader.hasNext()) {
+            String key = o.getName();
+            String value = o.getString();
+            String settings_key = key.replace("settings_", "");
+
+            Setting setting = Setting.getSettingFromSettingsKey(settings_key);
+            if(!(setting instanceof UnknownSetting) && !DEFAULT.equals(value)) {
+                editor.putString(key, DataBridge.cycleSerialization(value, Setting.class));
             }
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         initialize();

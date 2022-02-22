@@ -1,9 +1,10 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.transaction.AssetPrice;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -12,10 +13,11 @@ import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PriceData implements Serialization.SerializableToJSON {
+public class PriceData implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON {
     final public CryptoPrice cryptoPrice;
     final public PriceAPI priceAPI_price;
     final public PriceAPI priceAPI_marketCap;
@@ -24,12 +26,12 @@ public class PriceData implements Serialization.SerializableToJSON {
     final public Timestamp timestamp_price;
     final public Timestamp timestamp_marketCap;
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
                 .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
@@ -57,7 +59,7 @@ public class PriceData implements Serialization.SerializableToJSON {
                 .toStringOrNull();
     }
 
-    public static PriceData deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static PriceData legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
         PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
@@ -88,6 +90,33 @@ public class PriceData implements Serialization.SerializableToJSON {
         }
 
         return hashMap;
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
+                .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
+                .serialize("priceAPI_marketCap", priceAPI_marketCap, PriceAPI.class)
+                .splitHashMap("priceHashMap", priceHashMap, Asset.class, AssetQuantity.class)
+                .splitHashMap("marketCapHashMap", marketCapHashMap, Asset.class, AssetQuantity.class)
+                .serialize("timestamp_price", timestamp_price, Timestamp.class)
+                .serialize("timestamp_marketCap", timestamp_marketCap, Timestamp.class)
+                .endObject();
+    }
+
+    public static PriceData deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
+        PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
+        PriceAPI priceAPI_marketCap = o.deserialize("priceAPI_marketCap", PriceAPI.class);
+        HashMap<Asset, AssetQuantity> priceHashMap = o.combineHashMap("priceHashMap", Asset.class, AssetQuantity.class);
+        HashMap<Asset, AssetQuantity> marketCapHashMap = o.combineHashMap("marketCapHashMap", Asset.class, AssetQuantity.class);
+        Timestamp timestamp_price = o.deserialize("timestamp_price", Timestamp.class);
+        Timestamp timestamp_marketCap = o.deserialize("timestamp_marketCap", Timestamp.class);
+        o.endObject();
+
+        return new PriceData(cryptoPrice, priceAPI_price, priceAPI_marketCap, priceHashMap, marketCapHashMap, timestamp_price, timestamp_marketCap);
     }
 
     public PriceData(CryptoPrice cryptoPrice, PriceAPI priceAPI_price, PriceAPI priceAPI_marketCap, HashMap<Asset, AssetQuantity> priceHashMap, HashMap<Asset, AssetQuantity> marketCapHashMap, Timestamp timestamp_price, Timestamp timestamp_marketCap) {

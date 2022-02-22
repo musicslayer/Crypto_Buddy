@@ -42,6 +42,8 @@ import java.util.Date;
 // TODO Better reset data.
 // TODO Only exporting should be a premium feature.
 
+// TODO Flip to new Serialization.
+
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {

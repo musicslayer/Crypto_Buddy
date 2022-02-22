@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -41,7 +42,6 @@ import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -287,14 +287,14 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
                     PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newExchangeDataArrayList, ExchangeData.class));
+                ProgressDialogFragment.setValue(DataBridge.serializeArrayList(newExchangeDataArrayList, ExchangeData.class));
             }
         });
 
         download_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<ExchangeData> newExchangeDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), ExchangeData.class);
+                ArrayList<ExchangeData> newExchangeDataArrayList = DataBridge.deserializeArrayList(ProgressDialogFragment.getValue(), ExchangeData.class);
 
                 for(int i = 0; i < newExchangeDataArrayList.size(); i++) {
                     ExchangeData newExchangeData = newExchangeDataArrayList.get(i);
@@ -449,7 +449,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "ExchangePortfolio";
             StateObj.tableInfo = table.getInfo();
-            StateObj.filterInfo = Serialization.serialize(exchangeFilter, Filter.class);
+            StateObj.filterInfo = DataBridge.serialize(exchangeFilter, Filter.class);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangePortfolioExplorerActivity.this, "feedback");
             return true;
         }

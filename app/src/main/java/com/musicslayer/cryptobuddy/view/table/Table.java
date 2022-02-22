@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashTableLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.ChoosePageDialog;
 import com.musicslayer.cryptobuddy.dialog.FilterDialog;
 import com.musicslayer.cryptobuddy.settings.setting.NumberTransactionsPerPageSetting;
@@ -31,7 +32,6 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -398,7 +398,7 @@ abstract public class Table extends CrashTableLayout {
         //transactionArrayList and Net Transaction Sums.
         ArrayList<Transaction> transactionArrayList = StateObj.transactionArrayList;
         s.append("\n\nTransaction Array List:\n");
-        s.append(Serialization.serializeArrayList(transactionArrayList, Transaction.class));
+        s.append(DataBridge.serializeArrayList(transactionArrayList, Transaction.class));
 
         HashMap<Asset, AssetAmount> netTransactionsMap = Transaction.resolveAssets(transactionArrayList);
         s.append("\n\nNet Transaction Sums:");
@@ -411,7 +411,7 @@ abstract public class Table extends CrashTableLayout {
         //filteredTransactionArrayList and Net Filtered Transaction Sums.
         ArrayList<Transaction> filteredTransactionArrayList = getFilteredTransactionArrayList();
         s.append("\n\nFiltered Transaction Array List:\n");
-        s.append(Serialization.serializeArrayList(filteredTransactionArrayList, Transaction.class));
+        s.append(DataBridge.serializeArrayList(filteredTransactionArrayList, Transaction.class));
 
         HashMap<Asset, AssetAmount> netFilteredTransactionsMap = Transaction.resolveAssets(filteredTransactionArrayList);
         s.append("\n\nNet Filtered Transaction Sums:");
@@ -423,7 +423,7 @@ abstract public class Table extends CrashTableLayout {
 
         //filterArrayList
         s.append("\n\nFilter Array List:\n");
-        s.append(Serialization.serializeArrayList(filterArrayList, Filter.class));
+        s.append(DataBridge.serializeArrayList(filterArrayList, Filter.class));
 
         //sortingColumn
         s.append("\n\nSorting Column: ").append(sortingColumn);

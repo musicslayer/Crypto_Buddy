@@ -16,7 +16,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
@@ -65,14 +65,14 @@ public class CryptoPricesDialog extends BaseDialog {
                 CryptoPrice cryptoPrice = new CryptoPrice(assetArrayList, priceFiat);
 
                 PriceData priceData = PriceData.getAllData(cryptoPrice);
-                ProgressDialogFragment.setValue(Serialization.serialize(priceData, PriceData.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(priceData, PriceData.class));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                PriceData priceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
+                PriceData priceData = DataBridge.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(priceData.isComplete(crypto)) {
                     T.setVisibility(View.VISIBLE);

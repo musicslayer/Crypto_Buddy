@@ -6,11 +6,13 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,7 +22,7 @@ import java.util.HashMap;
 // addr1v9s96gdnn9nmhmyz2duu0ghgnt6wvzdjkavkcv92smj69uc4rsp5h
 // CardanoExplorer.java can get balance but not transactions.
 
-abstract public class Network implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
+abstract public class Network implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());
@@ -131,24 +133,51 @@ abstract public class Network implements Serialization.SerializableToJSON, Seria
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .toStringOrNull();
     }
 
-    public static Network deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Network legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
         return Network.getNetworkFromKey(key);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("key", getKey(), String.class)
+                .endObject();
+    }
+
+    public static Network deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        Network network;
+
+        if("2".equals(version)) {
+            String key = o.deserialize("key", String.class);
+            o.endObject();
+
+            network = Network.getNetworkFromKey(key);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return network;
     }
 }

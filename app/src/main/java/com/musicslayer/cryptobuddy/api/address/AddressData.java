@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.api.address;
 import com.musicslayer.cryptobuddy.api.price.PriceData;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
@@ -10,15 +11,16 @@ import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantityData;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.transaction.TransactionData;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AddressData implements Serialization.SerializableToJSON {
+public class AddressData implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON {
     final public CryptoAddress cryptoAddress;
     final public AddressAPI addressAPI_currentBalance;
     final public AddressAPI addressAPI_transactions;
@@ -31,12 +33,12 @@ public class AddressData implements Serialization.SerializableToJSON {
     final public TransactionData transactionData;
     final public AssetQuantityData discrepancyData;
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("cryptoAddress", cryptoAddress, CryptoAddress.class)
             .serialize("addressAPI_currentBalance", addressAPI_currentBalance, AddressAPI.class)
@@ -48,7 +50,7 @@ public class AddressData implements Serialization.SerializableToJSON {
             .toStringOrNull();
     }
 
-    public static AddressData deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AddressData legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         CryptoAddress cryptoAddress = o.deserialize("cryptoAddress", CryptoAddress.class);
         AddressAPI addressAPI_currentBalance = o.deserialize("addressAPI_currentBalance", AddressAPI.class);
@@ -57,6 +59,33 @@ public class AddressData implements Serialization.SerializableToJSON {
         ArrayList<Transaction> transactionArrayList = o.deserializeArrayList("transactionArrayList", Transaction.class);
         Timestamp timestamp_currentBalance = o.deserialize("timestamp_currentBalance", Timestamp.class);
         Timestamp timestamp_transactions = o.deserialize("timestamp_transactions", Timestamp.class);
+        return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, currentBalanceArrayList, transactionArrayList, timestamp_currentBalance, timestamp_transactions);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("cryptoAddress", cryptoAddress, CryptoAddress.class)
+                .serialize("addressAPI_currentBalance", addressAPI_currentBalance, AddressAPI.class)
+                .serialize("addressAPI_transactions", addressAPI_transactions, AddressAPI.class)
+                .serializeArrayList("currentBalanceArrayList", currentBalanceArrayList, AssetQuantity.class)
+                .serializeArrayList("transactionArrayList", transactionArrayList, Transaction.class)
+                .serialize("timestamp_currentBalance", timestamp_currentBalance, Timestamp.class)
+                .serialize("timestamp_transactions", timestamp_transactions, Timestamp.class)
+                .endObject();
+    }
+
+    public static AddressData deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        CryptoAddress cryptoAddress = o.deserialize("cryptoAddress", CryptoAddress.class);
+        AddressAPI addressAPI_currentBalance = o.deserialize("addressAPI_currentBalance", AddressAPI.class);
+        AddressAPI addressAPI_transactions = o.deserialize("addressAPI_transactions", AddressAPI.class);
+        ArrayList<AssetQuantity> currentBalanceArrayList = o.deserializeArrayList("currentBalanceArrayList", AssetQuantity.class);
+        ArrayList<Transaction> transactionArrayList = o.deserializeArrayList("transactionArrayList", Transaction.class);
+        Timestamp timestamp_currentBalance = o.deserialize("timestamp_currentBalance", Timestamp.class);
+        Timestamp timestamp_transactions = o.deserialize("timestamp_transactions", Timestamp.class);
+        o.endObject();
+
         return new AddressData(cryptoAddress, addressAPI_currentBalance, addressAPI_transactions, currentBalanceArrayList, transactionArrayList, timestamp_currentBalance, timestamp_transactions);
     }
 

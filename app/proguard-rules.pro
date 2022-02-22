@@ -25,23 +25,9 @@
     public <init>(...);
 }
 
-# Exportation
--keepclassmembers class * {
-    public static *** exportationType(...);
-}
--keepclassmembers class * {
-    public static *** exportationVersion(...);
-}
-
 # Referentiation
 -keepclassmembers class * {
     public static *** dereferenceFromJSON(...);
-}
--keepclassmembers class * {
-    public static *** referentiationType(...);
-}
--keepclassmembers class * {
-    public static *** referentiationVersion(...);
 }
 
 # Serialization
@@ -49,8 +35,11 @@
     public static *** deserializeFromJSON(...);
 }
 -keepclassmembers class * {
-    public static *** serializationType(...);
+    public static *** legacy_deserializeFromJSON(...);
 }
 -keepclassmembers class * {
-    public static *** serializationVersion(...);
+    public static *** legacy_serializationType(...);
+}
+-keepclassmembers class * {
+    public static *** legacy_serializationVersion(...);
 }

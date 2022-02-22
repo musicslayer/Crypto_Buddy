@@ -3,17 +3,18 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.asset.coinmanager.UnknownCoinManager;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class CoinManagerList extends PersistentAppDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+import java.io.IOException;
+
+public class CoinManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "CoinManagerList"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, CoinManagerList.class); }
-    public void doImport(String s) { Exportation.importData(this, s, CoinManagerList.class); }
+    public String doExport() { return DataBridge.exportData(this, CoinManagerList.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, CoinManagerList.class); }
 
     // Just pick something that would never actually be saved.
     public final static String DEFAULT = "!UNKNOWN!";
@@ -26,7 +27,7 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager, CoinManager.class));
+        editor.putString("coin_manager_" + coinManager.getSettingsKey(), DataBridge.serialize(coinManager, CoinManager.class));
         editor.apply();
     }
 
@@ -37,7 +38,7 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
         editor.clear();
 
         for(CoinManager coinManager : CoinManager.coinManagers) {
-            editor.putString("coin_manager_" + coinManager.getSettingsKey(), Serialization.serialize(coinManager, CoinManager.class));
+            editor.putString("coin_manager_" + coinManager.getSettingsKey(), DataBridge.serialize(coinManager, CoinManager.class));
         }
 
         editor.apply();
@@ -50,7 +51,7 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String serialString = sharedPreferences.getString("coin_manager_" + coinManager.getSettingsKey(), DEFAULT);
 
-            CoinManager copyCoinManager = DEFAULT.equals(serialString) ? null : Serialization.deserialize(serialString, CoinManager.class);
+            CoinManager copyCoinManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, CoinManager.class);
             if(copyCoinManager != null) {
                 coinManager.addHardcodedCoin(copyCoinManager.hardcoded_coins);
                 coinManager.addFoundCoin(copyCoinManager.found_coins);
@@ -70,18 +71,12 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         for(CoinManager coinManager : CoinManager.coinManagers) {
             String key = "coin_manager_" + coinManager.getSettingsKey();
@@ -90,9 +85,9 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
             // We do not want to export hardcoded coins, so let's remove them.
             String newSerialString;
             try {
-                CoinManager copyCoinManager = Serialization.deserialize(serialString, CoinManager.class);
+                CoinManager copyCoinManager = DataBridge.deserialize(serialString, CoinManager.class);
                 copyCoinManager.resetHardcodedCoins();
-                newSerialString = Serialization.serialize(copyCoinManager, CoinManager.class);
+                newSerialString = DataBridge.serialize(copyCoinManager, CoinManager.class);
             }
             catch(Exception e) {
                 throw new IllegalStateException(e);
@@ -101,28 +96,36 @@ public class CoinManagerList extends PersistentAppDataStore implements Exportati
             o.serialize(key, newSerialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         // Only import coin managers that currently exist.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        for(CoinManager coinManager : CoinManager.coinManagers) {
-            String key = "coin_manager_" + coinManager.getSettingsKey();
-            if(o.has(key)) {
-                String value = o.deserialize(key, String.class);
-                if(!DEFAULT.equals(value)) {
-                    editor.putString(key, Serialization.cycle(value, CoinManager.class));
-                }
+        while(o.jsonReader.hasNext()) {
+            String key = o.getName();
+            String value = o.getString();
+            String settings_key = key.replace("coin_manager_", "");
+
+            CoinManager coinManager = CoinManager.getCoinManagerFromSettingsKey(settings_key);
+            if(!(coinManager instanceof UnknownCoinManager) && !DEFAULT.equals(value)) {
+                editor.putString(key, DataBridge.cycleSerialization(value, CoinManager.class));
             }
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         initialize();

@@ -2,19 +2,18 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class AddressPortfolio extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class AddressPortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "AddressPortfolio"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, AddressPortfolio.class); }
-    public void doImport(String s) { Exportation.importData(this, s, AddressPortfolio.class); }
+    public String doExport() { return DataBridge.exportData(this, AddressPortfolio.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, AddressPortfolio.class); }
 
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
@@ -38,7 +37,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         String serialString = sharedPreferences.getString("address_portfolio" + idx, DEFAULT);
-        return Serialization.deserialize(serialString, AddressPortfolioObj.class);
+        return DataBridge.deserialize(serialString, AddressPortfolioObj.class);
     }
 
     public void addPortfolio(AddressPortfolioObj addressPortfolioObj) {
@@ -50,7 +49,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
 
         int size = settings_address_portfolio_names.size();
         editor.putInt("address_portfolio_size", size);
-        editor.putString("address_portfolio" + (size - 1), Serialization.serialize(addressPortfolioObj, AddressPortfolioObj.class));
+        editor.putString("address_portfolio" + (size - 1), DataBridge.serialize(addressPortfolioObj, AddressPortfolioObj.class));
         editor.putString("address_portfolio_names" + (size - 1), addressPortfolioObj.name);
 
         editor.apply();
@@ -90,7 +89,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
-        editor.putString("address_portfolio" + idx, Serialization.serialize(addressPortfolioObj, AddressPortfolioObj.class));
+        editor.putString("address_portfolio" + idx, DataBridge.serialize(addressPortfolioObj, AddressPortfolioObj.class));
 
         editor.apply();
     }
@@ -110,7 +109,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
-            editor.putString("address_portfolio" + i, Serialization.cycle(serialString, AddressPortfolioObj.class));
+            editor.putString("address_portfolio" + i, DataBridge.cycleSerialization(serialString, AddressPortfolioObj.class));
         }
 
         editor.apply();
@@ -132,7 +131,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
                 // Older installations won't have the name saved.
                 // TODO To Remove!
                 String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
-                AddressPortfolioObj addressPortfolioObj = Serialization.deserialize(serialString, AddressPortfolioObj.class);
+                AddressPortfolioObj addressPortfolioObj = DataBridge.deserialize(serialString, AddressPortfolioObj.class);
                 name = addressPortfolioObj.name;
 
                 // Save the name now so this never has to be done again.
@@ -154,18 +153,12 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         String sizeKey = "address_portfolio_size";
         int size = sharedPreferences.getInt(sizeKey, 0);
@@ -181,12 +174,17 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
             o.serialize(key, serialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -202,10 +200,12 @@ public class AddressPortfolio extends PersistentUserDataStore implements Exporta
 
             String key = "address_portfolio" + i;
             String value = o.deserialize(key, String.class);
-            editor.putString(key, Serialization.cycle(value, AddressPortfolioObj.class));
+            editor.putString(key, DataBridge.cycleSerialization(value, AddressPortfolioObj.class));
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         loadAllData();

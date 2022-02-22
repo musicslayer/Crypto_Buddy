@@ -2,20 +2,19 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
-public class AddressHistory extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class AddressHistory extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "AddressHistory"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, AddressHistory.class); }
-    public void doImport(String s) { Exportation.importData(this, s, AddressHistory.class); }
+    public String doExport() { return DataBridge.exportData(this, AddressHistory.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, AddressHistory.class); }
 
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
@@ -72,7 +71,7 @@ public class AddressHistory extends PersistentUserDataStore implements Exportati
 
         for(int i = 0; i < size; i++) {
             AddressHistoryObj addressHistoryObj = settings_address_history.get(i);
-            editor.putString("address_history" + i, Serialization.serialize(addressHistoryObj, AddressHistoryObj.class));
+            editor.putString("address_history" + i, DataBridge.serialize(addressHistoryObj, AddressHistoryObj.class));
         }
 
         editor.apply();
@@ -86,7 +85,7 @@ public class AddressHistory extends PersistentUserDataStore implements Exportati
 
         for(int i = 0; i < size; i++) {
             String serialString = sharedPreferences.getString("address_history" + i, DEFAULT);
-            AddressHistoryObj addressHistoryObj = Serialization.deserialize(serialString, AddressHistoryObj.class);
+            AddressHistoryObj addressHistoryObj = DataBridge.deserialize(serialString, AddressHistoryObj.class);
             settings_address_history.add(addressHistoryObj);
         }
     }
@@ -101,18 +100,12 @@ public class AddressHistory extends PersistentUserDataStore implements Exportati
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         String sizeKey = "address_history_size";
         int size = sharedPreferences.getInt(sizeKey, 0);
@@ -124,12 +117,17 @@ public class AddressHistory extends PersistentUserDataStore implements Exportati
             o.serialize(key, serialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -141,10 +139,12 @@ public class AddressHistory extends PersistentUserDataStore implements Exportati
         for(int i = 0; i < size; i++) {
             String key = "address_history" + i;
             String value = o.deserialize(key, String.class);
-            editor.putString(key, Serialization.cycle(value, AddressHistoryObj.class));
+            editor.putString(key, DataBridge.cycleSerialization(value, AddressHistoryObj.class));
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         loadAllData();

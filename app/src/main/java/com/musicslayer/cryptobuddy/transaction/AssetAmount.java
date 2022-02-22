@@ -2,15 +2,17 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.i18n.LocaleManager;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.NumberDecimalPlacesSetting;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class AssetAmount implements Serialization.SerializableToJSON, Serialization.Versionable {
+public class AssetAmount implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     public final static int MAXSCALE = 20;
 
     public BigDecimal amount;
@@ -195,16 +197,16 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
         }
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("amount", amount, BigDecimal.class)
             .serialize("isLoss", isLoss, Boolean.class)
@@ -212,16 +214,49 @@ public class AssetAmount implements Serialization.SerializableToJSON, Serializat
             .toStringOrNull();
     }
 
-    public static AssetAmount deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static AssetAmount legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         BigDecimal amount = o.deserialize("amount", BigDecimal.class);
         boolean isLoss = o.deserialize("isLoss", Boolean.class);
         boolean isInfinity = o.deserialize("isInfinity", Boolean.class);
 
-        AssetAmount a = new AssetAmount(amount);
-        a.isLoss = isLoss;
-        a.isInfinity = isInfinity;
+        AssetAmount assetAmount = new AssetAmount(amount);
+        assetAmount.isLoss = isLoss;
+        assetAmount.isInfinity = isInfinity;
 
-        return a;
+        return assetAmount;
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("amount", amount, BigDecimal.class)
+                .serialize("isLoss", isLoss, Boolean.class)
+                .serialize("isInfinity", isInfinity, Boolean.class)
+                .endObject();
+    }
+
+    public static AssetAmount deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        AssetAmount assetAmount;
+
+        if("2".equals(version)) {
+            BigDecimal amount = o.deserialize("amount", BigDecimal.class);
+            boolean isLoss = o.deserialize("isLoss", Boolean.class);
+            boolean isInfinity = o.deserialize("isInfinity", Boolean.class);
+            o.endObject();
+
+            assetAmount = new AssetAmount(amount);
+            assetAmount.isLoss = isLoss;
+            assetAmount.isInfinity = isInfinity;
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return assetAmount;
     }
 }

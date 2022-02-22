@@ -6,16 +6,18 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract public class Exchange implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
+abstract public class Exchange implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());
@@ -105,24 +107,39 @@ abstract public class Exchange implements Serialization.SerializableToJSON, Seri
         Collections.sort(exchangeArrayList, (a, b) -> compare(a, b));
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
                 .serialize("key", getKey(), String.class)
                 .toStringOrNull();
     }
 
-    public static Exchange deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Exchange legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
+        return Exchange.getExchangeFromKey(key);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("key", getKey(), String.class)
+                .endObject();
+    }
+
+    public static Exchange deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        String key = o.deserialize("key", String.class);
+        o.endObject();
+
         return Exchange.getExchangeFromKey(key);
     }
 }

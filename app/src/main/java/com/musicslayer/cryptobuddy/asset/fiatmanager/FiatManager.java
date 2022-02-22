@@ -3,20 +3,23 @@ package com.musicslayer.cryptobuddy.asset.fiatmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class FiatManager implements Serialization.SerializableToJSON, Serialization.Versionable {
+abstract public class FiatManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     public static ArrayList<FiatManager> fiatManagers;
     public static HashMap<String, FiatManager> fiatManagers_map;
+    public static HashMap<String, FiatManager> fiatManagers_settings_map;
     public static HashMap<String, FiatManager> fiatManagers_fiat_type_map;
     public static ArrayList<String> fiatManagers_names;
     public static ArrayList<String> fiatManagers_fiat_types;
@@ -68,6 +71,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
     public static void initialize() {
         fiatManagers = new ArrayList<>();
         fiatManagers_map = new HashMap<>();
+        fiatManagers_settings_map = new HashMap<>();
         fiatManagers_fiat_type_map = new HashMap<>();
         fiatManagers_fiat_types = new ArrayList<>();
 
@@ -77,6 +81,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
 
             fiatManagers.add(fiatManager);
             fiatManagers_map.put(fiatManager.getKey(), fiatManager);
+            fiatManagers_settings_map.put(fiatManager.getKey(), fiatManager);
             fiatManagers_fiat_type_map.put(fiatManager.getFiatType(), fiatManager);
             fiatManagers_fiat_types.add(fiatManager.getFiatType());
 
@@ -92,6 +97,15 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         FiatManager fiatManager = fiatManagers_map.get(key);
         if(fiatManager == null) {
             fiatManager = UnknownFiatManager.createUnknownFiatManager(key, "?");
+        }
+
+        return fiatManager;
+    }
+
+    public static FiatManager getFiatManagerFromSettingsKey(String settings_key) {
+        FiatManager fiatManager = fiatManagers_settings_map.get(settings_key);
+        if(fiatManager == null) {
+            fiatManager = UnknownFiatManager.createUnknownFiatManager("?", "?");
         }
 
         return fiatManager;
@@ -388,16 +402,16 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "2";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
@@ -408,7 +422,7 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             .toStringOrNull();
     }
 
-    public static FiatManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static FiatManager legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         FiatManager fiatManager;
 
         if("2".equals(version)) {
@@ -487,5 +501,45 @@ abstract public class FiatManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "3", String.class)
+                .serialize("key", getKey(), String.class)
+                .serialize("fiat_type", getFiatType(), String.class)
+                .serializeArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
+                .serializeArrayList("found_fiats", found_fiats, Fiat.class)
+                .serializeArrayList("custom_fiats", custom_fiats, Fiat.class)
+                .endObject();
+    }
+
+    public static FiatManager deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        FiatManager fiatManager;
+
+        if("3".equals(version)) {
+            String key = o.deserialize("key", String.class);
+            String coin_type = o.deserialize("fiat_type", String.class);
+            ArrayList<Fiat> hardcoded_fiats = o.deserializeArrayList("hardcoded_fiats", Fiat.class);
+            ArrayList<Fiat> found_fiats = o.deserializeArrayList("found_fiats", Fiat.class);
+            ArrayList<Fiat> custom_fiats = o.deserializeArrayList("custom_fiats", Fiat.class);
+            o.endObject();
+
+            // This is a dummy object that only has to hold onto the coin array lists.
+            // We don't need to call the proper add* methods here.
+            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, coin_type);
+            fiatManager.hardcoded_fiats = hardcoded_fiats;
+            fiatManager.found_fiats = found_fiats;
+            fiatManager.custom_fiats = custom_fiats;
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return fiatManager;
     }
 }

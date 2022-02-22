@@ -21,10 +21,10 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
@@ -132,13 +132,13 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 // Save found tokens, potentially from multiple TokenManagers.
                 PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
 
-                ProgressDialogFragment.setValue(Serialization.serialize(reflectionsAddressData, AddressData.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(reflectionsAddressData, AddressData.class));
             }
         });
         reflectionsProgressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData reflectionsAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
+                AddressData reflectionsAddressData = DataBridge.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 if(reflectionsAddressData.isComplete()) {
                     // Convert percentage to decimal.

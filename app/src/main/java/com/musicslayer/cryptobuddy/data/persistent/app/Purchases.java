@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 import android.content.SharedPreferences;
 
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -11,8 +10,8 @@ public class Purchases extends PersistentAppDataStore {
     public String getName() { return "Purchases"; }
 
     public boolean canExport() { return false; }
-    public String doExport() { return Exportation.exportData(this, Purchases.class); }
-    public void doImport(String s) { Exportation.importData(this, s, Purchases.class); }
+    public String doExport() { return null; }
+    public void doImport(String s) {}
 
     private final static boolean DEFAULT_isRemoveAdsPurchased = false;
     private static boolean isRemoveAdsPurchased;

@@ -3,10 +3,13 @@ package com.musicslayer.cryptobuddy.api;
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
-abstract public class API implements Serialization.SerializableToJSON, Serialization.Versionable {
+import java.io.IOException;
+
+abstract public class API implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     // For now, just use the name as the key.
     public String getKey() {
         return getName();
@@ -16,16 +19,16 @@ abstract public class API implements Serialization.SerializableToJSON, Serializa
     abstract public String getDisplayName();
     abstract public String getAPIType();
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("apiType", getAPIType(), String.class)
@@ -33,12 +36,41 @@ abstract public class API implements Serialization.SerializableToJSON, Serializa
             .toStringOrNull();
     }
 
-    public static API deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static API legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         // We have to do this based on type, rather than just the properties.
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String apiType = o.deserialize("apiType", String.class);
         String key = o.deserialize("key", String.class);
         return API.getAPI(apiType, key);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("apiType", getAPIType(), String.class)
+                .serialize("key", getKey(), String.class)
+                .endObject();
+    }
+
+    public static API deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        API api;
+
+        if("2".equals(version)) {
+            String apiType = o.deserialize("apiType", String.class);
+            String key = o.deserialize("key", String.class);
+            o.endObject();
+
+            api = API.getAPI(apiType, key);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return api;
     }
 
     public static API getAPI(String apiType, String key) {

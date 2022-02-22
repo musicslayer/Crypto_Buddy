@@ -20,7 +20,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.AssetAmount;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -77,14 +77,14 @@ public class ExchangeDiscrepancyDialog extends BaseDialog {
 
                 PriceData newPriceData = PriceData.getPriceData(cryptoPrice);
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newPriceData, PriceData.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(newPriceData, PriceData.class));
             }
         });
 
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                PriceData newPriceData = Serialization.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
+                PriceData newPriceData = DataBridge.deserialize(ProgressDialogFragment.getValue(), PriceData.class);
 
                 if(!newPriceData.isPriceFull()) {
                     ToastUtil.showToast("incomplete_price_data");

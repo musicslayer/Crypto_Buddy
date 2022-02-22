@@ -2,19 +2,18 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class ExchangePortfolio extends PersistentUserDataStore implements Exportation.ExportableToJSON, Exportation.Versionable {
+public class ExchangePortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "ExchangePortfolio"; }
 
     public boolean canExport() { return true; }
-    public String doExport() { return Exportation.exportData(this, ExchangePortfolio.class); }
-    public void doImport(String s) { Exportation.importData(this, s, ExchangePortfolio.class); }
+    public String doExport() { return DataBridge.exportData(this, ExchangePortfolio.class); }
+    public void doImport(String s) { DataBridge.importData(this, s, ExchangePortfolio.class); }
 
     // This default will cause an error when deserialized. We should never see this value used.
     public final static String DEFAULT = "null";
@@ -38,7 +37,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         String serialString = sharedPreferences.getString("exchange_portfolio" + idx, DEFAULT);
-        return Serialization.deserialize(serialString, ExchangePortfolioObj.class);
+        return DataBridge.deserialize(serialString, ExchangePortfolioObj.class);
     }
 
     public void addPortfolio(ExchangePortfolioObj exchangePortfolioObj) {
@@ -50,7 +49,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
 
         int size = settings_exchange_portfolio_names.size();
         editor.putInt("exchange_portfolio_size", size);
-        editor.putString("exchange_portfolio" + (size - 1), Serialization.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
+        editor.putString("exchange_portfolio" + (size - 1), DataBridge.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
         editor.putString("exchange_portfolio_names" + (size - 1), exchangePortfolioObj.name);
 
         editor.apply();
@@ -90,7 +89,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
 
         // We only need to update the portfolio object because the name can never change.
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObj.name);
-        editor.putString("exchange_portfolio" + idx, Serialization.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
+        editor.putString("exchange_portfolio" + idx, DataBridge.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
 
         editor.apply();
     }
@@ -110,7 +109,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
-            editor.putString("exchange_portfolio" + i, Serialization.cycle(serialString, ExchangePortfolioObj.class));
+            editor.putString("exchange_portfolio" + i, DataBridge.cycleSerialization(serialString, ExchangePortfolioObj.class));
         }
 
         editor.apply();
@@ -132,7 +131,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
                 // Older installations won't have the name saved.
                 // TODO To Remove!
                 String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
-                ExchangePortfolioObj exchangePortfolioObj = Serialization.deserialize(serialString, ExchangePortfolioObj.class);
+                ExchangePortfolioObj exchangePortfolioObj = DataBridge.deserialize(serialString, ExchangePortfolioObj.class);
                 name = exchangePortfolioObj.name;
 
                 // Save the name now so this never has to be done again.
@@ -154,18 +153,12 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
         editor.apply();
     }
 
-    public static String exportationVersion() {
-        return "1";
-    }
-
-    public static String exportationType(String version) {
-        return "!OBJECT!";
-    }
-
-    public String exportDataToJSON() throws org.json.JSONException {
+    @Override
+    public void exportDataToJSON(DataBridge.Writer o) throws IOException {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
 
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        o.beginObject();
+        o.serialize("!V!", "1", String.class);
 
         String sizeKey = "exchange_portfolio_size";
         int size = sharedPreferences.getInt(sizeKey, 0);
@@ -181,12 +174,18 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
             o.serialize(key, serialString, String.class);
         }
 
-        return o.toStringOrNull();
+        o.endObject();
     }
 
 
-    public void importDataFromJSON(String s, String version) throws org.json.JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+    @Override
+    public void importDataFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        if(!"1".equals(version)) {
+            throw new IllegalStateException();
+        }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -202,10 +201,12 @@ public class ExchangePortfolio extends PersistentUserDataStore implements Export
 
             String key = "exchange_portfolio" + i;
             String value = o.deserialize(key, String.class);
-            editor.putString(key, Serialization.cycle(value, ExchangePortfolioObj.class));
+            editor.putString(key, DataBridge.cycleSerialization(value, ExchangePortfolioObj.class));
         }
 
         editor.apply();
+
+        o.endObject();
 
         // Reinitialize data.
         loadAllData();

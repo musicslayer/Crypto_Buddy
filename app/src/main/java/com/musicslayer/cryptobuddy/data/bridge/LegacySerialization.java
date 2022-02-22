@@ -11,7 +11,6 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,22 +19,21 @@ import java.util.HashMap;
 
 // Note: Serialization has to be perfect, or we throw errors. There are no "default" or "fallback" values here.
 
-public class Serialization {
+public class LegacySerialization {
     // Keep this short because it will appear on every piece of stored data.
     public final static String SERIALIZATION_VERSION_MARKER = "!V!";
 
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
-        String serializeToJSON() throws org.json.JSONException;
-        default void serializeToJSONX(DataBridge.Writer o) throws IOException {}
+        String legacy_serializeToJSON() throws org.json.JSONException;
 
-        // Classes also need to implement static methods "deserializeFromJSON" and "serializationType".
+        // Classes also need to implement static methods "legacy_deserializeFromJSON" and "legacy_serializationType".
     }
 
     // Any class implementing this supports versioning.
     // This is needed when saving data that may be loaded in a different release.
     public interface Versionable {
-        // Classes also need to implement a static method "serializationVersion".
+        // Classes also need to implement a static method "legacy_serializationVersion".
     }
 
     public static <T> String serialize(T obj, Class<T> clazzT) {
@@ -45,7 +43,7 @@ public class Serialization {
 
         String s;
         try {
-            s = wrappedObj.serializeToJSON();
+            s = wrappedObj.legacy_serializeToJSON();
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -55,8 +53,8 @@ public class Serialization {
         if(Versionable.class.isAssignableFrom(wrappedClass)) {
             // Add the version to every individual object that we serialize, or error if we cannot.
             try {
-                String version = Serialization.getCurrentVersion(wrappedClass);
-                String type = Serialization.getCurrentType(wrappedClass);
+                String version = LegacySerialization.getCurrentVersion(wrappedClass);
+                String type = LegacySerialization.getCurrentType(wrappedClass);
 
                 if("!OBJECT!".equals(type)) {
                     LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
@@ -80,7 +78,7 @@ public class Serialization {
         String version = getVersion(s);
 
         try {
-            return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSON", s, version);
+            return ReflectUtil.callStaticMethod(wrappedClass, "legacy_deserializeFromJSON", s, version);
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -91,7 +89,7 @@ public class Serialization {
     public static <T> String getCurrentVersion(Class<T> clazzT) {
         Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
         if(Versionable.class.isAssignableFrom(wrappedClass)) {
-            return ReflectUtil.callStaticMethod(wrappedClass, "serializationVersion");
+            return ReflectUtil.callStaticMethod(wrappedClass, "legacy_serializationVersion");
         }
         else {
             // If there is no version, just call it "version zero".
@@ -116,13 +114,7 @@ public class Serialization {
 
     public static <T> String getTypeForVersion(String version, Class<T> clazzT) {
         Class<? extends SerializableToJSON> wrappedClass = wrapClass(clazzT);
-        return ReflectUtil.callStaticMethod(wrappedClass, "serializationType", version);
-    }
-
-    public static <T> String cycle(String s, Class<T> clazzT) {
-        // Do a round trip of deserializing and serializing to make sure the string represents an object of the class.
-        T obj = deserialize(s, clazzT);
-        return serialize(obj, clazzT);
+        return ReflectUtil.callStaticMethod(wrappedClass, "legacy_serializationType", version);
     }
 
     public static <T> String serializeArray(T[] array, Class<T> clazzT) {
@@ -331,25 +323,17 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return obj;
         }
 
-        public void serializeToJSONX(DataBridge.Writer o) throws IOException {
-            o.jsonWriter.value(obj);
-        }
-
-        public static String deserializeFromJSON(String s, String version) {
+        public static String legacy_deserializeFromJSON(String s, String version) {
             return s;
-        }
-
-        public static String deserializeFromJSONX(DataBridge.Reader o) throws IOException {
-            return o.getString();
         }
     }
 
@@ -359,16 +343,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return Boolean.toString(obj);
         }
 
-        public static boolean deserializeFromJSON(String s, String version) {
+        public static boolean legacy_deserializeFromJSON(String s, String version) {
             return Boolean.parseBoolean(s);
         }
     }
@@ -379,16 +363,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return Byte.toString(obj);
         }
 
-        public static byte deserializeFromJSON(String s, String version) {
+        public static byte legacy_deserializeFromJSON(String s, String version) {
             return Byte.parseByte(s);
         }
     }
@@ -399,25 +383,17 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return Integer.toString(obj);
         }
 
-        public void serializeToJSONX(DataBridge.Writer o) throws IOException {
-            o.jsonWriter.value(Integer.toString(obj));
-        }
-
-        public static int deserializeFromJSON(String s, String version) {
+        public static int legacy_deserializeFromJSON(String s, String version) {
             return Integer.parseInt(s);
-        }
-
-        public static int deserializeFromJSONX(DataBridge.Reader o) throws IOException {
-            return Integer.parseInt(o.getString());
         }
     }
 
@@ -427,16 +403,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return Long.toString(obj);
         }
 
-        public static long deserializeFromJSON(String s, String version) {
+        public static long legacy_deserializeFromJSON(String s, String version) {
             return Long.parseLong(s);
         }
     }
@@ -447,16 +423,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return Long.toString(obj.getTime());
         }
 
-        public static Date deserializeFromJSON(String s, String version) {
+        public static Date legacy_deserializeFromJSON(String s, String version) {
             return new Date(Long.parseLong(s));
         }
     }
@@ -467,16 +443,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return obj.toString();
         }
 
-        public static BigDecimal deserializeFromJSON(String s, String version) {
+        public static BigDecimal legacy_deserializeFromJSON(String s, String version) {
             return new BigDecimal(s);
         }
     }
@@ -487,16 +463,16 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!STRING!";
         }
 
         @Override
-        public String serializeToJSON() {
+        public String legacy_serializeToJSON() {
             return obj.getAbsolutePath();
         }
 
-        public static File deserializeFromJSON(String s, String version) {
+        public static File legacy_deserializeFromJSON(String s, String version) {
             return new File(s);
         }
     }
@@ -507,19 +483,19 @@ public class Serialization {
             this.obj = obj;
         }
 
-        public static String serializationType(String version) {
+        public static String legacy_serializationType(String version) {
             return "!OBJECT!";
         }
 
         @Override
-        public String serializeToJSON() throws JSONException {
+        public String legacy_serializeToJSON() throws JSONException {
             return new LegacyDataBridge.JSONObjectDataBridge()
                     .serialize("class", obj.getClass().getSimpleName(), String.class)
                     .serialize("uri", obj.getUri().toString(), String.class)
                     .toStringOrNull();
         }
 
-        public static DocumentFile deserializeFromJSON(String s, String version) throws JSONException {
+        public static DocumentFile legacy_deserializeFromJSON(String s, String version) throws JSONException {
             LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
             String clazz = o.deserialize("class", String.class);
             Uri uri = Uri.parse(o.deserialize("uri", String.class));

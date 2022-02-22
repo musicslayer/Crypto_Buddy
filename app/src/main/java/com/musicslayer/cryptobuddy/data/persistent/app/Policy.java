@@ -2,15 +2,14 @@ package com.musicslayer.cryptobuddy.data.persistent.app;
 
 import android.content.SharedPreferences;
 
-import com.musicslayer.cryptobuddy.data.bridge.Exportation;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class Policy extends PersistentAppDataStore {
     public String getName() { return "Policy"; }
 
     public boolean canExport() { return false; }
-    public String doExport() { return Exportation.exportData(this, Policy.class); }
-    public void doImport(String s) { Exportation.importData(this, s, Policy.class); }
+    public String doExport() { return null; }
+    public void doImport(String s) {}
 
     public final static boolean DEFAULT_settings_privacy_policy = false;
     public static boolean settings_privacy_policy = false; // Did the user agree to the privacy policy?

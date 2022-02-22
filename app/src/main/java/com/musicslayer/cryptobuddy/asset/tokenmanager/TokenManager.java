@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class TokenManager implements Serialization.SerializableToJSON, Serialization.Versionable {
+abstract public class TokenManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     public static ArrayList<TokenManager> tokenManagers;
     public static HashMap<String, TokenManager> tokenManagers_map;
+    public static HashMap<String, TokenManager> tokenManagers_settings_map;
     public static HashMap<String, TokenManager> tokenManagers_token_type_map;
     public static ArrayList<String> tokenManagers_names;
     public static ArrayList<String> tokenManagers_token_types;
@@ -80,6 +81,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
     public static void initialize() {
         tokenManagers = new ArrayList<>();
         tokenManagers_map = new HashMap<>();
+        tokenManagers_settings_map = new HashMap<>();
         tokenManagers_token_type_map = new HashMap<>();
         tokenManagers_token_types = new ArrayList<>();
 
@@ -89,6 +91,7 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
 
             tokenManagers.add(tokenManager);
             tokenManagers_map.put(tokenManager.getKey(), tokenManager);
+            tokenManagers_settings_map.put(tokenManager.getKey(), tokenManager);
             tokenManagers_token_type_map.put(tokenManager.getTokenType(), tokenManager);
             tokenManagers_token_types.add(tokenManager.getTokenType());
         }
@@ -98,6 +101,15 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         TokenManager tokenManager = tokenManagers_map.get(key);
         if(tokenManager == null || !Purchases.isUnlockTokensPurchased()) {
             tokenManager = UnknownTokenManager.createUnknownTokenManager(key, "?");
+        }
+
+        return tokenManager;
+    }
+
+    public static TokenManager getTokenManagerFromSettingsKey(String settings_key) {
+        TokenManager tokenManager = tokenManagers_settings_map.get(settings_key);
+        if(tokenManager == null) {
+            tokenManager = UnknownTokenManager.createUnknownTokenManager("?", "?");
         }
 
         return tokenManager;
@@ -423,68 +435,26 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
         }
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "2";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
-        String s = new LegacyDataBridge.JSONObjectDataBridge()
+    public String legacy_serializeToJSON() throws org.json.JSONException {
+        return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("token_type", getTokenType(), String.class)
             .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
             .serializeArrayList("found_tokens", found_tokens, Token.class)
             .serializeArrayList("custom_tokens", custom_tokens, Token.class)
             .toStringOrNull();
-
-        return s;
     }
 
-    public void serializeToJSONX(DataBridge.Writer o) throws IOException {
-        o.beginObject()
-                .serialize("!V!", "2", String.class)
-                .serialize("key", getKey(), String.class)
-                .serialize("token_type", getTokenType(), String.class)
-                .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
-                .serializeArrayList("found_tokens", found_tokens, Token.class)
-                .serializeArrayList("custom_tokens", custom_tokens, Token.class)
-                .endObject();
-    }
-
-    public static TokenManager deserializeFromJSONX(DataBridge.Reader o) throws IOException {
-        o.beginObject();
-
-        String version = o.deserialize("!V!", String.class);
-        TokenManager tokenManager;
-
-        if("2".equals(version)) {
-            String key = o.deserialize("key", String.class);
-            String token_type = o.deserialize("token_type", String.class);
-            ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
-            ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
-            ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
-
-            o.endObject();
-
-            // This is a dummy object that only has to hold onto the token array lists.
-            // We don't need to call the proper add* methods here.
-            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
-            tokenManager.downloaded_tokens = downloaded_tokens;
-            tokenManager.found_tokens = found_tokens;
-            tokenManager.custom_tokens = custom_tokens;
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return tokenManager;
-    }
-
-    public static TokenManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static TokenManager legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         TokenManager tokenManager;
 
         if("2".equals(version)) {
@@ -566,5 +536,46 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "3", String.class)
+                .serialize("key", getKey(), String.class)
+                .serialize("token_type", getTokenType(), String.class)
+                .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
+                .serializeArrayList("found_tokens", found_tokens, Token.class)
+                .serializeArrayList("custom_tokens", custom_tokens, Token.class)
+                .endObject();
+    }
+
+    public static TokenManager deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        TokenManager tokenManager;
+
+        if("3".equals(version)) {
+            String key = o.deserialize("key", String.class);
+            String token_type = o.deserialize("token_type", String.class);
+            ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
+            ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
+            ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
+
+            o.endObject();
+
+            // This is a dummy object that only has to hold onto the token array lists.
+            // We don't need to call the proper add* methods here.
+            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+            tokenManager.downloaded_tokens = downloaded_tokens;
+            tokenManager.found_tokens = found_tokens;
+            tokenManager.custom_tokens = custom_tokens;
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return tokenManager;
     }
 }

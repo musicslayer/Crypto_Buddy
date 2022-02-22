@@ -3,13 +3,15 @@ package com.musicslayer.cryptobuddy.filter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-abstract public class Filter implements Serialization.SerializableToJSON, Parcelable {
+abstract public class Filter implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getType());
@@ -40,18 +42,19 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
     abstract public String getFilterType();
 
     // Each subclass is serialized and deserialized differently.
-    abstract public String serializeToJSON_sub() throws org.json.JSONException;
+    abstract public String legacy_serializeToJSON_sub() throws org.json.JSONException;
+    abstract public void serializeToJSON_sub(DataBridge.Writer o) throws IOException;
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
-        return serializeToJSON_sub();
+    public String legacy_serializeToJSON() throws org.json.JSONException {
+        return legacy_serializeToJSON_sub();
     }
 
-    public static Filter deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Filter legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String filterType = o.deserialize("filterType", String.class);
         if("!DISCRETE!".equals(filterType)) {
@@ -59,6 +62,25 @@ abstract public class Filter implements Serialization.SerializableToJSON, Parcel
         }
         else if("!DATE!".equals(filterType)) {
             return DateFilter.deserializeFromJSON_sub(s);
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        serializeToJSON_sub(o);
+    }
+
+    public static Filter deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        String filterType = o.deserialize("filterType", String.class);
+        if("!DISCRETE!".equals(filterType)) {
+            return DiscreteFilter.deserializeFromJSON_sub(o);
+        }
+        else if("!DATE!".equals(filterType)) {
+            return DateFilter.deserializeFromJSON_sub(o);
         }
         else {
             return null;

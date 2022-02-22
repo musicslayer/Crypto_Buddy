@@ -10,8 +10,7 @@ import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Referentiation;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract public class Asset implements Serialization.SerializableToJSON, Serialization.Versionable, Referentiation.ReferenceableToJSON, Referentiation.Versionable, Parcelable {
+abstract public class Asset implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, DataBridge.ReferenceableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         // Within the app, we can just store the key so we can lookup the asset.
@@ -125,16 +124,16 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         Collections.sort(assetArrayList, (a, b) -> compare(a, b));
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "4";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         // For both serialize and reference, write all information.
         // Use original properties directly, not the potentially modified ones from getter functions.
         return new LegacyDataBridge.JSONObjectDataBridge()
@@ -148,45 +147,7 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
                 .toStringOrNull();
     }
 
-    public void serializeToJSONX(DataBridge.Writer o) throws IOException {
-        o.beginObject()
-                .serialize("!V!", serializationVersion(), String.class)
-                .serialize("assetKind", getAssetKind(), String.class)
-                .serialize("key", getOriginalKey(), String.class)
-                .serialize("name", getOriginalName(), String.class)
-                .serialize("displayName", getOriginalDisplayName(), String.class)
-                .serialize("scale", getOriginalScale(), Integer.class)
-                .serialize("assetType", getOriginalAssetType(), String.class)
-                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
-                .endObject();
-    }
-
-    public static Asset deserializeFromJSONX(DataBridge.Reader o) throws IOException {
-        o.beginObject();
-
-        String version = o.deserialize("!V!", String.class);
-        Asset asset;
-
-        if("4".equals(version)) {
-            String assetKind = o.deserialize("assetKind", String.class);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String displayName = o.deserialize("displayName", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String assetType = o.deserialize("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-            o.endObject();
-
-            asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return asset;
-    }
-
-    public static Asset deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Asset legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         Asset asset;
 
         if("4".equals(version)) {
@@ -252,19 +213,10 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
         return asset;
     }
 
-    public static String referentiationVersion() {
-        return "1";
-    }
-
-    public static String referentiationType(String version) {
-        return "!OBJECT!";
-    }
-
     @Override
-    public String referenceToJSON() throws org.json.JSONException {
-        // For both serialize and reference, write all information.
-        // Use original properties directly, not the potentially modified ones from getter functions.
-        return new LegacyDataBridge.JSONObjectDataBridge()
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "5", String.class)
                 .serialize("assetKind", getAssetKind(), String.class)
                 .serialize("key", getOriginalKey(), String.class)
                 .serialize("name", getOriginalName(), String.class)
@@ -272,15 +224,16 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
                 .serialize("scale", getOriginalScale(), Integer.class)
                 .serialize("assetType", getOriginalAssetType(), String.class)
                 .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
-                .toStringOrNull();
+                .endObject();
     }
 
-    public static Asset dereferenceFromJSON(String s, String version) throws org.json.JSONException {
+    public static Asset deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
         Asset asset;
 
-        if("1".equals(version)) {
-            // When we dereference, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
+        if("5".equals(version)) {
             String assetKind = o.deserialize("assetKind", String.class);
             String key = o.deserialize("key", String.class);
             String name = o.deserialize("name", String.class);
@@ -288,6 +241,49 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
             int scale = o.deserialize("scale", Integer.class);
             String assetType = o.deserialize("assetType", String.class);
             HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
+            o.endObject();
+
+            asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return asset;
+    }
+
+    @Override
+    public void referenceToJSON(DataBridge.Writer o) throws IOException {
+        // For both serialize and reference, write all information.
+        // Use original properties directly, not the potentially modified ones from getter functions.
+        o.beginObject()
+                .serialize("!V!", "1", String.class)
+                .serialize("assetKind", getAssetKind(), String.class)
+                .serialize("key", getOriginalKey(), String.class)
+                .serialize("name", getOriginalName(), String.class)
+                .serialize("displayName", getOriginalDisplayName(), String.class)
+                .serialize("scale", getOriginalScale(), Integer.class)
+                .serialize("assetType", getOriginalAssetType(), String.class)
+                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
+                .endObject();
+    }
+
+    public static Asset dereferenceFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        Asset asset;
+
+        if("1".equals(version)) {
+            // When we dereference, we lookup by key, but we use the extra info in case we cannot find an existing asset.
+            String assetKind = o.deserialize("assetKind", String.class);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String displayName = o.deserialize("displayName", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String assetType = o.deserialize("assetType", String.class);
+            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
+            o.endObject();
 
             asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }

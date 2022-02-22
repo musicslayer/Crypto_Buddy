@@ -8,13 +8,15 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class CryptoAddress implements Serialization.SerializableToJSON, Serialization.Versionable, Parcelable {
+public class CryptoAddress implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(address);
@@ -157,16 +159,16 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
         return cryptoAddressArrayList;
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("address", address, String.class)
             .serialize("network", network, Network.class)
@@ -174,11 +176,42 @@ public class CryptoAddress implements Serialization.SerializableToJSON, Serializ
             .toStringOrNull();
     }
 
-    public static CryptoAddress deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CryptoAddress legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String address = o.deserialize("address", String.class);
         Network network = o.deserialize("network", Network.class);
         boolean includeTokens = o.deserialize("includeTokens", Boolean.class);
         return new CryptoAddress(address, network, includeTokens);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("address", address, String.class)
+                .serialize("network", network, Network.class)
+                .serialize("includeTokens", includeTokens, Boolean.class)
+                .endObject();
+    }
+
+    public static CryptoAddress deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        CryptoAddress cryptoAddress;
+
+        if("2".equals(version)) {
+            String address = o.deserialize("address", String.class);
+            Network network = o.deserialize("network", Network.class);
+            boolean includeTokens = o.deserialize("includeTokens", Boolean.class);
+            o.endObject();
+
+            cryptoAddress = new CryptoAddress(address, network, includeTokens);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return cryptoAddress;
     }
 }

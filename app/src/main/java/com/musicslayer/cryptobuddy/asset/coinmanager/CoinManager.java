@@ -3,20 +3,23 @@ package com.musicslayer.cryptobuddy.asset.coinmanager;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class CoinManager implements Serialization.SerializableToJSON, Serialization.Versionable {
+abstract public class CoinManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON  {
     public static ArrayList<CoinManager> coinManagers;
     public static HashMap<String, CoinManager> coinManagers_map;
+    public static HashMap<String, CoinManager> coinManagers_settings_map;
     public static HashMap<String, CoinManager> coinManagers_coin_type_map;
     public static ArrayList<String> coinManagers_names;
     public static ArrayList<String> coinManagers_coin_types;
@@ -68,6 +71,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
     public static void initialize() {
         coinManagers = new ArrayList<>();
         coinManagers_map = new HashMap<>();
+        coinManagers_settings_map = new HashMap<>();
         coinManagers_coin_type_map = new HashMap<>();
         coinManagers_coin_types = new ArrayList<>();
 
@@ -77,6 +81,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
 
             coinManagers.add(coinManager);
             coinManagers_map.put(coinManager.getKey(), coinManager);
+            coinManagers_settings_map.put(coinManager.getSettingsKey(), coinManager);
             coinManagers_coin_type_map.put(coinManager.getCoinType(), coinManager);
             coinManagers_coin_types.add(coinManager.getCoinType());
 
@@ -92,6 +97,15 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         CoinManager coinManager = coinManagers_map.get(key);
         if(coinManager == null) {
             coinManager = UnknownCoinManager.createUnknownCoinManager(key, "?");
+        }
+
+        return coinManager;
+    }
+
+    public static CoinManager getCoinManagerFromSettingsKey(String settings_key) {
+        CoinManager coinManager = coinManagers_settings_map.get(settings_key);
+        if(coinManager == null) {
+            coinManager = UnknownCoinManager.createUnknownCoinManager("?", "?");
         }
 
         return coinManager;
@@ -388,16 +402,16 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
         return displayNames;
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "2";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
@@ -408,7 +422,7 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             .toStringOrNull();
     }
 
-    public static CoinManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static CoinManager legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         CoinManager coinManager;
 
         if("2".equals(version)) {
@@ -488,5 +502,45 @@ abstract public class CoinManager implements Serialization.SerializableToJSON, S
             ThrowableUtil.processThrowable(e);
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "3", String.class)
+                .serialize("key", getKey(), String.class)
+                .serialize("coin_type", getCoinType(), String.class)
+                .serializeArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
+                .serializeArrayList("found_coins", found_coins, Coin.class)
+                .serializeArrayList("custom_coins", custom_coins, Coin.class)
+                .endObject();
+    }
+
+    public static CoinManager deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        CoinManager coinManager;
+
+        if("3".equals(version)) {
+            String key = o.deserialize("key", String.class);
+            String coin_type = o.deserialize("coin_type", String.class);
+            ArrayList<Coin> hardcoded_coins = o.deserializeArrayList("hardcoded_coins", Coin.class);
+            ArrayList<Coin> found_coins = o.deserializeArrayList("found_coins", Coin.class);
+            ArrayList<Coin> custom_coins = o.deserializeArrayList("custom_coins", Coin.class);
+            o.endObject();
+
+            // This is a dummy object that only has to hold onto the coin array lists.
+            // We don't need to call the proper add* methods here.
+            coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
+            coinManager.hardcoded_coins = hardcoded_coins;
+            coinManager.found_coins = found_coins;
+            coinManager.custom_coins = custom_coins;
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return coinManager;
     }
 }

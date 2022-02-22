@@ -15,6 +15,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -22,7 +23,6 @@ import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
@@ -90,13 +90,13 @@ public class TokenManagerActivity extends BaseActivity {
                 ProgressDialogFragment.updateProgressTitle("Downloading All Tokens...");
 
                 String tokenAllJSON = WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/ALL");
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenAllJSON, String.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(tokenAllJSON, String.class));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenAllJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
+                String tokenAllJSON = DataBridge.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 if(tokenAllJSON == null) {
                     ToastUtil.showToast("tokens_not_downloaded");
@@ -163,13 +163,13 @@ public class TokenManagerActivity extends BaseActivity {
                     tokenJSONArrayList.add(tokenManagerView.tokenManager.getJSON());
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(tokenJSONArrayList, String.class));
+                ProgressDialogFragment.setValue(DataBridge.serializeArrayList(tokenJSONArrayList, String.class));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<String> tokenJSONArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), String.class);
+                ArrayList<String> tokenJSONArrayList = DataBridge.deserializeArrayList(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isAllComplete = true;
 

@@ -2,12 +2,14 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import androidx.annotation.NonNull;
 
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Action implements Serialization.SerializableToJSON, Serialization.Versionable {
+public class Action implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     final public static ArrayList<String> actions;
     static {
         actions = new ArrayList<>();
@@ -114,24 +116,39 @@ public class Action implements Serialization.SerializableToJSON, Serialization.V
         else { return Boolean.compare(isValidA, isValidB); }
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("actionString", actionString, String.class)
             .toStringOrNull();
     }
 
-    public static Action deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Action legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String actionString = o.deserialize("actionString", String.class);
+        return new Action(actionString);
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("actionString", actionString, String.class)
+                .endObject();
+    }
+
+    public static Action deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        String actionString = o.deserialize("actionString", String.class);
+        o.endObject();
+
         return new Action(actionString);
     }
 }

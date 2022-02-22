@@ -3,17 +3,19 @@ package com.musicslayer.cryptobuddy.settings.setting;
 import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 import com.musicslayer.cryptobuddy.view.settings.StandardSettingsView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class Setting implements Serialization.SerializableToJSON, Serialization.Versionable {
+abstract public class Setting implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
     public static ArrayList<Setting> settings;
     public static HashMap<String, Setting> setting_map;
     public static HashMap<String, Setting> setting_settings_map;
@@ -105,6 +107,15 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         return setting;
     }
 
+    public static Setting getSettingFromSettingsKey(String settingsKey) {
+        Setting setting = setting_settings_map.get(settingsKey);
+        if(setting == null) {
+            setting = UnknownSetting.createUnknownSetting("?", settingsKey);
+        }
+
+        return setting;
+    }
+
     public void refreshSetting() {
         // If the setting's current choice no longer exists, set it to the default value.
         // Otherwise, do nothing.
@@ -125,16 +136,16 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
         }
     }
 
-    public static String serializationVersion() {
+    public static String legacy_serializationVersion() {
         return "1";
     }
 
-    public static String serializationType(String version) {
+    public static String legacy_serializationType(String version) {
         return "!OBJECT!";
     }
 
     @Override
-    public String serializeToJSON() throws org.json.JSONException {
+    public String legacy_serializeToJSON() throws org.json.JSONException {
         return new LegacyDataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("settingsKey", getSettingsKey(), String.class)
@@ -142,11 +153,36 @@ abstract public class Setting implements Serialization.SerializableToJSON, Seria
             .toStringOrNull();
     }
 
-    public static Setting deserializeFromJSON(String s, String version) throws org.json.JSONException {
+    public static Setting legacy_deserializeFromJSON(String s, String version) throws org.json.JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String key = o.deserialize("key", String.class);
         String settingsKey = o.deserialize("settingsKey", String.class);
         String chosenOptionName = o.deserialize("chosenOptionName", String.class);
+
+        // This is a dummy object that only has to hold onto the data.
+        Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);
+
+        // The option may not actually exist anymore, but it did at the time of serialization.
+        setting.chosenOptionName = chosenOptionName;
+
+        return setting;
+    }
+
+    @Override
+    public void serializeToJSON(DataBridge.Writer o) throws IOException {
+        o.beginObject()
+                .serialize("key", getKey(), String.class)
+                .serialize("settingsKey", getSettingsKey(), String.class)
+                .serialize("chosenOptionName", chosenOptionName, String.class)
+                .endObject();
+    }
+
+    public static Setting deserializeFromJSON(DataBridge.Reader o) throws IOException {
+        o.beginObject();
+        String key = o.deserialize("key", String.class);
+        String settingsKey = o.deserialize("settingsKey", String.class);
+        String chosenOptionName = o.deserialize("chosenOptionName", String.class);
+        o.endObject();
 
         // This is a dummy object that only has to hold onto the data.
         Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);

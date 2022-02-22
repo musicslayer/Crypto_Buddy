@@ -16,6 +16,7 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
@@ -25,7 +26,6 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ViewTokensDialog;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -61,13 +61,13 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getFixedJSON();
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON, String.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(tokenJSON, String.class));
             }
         });
         progressFixedDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
+                String tokenJSON = DataBridge.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isComplete;
                 if(tokenJSON == null) {
@@ -94,13 +94,13 @@ public class TokenManagerView extends CrashTableRow {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 String tokenJSON = tokenManager.getJSON();
-                ProgressDialogFragment.setValue(Serialization.serialize(tokenJSON, String.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(tokenJSON, String.class));
             }
         });
         progressDirectDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                String tokenJSON = Serialization.deserialize(ProgressDialogFragment.getValue(), String.class);
+                String tokenJSON = DataBridge.deserialize(ProgressDialogFragment.getValue(), String.class);
 
                 boolean isComplete;
                 if(tokenJSON == null) {

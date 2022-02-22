@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AddressInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
@@ -38,7 +39,6 @@ import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
@@ -202,13 +202,13 @@ public class AddressExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newAddressData, AddressData.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(newAddressData, AddressData.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                AddressData newAddressData = Serialization.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
+                AddressData newAddressData = DataBridge.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
                 boolean isComplete;
                 if(includeBalances.get(0) && includeTransactions.get(0)) {

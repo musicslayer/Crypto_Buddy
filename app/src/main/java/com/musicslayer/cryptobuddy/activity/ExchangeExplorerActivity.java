@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AuthorizeExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
@@ -34,7 +35,6 @@ import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.dialog.TotalDialog;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
@@ -191,13 +191,13 @@ public class ExchangeExplorerActivity extends BaseActivity {
                 // Save found tokens, potentially from multiple TokenManagers.
                 PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
 
-                ProgressDialogFragment.setValue(Serialization.serialize(newExchangeData, ExchangeData.class));
+                ProgressDialogFragment.setValue(DataBridge.serialize(newExchangeData, ExchangeData.class));
             }
         });
         progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ExchangeData newExchangeData = Serialization.deserialize(ProgressDialogFragment.getValue(), ExchangeData.class);
+                ExchangeData newExchangeData = DataBridge.deserialize(ProgressDialogFragment.getValue(), ExchangeData.class);
 
                 boolean isComplete;
                 if(includeBalances.get(0) && includeTransactions.get(0)) {

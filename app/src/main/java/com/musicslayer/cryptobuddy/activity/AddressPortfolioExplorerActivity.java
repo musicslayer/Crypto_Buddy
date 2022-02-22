@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.AddressQRCodeDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
@@ -45,7 +46,6 @@ import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
-import com.musicslayer.cryptobuddy.data.bridge.Serialization;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.table.AddressTable;
 
@@ -301,14 +301,14 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
                     PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
                 }
 
-                ProgressDialogFragment.setValue(Serialization.serializeArrayList(newAddressDataArrayList, AddressData.class));
+                ProgressDialogFragment.setValue(DataBridge.serializeArrayList(newAddressDataArrayList, AddressData.class));
             }
         });
 
         download_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                ArrayList<AddressData> newAddressDataArrayList = Serialization.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
+                ArrayList<AddressData> newAddressDataArrayList = DataBridge.deserializeArrayList(ProgressDialogFragment.getValue(), AddressData.class);
 
                 for(int i = 0; i < newAddressDataArrayList.size(); i++) {
                     AddressData newAddressData = newAddressDataArrayList.get(i);
@@ -463,7 +463,7 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
         else if (id == 3) {
             String type = "AddressPortfolio";
             StateObj.tableInfo = table.getInfo();
-            StateObj.filterInfo = Serialization.serialize(addressFilter, Filter.class);
+            StateObj.filterInfo = DataBridge.serialize(addressFilter, Filter.class);
             BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
             return true;
         }
