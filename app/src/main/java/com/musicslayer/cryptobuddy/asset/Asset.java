@@ -12,8 +12,10 @@ import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.Referentiation;
 import com.musicslayer.cryptobuddy.data.bridge.Serialization;
+import com.musicslayer.cryptobuddy.data.bridge.StreamDataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -144,6 +146,49 @@ abstract public class Asset implements Serialization.SerializableToJSON, Seriali
                 .serialize("assetType", getOriginalAssetType(), String.class)
                 .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
                 .toStringOrNull();
+    }
+
+    public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", serializationVersion(), String.class)
+                .serialize("assetKind", getAssetKind(), String.class)
+                .serialize("key", getOriginalKey(), String.class)
+                .serialize("name", getOriginalName(), String.class)
+                .serialize("displayName", getOriginalDisplayName(), String.class)
+                .serialize("scale", getOriginalScale(), Integer.class)
+                .serialize("assetType", getOriginalAssetType(), String.class)
+                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
+                .endObject();
+    }
+
+    public static Asset deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        //String version = "4";
+        Asset asset;
+
+        if("4".equals(version)) {
+            String assetKind = o.deserialize("assetKind", String.class);
+            String key = o.deserialize("key", String.class);
+            String name = o.deserialize("name", String.class);
+            String displayName = o.deserialize("displayName", String.class);
+            int scale = o.deserialize("scale", Integer.class);
+            String assetType = o.deserialize("assetType", String.class);
+            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
+            //o.finish();
+
+            //o.deserialize("!V!", String.class);
+
+            o.endObject();
+
+            asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return asset;
     }
 
     public static Asset deserializeFromJSON(String s, String version) throws org.json.JSONException {

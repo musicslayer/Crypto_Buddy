@@ -11,6 +11,7 @@ import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class Serialization {
     // Any class implementing this can be serialized and deserialized with JSON.
     public interface SerializableToJSON {
         String serializeToJSON() throws org.json.JSONException;
+        default void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {}
 
         // Classes also need to implement static methods "deserializeFromJSON" and "serializationType".
     }
@@ -338,8 +340,16 @@ public class Serialization {
             return obj;
         }
 
+        public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+            o.jsonWriter.value(obj);
+        }
+
         public static String deserializeFromJSON(String s, String version) {
             return s;
+        }
+
+        public static String deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+            return o.getString();
         }
     }
 
@@ -398,8 +408,16 @@ public class Serialization {
             return Integer.toString(obj);
         }
 
+        public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+            o.jsonWriter.value(Integer.toString(obj));
+        }
+
         public static int deserializeFromJSON(String s, String version) {
             return Integer.parseInt(s);
+        }
+
+        public static int deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+            return Integer.parseInt(o.getString());
         }
     }
 

@@ -39,7 +39,6 @@ import java.util.Date;
 // TODO Exporting takes a long time.
 // TODO Better reset data.
 // TODO Only exporting should be a premium feature.
-// TODO Export/Import app data vs. user data.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

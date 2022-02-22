@@ -5,6 +5,7 @@ import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.StreamDataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
@@ -18,6 +19,7 @@ import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -431,14 +433,59 @@ abstract public class TokenManager implements Serialization.SerializableToJSON, 
 
     @Override
     public String serializeToJSON() throws org.json.JSONException {
-        // Just serialize the token array lists. TokenManagerList keeps track of which TokenManager had these.
-        return new DataBridge.JSONObjectDataBridge()
+        String s = new DataBridge.JSONObjectDataBridge()
             .serialize("key", getKey(), String.class)
             .serialize("token_type", getTokenType(), String.class)
             .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
             .serializeArrayList("found_tokens", found_tokens, Token.class)
             .serializeArrayList("custom_tokens", custom_tokens, Token.class)
             .toStringOrNull();
+
+        return s;
+    }
+
+    public void serializeToJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        o.beginObject()
+                .serialize("!V!", "2", String.class)
+                .serialize("key", getKey(), String.class)
+                .serialize("token_type", getTokenType(), String.class)
+                .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
+                .serializeArrayList("found_tokens", found_tokens, Token.class)
+                .serializeArrayList("custom_tokens", custom_tokens, Token.class)
+                .endObject();
+    }
+
+    public static TokenManager deserializeFromJSONX(StreamDataBridge.JSONStreamDataBridge o) throws IOException {
+        o.beginObject();
+
+        String version = o.deserialize("!V!", String.class);
+        //String version = "2";
+        TokenManager tokenManager;
+
+        if("2".equals(version)) {
+            String key = o.deserialize("key", String.class);
+            String token_type = o.deserialize("token_type", String.class);
+            ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
+            ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
+            ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
+            //o.finish();
+
+            //o.deserialize("!V!", String.class);
+
+            o.endObject();
+
+            // This is a dummy object that only has to hold onto the token array lists.
+            // We don't need to call the proper add* methods here.
+            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
+            tokenManager.downloaded_tokens = downloaded_tokens;
+            tokenManager.found_tokens = found_tokens;
+            tokenManager.custom_tokens = custom_tokens;
+        }
+        else {
+            throw new IllegalStateException();
+        }
+
+        return tokenManager;
     }
 
     public static TokenManager deserializeFromJSON(String s, String version) throws org.json.JSONException {
