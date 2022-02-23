@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.PersistentDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
@@ -21,6 +22,8 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmResetAppDialog;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.json.JSONWithNull;
@@ -40,7 +43,7 @@ public class DataManagementActivity extends BaseActivity {
     String fileName;
     String fileText;
     String clipboardText;
-    public ArrayList<String> chosenResetDataTypes;
+    public ArrayList<String> chosenDataTypes;
 
     @Override
     public int getAdLayoutViewID() {
@@ -73,29 +76,48 @@ public class DataManagementActivity extends BaseActivity {
         ArrayList<String> visibleDataTypes = PersistentDataStore.getAllVisibleDataTypes();
         Collections.sort(visibleDataTypes);
 
+        ProgressDialogFragment exportFile_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        exportFile_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Exporting to File...");
+
+                String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
+
+                boolean isSuccess = false;
+                if(universalFolder != null) {
+                    isSuccess = universalFolder.writeContent(fileName, json);
+                }
+                else if(universalFile != null) {
+                    isSuccess = universalFile.write(json);
+                }
+
+                ProgressDialogFragment.setValue(DataBridge.serializeValue(isSuccess, Boolean.class));
+            }
+        });
+        exportFile_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                Boolean isSuccess_o = DataBridge.deserializeValue(ProgressDialogFragment.getValue(), Boolean.class);
+
+                if(isSuccess_o != null && isSuccess_o) {
+                    ToastUtil.showToast("export_file_success");
+                }
+                else {
+                    ToastUtil.showToast("export_file_failed");
+                }
+            }
+        });
+        exportFile_progressDialogFragment.restoreListeners(this, "progress_export_file");
+
         // Export to File
         BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportFile_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
-
-                    boolean isSuccess = false;
-                    if(universalFolder != null) {
-                        isSuccess = universalFolder.writeContent(fileName, json);
-                    }
-                    else if(universalFile != null) {
-                        isSuccess = universalFile.write(json);
-                    }
-
-                    if(isSuccess) {
-                        ToastUtil.showToast("export_file_success");
-                    }
-                    else {
-                        ToastUtil.showToast("export_file_failed");
-                    }
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    exportFile_progressDialogFragment.show(DataManagementActivity.this, "progress_export_file");
                 }
             }
         });
@@ -202,13 +224,32 @@ public class DataManagementActivity extends BaseActivity {
         }
 
         // Export to Clipboard
+        ProgressDialogFragment exportClipboard_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        exportClipboard_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Exporting to Clipboard...");
+
+                String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
+                ProgressDialogFragment.setValue(DataBridge.serializeValue(json, String.class));
+            }
+        });
+        exportClipboard_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                String json = DataBridge.deserializeValue(ProgressDialogFragment.getValue(), String.class);
+                ClipboardUtil.exportText("export_data", json);
+            }
+        });
+        exportClipboard_progressDialogFragment.restoreListeners(this, "progress_export_clipboard");
+
         BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportClipboard_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ClipboardUtil.exportText("export_data", PersistentDataStore.exportStoredDataToJSON(chosenDataTypes));
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    exportClipboard_progressDialogFragment.show(DataManagementActivity.this, "progress_export_clipboard");
                 }
             }
         });
@@ -276,16 +317,36 @@ public class DataManagementActivity extends BaseActivity {
         }
 
         // Export to Email
+        ProgressDialogFragment exportEmail_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        exportEmail_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Exporting to Email...");
+
+                String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
+                ProgressDialogFragment.setValue(DataBridge.serializeValue(json, String.class));
+            }
+        });
+        exportEmail_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                String json = DataBridge.deserializeValue(ProgressDialogFragment.getValue(), String.class);
+
+                // Create temp file with exported data and email it.
+                ArrayList<File> fileArrayList = new ArrayList<>();
+                fileArrayList.add(FileUtil.writeTempFile(json));
+                MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
+            }
+        });
+        exportEmail_progressDialogFragment.restoreListeners(this, "progress_export_email");
+
         BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportEmail_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    // Create temp file with exported data and email it.
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    ArrayList<File> fileArrayList = new ArrayList<>();
-                    fileArrayList.add(FileUtil.writeTempFile(PersistentDataStore.exportStoredDataToJSON(chosenDataTypes)));
-                    MessageUtil.sendEmail(DataManagementActivity.this, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    exportEmail_progressDialogFragment.show(DataManagementActivity.this, "progress_export_email");
                 }
             }
         });
@@ -312,8 +373,8 @@ public class DataManagementActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmDeleteDataDialog)dialog).isComplete) {
-                    boolean isAppComplete = PersistentAppDataStore.resetAllStoredData(chosenResetDataTypes);
-                    boolean isUserComplete = PersistentUserDataStore.resetAllStoredData(chosenResetDataTypes);
+                    boolean isAppComplete = PersistentAppDataStore.resetAllStoredData(chosenDataTypes);
+                    boolean isUserComplete = PersistentUserDataStore.resetAllStoredData(chosenDataTypes);
 
                     if(isAppComplete && isUserComplete) {
                         ToastUtil.showToast("delete_data");
@@ -331,7 +392,7 @@ public class DataManagementActivity extends BaseActivity {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    chosenResetDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
                     confirmDeleteDataDialogFragment.show(DataManagementActivity.this, "confirm_delete_data");
                 }
             }
@@ -405,7 +466,7 @@ public class DataManagementActivity extends BaseActivity {
         bundle.putString("fileName", fileName);
         bundle.putString("fileText", fileText);
         bundle.putString("clipboardText", clipboardText);
-        bundle.putStringArrayList("chosenResetDataTypes", chosenResetDataTypes);
+        bundle.putStringArrayList("chosenDataTypes", chosenDataTypes);
     }
 
     @Override
@@ -416,7 +477,7 @@ public class DataManagementActivity extends BaseActivity {
             fileName = bundle.getString("fileName");
             fileText = bundle.getString("fileText");
             clipboardText = bundle.getString("clipboardText");
-            chosenResetDataTypes = bundle.getStringArrayList("chosenResetDataTypes");
+            chosenDataTypes = bundle.getStringArrayList("chosenDataTypes");
         }
     }
 }
