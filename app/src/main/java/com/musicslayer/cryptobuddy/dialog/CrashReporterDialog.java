@@ -1,6 +1,9 @@
 package com.musicslayer.cryptobuddy.dialog;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +15,10 @@ import androidx.appcompat.app.AlertDialog;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashException;
+import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.persistent.PersistentDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.util.DataDumpUtil;
 import com.musicslayer.cryptobuddy.util.ScreenshotUtil;
@@ -62,11 +68,12 @@ public class CrashReporterDialog extends BaseDialog {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
 
-        Button B_EMAILSCREENSHOT = findViewById(R.id.crash_reporter_dialog_emailScreenshotButton);
-        B_EMAILSCREENSHOT.setOnClickListener(v -> {
+        Button B_EMAIL_SCREENSHOT = findViewById(R.id.crash_reporter_dialog_emailScreenshotButton);
+        B_EMAIL_SCREENSHOT.setOnClickListener(v -> {
             try {
                 // Attach three files. One has the Exception that caused the crash, one has the DataDump data, and one has a screenshot.
                 // Some of the Exception may be obfuscated by ProGuard.
@@ -83,8 +90,71 @@ public class CrashReporterDialog extends BaseDialog {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
+
+        TextView T_EXPORT = findViewById(R.id.crash_reporter_dialog_exportTextView);
+
+        Button B_EXPORT_CLIPBOARD = findViewById(R.id.crash_reporter_dialog_exportClipboardButton);
+        B_EXPORT_CLIPBOARD.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                try {
+                    // Manually export to clipboard so we can manually show the messages.
+                    ArrayList<String> dataTypes = PersistentDataStore.getAllVisibleDataTypes();
+                    String text = PersistentDataStore.exportStoredDataToJSON(dataTypes);
+                    ClipboardManager clipboard = (ClipboardManager) App.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
+
+                    // Check to see if size is too large.
+                    try {
+                        clipboard.setPrimaryClip(ClipData.newPlainText("export_data", text));
+                        showToast_export_clipboard_success();
+                    }
+                    catch(RuntimeException e) {
+                        if(e.getCause() instanceof android.os.TransactionTooLargeException) {
+                            showToast_export_clipboard_text_too_large();
+                        }
+                        else {
+                            // Something else went wrong but we don't know what.
+                            showToast_export_clipboard_unknown_error();
+                        }
+                    }
+                }
+                catch(Exception e) {
+                    ThrowableUtil.processThrowable(e);
+                    showToast_unknown_error();
+                }
+            }
+        });
+
+        Button B_EXPORT_EMAIL = findViewById(R.id.crash_reporter_dialog_exportEmailButton);
+        B_EXPORT_EMAIL.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                try {
+                    ArrayList<String> dataTypes = PersistentDataStore.getAllVisibleDataTypes();
+                    ArrayList<File> fileArrayList = new ArrayList<>();
+                    fileArrayList.add(FileUtil.writeTempFile(PersistentDataStore.exportStoredDataToJSON(dataTypes)));
+                    MessageUtil.sendEmail(activity, "", "Crypto Buddy - Exported Data", "Exported data is attached.", fileArrayList);
+                }
+                catch(Exception e) {
+                    ThrowableUtil.processThrowable(e);
+                    showToast_unknown_error();
+                }
+            }
+        });
+
+        if(Purchases.isUnlockImportExportPurchased()) {
+            T_EXPORT.setVisibility(View.VISIBLE);
+            B_EXPORT_CLIPBOARD.setVisibility(View.VISIBLE);
+            B_EXPORT_EMAIL.setVisibility(View.VISIBLE);
+        }
+        else {
+            T_EXPORT.setVisibility(View.GONE);
+            B_EXPORT_CLIPBOARD.setVisibility(View.GONE);
+            B_EXPORT_EMAIL.setVisibility(View.GONE);
+        }
 
         Button B_EXIT = findViewById(R.id.crash_reporter_dialog_exitButton);
         B_EXIT.setOnClickListener(v -> {
@@ -119,6 +189,7 @@ public class CrashReporterDialog extends BaseDialog {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
 
@@ -132,6 +203,7 @@ public class CrashReporterDialog extends BaseDialog {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
 
@@ -160,14 +232,15 @@ public class CrashReporterDialog extends BaseDialog {
                 // Manually show toast because we do not know if the Toast database was correctly initialized.
                 // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.
                 if(isAppComplete && isUserComplete) {
-                    Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything"
+                    showToast_reset_everything();
                 }
                 else {
-                    Toast.makeText(activity, "Could not reset all stored app data.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything_fail"
+                    showToast_reset_everything_fail();
                 }
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
         // No-op, but we need this so the button appears.
@@ -179,6 +252,7 @@ public class CrashReporterDialog extends BaseDialog {
             }
             catch(Exception e) {
                 ThrowableUtil.processThrowable(e);
+                showToast_unknown_error();
             }
         });
 
@@ -199,5 +273,30 @@ public class CrashReporterDialog extends BaseDialog {
         B_RECOVER.setVisibility(View.GONE);
         B_CRASH.setVisibility(View.GONE);
         B_RESET.setVisibility(View.GONE);
+    }
+
+    // Methods to manually show toasts. These are needed because we do not know if the Toast database was correctly initialized.
+    public void showToast_unknown_error() {
+        Toast.makeText(activity, "Unknown Error.", android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast_export_clipboard_success() {
+        Toast.makeText(activity, "Export to clipboard complete.", android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast_export_clipboard_text_too_large() {
+        Toast.makeText(activity, "Could not export to clipboard. Text is too large to place on clipboard.", android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast_export_clipboard_unknown_error() {
+        Toast.makeText(activity, "Could not export to clipboard. Cause is unknown.", android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast_reset_everything() {
+        Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast_reset_everything_fail() {
+        Toast.makeText(activity, "Could not reset all stored app data.", android.widget.Toast.LENGTH_LONG).show();
     }
 }

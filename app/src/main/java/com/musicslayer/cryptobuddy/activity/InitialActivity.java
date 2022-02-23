@@ -38,7 +38,6 @@ import java.util.Date;
 // TODO Importing still obliterates everything.
 
 // TODO Export Progress Dialog
-// TODO In Crash Dialog, I should be able to export data, but some exportData methods require initialization to have finished...
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
