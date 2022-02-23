@@ -17,6 +17,8 @@ import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteDataDialog;
+import com.musicslayer.cryptobuddy.dialog.ConfirmResetAppDialog;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.SelectDataTypesDialog;
@@ -38,6 +40,7 @@ public class DataManagementActivity extends BaseActivity {
     String fileName;
     String fileText;
     String clipboardText;
+    public ArrayList<String> chosenResetDataTypes;
 
     @Override
     public int getAdLayoutViewID() {
@@ -67,11 +70,11 @@ public class DataManagementActivity extends BaseActivity {
             }
         });
 
-        ArrayList<String> exportableDataTypes = PersistentDataStore.getAllExportableDataTypes();
-        Collections.sort(exportableDataTypes);
+        ArrayList<String> visibleDataTypes = PersistentDataStore.getAllVisibleDataTypes();
+        Collections.sort(visibleDataTypes);
 
         // Export to File
-        BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
+        BaseDialogFragment exportFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportFile_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -199,7 +202,7 @@ public class DataManagementActivity extends BaseActivity {
         }
 
         // Export to Clipboard
-        BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
+        BaseDialogFragment exportClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportClipboard_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -274,7 +277,7 @@ public class DataManagementActivity extends BaseActivity {
         }
 
         // Export to Email
-        BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
+        BaseDialogFragment exportEmail_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
         exportEmail_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
@@ -305,25 +308,70 @@ public class DataManagementActivity extends BaseActivity {
         updateLayout();
 
         // Reset Data
-        BaseDialogFragment resetData_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
-        resetData_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment confirmDeleteDataDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteDataDialog.class);
+        confirmDeleteDataDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((SelectDataTypesDialog)dialog).isComplete) {
-                    // Create temp file with exported data and email it.
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentAppDataStore.resetAllStoredData(chosenDataTypes);
-                    PersistentUserDataStore.resetAllStoredData(chosenDataTypes);
+                if(((ConfirmDeleteDataDialog)dialog).isComplete) {
+                    boolean isAppComplete = PersistentAppDataStore.resetAllStoredData(chosenResetDataTypes);
+                    boolean isUserComplete = PersistentUserDataStore.resetAllStoredData(chosenResetDataTypes);
+
+                    if(isAppComplete && isUserComplete) {
+                        ToastUtil.showToast("delete_data");
+                    }
+                    else {
+                        ToastUtil.showToast("delete_data_fail");
+                    }
                 }
             }
         });
-        resetData_selectDataTypesDialogFragment.restoreListeners(this, "select_reset_data");
+        confirmDeleteDataDialogFragment.restoreListeners(this, "confirm_delete_data");
 
-        Button B_RESET_DATA = findViewById(R.id.data_management_resetDataButton);
-        B_RESET_DATA.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        BaseDialogFragment deleteData_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, visibleDataTypes);
+        deleteData_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    chosenResetDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    confirmDeleteDataDialogFragment.show(DataManagementActivity.this, "confirm_delete_data");
+                }
+            }
+        });
+        deleteData_selectDataTypesDialogFragment.restoreListeners(this, "select_delete_data");
+
+        Button B_DELETE_DATA = findViewById(R.id.data_management_deleteDataButton);
+        B_DELETE_DATA.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                resetData_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_reset_data");
+                deleteData_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_delete_data");
+            }
+        });
+
+        // Reset App
+        BaseDialogFragment confirmResetAppDialogFragment = BaseDialogFragment.newInstance(ConfirmResetAppDialog.class);
+        confirmResetAppDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ConfirmResetAppDialog)dialog).isComplete) {
+                    boolean isAppComplete = PersistentAppDataStore.resetAllStoredData();
+                    boolean isUserComplete = PersistentUserDataStore.resetAllStoredData();
+
+                    if(isAppComplete && isUserComplete) {
+                        ToastUtil.showToast("reset_app");
+                    }
+                    else {
+                        ToastUtil.showToast("reset_app_fail");
+                    }
+                }
+            }
+        });
+        confirmResetAppDialogFragment.restoreListeners(this, "confirm_reset_app");
+
+        Button B_RESET_APP = findViewById(R.id.data_management_resetAppButton);
+        B_RESET_APP.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                confirmResetAppDialogFragment.show(DataManagementActivity.this, "confirm_reset_app");
             }
         });
     }
@@ -358,6 +406,7 @@ public class DataManagementActivity extends BaseActivity {
         bundle.putString("fileName", fileName);
         bundle.putString("fileText", fileText);
         bundle.putString("clipboardText", clipboardText);
+        bundle.putStringArrayList("chosenResetDataTypes", chosenResetDataTypes);
     }
 
     @Override
@@ -368,6 +417,7 @@ public class DataManagementActivity extends BaseActivity {
             fileName = bundle.getString("fileName");
             fileText = bundle.getString("fileText");
             clipboardText = bundle.getString("clipboardText");
+            chosenResetDataTypes = bundle.getStringArrayList("chosenResetDataTypes");
         }
     }
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class CoinManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "CoinManagerList"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, CoinManagerList.class); }
     public void doImport(String s) { DataBridge.importData(this, s, CoinManagerList.class); }
 

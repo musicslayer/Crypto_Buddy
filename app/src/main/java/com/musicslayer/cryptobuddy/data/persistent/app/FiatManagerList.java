@@ -15,7 +15,7 @@ import java.io.IOException;
 public class FiatManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "FiatManagerList"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, FiatManagerList.class); }
     public void doImport(String s) { DataBridge.importData(this, s, FiatManagerList.class); }
 

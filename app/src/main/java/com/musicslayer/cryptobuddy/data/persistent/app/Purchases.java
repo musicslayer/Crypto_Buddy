@@ -9,7 +9,7 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class Purchases extends PersistentAppDataStore {
     public String getName() { return "Purchases"; }
 
-    public boolean canExport() { return false; }
+    public boolean isVisible() { return false; }
     public String doExport() { return null; }
     public void doImport(String s) {}
 

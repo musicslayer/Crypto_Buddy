@@ -90,20 +90,17 @@ public class ToastUtil {
         toastMap.put("setting_message_test_short", Toast.makeText(context, "Short Test Message.", duration));
         toastMap.put("setting_message_test_long", Toast.makeText(context, "Long Test Message.", duration));
 
-        // Reset Data Setting and Deleting
+        // Resetting and Deleting
         toastMap.put("nothing_to_delete", Toast.makeText(context, "There is nothing to delete.", duration));
         toastMap.put("nothing_to_download", Toast.makeText(context, "There is nothing to download.", duration));
         toastMap.put("nothing_to_remove", Toast.makeText(context, "There is nothing to remove.", duration));
-        toastMap.put("reset_settings", Toast.makeText(context, "Settings have been reset to default values.", duration));
-        toastMap.put("reset_address_history", Toast.makeText(context, "Address history has been deleted.", duration));
-        toastMap.put("reset_transaction_portfolios", Toast.makeText(context, "Transaction portfolios have been deleted.", duration));
-        toastMap.put("reset_address_portfolios", Toast.makeText(context, "Address portfolios have been deleted.", duration));
-        toastMap.put("reset_exchange_portfolios", Toast.makeText(context, "Exchange portfolios have been deleted.", duration));
         toastMap.put("reset_fiats", Toast.makeText(context, "Fiats have been deleted.", duration));
         toastMap.put("reset_coins", Toast.makeText(context, "Coins have been deleted.", duration));
         toastMap.put("reset_tokens", Toast.makeText(context, "Tokens have been deleted.", duration));
-        toastMap.put("reset_everything", Toast.makeText(context, "All stored app data has been reset.", duration));
-        toastMap.put("reset_everything_fail", Toast.makeText(context, "Could not reset all stored app data.", duration));
+        toastMap.put("delete_data", Toast.makeText(context, "Data has been deleted.", duration));
+        toastMap.put("delete_data_fail", Toast.makeText(context, "Could not delete data.", duration));
+        toastMap.put("reset_app", Toast.makeText(context, "App has been reset.", duration));
+        toastMap.put("reset_app_fail", Toast.makeText(context, "Could not reset app.", duration));
 
         // Purchases - Key must follow naming convention "<SKU>_purchase"
         toastMap.put("premium_purchase", Toast.makeText(context, "Thank you for purchasing \"Unlock Premium Features\"!", duration));

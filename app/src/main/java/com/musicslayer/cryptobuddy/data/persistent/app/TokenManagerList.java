@@ -12,7 +12,7 @@ import java.io.IOException;
 public class TokenManagerList extends PersistentAppDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "TokenManagerList"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, TokenManagerList.class); }
     public void doImport(String s) { DataBridge.importData(this, s, TokenManagerList.class); }
 

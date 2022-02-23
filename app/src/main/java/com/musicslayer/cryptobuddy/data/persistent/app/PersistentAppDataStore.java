@@ -36,7 +36,7 @@ abstract public class PersistentAppDataStore {
 
     abstract public String getName();
 
-    abstract public boolean canExport();
+    abstract public boolean isVisible(); // Whether app data can be seen by user, exported, etc...
     abstract public String doExport();
     abstract public void doImport(String s);
 
@@ -54,16 +54,16 @@ abstract public class PersistentAppDataStore {
             }
         }
 
-        // Do not use null or UnknownPersistentDataStore here. The input class must exist.
+        // Do not use null or an Unknown object here. The input class must exist.
         throw new IllegalStateException();
     }
 
-    public static ArrayList<String> getAllExportableDataTypes() {
+    public static ArrayList<String> getAllVisibleDataTypes() {
         // Return all the possible data types that we can export.
         ArrayList<String> dataTypes = new ArrayList<>();
 
         for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
-            if(persistentAppDataStore.canExport()) {
+            if(persistentAppDataStore.isVisible()) {
                 dataTypes.add(persistentAppDataStore.getSharedPreferencesKey());
             }
         }
@@ -180,12 +180,15 @@ abstract public class PersistentAppDataStore {
         }
     }
 
-    public static boolean resetAllStoredData() {
-        // Resets all stored persistent data in the app. App should be just like a new install.
+    public static boolean resetAllStoredData(ArrayList<String> dataTypes) {
+        // Resets all stored persistent data in the app that matches the dataTypes.
         boolean isComplete = true;
 
         for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
+                String key = persistentAppDataStore.getSharedPreferencesKey();
+                if(!dataTypes.contains(key)) { continue; }
+
                 persistentAppDataStore.resetAllData();
             }
             catch(Exception e) {
@@ -197,15 +200,12 @@ abstract public class PersistentAppDataStore {
         return isComplete;
     }
 
-    public static boolean resetAllStoredData(ArrayList<String> dataTypes) {
-        // Resets all stored persistent data in the app that matches the dataTypes.
+    public static boolean resetAllStoredData() {
+        // Resets all stored persistent data in the app. App should be just like a new install.
         boolean isComplete = true;
 
         for(PersistentAppDataStore persistentAppDataStore : persistent_app_data_stores) {
             try {
-                String key = persistentAppDataStore.getSharedPreferencesKey();
-                if(!dataTypes.contains(key)) { continue; }
-
                 persistentAppDataStore.resetAllData();
             }
             catch(Exception e) {

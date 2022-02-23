@@ -7,7 +7,7 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class Policy extends PersistentAppDataStore {
     public String getName() { return "Policy"; }
 
-    public boolean canExport() { return false; }
+    public boolean isVisible() { return false; }
     public String doExport() { return null; }
     public void doImport(String s) {}
 

@@ -9,18 +9,18 @@ import java.util.ArrayList;
 
 // For now, app and user data is not separated everywhere, so use this class to handle both.
 abstract public class PersistentDataStore {
-    public static ArrayList<String> getAllExportableDataTypes() {
+    public static ArrayList<String> getAllVisibleDataTypes() {
         // Return all the possible data types that we can export.
         ArrayList<String> dataTypes = new ArrayList<>();
 
         for(PersistentAppDataStore persistentAppDataStore : PersistentAppDataStore.persistent_app_data_stores) {
-            if(persistentAppDataStore.canExport()) {
+            if(persistentAppDataStore.isVisible()) {
                 dataTypes.add(persistentAppDataStore.getSharedPreferencesKey());
             }
         }
 
         for(PersistentUserDataStore persistentUserDataStore : PersistentUserDataStore.persistent_user_data_stores) {
-            if(persistentUserDataStore.canExport()) {
+            if(persistentUserDataStore.isVisible()) {
                 dataTypes.add(persistentUserDataStore.getSharedPreferencesKey());
             }
         }

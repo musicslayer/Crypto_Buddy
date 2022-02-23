@@ -103,11 +103,18 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/data_management_resetDataButton"
+                android:id="@+id/data_management_deleteDataButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reset Data"
+                android:text="Delete Data"
                 app:drawableLeftCompat="@drawable/ic_baseline_warning_24" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/data_management_resetAppButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset App"
+                app:drawableLeftCompat="@drawable/ic_baseline_warning_red_24" />
 
         </TableRow>
 

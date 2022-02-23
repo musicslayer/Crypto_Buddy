@@ -9,19 +9,20 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
-public class ConfirmResetSettingsDialog extends BaseDialog {
-    public ConfirmResetSettingsDialog(Activity activity) {
+public class ConfirmResetAppDialog extends BaseDialog {
+    public ConfirmResetAppDialog(Activity activity) {
         super(activity);
     }
 
     public int getBaseViewID() {
-        return R.id.confirm_reset_settings_dialog;
+        return R.id.confirm_reset_app_dialog;
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_confirm_reset_settings);
+        setContentView(R.layout.dialog_confirm_reset_app);
 
-        ConfirmationView C = findViewById(R.id.confirm_reset_settings_dialog_confirmationView);
+        // This has extra digits, and will always show regardless of the setting.
+        ConfirmationView C = findViewById(R.id.confirm_reset_app_dialog_confirmationView);
         C.setNumDigits(8);
         C.setStrict(true);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
@@ -32,7 +33,7 @@ public class ConfirmResetSettingsDialog extends BaseDialog {
             }
         });
 
-        Button B_CANCEL = findViewById(R.id.confirm_reset_settings_dialog_cancelButton);
+        Button B_CANCEL = findViewById(R.id.confirm_reset_app_dialog_cancelButton);
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {

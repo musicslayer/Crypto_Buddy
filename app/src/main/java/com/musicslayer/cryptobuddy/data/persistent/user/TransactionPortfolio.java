@@ -11,7 +11,7 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class TransactionPortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "TransactionPortfolio"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, TransactionPortfolio.class); }
     public void doImport(String s) { DataBridge.importData(this, s, TransactionPortfolio.class); }
 

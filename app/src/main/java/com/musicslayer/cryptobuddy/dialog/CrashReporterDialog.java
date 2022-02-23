@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -159,10 +160,10 @@ public class CrashReporterDialog extends BaseDialog {
                 // Manually show toast because we do not know if the Toast database was correctly initialized.
                 // Similarly, just hardcode a Toast duration because we don't know if the settings were correctly initialized.
                 if(isAppComplete && isUserComplete) {
-                    android.widget.Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything"
+                    Toast.makeText(activity, "All stored app data has been reset.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything"
                 }
                 else {
-                    android.widget.Toast.makeText(activity, "Could not reset all stored app data.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything_fail"
+                    Toast.makeText(activity, "Could not reset all stored app data.", android.widget.Toast.LENGTH_LONG).show(); // "reset_everything_fail"
                 }
             }
             catch(Exception e) {

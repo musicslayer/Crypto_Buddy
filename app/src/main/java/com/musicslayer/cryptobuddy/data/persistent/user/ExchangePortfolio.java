@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ExchangePortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "ExchangePortfolio"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, ExchangePortfolio.class); }
     public void doImport(String s) { DataBridge.importData(this, s, ExchangePortfolio.class); }
 

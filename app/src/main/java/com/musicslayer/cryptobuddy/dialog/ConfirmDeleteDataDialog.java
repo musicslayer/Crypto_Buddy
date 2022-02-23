@@ -9,19 +9,20 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.view.ConfirmationView;
 
-public class ConfirmDeleteAllAddressHistoryDialog extends BaseDialog {
-    public ConfirmDeleteAllAddressHistoryDialog(Activity activity) {
+public class ConfirmDeleteDataDialog extends BaseDialog {
+    public ConfirmDeleteDataDialog(Activity activity) {
         super(activity);
     }
 
     public int getBaseViewID() {
-        return R.id.confirm_delete_all_address_history_dialog;
+        return R.id.confirm_delete_data_dialog;
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_confirm_delete_all_address_history);
+        setContentView(R.layout.dialog_confirm_delete_data);
 
-        ConfirmationView C = findViewById(R.id.confirm_delete_all_address_history_dialog_confirmationView);
+        // This has extra digits, and will always show regardless of the setting.
+        ConfirmationView C = findViewById(R.id.confirm_delete_data_dialog_confirmationView);
         C.setNumDigits(8);
         C.setStrict(true);
         C.setOnConfirmationListener(new ConfirmationView.ConfirmationListener() {
@@ -32,7 +33,7 @@ public class ConfirmDeleteAllAddressHistoryDialog extends BaseDialog {
             }
         });
 
-        Button B_CANCEL = findViewById(R.id.confirm_delete_all_address_history_dialog_cancelButton);
+        Button B_CANCEL = findViewById(R.id.confirm_delete_data_dialog_cancelButton);
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
             public void onClickImpl(View v) {

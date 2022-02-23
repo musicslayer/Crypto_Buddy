@@ -12,7 +12,7 @@ import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 public class AddressHistory extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
     public String getName() { return "AddressHistory"; }
 
-    public boolean canExport() { return true; }
+    public boolean isVisible() { return true; }
     public String doExport() { return DataBridge.exportData(this, AddressHistory.class); }
     public void doImport(String s) { DataBridge.importData(this, s, AddressHistory.class); }
 
