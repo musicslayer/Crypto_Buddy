@@ -103,8 +103,7 @@ public class FiatManagerList extends PersistentAppDataStore implements DataBridg
         o.beginObject();
         o.serialize("!V!", "1", String.class);
 
-        for(FiatManager fiatManager : FiatManager.fiatManagers) {
-            String key = "fiat_manager_" + fiatManager.getSettingsKey();
+        for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
             // We do not want to export hardcoded fiats, so let's remove them.

@@ -81,8 +81,7 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
         o.beginObject();
         o.serialize("!V!", "1", String.class);
 
-        for(TokenManager tokenManager : TokenManager.tokenManagers) {
-            String key = "token_manager_" + tokenManager.getSettingsKey();
+        for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
             // We do not want to export downloaded tokens, so let's remove them.

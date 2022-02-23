@@ -103,8 +103,7 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
         o.beginObject();
         o.serialize("!V!", "1", String.class);
 
-        for(CoinManager coinManager : CoinManager.coinManagers) {
-            String key = "coin_manager_" + coinManager.getSettingsKey();
+        for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
             // We do not want to export hardcoded coins, so let's remove them.

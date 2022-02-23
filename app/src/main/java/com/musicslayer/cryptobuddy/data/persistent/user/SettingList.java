@@ -79,8 +79,7 @@ public class SettingList extends PersistentUserDataStore implements DataBridge.E
         o.beginObject();
         o.serialize("!V!", "1", String.class);
 
-        for(Setting setting : Setting.settings) {
-            String key = "settings_" + setting.getSettingsKey();
+        for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
             o.serialize(key, serialString, String.class);
         }
