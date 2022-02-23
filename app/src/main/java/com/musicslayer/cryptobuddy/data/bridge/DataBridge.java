@@ -152,6 +152,28 @@ public class DataBridge {
         }
     }
 
+    public static <T, U> String serializeHashMap(HashMap<T, U> hashMap, Class<T> clazzT, Class<U> clazzU) {
+        // REMOVE
+        if(getIsLegacy()) {
+            return LegacySerialization.serializeHashMap(hashMap, clazzT, clazzU);
+        }
+
+        if(hashMap == null) { return null; }
+
+        Writer writer = new Writer();
+
+        try {
+            writer.serializeHashMap(null, hashMap, clazzT, clazzU);
+            safeFlushAndClose(writer);
+            return writer.stringWriter.toString();
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            safeFlushAndClose(writer);
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static <T> String exportData(T obj, Class<T> clazzT) {
         if(obj == null) { return null; }
 
@@ -269,6 +291,26 @@ public class DataBridge {
             ArrayList<T> arrayList = reader.deserializeArrayList(null, clazzT);
             safeClose(reader);
             return arrayList;
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            safeClose(reader);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static <T, U> HashMap<T, U> deserializeHashMap(String s, Class<T> clazzT, Class<U> clazzU) {
+        if(getIsLegacy()) {
+            return LegacySerialization.deserializeHashMap(s, clazzT, clazzU);
+        }
+
+        if(s == null) { return null; }
+
+        Reader reader = new Reader(s);
+        try {
+            HashMap<T, U> hashMap = reader.deserializeHashMap(null, clazzT, clazzU);
+            safeClose(reader);
+            return hashMap;
         }
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
@@ -699,7 +741,7 @@ public class DataBridge {
             }
             else {
                 Class<? extends ReferenceableToJSON> wrappedClass = wrapReferenceableClass(clazzT);
-                return ReflectUtil.callStaticMethod(wrappedClass, "deserializeFromJSON", this);
+                return ReflectUtil.callStaticMethod(wrappedClass, "dereferenceFromJSON", this);
             }
         }
 

@@ -336,6 +336,7 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
             AssetQuantity otherAssetQuantity = o.deserialize("otherAssetQuantity", AssetQuantity.class);
             Timestamp timestamp = o.deserialize("timestamp", Timestamp.class);
             String info = o.deserialize("info", String.class);
+            o.endObject();
 
             transaction = new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
         }

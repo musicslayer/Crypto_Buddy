@@ -105,6 +105,7 @@ public class AssetQuantity implements LegacySerialization.SerializableToJSON, Le
     @Override
     public void serializeToJSON(DataBridge.Writer o) throws IOException {
         o.beginObject()
+                .serialize("!V!", "2", String.class)
                 .serialize("assetAmount", assetAmount, AssetAmount.class)
                 .reference("asset", asset, Asset.class)
                 .endObject();

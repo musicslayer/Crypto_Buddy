@@ -1,11 +1,13 @@
 package com.musicslayer.cryptobuddy.data.persistent;
 
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // For now, app and user data is not separated everywhere, so use this class to handle both.
 abstract public class PersistentDataStore {
@@ -32,7 +34,7 @@ abstract public class PersistentDataStore {
         // Export a JSON representation of persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge();
+        HashMap<String, String> data = new HashMap<>();
 
         // Individually, try to export each piece of data.
         for(PersistentAppDataStore persistentAppDataStore : PersistentAppDataStore.persistent_app_data_stores) {
@@ -41,7 +43,7 @@ abstract public class PersistentDataStore {
                 if(!dataTypes.contains(key)) { continue; }
 
                 String value = persistentAppDataStore.doExport();
-                o.serialize(key, value, String.class);
+                HashMapUtil.putValueInMap(data, key, value);
             }
             catch(Exception e) {
                 // If one class's data cannot be exported, skip it and do nothing.
@@ -55,7 +57,7 @@ abstract public class PersistentDataStore {
                 if(!dataTypes.contains(key)) { continue; }
 
                 String value = persistentUserDataStore.doExport();
-                o.serialize(key, value, String.class);
+                HashMapUtil.putValueInMap(data, key, value);
             }
             catch(Exception e) {
                 // If one class's data cannot be exported, skip it and do nothing.
@@ -63,28 +65,23 @@ abstract public class PersistentDataStore {
             }
         }
 
-        return o.toStringOrNull();
+        return DataBridge.serializeHashMap(data, String.class, String.class);
     }
 
     public static void importStoredDataFromJSON(ArrayList<String> dataTypes, String json) {
         // Import a JSON representation of persistent data into the app.
 
         // Each SharedPreferences key maps to its data.
-        LegacyDataBridge.JSONObjectDataBridge o;
-        try {
-            o = new LegacyDataBridge.JSONObjectDataBridge(json);
-        }
-        catch(Exception e) {
-            throw new IllegalStateException(e);
-        }
+        HashMap<String, String> data = DataBridge.deserializeHashMap(json, String.class, String.class);
+        if(data == null) { return; }
 
         // Individually, try to import each piece of data.
         for(PersistentAppDataStore persistentAppDataStore : PersistentAppDataStore.persistent_app_data_stores) {
             try {
                 String key = persistentAppDataStore.getSharedPreferencesKey();
-                if(!o.has(key) || !dataTypes.contains(key)) { continue; }
+                if(!data.containsKey(key) || !dataTypes.contains(key)) { continue; }
 
-                String value = o.deserialize(key, String.class);
+                String value = HashMapUtil.getValueFromMap(data, key);
                 persistentAppDataStore.doImport(value);
             }
             catch(Exception e) {
@@ -96,9 +93,9 @@ abstract public class PersistentDataStore {
         for(PersistentUserDataStore persistentUserDataStore : PersistentUserDataStore.persistent_user_data_stores) {
             try {
                 String key = persistentUserDataStore.getSharedPreferencesKey();
-                if(!o.has(key) || !dataTypes.contains(key)) { continue; }
+                if(!data.containsKey(key) || !dataTypes.contains(key)) { continue; }
 
-                String value = o.deserialize(key, String.class);
+                String value = HashMapUtil.getValueFromMap(data, key);
                 persistentUserDataStore.doImport(value);
             }
             catch(Exception e) {
