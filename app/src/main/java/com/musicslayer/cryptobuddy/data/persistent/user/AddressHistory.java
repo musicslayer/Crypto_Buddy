@@ -132,6 +132,8 @@ public class AddressHistory extends PersistentUserDataStore implements DataBridg
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        editor.clear();
+
         String sizeKey = "address_history_size";
         int size = o.deserialize(sizeKey, Integer.class);
         editor.putInt(sizeKey, size);

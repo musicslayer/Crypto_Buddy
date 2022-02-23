@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 public class AddressPortfolio extends PersistentUserDataStore implements DataBridge.ExportableToJSON {
@@ -189,18 +191,36 @@ public class AddressPortfolio extends PersistentUserDataStore implements DataBri
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String sizeKey = "address_portfolio_size";
-        int size = o.deserialize(sizeKey, Integer.class);
-        editor.putInt(sizeKey, size);
+        // Create HashMap of all existing portfolios.
+        HashMap<String, String> hashMap = new HashMap<>();
+        for(int i = 0; i < settings_address_portfolio_names.size(); i++) {
+            String name = sharedPreferences.getString("address_portfolio_names" + i, DEFAULT);
+            String value = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
+            HashMapUtil.putValueInMap(hashMap, name, value);
+        }
 
+        // Merge in the imported portfolios.
+        int size = o.deserialize("address_portfolio_size", Integer.class);
         for(int i = 0; i < size; i++) {
+            String name = o.deserialize("address_portfolio_names" + i, String.class);
+            String value = o.deserialize("address_portfolio" + i, String.class);
+            HashMapUtil.putValueInMap(hashMap, name, DataBridge.cycleSerialization(value, AddressPortfolioObj.class));
+        }
+
+        // Erase portfolios, rewrite, and reload.
+        editor.clear();
+
+        ArrayList<String> keySet = new ArrayList<>(hashMap.keySet());
+
+        editor.putInt("address_portfolio_size", keySet.size());
+        for(int i = 0; i < keySet.size(); i++) {
             String nameKey = "address_portfolio_names" + i;
-            String nameValue = o.deserialize(nameKey, String.class);
+            String nameValue = keySet.get(i);
             editor.putString(nameKey, nameValue);
 
             String key = "address_portfolio" + i;
-            String value = o.deserialize(key, String.class);
-            editor.putString(key, DataBridge.cycleSerialization(value, AddressPortfolioObj.class));
+            String value = HashMapUtil.getValueFromMap(hashMap, keySet.get(i));
+            editor.putString(key, value);
         }
 
         editor.apply();
