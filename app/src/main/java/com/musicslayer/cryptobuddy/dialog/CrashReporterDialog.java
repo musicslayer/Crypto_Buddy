@@ -52,6 +52,14 @@ public class CrashReporterDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_crash_reporter);
 
+        TextView T_INITIALIZATION = findViewById(R.id.crash_reporter_dialog_initializationTextView);
+        if(App.isAppInitialized) {
+            T_INITIALIZATION.setVisibility(View.GONE);
+        }
+        else {
+            T_INITIALIZATION.setVisibility(View.VISIBLE);
+        }
+
         Button B_EMAIL = findViewById(R.id.crash_reporter_dialog_emailButton);
         B_EMAIL.setOnClickListener(v -> {
             try {

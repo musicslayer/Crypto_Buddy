@@ -26,13 +26,23 @@
         app:layout_constraintTop_toBottomOf="@id/crash_reporter_dialog_toolbar" />
 
     <TextView
+        android:id="@+id/crash_reporter_dialog_initializationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="App did not finish initialization."
+        android:textColor="#FF0000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_messageTextView" />
+
+    <TextView
         android:id="@+id/crash_reporter_dialog_emailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Send crash info to the developer.\nEmail: musicslayer@gmail.com"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_messageTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/crash_reporter_dialog_initializationTextView" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/crash_reporter_dialog_emailButton"
