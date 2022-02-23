@@ -6,12 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import com.musicslayer.cryptobuddy.activity.AddressExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.AddressPortfolioExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.ExchangeExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.ExchangePortfolioExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.TransactionExplorerActivity;
-import com.musicslayer.cryptobuddy.activity.TransactionPortfolioExplorerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -114,7 +108,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                     ToastUtil.showToast("cannot_attach");
                 }
 
-                MessageUtil.sendEmail(ReportFeedbackDialog.this.activity, "musicslayer@gmail.com", "Crypto Buddy - Report Feedback", "Selected information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
+                MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Report Feedback", "Selected information is attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
             }
         });
     }
@@ -125,16 +119,16 @@ public class ReportFeedbackDialog extends BaseDialog {
         long timestamp = new Date().getTime();
         s.append("Timestamp: ").append(timestamp);
 
-        if(activity instanceof TransactionExplorerActivity) {
+        if("Transaction".equals(type)) {
             s.append("\n\nTransactionExplorerActivity");
             s.append("\n\n").append(StateObj.tableInfo);
         }
-        else if(activity instanceof TransactionPortfolioExplorerActivity) {
+        else if("TransactionPortfolio".equals(type)) {
             s.append("\n\nTransactionPortfolioExplorerActivity");
             s.append("\n\n").append("Transaction Portfolio:\n\n").append(DataBridge.serialize(StateObj.transactionPortfolioObj, TransactionPortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
-        else if(activity instanceof AddressExplorerActivity) {
+        else if("Address".equals(type)) {
             s.append("\n\nAddressExplorerActivity");
 
             // Full info for the address.
@@ -143,7 +137,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             s.append("\n\n").append(StateObj.tableInfo);
         }
-        else if(activity instanceof AddressPortfolioExplorerActivity) {
+        else if("AddressPortfolio".equals(type)) {
             s.append("\n\nAddressPortfolioExplorerActivity");
 
             // Full info for all addresses.
@@ -157,7 +151,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             s.append("\n\nAddress Portfolio:\n\n").append(DataBridge.serialize(StateObj.addressPortfolioObj, AddressPortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
-        else if(activity instanceof ExchangeExplorerActivity) {
+        else if("Exchange".equals(type)) {
             s.append("\n\nExchangeExplorerActivity");
 
             // Full info for the exchange.
@@ -166,7 +160,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             s.append("\n\n").append(StateObj.tableInfo);
         }
-        else if(activity instanceof ExchangePortfolioExplorerActivity) {
+        else if("ExchangePortfolio".equals(type)) {
             s.append("\n\nExchangePortfolioExplorerActivity");
 
             // Full info for all exchanges.

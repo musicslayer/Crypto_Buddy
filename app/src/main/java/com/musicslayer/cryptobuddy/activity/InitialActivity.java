@@ -37,8 +37,6 @@ import java.util.Date;
 // TODO Finish the getSingleAllData Implementations.
 // TODO Importing still obliterates everything.
 
-// TODO Export Progress Dialog
-// TODO Report Feedback Progress Dialog
 // TODO Get rid of last usages of LegacyDataBridge (exporting).
 
 // This Activity class only exists for initialization code, not to be seen by the user.
