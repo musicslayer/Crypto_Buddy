@@ -82,7 +82,9 @@ public class DataManagementActivity extends BaseActivity {
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Exporting to File...");
 
+                ProgressDialogFragment.updateProgressSubtitle("Exporting Data...");
                 String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
+                ProgressDialogFragment.updateProgressSubtitle("Writing to File...");
 
                 boolean isSuccess = false;
                 if(universalFolder != null) {
@@ -153,16 +155,82 @@ public class DataManagementActivity extends BaseActivity {
         });
 
         // Import from File
+        ProgressDialogFragment importFile_importData_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        importFile_importData_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Importing from File...");
+                ProgressDialogFragment.updateProgressSubtitle("Importing Data...");
+
+                PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
+            }
+        });
+        importFile_importData_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                ToastUtil.showToast("import_file_success");
+            }
+        });
+        importFile_importData_progressDialogFragment.restoreListeners(this, "progress_import_file_import_data");
+
         DialogInterface.OnDismissListener importFile_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, fileText);
-                    ToastUtil.showToast("import_file_success");
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    importFile_importData_progressDialogFragment.show(DataManagementActivity.this, "progress_import_file_import_data");
                 }
             }
         };
+
+        ProgressDialogFragment importFile_readFile_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        importFile_readFile_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Importing from File...");
+                ProgressDialogFragment.updateProgressSubtitle("Reading from File...");
+
+                ArrayList<String> dataTypes;
+                try {
+                    // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
+                    if(universalFolder != null) {
+                        fileText = universalFolder.readContent(fileName);
+                    }
+                    else if (universalFile != null){
+                        fileText = universalFile.read();
+                    }
+                    else {
+                        throw new IllegalStateException();
+                    }
+
+                    JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(fileText);
+                    dataTypes = o.keys();
+                    Collections.sort(dataTypes);
+                }
+                catch(Exception ignored) {
+                    dataTypes = null;
+                }
+
+                ProgressDialogFragment.setValue(DataBridge.serializeArrayList(dataTypes, String.class));
+            }
+        });
+        importFile_readFile_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                ArrayList<String> dataTypes = DataBridge.deserializeArrayList(ProgressDialogFragment.getValue(), String.class);
+
+                if(dataTypes == null) {
+                    ToastUtil.showToast("import_file_failed");
+                }
+                else {
+                    // Launch dialog to ask user which data types to import.
+                    BaseDialogFragment importFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
+                    importFile_selectDataTypesDialogFragment.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
+                    importFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_file");
+                }
+            }
+        });
+        importFile_readFile_progressDialogFragment.restoreListeners(this, "progress_import_file_read_file");
 
         BaseDialogFragment importDataFileDialogFragment = BaseDialogFragment.newInstance(ImportDataFileDialog.class);
         importDataFileDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -173,33 +241,7 @@ public class DataManagementActivity extends BaseActivity {
                     universalFolder = ((ImportDataFileDialog)dialog).user_UNIVERSALFOLDER;
                     fileName = ((ImportDataFileDialog)dialog).user_FILENAME;
 
-                    ArrayList<String> dataTypes;
-
-                    try {
-                        // Check if file text can be parsed as JSON. If so, store the data type keys that are present.
-                        if(universalFolder != null) {
-                            fileText = universalFolder.readContent(fileName);
-                        }
-                        else if (universalFile != null){
-                            fileText = universalFile.read();
-                        }
-                        else {
-                            throw new IllegalStateException();
-                        }
-
-                        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(fileText);
-                        dataTypes = o.keys();
-                        Collections.sort(dataTypes);
-                    }
-                    catch(Exception ignored) {
-                        ToastUtil.showToast("import_file_failed");
-                        return;
-                    }
-
-                    // Launch dialog to ask user which data types to import.
-                    BaseDialogFragment importFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
-                    importFile_selectDataTypesDialogFragment.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
-                    importFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_file");
+                    importFile_readFile_progressDialogFragment.show(DataManagementActivity.this, "progress_import_file_read_file");
                 }
             }
         });
@@ -229,6 +271,7 @@ public class DataManagementActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Exporting to Clipboard...");
+                ProgressDialogFragment.updateProgressSubtitle("Exporting Data...");
 
                 String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
                 ProgressDialogFragment.setValue(DataBridge.serializeValue(json, String.class));
@@ -269,13 +312,30 @@ public class DataManagementActivity extends BaseActivity {
         });
 
         // Import from Clipboard
+        ProgressDialogFragment importClipboard_importData_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        importClipboard_importData_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Importing from Clipboard...");
+                ProgressDialogFragment.updateProgressSubtitle("Importing Data...");
+
+                PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
+            }
+        });
+        importClipboard_importData_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                ToastUtil.showToast("import_clipboard_success");
+            }
+        });
+        importClipboard_importData_progressDialogFragment.restoreListeners(this, "progress_import_clipboard_import_data");
+
         DialogInterface.OnDismissListener importClipboard_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
-                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
-                    PersistentDataStore.importStoredDataFromJSON(chosenDataTypes, clipboardText);
-                    ToastUtil.showToast("import_clipboard_success");
+                    chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    importClipboard_importData_progressDialogFragment.show(DataManagementActivity.this, "progress_import_clipboard_import_data");
                 }
             }
         };
@@ -322,6 +382,7 @@ public class DataManagementActivity extends BaseActivity {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Exporting to Email...");
+                ProgressDialogFragment.updateProgressSubtitle("Exporting Data...");
 
                 String json = PersistentDataStore.exportStoredDataToJSON(chosenDataTypes);
                 ProgressDialogFragment.setValue(DataBridge.serializeValue(json, String.class));
