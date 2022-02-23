@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class UniversalFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(DataBridge.serialize(file, File.class));
+        out.writeString(DataBridge.serializeValue(file, File.class));
         out.writeString(DataBridge.serialize(documentFile, DocumentFile.class));
     }
 
@@ -31,7 +31,7 @@ public class UniversalFile implements Parcelable {
         @SuppressLint("NewApi")
         @Override
         public UniversalFile createFromParcel(Parcel in) {
-            File file = DataBridge.deserialize(in.readString(), File.class);
+            File file = DataBridge.deserializeValue(in.readString(), File.class);
             DocumentFile documentFile = DataBridge.deserialize(in.readString(), DocumentFile.class);
 
             if(file != null) {
