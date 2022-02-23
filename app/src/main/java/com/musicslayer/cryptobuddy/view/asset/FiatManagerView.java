@@ -23,9 +23,6 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.ViewFiatsDialog;
 import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
-import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
-import com.musicslayer.cryptobuddy.settings.setting.Setting;
 
 import java.util.ArrayList;
 
@@ -90,11 +87,6 @@ public class FiatManagerView extends CrashTableRow {
                     }
 
                     PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(fiatManager);
-
-                    Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
-                    setting.refreshSetting();
-                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
-
                     updateLayout();
                 }
             }

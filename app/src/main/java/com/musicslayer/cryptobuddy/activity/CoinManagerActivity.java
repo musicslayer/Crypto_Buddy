@@ -71,11 +71,6 @@ public class CoinManagerActivity extends BaseActivity {
                     }
 
                     PersistentAppDataStore.getInstance(CoinManagerList.class).saveAllData();
-
-                    Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
-                    setting.refreshSetting();
-                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
-
                     ToastUtil.showToast("reset_coins");
 
                     updateLayout();

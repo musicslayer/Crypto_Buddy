@@ -71,11 +71,6 @@ public class FiatManagerActivity extends BaseActivity {
                     }
 
                     PersistentAppDataStore.getInstance(FiatManagerList.class).saveAllData();
-
-                    Setting setting = Setting.getSettingFromKey("DefaultFiatSetting");
-                    setting.refreshSetting();
-                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
-
                     ToastUtil.showToast("reset_fiats");
 
                     updateLayout();

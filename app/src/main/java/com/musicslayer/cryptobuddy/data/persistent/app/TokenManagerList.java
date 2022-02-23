@@ -61,12 +61,13 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
     }
 
     public void resetAllData() {
-        // Only reset data stored in settings, not the TokenManager class.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
+
+        loadAllData();
     }
 
     @Override

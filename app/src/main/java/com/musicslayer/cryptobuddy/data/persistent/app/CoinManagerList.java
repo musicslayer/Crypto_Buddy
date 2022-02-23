@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.coinmanager.UnknownCoinManager;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
+import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
 import java.io.IOException;
@@ -23,12 +26,24 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
         return "coin_manager_data";
     }
 
+    public void updateSetting() {
+        // When CoinManagers are altered, the default coin setting option may no longer exist.
+        // Note that the setting may not have been initialized yet.
+        if(Setting.settings != null) {
+            Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
+            setting.refreshSetting();
+            PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
+        }
+    }
+
     public void updateCoinManager(CoinManager coinManager) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("coin_manager_" + coinManager.getSettingsKey(), DataBridge.serialize(coinManager, CoinManager.class));
         editor.apply();
+
+        updateSetting();
     }
 
     public void saveAllData() {
@@ -42,6 +57,8 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
         }
 
         editor.apply();
+
+        updateSetting();
     }
 
     public void loadAllData() {
@@ -60,15 +77,19 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
 
             coinManager.initializeHardcodedCoins();
         }
+
+        updateSetting();
     }
 
     public void resetAllData() {
-        // Only reset data stored in settings, not the TokenManager class.
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.clear();
         editor.apply();
+
+        loadAllData();
+        updateSetting();
     }
 
     @Override
@@ -129,5 +150,6 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
 
         // Reinitialize data.
         loadAllData();
+        updateSetting();
     }
 }

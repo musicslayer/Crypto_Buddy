@@ -23,9 +23,6 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.ViewCoinsDialog;
 import com.musicslayer.cryptobuddy.data.persistent.app.CoinManagerList;
-import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
-import com.musicslayer.cryptobuddy.settings.setting.Setting;
 
 import java.util.ArrayList;
 
@@ -90,11 +87,6 @@ public class CoinManagerView extends CrashTableRow {
                     }
 
                     PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
-
-                    Setting setting = Setting.getSettingFromKey("DefaultCoinSetting");
-                    setting.refreshSetting();
-                    PersistentUserDataStore.getInstance(SettingList.class).saveSetting(setting);
-
                     updateLayout();
                 }
             }

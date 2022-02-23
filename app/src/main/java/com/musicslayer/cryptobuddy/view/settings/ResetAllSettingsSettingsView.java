@@ -42,13 +42,13 @@ public class ResetAllSettingsSettingsView extends SettingsView {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ConfirmResetSettingsDialog)dialog).isComplete) {
+                    // TODO Non-standard reset?
                     Setting.resetAllSettings();
 
                     // Clear out any existing data, and then make sure our recently defaulted settings are saved.
                     PersistentUserDataStore.getInstance(SettingList.class).resetAllData();
                     PersistentUserDataStore.getInstance(SettingList.class).saveAllData();
 
-                    ContextUtil.getActivityFromContext(context).recreate();
                     ToastUtil.showToast("reset_settings");
                 }
             }
