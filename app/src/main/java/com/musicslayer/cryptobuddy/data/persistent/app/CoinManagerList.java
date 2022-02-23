@@ -66,6 +66,10 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
 
         // For each CoinManager, look for any stored data to fill in.
         for(CoinManager coinManager : CoinManager.coinManagers) {
+            coinManager.resetHardcodedCoins();
+            coinManager.resetFoundCoins();
+            coinManager.resetCustomCoins();
+
             String serialString = sharedPreferences.getString("coin_manager_" + coinManager.getSettingsKey(), DEFAULT);
 
             CoinManager copyCoinManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, CoinManager.class);

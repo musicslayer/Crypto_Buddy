@@ -66,6 +66,10 @@ public class FiatManagerList extends PersistentAppDataStore implements DataBridg
 
         // For each FiatManager, look for any stored data to fill in.
         for(FiatManager fiatManager : FiatManager.fiatManagers) {
+            fiatManager.resetHardcodedFiats();
+            fiatManager.resetFoundFiats();
+            fiatManager.resetCustomFiats();
+
             String serialString = sharedPreferences.getString("fiat_manager_" + fiatManager.getSettingsKey(), DEFAULT);
 
             FiatManager copyFiatManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, FiatManager.class);

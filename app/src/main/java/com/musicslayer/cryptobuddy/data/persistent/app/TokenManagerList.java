@@ -49,6 +49,10 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
 
         // For each TokenManager, look for any stored data to fill in.
         for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            tokenManager.resetDownloadedTokens();
+            tokenManager.resetFoundTokens();
+            tokenManager.resetCustomTokens();
+
             String serialString = sharedPreferences.getString("token_manager_" + tokenManager.getSettingsKey(), DEFAULT);
 
             TokenManager copyTokenManager = DEFAULT.equals(serialString) ? null : DataBridge.deserialize(serialString, TokenManager.class);
