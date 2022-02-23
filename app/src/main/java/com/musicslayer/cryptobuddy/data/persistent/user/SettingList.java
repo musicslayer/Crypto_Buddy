@@ -68,6 +68,8 @@ public class SettingList extends PersistentUserDataStore implements DataBridge.E
 
         editor.clear();
         editor.apply();
+
+        loadAllData();
     }
 
     @Override

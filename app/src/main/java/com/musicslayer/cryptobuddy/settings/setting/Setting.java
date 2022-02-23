@@ -131,13 +131,6 @@ abstract public class Setting implements LegacySerialization.SerializableToJSON,
         this.setSetting(this.getDefaultOptionName());
     }
 
-    public static void resetAllSettings() {
-        // Resets all settings to their default values.
-        for(Setting setting : settings) {
-            setting.resetSetting();
-        }
-    }
-
     public static String legacy_serializationVersion() {
         return "1";
     }
