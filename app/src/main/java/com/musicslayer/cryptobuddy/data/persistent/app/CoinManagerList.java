@@ -106,16 +106,10 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
         for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
-            // We do not want to export hardcoded coins, so let's remove them.
-            String newSerialString;
-            try {
-                CoinManager copyCoinManager = DataBridge.deserialize(serialString, CoinManager.class);
-                copyCoinManager.resetHardcodedCoins();
-                newSerialString = DataBridge.serialize(copyCoinManager, CoinManager.class);
-            }
-            catch(Exception e) {
-                throw new IllegalStateException(e);
-            }
+            // We do not want to export hardcoded coins, so let's remove them ourselves.
+            CoinManager copyCoinManager = DataBridge.deserialize(serialString, CoinManager.class);
+            copyCoinManager.resetHardcodedCoins();
+            String newSerialString = DataBridge.serialize(copyCoinManager, CoinManager.class);
 
             o.serialize(key, newSerialString, String.class);
         }
@@ -143,7 +137,12 @@ public class CoinManagerList extends PersistentAppDataStore implements DataBridg
 
             CoinManager coinManager = CoinManager.getCoinManagerFromSettingsKey(settings_key);
             if(!(coinManager instanceof UnknownCoinManager) && !DEFAULT.equals(value)) {
-                editor.putString(key, DataBridge.cycleSerialization(value, CoinManager.class));
+                // Hardcoded coins will not be imported, so let's add them ourselves.
+                CoinManager copyCoinManager = DataBridge.deserialize(value, CoinManager.class);
+                copyCoinManager.addHardcodedCoin(coinManager.hardcoded_coins);
+                String newValue = DataBridge.serialize(copyCoinManager, CoinManager.class);
+
+                editor.putString(key, newValue);
             }
         }
 

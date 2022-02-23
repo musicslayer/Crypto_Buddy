@@ -1,9 +1,8 @@
 package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.util.FileUtil;
-import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
@@ -76,7 +75,7 @@ abstract public class PersistentUserDataStore {
         // Export a JSON representation of persistent data stored in the app.
 
         // Each SharedPreferences key maps to its data.
-        HashMap<String, String> data = new HashMap<>();
+        JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull();
 
         // Individually, try to export each piece of data.
         for(PersistentUserDataStore persistentUserDataStore : persistent_user_data_stores) {
@@ -85,7 +84,7 @@ abstract public class PersistentUserDataStore {
                 if(!dataTypes.contains(key)) { continue; }
 
                 String value = persistentUserDataStore.doExport();
-                HashMapUtil.putValueInMap(data, key, value);
+                o.putString(key, value);
             }
             catch(Exception e) {
                 // If one class's data cannot be exported, skip it and do nothing.
@@ -93,23 +92,28 @@ abstract public class PersistentUserDataStore {
             }
         }
 
-        return DataBridge.serializeHashMap(data, String.class, String.class);
+        return o.toStringOrNull();
     }
 
     public static void importStoredDataFromJSON(ArrayList<String> dataTypes, String json) {
         // Import a JSON representation of persistent data into the app.
 
         // Each SharedPreferences key maps to its data.
-        HashMap<String, String> data = DataBridge.deserializeHashMap(json, String.class, String.class);
-        if(data == null) { return; }
+        JSONWithNull.JSONObjectWithNull o;
+        try {
+            o = new JSONWithNull.JSONObjectWithNull(json);
+        }
+        catch(Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         // Individually, try to import each piece of data.
         for(PersistentUserDataStore persistentUserDataStore : persistent_user_data_stores) {
             try {
                 String key = persistentUserDataStore.getSharedPreferencesKey();
-                if(!data.containsKey(key) || !dataTypes.contains(key)) { continue; }
+                if(!o.has(key) || !dataTypes.contains(key)) { continue; }
 
-                String value = HashMapUtil.getValueFromMap(data, key);
+                String value = o.getString(key);
                 persistentUserDataStore.doImport(value);
             }
             catch(Exception e) {

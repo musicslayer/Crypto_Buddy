@@ -84,16 +84,10 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
         for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
-            // We do not want to export downloaded tokens, so let's remove them.
-            String newSerialString;
-            try {
-                TokenManager copyTokenManager = DataBridge.deserialize(serialString, TokenManager.class);
-                copyTokenManager.resetDownloadedTokens();
-                newSerialString = DataBridge.serialize(copyTokenManager, TokenManager.class);
-            }
-            catch(Exception e) {
-                throw new IllegalStateException(e);
-            }
+            // We do not want to export downloaded tokens, so let's remove them ourselves.
+            TokenManager copyTokenManager = DataBridge.deserialize(serialString, TokenManager.class);
+            copyTokenManager.resetDownloadedTokens();
+            String newSerialString = DataBridge.serialize(copyTokenManager, TokenManager.class);
 
             o.serialize(key, newSerialString, String.class);
         }
@@ -121,7 +115,12 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
 
             TokenManager tokenManager = TokenManager.getTokenManagerFromSettingsKey(settings_key);
             if(!(tokenManager instanceof UnknownTokenManager) && !DEFAULT.equals(value)) {
-                editor.putString(key, DataBridge.cycleSerialization(value, TokenManager.class));
+                // Downloaded tokens will not be imported, so let's add them ourselves.
+                TokenManager copyTokenManager = DataBridge.deserialize(value, TokenManager.class);
+                copyTokenManager.addDownloadedToken(tokenManager.downloaded_tokens);
+                String newValue = DataBridge.serialize(copyTokenManager, TokenManager.class);
+
+                editor.putString(key, newValue);
             }
         }
 

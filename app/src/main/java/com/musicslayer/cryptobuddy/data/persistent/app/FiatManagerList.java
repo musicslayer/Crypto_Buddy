@@ -106,16 +106,10 @@ public class FiatManagerList extends PersistentAppDataStore implements DataBridg
         for(String key : SharedPreferencesUtil.getDataKeys(getSharedPreferencesKey())) {
             String serialString = sharedPreferences.getString(key, DEFAULT);
 
-            // We do not want to export hardcoded fiats, so let's remove them.
-            String newSerialString;
-            try {
-                FiatManager copyFiatManager = DataBridge.deserialize(serialString, FiatManager.class);
-                copyFiatManager.resetHardcodedFiats();
-                newSerialString = DataBridge.serialize(copyFiatManager, FiatManager.class);
-            }
-            catch(Exception e) {
-                throw new IllegalStateException(e);
-            }
+            // We do not want to export hardcoded fiats, so let's remove them ourselves.
+            FiatManager copyFiatManager = DataBridge.deserialize(serialString, FiatManager.class);
+            copyFiatManager.resetHardcodedFiats();
+            String newSerialString = DataBridge.serialize(copyFiatManager, FiatManager.class);
 
             o.serialize(key, newSerialString, String.class);
         }
@@ -143,7 +137,12 @@ public class FiatManagerList extends PersistentAppDataStore implements DataBridg
 
             FiatManager fiatManager = FiatManager.getFiatManagerFromSettingsKey(settings_key);
             if(!(fiatManager instanceof UnknownFiatManager) && !DEFAULT.equals(value)) {
-                editor.putString(key, DataBridge.cycleSerialization(value, FiatManager.class));
+                // Hardcoded fiats will not be imported, so let's add them ourselves.
+                FiatManager copyFiatManager = DataBridge.deserialize(value, FiatManager.class);
+                copyFiatManager.addHardcodedFiat(fiatManager.hardcoded_fiats);
+                String newValue = DataBridge.serialize(copyFiatManager, FiatManager.class);
+
+                editor.putString(key, newValue);
             }
         }
 
