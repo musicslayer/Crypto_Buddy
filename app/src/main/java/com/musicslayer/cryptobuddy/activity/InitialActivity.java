@@ -38,8 +38,6 @@ import java.util.Date;
 // TODO Finish the getSingleAllData Implementations.
 
 // TODO Rename portfolio.
-// TODO Order of portfolios in Viewer Activity.
-// TODO Update Confirmations Setting Text
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

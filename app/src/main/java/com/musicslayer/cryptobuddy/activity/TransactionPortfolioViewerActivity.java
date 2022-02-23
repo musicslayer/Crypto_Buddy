@@ -25,6 +25,10 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class TransactionPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 
@@ -100,7 +104,10 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        for(String transactionPortfolioObjName : TransactionPortfolio.settings_transaction_portfolio_names) {
+        ArrayList<String> portfolioNames = new ArrayList<>(TransactionPortfolio.settings_transaction_portfolio_names);
+        Collections.sort(portfolioNames, Comparator.comparing(String::toLowerCase));
+
+        for(String transactionPortfolioObjName : portfolioNames) {
             TableRow TR = new TableRow(TransactionPortfolioViewerActivity.this);
             AppCompatButton B = new AppCompatButton(TransactionPortfolioViewerActivity.this);
             B.setText(transactionPortfolioObjName);

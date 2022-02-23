@@ -25,6 +25,10 @@ import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
 
@@ -100,7 +104,10 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        for(String addressPortfolioObjName : AddressPortfolio.settings_address_portfolio_names) {
+        ArrayList<String> portfolioNames = new ArrayList<>(AddressPortfolio.settings_address_portfolio_names);
+        Collections.sort(portfolioNames, Comparator.comparing(String::toLowerCase));
+
+        for(String addressPortfolioObjName : portfolioNames) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
             B.setText(addressPortfolioObjName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
