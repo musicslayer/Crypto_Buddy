@@ -10,6 +10,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
@@ -18,6 +19,8 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
+import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
@@ -36,6 +39,7 @@ import java.util.Comparator;
 
 public class TokenManagerActivity extends BaseActivity {
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
+    public ArrayList<String> choices;
 
     @Override
     public int getAdLayoutViewID() {
@@ -57,6 +61,49 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
+            }
+        });
+
+        BaseDialogFragment confirmDeleteTokensDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteTokensDialog.class, "All");
+        confirmDeleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(TokenManagerActivity.this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ConfirmDeleteTokensDialog)dialog).isComplete) {
+                    if(choices.contains("downloaded")) {
+                        TokenManager.resetAllDownloadedTokens();
+                    }
+                    if(choices.contains("found")) {
+                        TokenManager.resetAllFoundTokens();
+                    }
+                    if(choices.contains("custom")) {
+                        TokenManager.resetAllCustomTokens();
+                    }
+
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
+                    ToastUtil.showToast("reset_tokens");
+
+                    updateLayout();
+                }
+            }
+        });
+        confirmDeleteTokensDialogFragment.restoreListeners(this, "confirm_delete_all_tokens");
+
+        BaseDialogFragment deleteTokensDialogFragment = BaseDialogFragment.newInstance(DeleteTokensDialog.class, "All", true);
+        deleteTokensDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(TokenManagerActivity.this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((DeleteTokensDialog)dialog).isComplete) {
+                    choices = ((DeleteTokensDialog)dialog).user_CHOICES;
+                    confirmDeleteTokensDialogFragment.show(TokenManagerActivity.this, "confirm_delete_all_tokens");
+                }
+            }
+        });
+        deleteTokensDialogFragment.restoreListeners(TokenManagerActivity.this, "delete_all_tokens");
+
+        AppCompatButton B_DELETE = findViewById(R.id.token_manager_deleteAllTokensButton);
+        B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(TokenManagerActivity.this) {
+            public void onClickImpl(View v) {
+                deleteTokensDialogFragment.show(TokenManagerActivity.this, "delete_all_tokens");
             }
         });
 
@@ -223,6 +270,7 @@ public class TokenManagerActivity extends BaseActivity {
         for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
             bundle.putParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType(), tokenManagerView.onSaveInstanceState());
         }
+        bundle.putStringArrayList("choices", choices);
     }
 
     @Override
@@ -231,6 +279,7 @@ public class TokenManagerActivity extends BaseActivity {
             for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                 tokenManagerView.onRestoreInstanceState(bundle.getParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType()));
             }
+            choices = bundle.getStringArrayList("choices");
         }
     }
 }

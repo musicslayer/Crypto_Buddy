@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.settings.category;
 
-import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.settings.setting.Setting;
 
 import java.util.ArrayList;
@@ -16,12 +15,6 @@ public class ResetDataSettingsCategory extends SettingsCategory {
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllTransactionPortfoliosSetting"));
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllAddressPortfoliosSetting"));
         settingArrayList.add(Setting.getSettingFromKey("DeleteAllExchangePortfoliosSetting"));
-        settingArrayList.add(Setting.getSettingFromKey("DeleteFiatsSetting"));
-        settingArrayList.add(Setting.getSettingFromKey("DeleteCoinsSetting"));
-
-        if(Purchases.isUnlockTokensPurchased()) {
-            settingArrayList.add(Setting.getSettingFromKey("DeleteTokensSetting"));
-        }
 
         // This should be presented last, as it resets everything.
         settingArrayList.add(Setting.getSettingFromKey("ResetEverythingSetting"));

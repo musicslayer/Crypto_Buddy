@@ -9,9 +9,6 @@ DeleteAllAddressHistorySetting
 DeleteAllAddressPortfoliosSetting
 DeleteAllExchangePortfoliosSetting
 DeleteAllTransactionPortfoliosSetting
-DeleteCoinsSetting
-DeleteFiatsSetting
-DeleteTokensSetting
 LossValuesSetting
 MaxNumberTransactionsSetting
 MessageLengthSetting
