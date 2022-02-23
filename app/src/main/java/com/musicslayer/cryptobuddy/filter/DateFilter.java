@@ -24,7 +24,7 @@ public class DateFilter extends Filter {
             .toStringOrNull();
     }
 
-    public static DateFilter deserializeFromJSON_sub(String s) throws JSONException {
+    public static DateFilter legacy_deserializeFromJSON_sub(String s) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         Date user_startDate = o.deserialize("user_startDate", Date.class);
         Date user_endDate = o.deserialize("user_endDate", Date.class);

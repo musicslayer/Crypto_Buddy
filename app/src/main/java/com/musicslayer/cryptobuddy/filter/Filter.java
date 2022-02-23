@@ -60,10 +60,10 @@ abstract public class Filter implements LegacySerialization.SerializableToJSON, 
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         String filterType = o.deserialize("filterType", String.class);
         if("!DISCRETE!".equals(filterType)) {
-            return DiscreteFilter.deserializeFromJSON_sub(s);
+            return DiscreteFilter.legacy_deserializeFromJSON_sub(s);
         }
         else if("!DATE!".equals(filterType)) {
-            return DateFilter.deserializeFromJSON_sub(s);
+            return DateFilter.legacy_deserializeFromJSON_sub(s);
         }
         else {
             return null;

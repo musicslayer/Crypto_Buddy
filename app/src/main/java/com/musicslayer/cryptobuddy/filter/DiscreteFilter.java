@@ -24,7 +24,7 @@ public class DiscreteFilter extends Filter {
             .toStringOrNull();
     }
 
-    public static DiscreteFilter deserializeFromJSON_sub(String s) throws JSONException {
+    public static DiscreteFilter legacy_deserializeFromJSON_sub(String s) throws JSONException {
         LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
         ArrayList<String> choices = o.deserializeArrayList("choices", String.class);
         ArrayList<String> user_choices = o.deserializeArrayList("user_choices", String.class);

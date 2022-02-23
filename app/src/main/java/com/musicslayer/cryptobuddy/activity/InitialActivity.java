@@ -31,13 +31,12 @@ import java.util.Date;
 //  Chart Explorer, Chart Portfolio
 //  Fake trades?
 //  User accounts?
+//  Perform simple operation with ProgressDialog, without having to define listeners. (ex. ReportFeedback can take a long time with many transactions).
 
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 // TODO Importing still obliterates everything.
-
-// TODO Get rid of last usages of LegacyDataBridge (exporting).
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

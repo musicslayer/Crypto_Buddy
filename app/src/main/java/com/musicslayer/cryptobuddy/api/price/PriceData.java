@@ -36,14 +36,14 @@ public class PriceData implements LegacySerialization.SerializableToJSON, DataBr
                 .serialize("cryptoPrice", cryptoPrice, CryptoPrice.class)
                 .serialize("priceAPI_price", priceAPI_price, PriceAPI.class)
                 .serialize("priceAPI_marketCap", priceAPI_marketCap, PriceAPI.class)
-                .putJSONObjectString("priceHashMap", splitHashMap(priceHashMap))
-                .putJSONObjectString("marketCapHashMap", splitHashMap(marketCapHashMap))
+                .putJSONObjectString("priceHashMap", legacy_splitHashMap(priceHashMap))
+                .putJSONObjectString("marketCapHashMap", legacy_splitHashMap(marketCapHashMap))
                 .serialize("timestamp_price", timestamp_price, Timestamp.class)
                 .serialize("timestamp_marketCap", timestamp_marketCap, Timestamp.class)
                 .toStringOrNull();
     }
 
-    public static String splitHashMap(HashMap<Asset, AssetQuantity> hashMap) throws JSONException {
+    public static String legacy_splitHashMap(HashMap<Asset, AssetQuantity> hashMap) throws JSONException {
         // Split HashMaps so Assets are referenced but AssetQuantities are serialized.
         if(hashMap == null) { return null; }
 
@@ -64,14 +64,14 @@ public class PriceData implements LegacySerialization.SerializableToJSON, DataBr
         CryptoPrice cryptoPrice = o.deserialize("cryptoPrice", CryptoPrice.class);
         PriceAPI priceAPI_price = o.deserialize("priceAPI_price", PriceAPI.class);
         PriceAPI priceAPI_marketCap = o.deserialize("priceAPI_marketCap", PriceAPI.class);
-        HashMap<Asset, AssetQuantity> priceHashMap = combineHashMap(o.getJSONObjectString("priceHashMap"));
-        HashMap<Asset, AssetQuantity> marketCapHashMap = combineHashMap(o.getJSONObjectString("marketCapHashMap"));
+        HashMap<Asset, AssetQuantity> priceHashMap = legacy_combineHashMap(o.getJSONObjectString("priceHashMap"));
+        HashMap<Asset, AssetQuantity> marketCapHashMap = legacy_combineHashMap(o.getJSONObjectString("marketCapHashMap"));
         Timestamp timestamp_price = o.deserialize("timestamp_price", Timestamp.class);
         Timestamp timestamp_marketCap = o.deserialize("timestamp_marketCap", Timestamp.class);
         return new PriceData(cryptoPrice, priceAPI_price, priceAPI_marketCap, priceHashMap, marketCapHashMap, timestamp_price, timestamp_marketCap);
     }
 
-    public static HashMap<Asset, AssetQuantity> combineHashMap(String s) throws JSONException {
+    public static HashMap<Asset, AssetQuantity> legacy_combineHashMap(String s) throws JSONException {
         // Combine HashMaps so Assets are dereferenced but AssetQuantities are deserialized.
         if(s == null) { return null; }
 
