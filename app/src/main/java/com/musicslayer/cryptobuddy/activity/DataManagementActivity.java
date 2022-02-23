@@ -13,7 +13,9 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.PersistentDataStore;
+import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ExportDataFileDialog;
 import com.musicslayer.cryptobuddy.dialog.ImportDataFileDialog;
@@ -301,6 +303,29 @@ public class DataManagementActivity extends BaseActivity {
         });
 
         updateLayout();
+
+        // Reset Data
+        BaseDialogFragment resetData_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, exportableDataTypes);
+        resetData_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((SelectDataTypesDialog)dialog).isComplete) {
+                    // Create temp file with exported data and email it.
+                    ArrayList<String> chosenDataTypes = ((SelectDataTypesDialog)dialog).user_CHOICES;
+                    PersistentAppDataStore.resetAllStoredData(chosenDataTypes);
+                    PersistentUserDataStore.resetAllStoredData(chosenDataTypes);
+                }
+            }
+        });
+        resetData_selectDataTypesDialogFragment.restoreListeners(this, "select_reset_data");
+
+        Button B_RESET_DATA = findViewById(R.id.data_management_resetDataButton);
+        B_RESET_DATA.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                resetData_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_reset_data");
+            }
+        });
     }
 
     public void updateLayout() {

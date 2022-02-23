@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 
 public class TokenManagerView extends CrashTableRow {
     public TextView T;
+    public AppCompatImageButton B_CUSTOM;
     public AppCompatImageButton B_DELETE;
     public AppCompatImageButton B_VIEW;
     public AppCompatImageButton B_DOWNLOAD;
@@ -55,6 +57,27 @@ public class TokenManagerView extends CrashTableRow {
         L.setGravity(Gravity.CENTER_VERTICAL);
 
         T = new TextView(context);
+
+        BaseDialogFragment addCustomTokenDialogFragment = BaseDialogFragment.newInstance(AddCustomTokenDialog.class, tokenManager.getTokenType());
+        addCustomTokenDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((AddCustomTokenDialog)dialog).isComplete) {
+                    updateLayout();
+                }
+            }
+        });
+        addCustomTokenDialogFragment.restoreListeners(activity, "add_custom_token_" + tokenManager.getSettingsKey());
+
+
+        B_CUSTOM = new AppCompatImageButton(context);
+        B_CUSTOM.setImageResource(R.drawable.ic_baseline_add_24);
+        B_CUSTOM.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                addCustomTokenDialogFragment.show(activity, "add_custom_token_" + tokenManager.getSettingsKey());
+            }
+        });
 
         ProgressDialogFragment progressFixedDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         progressFixedDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(context) {
@@ -197,6 +220,7 @@ public class TokenManagerView extends CrashTableRow {
             }
         });
 
+        L.addView(B_CUSTOM);
         L.addView(B_DELETE);
         L.addView(B_VIEW);
         L.addView(B_DOWNLOAD);

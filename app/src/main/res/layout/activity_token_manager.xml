@@ -61,14 +61,14 @@
                 android:paddingBottom="20dp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/token_manager_customTokenButton"
+                    android:id="@+id/token_manager_deleteAllTokensButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add\nCustom Token"
-                    app:drawableLeftCompat="@drawable/ic_baseline_add_24" />
+                    android:text="Delete\nAll Tokens"
+                    app:drawableLeftCompat="@drawable/ic_baseline_delete_24" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/token_manager_massUpdateButton"
+                    android:id="@+id/token_manager_downloadAllTokensButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Download\nAll Tokens"

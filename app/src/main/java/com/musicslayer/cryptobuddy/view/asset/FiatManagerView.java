@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.dialog.AddCustomFiatDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 public class FiatManagerView extends CrashTableRow {
     public TextView T;
+    public AppCompatImageButton B_CUSTOM;
     public AppCompatImageButton B_DELETE;
     public AppCompatImageButton B_VIEW;
     public FiatManager fiatManager;
@@ -52,6 +54,27 @@ public class FiatManagerView extends CrashTableRow {
         L.setGravity(Gravity.CENTER_VERTICAL);
 
         T = new TextView(context);
+
+        BaseDialogFragment addCustomFiatDialogFragment = BaseDialogFragment.newInstance(AddCustomFiatDialog.class, fiatManager.getFiatType());
+        addCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((AddCustomFiatDialog)dialog).isComplete) {
+                    updateLayout();
+                }
+            }
+        });
+        addCustomFiatDialogFragment.restoreListeners(activity, "add_custom_fiat_" + fiatManager.getSettingsKey());
+
+
+        B_CUSTOM = new AppCompatImageButton(context);
+        B_CUSTOM.setImageResource(R.drawable.ic_baseline_add_24);
+        B_CUSTOM.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                addCustomFiatDialogFragment.show(activity, "add_custom_fiat_" + fiatManager.getSettingsKey());
+            }
+        });
 
         BaseDialogFragment confirmDeleteFiatsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteFiatsDialog.class, fiatManager.getFiatType());
         confirmDeleteFiatsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -106,6 +129,7 @@ public class FiatManagerView extends CrashTableRow {
             }
         });
 
+        L.addView(B_CUSTOM);
         L.addView(B_DELETE);
         L.addView(B_VIEW);
 

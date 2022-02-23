@@ -17,7 +17,6 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
-import com.musicslayer.cryptobuddy.dialog.AddCustomTokenDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.DownloadTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
@@ -58,28 +57,6 @@ public class TokenManagerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(TokenManagerActivity.this, R.raw.help_token_manager);
-            }
-        });
-
-        BaseDialogFragment addCustomTokenDialogFragment = BaseDialogFragment.newInstance(AddCustomTokenDialog.class);
-        addCustomTokenDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((AddCustomTokenDialog)dialog).isComplete) {
-                    // It's easier to just update all of them.
-                    for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
-                        tokenManagerView.updateLayout();
-                    }
-                }
-            }
-        });
-        addCustomTokenDialogFragment.restoreListeners(this, "add_custom_token");
-
-        Button B_CustomToken = findViewById(R.id.token_manager_customTokenButton);
-        B_CustomToken.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                addCustomTokenDialogFragment.show(TokenManagerActivity.this, "add_custom_token");
             }
         });
 
@@ -209,8 +186,8 @@ public class TokenManagerActivity extends BaseActivity {
         });
         downloadTokensDialogFragment.restoreListeners(this, "download");
 
-        Button B_MassUpdate = findViewById(R.id.token_manager_massUpdateButton);
-        B_MassUpdate.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        Button B_DOWNLOAD = findViewById(R.id.token_manager_downloadAllTokensButton);
+        B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");

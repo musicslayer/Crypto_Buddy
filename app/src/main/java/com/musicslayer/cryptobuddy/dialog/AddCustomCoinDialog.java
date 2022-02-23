@@ -4,31 +4,31 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
-import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.CoinManagerList;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
 
 public class AddCustomCoinDialog extends BaseDialog {
-    public CoinManager chosenCoinManager;
+    public String coinType;
 
-    public AddCustomCoinDialog(Activity activity) {
+    public AddCustomCoinDialog(Activity activity, String coinType) {
         super(activity);
+        this.coinType = coinType;
     }
 
     public int getBaseViewID() {
@@ -38,6 +38,9 @@ public class AddCustomCoinDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_add_custom_coin);
 
+        Toolbar toolbar = findViewById(R.id.add_custom_coin_dialog_toolbar);
+        toolbar.setTitle("Add Custom " + coinType + " Coin");
+
         ImageButton helpButton = findViewById(R.id.add_custom_coin_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
@@ -46,18 +49,7 @@ public class AddCustomCoinDialog extends BaseDialog {
             }
         });
 
-        BorderedSpinnerView bsv = findViewById(R.id.add_custom_coin_dialog_coinTypeSpinner);
-        bsv.setOptions(CoinManager.coinManagers_coin_types);
-        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
-            public void onNothingSelectedImpl(AdapterView<?> parent){}
-            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                chosenCoinManager = CoinManager.getCoinManagerFromCoinType(CoinManager.coinManagers_coin_types.get(pos));
-            }
-        });
-
-        if(CoinManager.coinManagers_coin_types.size() == 1) {
-            bsv.setVisibility(View.GONE);
-        }
+        CoinManager coinManager = CoinManager.getCoinManagerFromCoinType(coinType);
 
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_coin_dialog_nameEditText);
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_coin_dialog_symbolEditText);
@@ -67,8 +59,8 @@ public class AddCustomCoinDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomCoinDialog)dialog).isComplete) {
-                    chosenCoinManager.addCustomCoin(((ReplaceCustomCoinDialog)dialog).newCoin);
-                    PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(chosenCoinManager);
+                    coinManager.addCustomCoin(((ReplaceCustomCoinDialog)dialog).newCoin);
+                    PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
 
                     ToastUtil.showToast("custom_coin_added");
                     isComplete = true;
@@ -97,12 +89,12 @@ public class AddCustomCoinDialog extends BaseDialog {
                     // For custom coin, use an invalid ID.
                     String id = "?";
 
-                    Coin oldCoin = chosenCoinManager.custom_coin_map.get(key);
-                    Coin newCoin = Coin.buildCoin(key, name, display_name, scale, chosenCoinManager.getCoinType(), id);
+                    Coin oldCoin = coinManager.custom_coin_map.get(key);
+                    Coin newCoin = Coin.buildCoin(key, name, display_name, scale, coinManager.getCoinType(), id);
 
                     if(oldCoin == null) {
-                        chosenCoinManager.addCustomCoin(newCoin);
-                        PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(chosenCoinManager);
+                        coinManager.addCustomCoin(newCoin);
+                        PersistentAppDataStore.getInstance(CoinManagerList.class).updateCoinManager(coinManager);
 
                         ToastUtil.showToast("custom_coin_added");
                         isComplete = true;

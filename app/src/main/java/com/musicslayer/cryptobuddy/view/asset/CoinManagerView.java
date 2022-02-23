@@ -17,6 +17,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashTableRow;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.dialog.AddCustomCoinDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 public class CoinManagerView extends CrashTableRow {
     public TextView T;
+    public AppCompatImageButton B_CUSTOM;
     public AppCompatImageButton B_DELETE;
     public AppCompatImageButton B_VIEW;
     public CoinManager coinManager;
@@ -52,6 +54,27 @@ public class CoinManagerView extends CrashTableRow {
         L.setGravity(Gravity.CENTER_VERTICAL);
 
         T = new TextView(context);
+
+        BaseDialogFragment addCustomCoinDialogFragment = BaseDialogFragment.newInstance(AddCustomCoinDialog.class, coinManager.getCoinType());
+        addCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((AddCustomCoinDialog)dialog).isComplete) {
+                    updateLayout();
+                }
+            }
+        });
+        addCustomCoinDialogFragment.restoreListeners(activity, "add_custom_coin_" + coinManager.getSettingsKey());
+
+
+        B_CUSTOM = new AppCompatImageButton(context);
+        B_CUSTOM.setImageResource(R.drawable.ic_baseline_add_24);
+        B_CUSTOM.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                addCustomCoinDialogFragment.show(activity, "add_custom_coin_" + coinManager.getSettingsKey());
+            }
+        });
 
         BaseDialogFragment confirmDeleteCoinsDialogFragment = BaseDialogFragment.newInstance(ConfirmDeleteCoinsDialog.class, coinManager.getCoinType());
         confirmDeleteCoinsDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(context) {
@@ -106,6 +129,7 @@ public class CoinManagerView extends CrashTableRow {
             }
         });
 
+        L.addView(B_CUSTOM);
         L.addView(B_DELETE);
         L.addView(B_VIEW);
 

@@ -29,15 +29,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
-    <com.musicslayer.cryptobuddy.view.BorderedSpinnerView
-        android:id="@+id/add_custom_token_dialog_tokenTypeSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_custom_token_dialog_toolbar">
-
-    </com.musicslayer.cryptobuddy.view.BorderedSpinnerView>
-
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_token_dialog_idEditText"
         android:layout_width="wrap_content"
@@ -46,7 +37,7 @@
         android:hint="ID / Contract Address"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_custom_token_dialog_tokenTypeSpinner" />
+        app:layout_constraintTop_toBottomOf="@id/add_custom_token_dialog_toolbar" />
 
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_token_dialog_nameEditText"

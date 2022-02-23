@@ -4,31 +4,31 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.app.TokenManagerList;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
 
 public class AddCustomTokenDialog extends BaseDialog {
-    public TokenManager chosenTokenManager;
+    public String tokenType;
 
-    public AddCustomTokenDialog(Activity activity) {
+    public AddCustomTokenDialog(Activity activity, String tokenType) {
         super(activity);
+        this.tokenType = tokenType;
     }
 
     public int getBaseViewID() {
@@ -38,6 +38,9 @@ public class AddCustomTokenDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_add_custom_token);
 
+        Toolbar toolbar = findViewById(R.id.add_custom_token_dialog_toolbar);
+        toolbar.setTitle("Add Custom " + tokenType + " Token");
+
         ImageButton helpButton = findViewById(R.id.add_custom_token_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
@@ -46,18 +49,7 @@ public class AddCustomTokenDialog extends BaseDialog {
             }
         });
 
-        BorderedSpinnerView bsv = findViewById(R.id.add_custom_token_dialog_tokenTypeSpinner);
-        bsv.setOptions(TokenManager.tokenManagers_token_types);
-        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
-            public void onNothingSelectedImpl(AdapterView<?> parent){}
-            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                chosenTokenManager = TokenManager.getTokenManagerFromTokenType(TokenManager.tokenManagers_token_types.get(pos));
-            }
-        });
-
-        if(TokenManager.tokenManagers_token_types.size() == 1) {
-            bsv.setVisibility(View.GONE);
-        }
+        TokenManager tokenManager = TokenManager.getTokenManagerFromTokenType(tokenType);
 
         PlainTextEditText E_ID = findViewById(R.id.add_custom_token_dialog_idEditText); // i.e. the contract address
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_token_dialog_nameEditText);
@@ -68,8 +60,8 @@ public class AddCustomTokenDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
-                    chosenTokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
-                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
+                    tokenManager.addCustomToken(((ReplaceCustomTokenDialog)dialog).newToken);
+                    PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                     ToastUtil.showToast("custom_token_added");
                     isComplete = true;
@@ -95,12 +87,12 @@ public class AddCustomTokenDialog extends BaseDialog {
                     int scale = new BigInteger(E_DECIMALS.getTextString()).intValue();
                     String id = key;
 
-                    Token oldToken = chosenTokenManager.custom_token_map.get(key);
-                    Token newToken = Token.buildToken(key, name, display_name, scale, chosenTokenManager.getTokenType(), id, chosenTokenManager.getCoinGeckoBlockchainID());
+                    Token oldToken = tokenManager.custom_token_map.get(key);
+                    Token newToken = Token.buildToken(key, name, display_name, scale, tokenManager.getTokenType(), id, tokenManager.getCoinGeckoBlockchainID());
 
                     if(oldToken == null) {
-                        chosenTokenManager.addCustomToken(newToken);
-                        PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(chosenTokenManager);
+                        tokenManager.addCustomToken(newToken);
+                        PersistentAppDataStore.getInstance(TokenManagerList.class).updateTokenManager(tokenManager);
 
                         ToastUtil.showToast("custom_token_added");
                         isComplete = true;

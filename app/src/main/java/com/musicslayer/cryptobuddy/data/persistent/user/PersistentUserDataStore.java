@@ -196,4 +196,24 @@ abstract public class PersistentUserDataStore {
 
         return isComplete;
     }
+
+    public static boolean resetAllStoredData(ArrayList<String> dataTypes) {
+        // Resets all stored persistent data in the app that matches the dataTypes.
+        boolean isComplete = true;
+
+        for(PersistentUserDataStore persistentUserDataStore : persistent_user_data_stores) {
+            try {
+                String key = persistentUserDataStore.getSharedPreferencesKey();
+                if(!dataTypes.contains(key)) { continue; }
+
+                persistentUserDataStore.resetAllData();
+            }
+            catch(Exception e) {
+                ThrowableUtil.processThrowable(e);
+                isComplete = false;
+            }
+        }
+
+        return isComplete;
+    }
 }

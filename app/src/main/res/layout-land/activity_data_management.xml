@@ -94,8 +94,8 @@
         android:id="@+id/data_management_tableLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/data_management_halfWayVertical">
+        app:layout_constraintStart_toStartOf="@id/data_management_halfWayHorizontal"
+        app:layout_constraintTop_toTopOf="@id/data_management_adLayout">
 
         <TableRow
             android:id="@+id/data_management_tableRow4"
@@ -114,10 +114,10 @@
     </TableLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/data_management_halfWayVertical"
+        android:id="@+id/data_management_halfWayHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

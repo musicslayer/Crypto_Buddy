@@ -50,28 +50,6 @@ public class FiatManagerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addCustomFiatDialogFragment = BaseDialogFragment.newInstance(AddCustomFiatDialog.class);
-        addCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((AddCustomFiatDialog)dialog).isComplete) {
-                    // It's easier to just update all of them.
-                    for(FiatManagerView fiatManagerView : fiatManagerViewArrayList) {
-                        fiatManagerView.updateLayout();
-                    }
-                }
-            }
-        });
-        addCustomFiatDialogFragment.restoreListeners(this, "add_custom_fiat");
-
-        Button B_CustomFiat = findViewById(R.id.fiat_manager_customFiatButton);
-        B_CustomFiat.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                addCustomFiatDialogFragment.show(FiatManagerActivity.this, "add_custom_fiat");
-            }
-        });
-
         updateLayout();
     }
 

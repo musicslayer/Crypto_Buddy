@@ -50,28 +50,6 @@ public class CoinManagerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment addCustomCoinDialogFragment = BaseDialogFragment.newInstance(AddCustomCoinDialog.class);
-        addCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((AddCustomCoinDialog)dialog).isComplete) {
-                    // It's easier to just update all of them.
-                    for(CoinManagerView coinManagerView : coinManagerViewArrayList) {
-                        coinManagerView.updateLayout();
-                    }
-                }
-            }
-        });
-        addCustomCoinDialogFragment.restoreListeners(this, "add_custom_coin");
-
-        Button B_CustomCoin = findViewById(R.id.coin_manager_customCoinButton);
-        B_CustomCoin.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                addCustomCoinDialogFragment.show(CoinManagerActivity.this, "add_custom_coin");
-            }
-        });
-
         updateLayout();
     }
 

@@ -4,31 +4,31 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
-import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
 import com.musicslayer.cryptobuddy.view.red.Int2EditText;
 import com.musicslayer.cryptobuddy.view.red.PlainTextEditText;
 
 import java.math.BigInteger;
 
 public class AddCustomFiatDialog extends BaseDialog {
-    public FiatManager chosenFiatManager;
+    public String fiatType;
 
-    public AddCustomFiatDialog(Activity activity) {
+    public AddCustomFiatDialog(Activity activity, String fiatType) {
         super(activity);
+        this.fiatType = fiatType;
     }
 
     public int getBaseViewID() {
@@ -38,6 +38,10 @@ public class AddCustomFiatDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_add_custom_fiat);
 
+        Toolbar toolbar = findViewById(R.id.add_custom_fiat_dialog_toolbar);
+        // TODO Use Subtitle instead to save space.
+        toolbar.setTitle("Add Custom " + fiatType + " Fiat");
+
         ImageButton helpButton = findViewById(R.id.add_custom_fiat_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             @Override
@@ -46,18 +50,7 @@ public class AddCustomFiatDialog extends BaseDialog {
             }
         });
 
-        BorderedSpinnerView bsv = findViewById(R.id.add_custom_fiat_dialog_fiatTypeSpinner);
-        bsv.setOptions(FiatManager.fiatManagers_fiat_types);
-        bsv.setOnItemSelectedListener(new CrashAdapterView.CrashOnItemSelectedListener(this.activity) {
-            public void onNothingSelectedImpl(AdapterView<?> parent){}
-            public void onItemSelectedImpl(AdapterView<?> parent, View view, int pos, long id) {
-                chosenFiatManager = FiatManager.getFiatManagerFromFiatType(FiatManager.fiatManagers_fiat_types.get(pos));
-            }
-        });
-
-        if(FiatManager.fiatManagers_fiat_types.size() == 1) {
-            bsv.setVisibility(View.GONE);
-        }
+        FiatManager fiatManager = FiatManager.getFiatManagerFromFiatType(fiatType);
 
         PlainTextEditText E_NAME = findViewById(R.id.add_custom_fiat_dialog_nameEditText);
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_fiat_dialog_symbolEditText);
@@ -67,8 +60,8 @@ public class AddCustomFiatDialog extends BaseDialog {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomFiatDialog)dialog).isComplete) {
-                    chosenFiatManager.addCustomFiat(((ReplaceCustomFiatDialog)dialog).newFiat);
-                    PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
+                    fiatManager.addCustomFiat(((ReplaceCustomFiatDialog)dialog).newFiat);
+                    PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(fiatManager);
 
                     ToastUtil.showToast("custom_fiat_added");
                     isComplete = true;
@@ -94,12 +87,12 @@ public class AddCustomFiatDialog extends BaseDialog {
 
                     String key = name;
 
-                    Fiat oldFiat = chosenFiatManager.custom_fiat_map.get(key);
-                    Fiat newFiat = Fiat.buildFiat(key, name, display_name, scale, chosenFiatManager.getFiatType());
+                    Fiat oldFiat = fiatManager.custom_fiat_map.get(key);
+                    Fiat newFiat = Fiat.buildFiat(key, name, display_name, scale, fiatManager.getFiatType());
 
                     if(oldFiat == null) {
-                        chosenFiatManager.addCustomFiat(newFiat);
-                        PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(chosenFiatManager);
+                        fiatManager.addCustomFiat(newFiat);
+                        PersistentAppDataStore.getInstance(FiatManagerList.class).updateFiatManager(fiatManager);
 
                         ToastUtil.showToast("custom_fiat_added");
                         isComplete = true;
