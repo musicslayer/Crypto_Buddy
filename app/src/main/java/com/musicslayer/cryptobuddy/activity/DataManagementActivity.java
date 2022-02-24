@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 
@@ -30,6 +31,7 @@ import com.musicslayer.cryptobuddy.json.JSONWithNull;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -75,6 +77,14 @@ public class DataManagementActivity extends BaseActivity {
                         updateLayout();
                     }
                 });
+            }
+        });
+
+        ImageButton helpButton = findViewById(R.id.data_management_helpButton);
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                HelpUtil.showHelp(DataManagementActivity.this, R.raw.help_data_management);
             }
         });
 

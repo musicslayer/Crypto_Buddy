@@ -1,0 +1,16 @@
+Manage persistent app data here. This includes settings, assets stored in the app's database, and portfolios.
+
+There are various methods of importing* and exporting* data:
+--> Using a file on your device
+--> Using the clipboard
+--> Using email attachments (export only)
+
+Individual types of data can be erased using "Delete Data". If you wish to completely wipe the app of all data, "Reset App" will make your app act like a new install.
+
+Lastly, please note that the following items will not be exported or imported:
+--> Hardcoded Fiats
+--> Hardcoded Coins
+--> Downloaded Tokens
+
+
+*Premium Feature (Requires In-app Purchase)

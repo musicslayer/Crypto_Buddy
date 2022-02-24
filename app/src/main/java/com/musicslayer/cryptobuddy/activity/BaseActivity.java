@@ -22,22 +22,22 @@ import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 
 abstract public class BaseActivity extends CrashActivity {
     // Needed when the current activity is different than the activity captured in a closure.
-    public static BaseActivity activity;
+    private static BaseActivity activity;
 
     abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getAdLayoutViewID();
-    //abstract public int getProgressViewID();
-
-    public int getProgressViewID() { return -1; }
+    abstract public int getProgressViewID();
 
     public static BaseActivity getCurrentActivity() {
         return activity;
     }
 
+    public static void setCurrentActivity(BaseActivity activity) {
+        BaseActivity.activity = activity;
+    }
+
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
-        activity = this;
-
         // In some situations (like manually removing a permission), the app may be "reset" and left in a bad state.
         // We need to exit the app and tell the user to restart.
         if(!App.isAppInitialized) {
@@ -62,18 +62,15 @@ abstract public class BaseActivity extends CrashActivity {
             }
         }
 
+        setCurrentActivity(this);
         AppearanceUtil.setAppearance(this);
 
         // By default, do nothing when a new purchase is made.
         InAppPurchase.setInAppPurchaseListener(null);
 
+        // On the first creation, reset all state.
         if(savedInstanceState == null) {
-            CallbackActivity.wasCallbackFired[0] = false;
-            CallbackActivity.lastIntent[0] = null;
-        }
-
-        // Clear state the first time each activity is created.
-        if(savedInstanceState == null) {
+            CallbackActivity.resetState();
             StateObj.resetState();
         }
 
