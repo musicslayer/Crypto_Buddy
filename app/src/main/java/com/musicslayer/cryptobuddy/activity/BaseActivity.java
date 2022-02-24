@@ -1,9 +1,9 @@
 package com.musicslayer.cryptobuddy.activity;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -12,6 +12,8 @@ import com.google.android.gms.ads.AdView;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashActivity;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
+import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.TransparentDialog;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
@@ -19,14 +21,23 @@ import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 
 abstract public class BaseActivity extends CrashActivity {
+    // Needed when the current activity is different than the activity captured in a closure.
+    public static BaseActivity activity;
+
     abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getAdLayoutViewID();
     //abstract public int getProgressViewID();
 
     public int getProgressViewID() { return -1; }
 
+    public static BaseActivity getCurrentActivity() {
+        return activity;
+    }
+
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
+        activity = this;
+
         // In some situations (like manually removing a permission), the app may be "reset" and left in a bad state.
         // We need to exit the app and tell the user to restart.
         if(!App.isAppInitialized) {
@@ -88,39 +99,58 @@ abstract public class BaseActivity extends CrashActivity {
         }
     }
 
-    public void runWithProgressIndicator(Runnable runnable) {
-        new Thread(new CrashRunnable(this) {
+    public void runWithProgressIndicator(Runnable startRunnable, Runnable finishRunnable) {
+        Thread run = new Thread(new CrashRunnable(this) {
             @Override
             public void runImpl() {
-                runnable.run();
+                startRunnable.run();
                 hideProgressIndicator();
+                runOnUiThread(finishRunnable);
             }
-        }).start();
+        });
 
         showProgressIndicator();
+        run.start();
     }
 
     private void showProgressIndicator() {
+        BaseDialogFragment.newInstance(TransparentDialog.class).show(this, "transparent");
+
         if(getProgressViewID() != -1) {
             runOnUiThread(new CrashRunnable(this) {
                 @Override
                 public void runImpl() {
-                    findViewById(getProgressViewID()).setVisibility(View.VISIBLE);
-                    Looper.loop();
+                    getCurrentActivity().findViewById(getProgressViewID()).setVisibility(View.VISIBLE);
                 }
             });
         }
     }
 
     private void hideProgressIndicator() {
+        BaseDialogFragment bdf = (BaseDialogFragment)BaseDialogFragment.getFragmentByTag(getCurrentActivity(), "transparent");
+        if(bdf != null) {
+            bdf.dismiss();
+        }
+
         if(getProgressViewID() != -1) {
             runOnUiThread(new CrashRunnable(this) {
                 @Override
                 public void runImpl() {
-                    findViewById(getProgressViewID()).setVisibility(View.INVISIBLE);
-                    Looper.loop();
+                    getCurrentActivity().findViewById(getProgressViewID()).setVisibility(View.INVISIBLE);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        bundle.putInt("progressVisibility", findViewById(getProgressViewID()).getVisibility());
+    }
+
+    @Override
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        if(bundle != null) {
+            findViewById(getProgressViewID()).setVisibility(bundle.getInt("progressVisibility"));
         }
     }
 }

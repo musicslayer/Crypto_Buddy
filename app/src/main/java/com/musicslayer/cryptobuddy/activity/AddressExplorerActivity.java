@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
@@ -305,9 +306,19 @@ public class AddressExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            String type = "Address";
-            StateObj.tableInfo = table.getInfo();
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressExplorerActivity.this, "feedback");
+            runWithProgressIndicator(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    StateObj.tableInfo = table.getInfo();
+                }
+            }, new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    String type = "Address";
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(getCurrentActivity(), "feedback");
+                }
+            });
+
             return true;
         }
 
@@ -316,6 +327,7 @@ public class AddressExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putBoolean("hasDiscrepancy", hasDiscrepancy);
@@ -325,6 +337,7 @@ public class AddressExplorerActivity extends BaseActivity {
     @Override
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");
