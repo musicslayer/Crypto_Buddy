@@ -121,7 +121,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Dat
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
-            editor.putString("transaction_portfolio" + i, DataBridge.cycleSerialization(serialString, TransactionPortfolio.class));
+            editor.putString("transaction_portfolio" + i, DataBridge.cycleSerialization(serialString, TransactionPortfolioObj.class));
         }
 
         editor.apply();
