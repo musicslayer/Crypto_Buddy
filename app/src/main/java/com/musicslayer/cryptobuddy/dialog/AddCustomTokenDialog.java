@@ -56,7 +56,9 @@ public class AddCustomTokenDialog extends BaseDialog {
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_token_dialog_symbolEditText);
         Int2EditText E_DECIMALS = findViewById(R.id.add_custom_token_dialog_decimalsEditText);
 
-        DialogInterface.OnDismissListener replaceCustomTokenDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        Token dummyToken = new Token("", "", "", 0, "", null);
+        BaseDialogFragment replaceCustomTokenDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomTokenDialog.class, dummyToken, dummyToken);
+        replaceCustomTokenDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomTokenDialog)dialog).isComplete) {
@@ -68,7 +70,8 @@ public class AddCustomTokenDialog extends BaseDialog {
                     dismiss();
                 }
             }
-        };
+        });
+        replaceCustomTokenDialogFragment.restoreListeners(this.activity, "replace_custom_token");
 
         Button B_Confirm = findViewById(R.id.add_custom_token_dialog_confirmButton);
         B_Confirm.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -100,17 +103,11 @@ public class AddCustomTokenDialog extends BaseDialog {
                     }
                     else {
                         // Token already exists, so ask user if they want to override it.
-                        BaseDialogFragment replaceCustomTokenDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomTokenDialog.class, oldToken, newToken);
-                        replaceCustomTokenDialogFragment.setOnDismissListener(replaceCustomTokenDialogFragmentListener);
+                        replaceCustomTokenDialogFragment.updateArguments(ReplaceCustomTokenDialog.class, oldToken, newToken);
                         replaceCustomTokenDialogFragment.show(AddCustomTokenDialog.this.activity, "replace_custom_token");
                     }
                 }
             }
         });
-
-        BaseDialogFragment replaceCustomTokenDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("replace_custom_token");
-        if (replaceCustomTokenDialogFragment2 != null) {
-            replaceCustomTokenDialogFragment2.setOnDismissListener(replaceCustomTokenDialogFragmentListener);
-        }
     }
 }

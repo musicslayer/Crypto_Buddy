@@ -56,7 +56,9 @@ public class AddCustomFiatDialog extends BaseDialog {
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_fiat_dialog_symbolEditText);
         Int2EditText E_DECIMALS = findViewById(R.id.add_custom_fiat_dialog_decimalsEditText);
 
-        OnDismissListener replaceCustomFiatDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        Fiat dummyFiat = new Fiat("", "", "", 0, "", null);
+        BaseDialogFragment replaceCustomFiatDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomFiatDialog.class, dummyFiat, dummyFiat);
+        replaceCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomFiatDialog)dialog).isComplete) {
@@ -68,7 +70,8 @@ public class AddCustomFiatDialog extends BaseDialog {
                     dismiss();
                 }
             }
-        };
+        });
+        replaceCustomFiatDialogFragment.restoreListeners(this.activity, "replace_custom_fiat");
 
         Button B_Confirm = findViewById(R.id.add_custom_fiat_dialog_confirmButton);
         B_Confirm.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -100,17 +103,11 @@ public class AddCustomFiatDialog extends BaseDialog {
                     }
                     else {
                         // Fiat already exists, so ask user if they want to override it.
-                        BaseDialogFragment replaceCustomFiatDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomFiatDialog.class, oldFiat, newFiat);
-                        replaceCustomFiatDialogFragment.setOnDismissListener(replaceCustomFiatDialogFragmentListener);
+                        replaceCustomFiatDialogFragment.updateArguments(ReplaceCustomFiatDialog.class, oldFiat, newFiat);
                         replaceCustomFiatDialogFragment.show(AddCustomFiatDialog.this.activity, "replace_custom_fiat");
                     }
                 }
             }
         });
-
-        BaseDialogFragment replaceCustomFiatDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("replace_custom_fiat");
-        if (replaceCustomFiatDialogFragment2 != null) {
-            replaceCustomFiatDialogFragment2.setOnDismissListener(replaceCustomFiatDialogFragmentListener);
-        }
     }
 }

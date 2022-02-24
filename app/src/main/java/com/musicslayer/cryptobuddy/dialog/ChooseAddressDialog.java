@@ -118,7 +118,8 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        DialogInterface.OnDismissListener chooseCryptoDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class, new ArrayList<CryptoAddress>());
+        chooseCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ChooseCryptoDialog)dialog).isComplete) {
@@ -130,7 +131,8 @@ public class ChooseAddressDialog extends BaseDialog {
                     dismiss();
                 }
             }
-        };
+        });
+        chooseCryptoDialogFragment.restoreListeners(this.activity, "choose");
 
         Button B_CONFIRM = findViewById(R.id.choose_address_dialog_confirmButton);
         B_CONFIRM.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -158,17 +160,11 @@ public class ChooseAddressDialog extends BaseDialog {
                     dismiss();
                 }
                 else {
-                    BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class, cryptoAddressArrayList);
-                    chooseCryptoDialogFragment.setOnDismissListener(chooseCryptoDialogFragmentListener);
+                    chooseCryptoDialogFragment.updateArguments(ChooseCryptoDialog.class, cryptoAddressArrayList);
                     chooseCryptoDialogFragment.show(ChooseAddressDialog.this.activity, "choose");
                 }
             }
         });
-
-        BaseDialogFragment chooseCryptoDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("choose");
-        if (chooseCryptoDialogFragment2 != null) {
-            chooseCryptoDialogFragment2.setOnDismissListener(chooseCryptoDialogFragmentListener);
-        }
 
         updateLayout();
     }

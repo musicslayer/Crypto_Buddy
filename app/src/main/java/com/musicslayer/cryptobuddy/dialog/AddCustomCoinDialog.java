@@ -55,7 +55,9 @@ public class AddCustomCoinDialog extends BaseDialog {
         PlainTextEditText E_SYMBOL = findViewById(R.id.add_custom_coin_dialog_symbolEditText);
         Int2EditText E_DECIMALS = findViewById(R.id.add_custom_coin_dialog_decimalsEditText);
 
-        OnDismissListener replaceCustomCoinDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+        Coin dummyCoin = new Coin("", "", "", 0, "", null);
+        BaseDialogFragment replaceCustomCoinDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomCoinDialog.class, dummyCoin, dummyCoin);
+        replaceCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((ReplaceCustomCoinDialog)dialog).isComplete) {
@@ -67,7 +69,8 @@ public class AddCustomCoinDialog extends BaseDialog {
                     dismiss();
                 }
             }
-        };
+        });
+        replaceCustomCoinDialogFragment.restoreListeners(this.activity, "replace_custom_coin");
 
         Button B_Confirm = findViewById(R.id.add_custom_coin_dialog_confirmButton);
         B_Confirm.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
@@ -102,17 +105,11 @@ public class AddCustomCoinDialog extends BaseDialog {
                     }
                     else {
                         // Coin already exists, so ask user if they want to override it.
-                        BaseDialogFragment replaceCustomCoinDialogFragment = BaseDialogFragment.newInstance(ReplaceCustomCoinDialog.class, oldCoin, newCoin);
-                        replaceCustomCoinDialogFragment.setOnDismissListener(replaceCustomCoinDialogFragmentListener);
+                        replaceCustomCoinDialogFragment.updateArguments(ReplaceCustomCoinDialog.class, oldCoin, newCoin);
                         replaceCustomCoinDialogFragment.show(AddCustomCoinDialog.this.activity, "replace_custom_coin");
                     }
                 }
             }
         });
-
-        BaseDialogFragment replaceCustomCoinDialogFragment2 = (BaseDialogFragment) this.activity.getSupportFragmentManager().findFragmentByTag("replace_custom_coin");
-        if (replaceCustomCoinDialogFragment2 != null) {
-            replaceCustomCoinDialogFragment2.setOnDismissListener(replaceCustomCoinDialogFragmentListener);
-        }
     }
 }
