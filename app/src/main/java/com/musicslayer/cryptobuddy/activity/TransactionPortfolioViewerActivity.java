@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.RenamePortfolioDialog;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -31,6 +32,7 @@ import java.util.Comparator;
 
 public class TransactionPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
+    String currentRenamePortfolioName;
 
     @Override
     public int getAdLayoutViewID() {
@@ -104,19 +106,41 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        ArrayList<String> portfolioNames = new ArrayList<>(TransactionPortfolio.settings_transaction_portfolio_names);
-        Collections.sort(portfolioNames, Comparator.comparing(String::toLowerCase));
+        BaseDialogFragment renamePortfolioDialogFragment = BaseDialogFragment.newInstance(RenamePortfolioDialog.class, "");
+        renamePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((RenamePortfolioDialog)dialog).isComplete) {
+                    String newName = ((RenamePortfolioDialog)dialog).user_NEWNAME;
 
-        for(String transactionPortfolioObjName : portfolioNames) {
+                    if(newName.equals(currentRenamePortfolioName)) {
+                        ToastUtil.showToast("portfolio_name_cannot_be_same");
+                    }
+                    else if(TransactionPortfolio.isSaved(newName)) {
+                        ToastUtil.showToast("portfolio_name_used");
+                    }
+                    else {
+                        PersistentUserDataStore.getInstance(TransactionPortfolio.class).renamePortfolio(currentRenamePortfolioName, newName);
+                        updateLayout();
+                    }
+                }
+            }
+        });
+        renamePortfolioDialogFragment.restoreListeners(this, "rename");
+
+        ArrayList<String> transactionPortfolioNames = new ArrayList<>(TransactionPortfolio.settings_transaction_portfolio_names);
+        Collections.sort(transactionPortfolioNames, Comparator.comparing(String::toLowerCase));
+
+        for(String transactionPortfolioName : transactionPortfolioNames) {
             TableRow TR = new TableRow(TransactionPortfolioViewerActivity.this);
             AppCompatButton B = new AppCompatButton(TransactionPortfolioViewerActivity.this);
-            B.setText(transactionPortfolioObjName);
+            B.setText(transactionPortfolioName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(TransactionPortfolioViewerActivity.this, TransactionPortfolioExplorerActivity.class);
-                    intent.putExtra("TransactionPortfolioName", transactionPortfolioObjName);
+                    intent.putExtra("TransactionPortfolioName", transactionPortfolioName);
 
                     startActivity(intent);
                     finish();
@@ -129,8 +153,20 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = transactionPortfolioObjName;
+                    currentDeletePortfolioName = transactionPortfolioName;
                     confirmDeletePortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "delete");
+                }
+            });
+
+            AppCompatButton B_RENAME = new AppCompatButton(TransactionPortfolioViewerActivity.this);
+            B_RENAME.setText("Rename");
+            B_RENAME.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_edit_24, 0, 0, 0);
+            B_RENAME.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    currentRenamePortfolioName = transactionPortfolioName;
+                    renamePortfolioDialogFragment.updateArguments(RenamePortfolioDialog.class, transactionPortfolioName);
+                    renamePortfolioDialogFragment.show(TransactionPortfolioViewerActivity.this, "rename");
                 }
             });
 
@@ -139,19 +175,22 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
 
             TR.addView(B);
             TR.addView(B_DELETE, TRP);
+            TR.addView(B_RENAME);
             table.addView(TR);
         }
     }
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("PortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentDeletePortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentRenamePortfolioName", currentRenamePortfolioName);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            currentDeletePortfolioName = bundle.getString("PortfolioName");
+            currentDeletePortfolioName = bundle.getString("currentDeletePortfolioName");
+            currentRenamePortfolioName = bundle.getString("currentRenamePortfolioName");
         }
     }
 }

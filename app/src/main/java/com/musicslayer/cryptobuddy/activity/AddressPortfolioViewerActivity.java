@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.dialog.ConfirmDeletePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.dialog.RenamePortfolioDialog;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -31,6 +32,7 @@ import java.util.Comparator;
 
 public class AddressPortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
+    String currentRenamePortfolioName;
 
     @Override
     public int getAdLayoutViewID() {
@@ -104,18 +106,40 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        ArrayList<String> portfolioNames = new ArrayList<>(AddressPortfolio.settings_address_portfolio_names);
-        Collections.sort(portfolioNames, Comparator.comparing(String::toLowerCase));
+        BaseDialogFragment renamePortfolioDialogFragment = BaseDialogFragment.newInstance(RenamePortfolioDialog.class, "");
+        renamePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((RenamePortfolioDialog)dialog).isComplete) {
+                    String newName = ((RenamePortfolioDialog)dialog).user_NEWNAME;
 
-        for(String addressPortfolioObjName : portfolioNames) {
+                    if(newName.equals(currentRenamePortfolioName)) {
+                        ToastUtil.showToast("portfolio_name_cannot_be_same");
+                    }
+                    else if(AddressPortfolio.isSaved(newName)) {
+                        ToastUtil.showToast("portfolio_name_used");
+                    }
+                    else {
+                        PersistentUserDataStore.getInstance(AddressPortfolio.class).renamePortfolio(currentRenamePortfolioName, newName);
+                        updateLayout();
+                    }
+                }
+            }
+        });
+        renamePortfolioDialogFragment.restoreListeners(this, "rename");
+
+        ArrayList<String> addressPortfolioNames = new ArrayList<>(AddressPortfolio.settings_address_portfolio_names);
+        Collections.sort(addressPortfolioNames, Comparator.comparing(String::toLowerCase));
+
+        for(String addressPortfolioName : addressPortfolioNames) {
             AppCompatButton B = new AppCompatButton(AddressPortfolioViewerActivity.this);
-            B.setText(addressPortfolioObjName);
+            B.setText(addressPortfolioName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(AddressPortfolioViewerActivity.this, AddressPortfolioExplorerActivity.class);
-                    intent.putExtra("AddressPortfolioName",  addressPortfolioObjName);
+                    intent.putExtra("AddressPortfolioName",  addressPortfolioName);
 
                     startActivity(intent);
                     finish();
@@ -128,8 +152,20 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = addressPortfolioObjName;
+                    currentDeletePortfolioName = addressPortfolioName;
                     confirmDeletePortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "delete");
+                }
+            });
+
+            AppCompatButton B_RENAME = new AppCompatButton(AddressPortfolioViewerActivity.this);
+            B_RENAME.setText("Rename");
+            B_RENAME.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_edit_24, 0, 0, 0);
+            B_RENAME.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    currentRenamePortfolioName = addressPortfolioName;
+                    renamePortfolioDialogFragment.updateArguments(RenamePortfolioDialog.class, addressPortfolioName);
+                    renamePortfolioDialogFragment.show(AddressPortfolioViewerActivity.this, "rename");
                 }
             });
 
@@ -139,19 +175,22 @@ public class AddressPortfolioViewerActivity extends BaseActivity {
             TableRow TR = new TableRow(AddressPortfolioViewerActivity.this);
             TR.addView(B);
             TR.addView(B_DELETE, TRP);
+            TR.addView(B_RENAME);
             table.addView(TR);
         }
     }
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("PortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentDeletePortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentRenamePortfolioName", currentRenamePortfolioName);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            currentDeletePortfolioName = bundle.getString("PortfolioName");
+            currentDeletePortfolioName = bundle.getString("currentDeletePortfolioName");
+            currentRenamePortfolioName = bundle.getString("currentRenamePortfolioName");
         }
     }
 }

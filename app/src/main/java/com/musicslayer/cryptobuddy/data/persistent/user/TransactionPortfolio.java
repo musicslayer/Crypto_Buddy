@@ -85,12 +85,22 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Dat
         editor.apply();
     }
 
+    public void renamePortfolio(String transactionPortfolioObjOldName, String transactionPortfolioObjNewName) {
+        TransactionPortfolioObj transactionPortfolioObj = getFromName(transactionPortfolioObjOldName);
+        transactionPortfolioObj.name = transactionPortfolioObjNewName;
+
+        int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObjOldName);
+        settings_transaction_portfolio_names.set(idx, transactionPortfolioObjNewName);
+
+        updatePortfolio(transactionPortfolioObj);
+    }
+
     public void updatePortfolio(TransactionPortfolioObj transactionPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // We only need to update the portfolio object because the name can never change.
         int idx = settings_transaction_portfolio_names.indexOf(transactionPortfolioObj.name);
+        editor.putString("transaction_portfolio_names" + idx, transactionPortfolioObj.name);
         editor.putString("transaction_portfolio" + idx, DataBridge.serialize(transactionPortfolioObj, TransactionPortfolioObj.class));
 
         editor.apply();

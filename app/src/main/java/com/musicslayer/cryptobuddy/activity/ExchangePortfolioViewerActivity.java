@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.dialog.CreatePortfolioDialog;
 import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolio;
 import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.dialog.RenamePortfolioDialog;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
@@ -31,6 +32,7 @@ import java.util.Comparator;
 
 public class ExchangePortfolioViewerActivity extends BaseActivity {
     String currentDeletePortfolioName;
+    String currentRenamePortfolioName;
 
     @Override
     public int getAdLayoutViewID() {
@@ -104,18 +106,40 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
         });
         confirmDeletePortfolioDialogFragment.restoreListeners(this, "delete");
 
-        ArrayList<String> portfolioNames = new ArrayList<>(ExchangePortfolio.settings_exchange_portfolio_names);
-        Collections.sort(portfolioNames, Comparator.comparing(String::toLowerCase));
+        BaseDialogFragment renamePortfolioDialogFragment = BaseDialogFragment.newInstance(RenamePortfolioDialog.class, "");
+        renamePortfolioDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((RenamePortfolioDialog)dialog).isComplete) {
+                    String newName = ((RenamePortfolioDialog)dialog).user_NEWNAME;
 
-        for(String exchangePortfolioObjName : portfolioNames) {
+                    if(newName.equals(currentRenamePortfolioName)) {
+                        ToastUtil.showToast("portfolio_name_cannot_be_same");
+                    }
+                    else if(ExchangePortfolio.isSaved(newName)) {
+                        ToastUtil.showToast("portfolio_name_used");
+                    }
+                    else {
+                        PersistentUserDataStore.getInstance(ExchangePortfolio.class).renamePortfolio(currentRenamePortfolioName, newName);
+                        updateLayout();
+                    }
+                }
+            }
+        });
+        renamePortfolioDialogFragment.restoreListeners(this, "rename");
+
+        ArrayList<String> exchangePortfolioNames = new ArrayList<>(ExchangePortfolio.settings_exchange_portfolio_names);
+        Collections.sort(exchangePortfolioNames, Comparator.comparing(String::toLowerCase));
+
+        for(String exchangePortfolioName : exchangePortfolioNames) {
             AppCompatButton B = new AppCompatButton(ExchangePortfolioViewerActivity.this);
-            B.setText(exchangePortfolioObjName);
+            B.setText(exchangePortfolioName);
             B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
             B.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
                     Intent intent = new Intent(ExchangePortfolioViewerActivity.this, ExchangePortfolioExplorerActivity.class);
-                    intent.putExtra("ExchangePortfolioName",  exchangePortfolioObjName);
+                    intent.putExtra("ExchangePortfolioName",  exchangePortfolioName);
 
                     startActivity(intent);
                     finish();
@@ -128,8 +152,20 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this) {
                 @Override
                 public void onClickImpl(View view) {
-                    currentDeletePortfolioName = exchangePortfolioObjName;
+                    currentDeletePortfolioName = exchangePortfolioName;
                     confirmDeletePortfolioDialogFragment.show(ExchangePortfolioViewerActivity.this, "delete");
+                }
+            });
+
+            AppCompatButton B_RENAME = new AppCompatButton(ExchangePortfolioViewerActivity.this);
+            B_RENAME.setText("Rename");
+            B_RENAME.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_edit_24, 0, 0, 0);
+            B_RENAME.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+                @Override
+                public void onClickImpl(View view) {
+                    currentRenamePortfolioName = exchangePortfolioName;
+                    renamePortfolioDialogFragment.updateArguments(RenamePortfolioDialog.class, exchangePortfolioName);
+                    renamePortfolioDialogFragment.show(ExchangePortfolioViewerActivity.this, "rename");
                 }
             });
 
@@ -139,19 +175,22 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
             TableRow TR = new TableRow(ExchangePortfolioViewerActivity.this);
             TR.addView(B);
             TR.addView(B_DELETE, TRP);
+            TR.addView(B_RENAME);
             table.addView(TR);
         }
     }
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putString("PortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentDeletePortfolioName", currentDeletePortfolioName);
+        bundle.putString("currentRenamePortfolioName", currentRenamePortfolioName);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            currentDeletePortfolioName = bundle.getString("PortfolioName");
+            currentDeletePortfolioName = bundle.getString("currentDeletePortfolioName");
+            currentRenamePortfolioName = bundle.getString("currentRenamePortfolioName");
         }
     }
 }

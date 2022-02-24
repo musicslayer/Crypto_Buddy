@@ -85,12 +85,22 @@ public class ExchangePortfolio extends PersistentUserDataStore implements DataBr
         editor.apply();
     }
 
+    public void renamePortfolio(String exchangePortfolioObjOldName, String exchangePortfolioObjNewName) {
+        ExchangePortfolioObj exchangePortfolioObj = getFromName(exchangePortfolioObjOldName);
+        exchangePortfolioObj.name = exchangePortfolioObjNewName;
+
+        int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObjOldName);
+        settings_exchange_portfolio_names.set(idx, exchangePortfolioObjNewName);
+
+        updatePortfolio(exchangePortfolioObj);
+    }
+
     public void updatePortfolio(ExchangePortfolioObj exchangePortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // We only need to update the portfolio object because the name can never change.
         int idx = settings_exchange_portfolio_names.indexOf(exchangePortfolioObj.name);
+        editor.putString("exchange_portfolio_names" + idx, exchangePortfolioObj.name);
         editor.putString("exchange_portfolio" + idx, DataBridge.serialize(exchangePortfolioObj, ExchangePortfolioObj.class));
 
         editor.apply();

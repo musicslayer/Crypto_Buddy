@@ -85,12 +85,22 @@ public class AddressPortfolio extends PersistentUserDataStore implements DataBri
         editor.apply();
     }
 
+    public void renamePortfolio(String addressPortfolioObjOldName, String addressPortfolioObjNewName) {
+        AddressPortfolioObj addressPortfolioObj = getFromName(addressPortfolioObjOldName);
+        addressPortfolioObj.name = addressPortfolioObjNewName;
+
+        int idx = settings_address_portfolio_names.indexOf(addressPortfolioObjOldName);
+        settings_address_portfolio_names.set(idx, addressPortfolioObjNewName);
+
+        updatePortfolio(addressPortfolioObj);
+    }
+
     public void updatePortfolio(AddressPortfolioObj addressPortfolioObj) {
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // We only need to update the portfolio object because the name can never change.
         int idx = settings_address_portfolio_names.indexOf(addressPortfolioObj.name);
+        editor.putString("address_portfolio_names" + idx, addressPortfolioObj.name);
         editor.putString("address_portfolio" + idx, DataBridge.serialize(addressPortfolioObj, AddressPortfolioObj.class));
 
         editor.apply();

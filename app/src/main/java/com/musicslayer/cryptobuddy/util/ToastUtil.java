@@ -57,6 +57,7 @@ public class ToastUtil {
         // Portfolios
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", duration));
         toastMap.put("exchange_in_portfolio", Toast.makeText(context, "This exchange is already in the portfolio.", duration));
+        toastMap.put("portfolio_name_cannot_be_same", Toast.makeText(context, "The new name must be different than the current name.", duration));
         toastMap.put("portfolio_name_used", Toast.makeText(context, "A portfolio with this name already exists.", duration));
 
         // Email
