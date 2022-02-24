@@ -39,8 +39,7 @@ public class AddCustomFiatDialog extends BaseDialog {
         setContentView(R.layout.dialog_add_custom_fiat);
 
         Toolbar toolbar = findViewById(R.id.add_custom_fiat_dialog_toolbar);
-        // TODO Use Subtitle instead to save space.
-        toolbar.setTitle("Add Custom " + fiatType + " Fiat");
+        toolbar.setSubtitle("Type = " + fiatType);
 
         ImageButton helpButton = findViewById(R.id.add_custom_fiat_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

@@ -41,7 +41,7 @@ public class ConfirmDeleteTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_delete_tokens);
 
         Toolbar toolbar = findViewById(R.id.confirm_delete_tokens_dialog_toolbar);
-        toolbar.setTitle("Delete " + tokenType + " Tokens?");
+        toolbar.setSubtitle("Type = " + tokenType);
 
         ConfirmationView C = findViewById(R.id.confirm_delete_tokens_dialog_confirmationView);
         if("All".equals(tokenType)) {

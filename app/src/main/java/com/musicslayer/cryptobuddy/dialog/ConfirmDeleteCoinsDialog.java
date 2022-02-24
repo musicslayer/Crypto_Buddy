@@ -41,7 +41,7 @@ public class ConfirmDeleteCoinsDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_delete_coins);
 
         Toolbar toolbar = findViewById(R.id.confirm_delete_coins_dialog_toolbar);
-        toolbar.setTitle("Delete " + coinType + " Coins?");
+        toolbar.setSubtitle("Type = " + coinType);
 
         ConfirmationView C = findViewById(R.id.confirm_delete_coins_dialog_confirmationView);
         if("All".equals(coinType)) {

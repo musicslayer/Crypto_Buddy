@@ -39,7 +39,7 @@ public class AddCustomCoinDialog extends BaseDialog {
         setContentView(R.layout.dialog_add_custom_coin);
 
         Toolbar toolbar = findViewById(R.id.add_custom_coin_dialog_toolbar);
-        toolbar.setTitle("Add Custom " + coinType + " Coin");
+        toolbar.setSubtitle("Type = " + coinType);
 
         ImageButton helpButton = findViewById(R.id.add_custom_coin_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

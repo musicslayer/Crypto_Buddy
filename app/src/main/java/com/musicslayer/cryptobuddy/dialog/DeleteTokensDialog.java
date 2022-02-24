@@ -43,7 +43,7 @@ public class DeleteTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_delete_tokens);
 
         Toolbar toolbar = findViewById(R.id.delete_tokens_dialog_toolbar);
-        toolbar.setTitle("Delete " + tokenType + " Tokens");
+        toolbar.setSubtitle("Type = " + tokenType);
 
         Button B_DELETE = findViewById(R.id.delete_tokens_dialog_deleteButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

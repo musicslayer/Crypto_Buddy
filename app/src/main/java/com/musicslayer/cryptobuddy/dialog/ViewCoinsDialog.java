@@ -39,7 +39,7 @@ public class ViewCoinsDialog extends BaseDialog {
         setContentView(R.layout.dialog_view_coins);
 
         Toolbar toolbar = findViewById(R.id.view_coins_dialog_toolbar);
-        toolbar.setTitle("View " + coinType + " Coins");
+        toolbar.setSubtitle("Type = " + coinType);
 
         RadioGroup radioGroup = findViewById(R.id.view_coins_dialog_radioGroup);
         RadioButton[] rb = new RadioButton[3];

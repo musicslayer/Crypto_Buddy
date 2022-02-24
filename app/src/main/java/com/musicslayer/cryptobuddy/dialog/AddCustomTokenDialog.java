@@ -39,7 +39,7 @@ public class AddCustomTokenDialog extends BaseDialog {
         setContentView(R.layout.dialog_add_custom_token);
 
         Toolbar toolbar = findViewById(R.id.add_custom_token_dialog_toolbar);
-        toolbar.setTitle("Add Custom " + tokenType + " Token");
+        toolbar.setSubtitle("Type = " + tokenType);
 
         ImageButton helpButton = findViewById(R.id.add_custom_token_dialog_helpButton);
         helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

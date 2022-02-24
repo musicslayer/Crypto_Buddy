@@ -41,7 +41,7 @@ public class DeleteCoinsDialog extends BaseDialog {
         setContentView(R.layout.dialog_delete_coins);
 
         Toolbar toolbar = findViewById(R.id.delete_coins_dialog_toolbar);
-        toolbar.setTitle("Delete " + coinType + " Coins");
+        toolbar.setSubtitle("Type = " + coinType);
 
         Button B_DELETE = findViewById(R.id.delete_coins_dialog_deleteButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

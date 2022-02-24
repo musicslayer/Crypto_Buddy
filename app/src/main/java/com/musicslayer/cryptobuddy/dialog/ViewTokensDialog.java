@@ -44,7 +44,7 @@ public class ViewTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_view_tokens);
 
         Toolbar toolbar = findViewById(R.id.view_tokens_dialog_toolbar);
-        toolbar.setTitle("View " + tokenType + " Tokens");
+        toolbar.setSubtitle("Type = " + tokenType);
 
         RadioGroup radioGroup = findViewById(R.id.view_tokens_dialog_radioGroup);
         RadioButton[] rb = new RadioButton[3];

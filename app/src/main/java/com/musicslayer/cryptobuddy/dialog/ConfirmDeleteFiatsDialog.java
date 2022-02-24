@@ -41,7 +41,7 @@ public class ConfirmDeleteFiatsDialog extends BaseDialog {
         setContentView(R.layout.dialog_confirm_delete_fiats);
 
         Toolbar toolbar = findViewById(R.id.confirm_delete_fiats_dialog_toolbar);
-        toolbar.setTitle("Delete " + fiatType + " Fiats?");
+        toolbar.setSubtitle("Type = " + fiatType);
 
         ConfirmationView C = findViewById(R.id.confirm_delete_fiats_dialog_confirmationView);
         if("All".equals(fiatType)) {

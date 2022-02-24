@@ -27,7 +27,7 @@ public class DownloadTokensDialog extends BaseDialog {
         setContentView(R.layout.dialog_download_tokens);
 
         Toolbar toolbar = findViewById(R.id.download_tokens_dialog_toolbar);
-        toolbar.setTitle("Download " + tokenType + " Tokens");
+        toolbar.setSubtitle("Type = " + tokenType);
 
         Button B_FIXED = findViewById(R.id.download_tokens_dialog_fixedButton);
         B_FIXED.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {

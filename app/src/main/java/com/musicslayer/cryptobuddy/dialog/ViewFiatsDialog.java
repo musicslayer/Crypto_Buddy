@@ -39,7 +39,7 @@ public class ViewFiatsDialog extends BaseDialog {
         setContentView(R.layout.dialog_view_fiats);
 
         Toolbar toolbar = findViewById(R.id.view_fiats_dialog_toolbar);
-        toolbar.setTitle("View " + fiatType + " Fiats");
+        toolbar.setSubtitle("Type = " + fiatType);
 
         RadioGroup radioGroup = findViewById(R.id.view_fiats_dialog_radioGroup);
         RadioButton[] rb = new RadioButton[3];

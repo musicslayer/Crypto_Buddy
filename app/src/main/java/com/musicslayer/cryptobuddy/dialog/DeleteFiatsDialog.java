@@ -41,7 +41,7 @@ public class DeleteFiatsDialog extends BaseDialog {
         setContentView(R.layout.dialog_delete_fiats);
 
         Toolbar toolbar = findViewById(R.id.delete_fiats_dialog_toolbar);
-        toolbar.setTitle("Delete " + fiatType + " Fiats");
+        toolbar.setSubtitle("Type = " + fiatType);
 
         Button B_DELETE = findViewById(R.id.delete_fiats_dialog_deleteButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
