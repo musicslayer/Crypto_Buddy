@@ -173,7 +173,8 @@ public class DataManagementActivity extends BaseActivity {
         });
         importFile_importData_progressDialogFragment.restoreListeners(this, "progress_import_file_import_data");
 
-        DialogInterface.OnDismissListener importFile_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment importFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, new ArrayList<String>());
+        importFile_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
@@ -181,7 +182,8 @@ public class DataManagementActivity extends BaseActivity {
                     importFile_importData_progressDialogFragment.show(DataManagementActivity.this, "progress_import_file_import_data");
                 }
             }
-        };
+        });
+        importFile_selectDataTypesDialogFragment.restoreListeners(this, "select_import_file");
 
         ProgressDialogFragment importFile_readFile_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         importFile_readFile_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
@@ -224,8 +226,7 @@ public class DataManagementActivity extends BaseActivity {
                 }
                 else {
                     // Launch dialog to ask user which data types to import.
-                    BaseDialogFragment importFile_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
-                    importFile_selectDataTypesDialogFragment.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
+                    importFile_selectDataTypesDialogFragment.updateArguments(SelectDataTypesDialog.class, dataTypes);
                     importFile_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_file");
                 }
             }
@@ -259,11 +260,6 @@ public class DataManagementActivity extends BaseActivity {
                 }
             }
         });
-
-        BaseDialogFragment importFile_selectDataTypesDialogFragment2 = (BaseDialogFragment) this.getSupportFragmentManager().findFragmentByTag("select_import_file");
-        if (importFile_selectDataTypesDialogFragment2 != null) {
-            importFile_selectDataTypesDialogFragment2.setOnDismissListener(importFile_selectDataTypesDialogFragmentListener);
-        }
 
         // Export to Clipboard
         ProgressDialogFragment exportClipboard_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
@@ -330,7 +326,8 @@ public class DataManagementActivity extends BaseActivity {
         });
         importClipboard_importData_progressDialogFragment.restoreListeners(this, "progress_import_clipboard_import_data");
 
-        DialogInterface.OnDismissListener importClipboard_selectDataTypesDialogFragmentListener = new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment importClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, new ArrayList<String>());
+        importClipboard_selectDataTypesDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((SelectDataTypesDialog)dialog).isComplete) {
@@ -338,7 +335,8 @@ public class DataManagementActivity extends BaseActivity {
                     importClipboard_importData_progressDialogFragment.show(DataManagementActivity.this, "progress_import_clipboard_import_data");
                 }
             }
-        };
+        });
+        importClipboard_selectDataTypesDialogFragment.restoreListeners(this, "select_import_clipboard");
 
         Button B_IMPORT_CLIPBOARD = findViewById(R.id.data_management_importClipboardButton);
         B_IMPORT_CLIPBOARD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -361,8 +359,7 @@ public class DataManagementActivity extends BaseActivity {
                     }
 
                     // Launch dialog to ask user which data types to import.
-                    BaseDialogFragment importClipboard_selectDataTypesDialogFragment = BaseDialogFragment.newInstance(SelectDataTypesDialog.class, dataTypes);
-                    importClipboard_selectDataTypesDialogFragment.setOnDismissListener(importClipboard_selectDataTypesDialogFragmentListener);
+                    importClipboard_selectDataTypesDialogFragment.updateArguments(SelectDataTypesDialog.class, dataTypes);
                     importClipboard_selectDataTypesDialogFragment.show(DataManagementActivity.this, "select_import_clipboard");
                 }
                 else {
@@ -370,11 +367,6 @@ public class DataManagementActivity extends BaseActivity {
                 }
             }
         });
-
-        BaseDialogFragment importClipboard_selectDataTypesDialogFragment2 = (BaseDialogFragment) this.getSupportFragmentManager().findFragmentByTag("select_import_clipboard");
-        if (importClipboard_selectDataTypesDialogFragment2 != null) {
-            importClipboard_selectDataTypesDialogFragment2.setOnDismissListener(importClipboard_selectDataTypesDialogFragmentListener);
-        }
 
         // Export to Email
         ProgressDialogFragment exportEmail_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);

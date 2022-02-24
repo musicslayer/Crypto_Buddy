@@ -28,7 +28,7 @@ public class ReplaceCustomFiatDialog extends BaseDialog {
         setContentView(R.layout.dialog_replace_custom_fiat);
 
         TextView T = findViewById(R.id.replace_custom_fiat_dialog_textView);
-        String text = "A custom fiat with this name already exists. Would you like to replace it?\n\n" +
+        String text = "A custom fiat with this symbol already exists. Would you like to replace it?\n\n" +
             "Existing Fiat:\n" +
             "  Name = " + oldFiat.getDisplayName() + "\n" +
             "  Symbol = " + oldFiat.getName() + "\n" +

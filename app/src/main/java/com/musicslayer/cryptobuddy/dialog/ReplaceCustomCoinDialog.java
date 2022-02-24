@@ -28,7 +28,7 @@ public class ReplaceCustomCoinDialog extends BaseDialog {
         setContentView(R.layout.dialog_replace_custom_coin);
 
         TextView T = findViewById(R.id.replace_custom_coin_dialog_textView);
-        String text = "A custom coin with this name already exists. Would you like to replace it?\n\n" +
+        String text = "A custom coin with this symbol already exists. Would you like to replace it?\n\n" +
             "Existing Coin:\n" +
             "  Name = " + oldCoin.getDisplayName() + "\n" +
             "  Symbol = " + oldCoin.getName() + "\n" +
