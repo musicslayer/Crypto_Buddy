@@ -31,10 +31,6 @@ public class AssetQuantity implements LegacySerialization.SerializableToJSON, Le
         this.asset = asset;
     }
 
-    public void setLoss() {
-        this.assetAmount.isLoss = true;
-    }
-
     public boolean hasSlidingScale() {
         return asset instanceof Fiat || (asset.getScale() == 0 && (asset instanceof UnknownCoin || asset instanceof UnknownToken));
     }

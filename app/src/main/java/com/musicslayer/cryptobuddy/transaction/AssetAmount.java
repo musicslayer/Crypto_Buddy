@@ -42,6 +42,14 @@ public class AssetAmount implements LegacySerialization.SerializableToJSON, Lega
         return infinityAssetAmount;
     }
 
+    public boolean isNegativeValue() {
+        // Every asset falls into exactly one category below:
+        // 1. Assets with strictly positive values that may have the "isLoss" flag set.
+        // 2. Assets with isLoss strictly false but values that can be positive or negative.
+        // This method returns whether the amount is negative, either by virtue of its value or its isLoss flag.
+        return isLoss || amount.compareTo(BigDecimal.ZERO) < 0;
+    }
+
     @NonNull
     public String toScaledString(int scale, boolean hasSlidingScale) {
         // Return a scaled string without any minus sign or Locale formatting.
@@ -107,7 +115,7 @@ public class AssetAmount implements LegacySerialization.SerializableToJSON, Lega
         // Returns a scaled string, properly formatted based on the numeric Locale setting.
         String s = this.toScaledString(scale, hasSlidingScale);
 
-        if(isLoss) {
+        if(isNegativeValue()) {
             s = LocaleManager.formatNegativeNumber(s);
         }
         else {

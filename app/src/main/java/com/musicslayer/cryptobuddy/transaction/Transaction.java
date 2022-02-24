@@ -37,8 +37,8 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
         this.timestamp = timestamp;
         this.info = info;
 
-        if(isActionedAssetLoss()) { this.actionedAssetQuantity.setLoss(); }
-        if(otherAssetQuantity != null && isOtherAssetLoss()) { this.otherAssetQuantity.setLoss(); }
+        if(isActionedAssetLoss()) { this.actionedAssetQuantity.assetAmount.isLoss = true; }
+        if(otherAssetQuantity != null && isOtherAssetLoss()) { this.otherAssetQuantity.assetAmount.isLoss = true; }
 
         this.hash = getHash();
     }
@@ -240,7 +240,7 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
     public static HashMap<Asset, AssetAmount> resolveAssets(ArrayList<Transaction> transactionArrayList, BigDecimal receiveTaxMultiplier, BigDecimal sendTaxMultiplier) {
         // Factor in potential taxes. For example, if a token has a send tax of 10%, then 1.1 is the sendTaxMultiplier.
         // With tokenomics, the amount actually sent is greater than what the recorded transaction states.
-        // Typically, receiveTaxMultiplier is still always 1.
+        // Typically, receiveTaxMultiplier is always 1.
         HashMap<Asset, AssetAmount> deltaMap = new HashMap<>();
 
         if(transactionArrayList != null) {

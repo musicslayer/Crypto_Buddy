@@ -32,7 +32,6 @@ import java.util.Date;
 //  User accounts?
 
 // TODO Actually implement Coinbase/Gemini API.
-// TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
 
 // This Activity class only exists for initialization code, not to be seen by the user.

@@ -32,7 +32,7 @@ public class RichStringBuilder {
                 str = enrich(assetQuantity.toString());
 
                 String lossSetting = LossValuesSetting.value;
-                if((assetQuantity.assetAmount.isLoss || assetQuantity.assetAmount.amount.compareTo(BigDecimal.ZERO) < 0) && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
+                if(assetQuantity.assetAmount.isNegativeValue() && ("red".equals(lossSetting) || "red_match_locale".equals(lossSetting) || "red_negative".equals(lossSetting) || "red_parentheses".equals(lossSetting))) {
                     // Make the string red.
                     str = redText(str);
                 }
