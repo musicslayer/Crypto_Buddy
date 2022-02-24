@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
@@ -294,9 +295,18 @@ public class ExchangeExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            String type = "Exchange";
-            StateObj.tableInfo = table.getInfo();
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(ExchangeExplorerActivity.this, "feedback");
+            runWithProgressIndicator(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    StateObj.tableInfo = table.getInfo();
+                }
+            }, new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "Exchange").show(getCurrentActivity(), "feedback");
+                }
+            });
+
             return true;
         }
 

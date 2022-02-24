@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
@@ -466,10 +467,19 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            String type = "AddressPortfolio";
-            StateObj.tableInfo = table.getInfo();
-            StateObj.filterInfo = DataBridge.serialize(addressFilter, Filter.class);
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(AddressPortfolioExplorerActivity.this, "feedback");
+            runWithProgressIndicator(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    StateObj.tableInfo = table.getInfo();
+                    StateObj.filterInfo = DataBridge.serialize(addressFilter, Filter.class);
+                }
+            }, new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "AddressPortfolio").show(getCurrentActivity(), "feedback");
+                }
+            });
+
             return true;
         }
 

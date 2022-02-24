@@ -314,8 +314,7 @@ public class AddressExplorerActivity extends BaseActivity {
             }, new CrashRunnable(this) {
                 @Override
                 public void runImpl() {
-                    String type = "Address";
-                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(getCurrentActivity(), "feedback");
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "Address").show(getCurrentActivity(), "feedback");
                 }
             });
 

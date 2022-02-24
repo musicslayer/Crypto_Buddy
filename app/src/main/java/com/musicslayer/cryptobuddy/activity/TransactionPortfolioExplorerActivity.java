@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
@@ -154,9 +155,18 @@ public class TransactionPortfolioExplorerActivity extends BaseActivity {
             return true;
         }
         else if (id == 3) {
-            String type = "TransactionPortfolio";
-            StateObj.tableInfo = table.getInfo();
-            BaseDialogFragment.newInstance(ReportFeedbackDialog.class, type).show(TransactionPortfolioExplorerActivity.this, "feedback");
+            runWithProgressIndicator(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    StateObj.tableInfo = table.getInfo();
+                }
+            }, new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "TransactionPortfolio").show(getCurrentActivity(), "feedback");
+                }
+            });
+
             return true;
         }
 
