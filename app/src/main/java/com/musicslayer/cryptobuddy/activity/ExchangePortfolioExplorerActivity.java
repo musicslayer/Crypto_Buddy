@@ -464,6 +464,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putParcelable("filter", exchangeFilter);
@@ -474,6 +475,7 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
     @Override
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");

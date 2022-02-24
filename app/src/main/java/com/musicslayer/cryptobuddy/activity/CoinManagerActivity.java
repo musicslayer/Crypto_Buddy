@@ -126,6 +126,7 @@ public class CoinManagerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         for(CoinManagerView coinManagerView : coinManagerViewArrayList) {
             bundle.putParcelable("coinManagerView_" + coinManagerView.coinManager.getCoinType(), coinManagerView.onSaveInstanceState());
         }
@@ -134,6 +135,7 @@ public class CoinManagerActivity extends BaseActivity {
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             for(CoinManagerView coinManagerView : coinManagerViewArrayList) {
                 coinManagerView.onRestoreInstanceState(bundle.getParcelable("coinManagerView_" + coinManagerView.coinManager.getCoinType()));

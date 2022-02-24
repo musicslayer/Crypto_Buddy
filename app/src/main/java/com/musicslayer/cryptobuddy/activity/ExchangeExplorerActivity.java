@@ -305,6 +305,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includeBalances", includeBalances);
         bundle.putSerializable("includeTransactions", includeTransactions);
         bundle.putBoolean("hasDiscrepancy", hasDiscrepancy);
@@ -314,6 +315,7 @@ public class ExchangeExplorerActivity extends BaseActivity {
     @Override
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             includeBalances = (ArrayList<Boolean>)bundle.getSerializable("includeBalances");
             includeTransactions = (ArrayList<Boolean>)bundle.getSerializable("includeTransactions");

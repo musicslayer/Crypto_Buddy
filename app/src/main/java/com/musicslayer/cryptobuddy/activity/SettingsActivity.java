@@ -79,6 +79,8 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
+
         ArrayList<String> categoryNameKeys = new ArrayList<>(settingsMap.keySet());
         for(int i = 0; i < categoryNameKeys.size(); i++) {
             String categoryName = categoryNameKeys.get(i);
@@ -92,6 +94,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             ArrayList<String> categoryNameKeys = new ArrayList<>(settingsMap.keySet());
             for(int i = 0; i < categoryNameKeys.size(); i++) {

@@ -272,6 +272,7 @@ public class TokenManagerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
             bundle.putParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType(), tokenManagerView.onSaveInstanceState());
         }
@@ -280,6 +281,7 @@ public class TokenManagerActivity extends BaseActivity {
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             for(TokenManagerView tokenManagerView : tokenManagerViewArrayList) {
                 tokenManagerView.onRestoreInstanceState(bundle.getParcelable("tokenManagerView_" + tokenManagerView.tokenManager.getTokenType()));

@@ -144,13 +144,17 @@ abstract public class BaseActivity extends CrashActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
-        bundle.putInt("progressVisibility", findViewById(getProgressViewID()).getVisibility());
+        if(getProgressViewID() != -1) {
+            bundle.putInt("progressVisibility", findViewById(getProgressViewID()).getVisibility());
+        }
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            findViewById(getProgressViewID()).setVisibility(bundle.getInt("progressVisibility"));
+            if(getProgressViewID() != -1) {
+                findViewById(getProgressViewID()).setVisibility(bundle.getInt("progressVisibility"));
+            }
         }
     }
 }

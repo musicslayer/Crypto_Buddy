@@ -187,12 +187,14 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         bundle.putString("currentDeletePortfolioName", currentDeletePortfolioName);
         bundle.putString("currentRenamePortfolioName", currentRenamePortfolioName);
     }
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             currentDeletePortfolioName = bundle.getString("currentDeletePortfolioName");
             currentRenamePortfolioName = bundle.getString("currentRenamePortfolioName");

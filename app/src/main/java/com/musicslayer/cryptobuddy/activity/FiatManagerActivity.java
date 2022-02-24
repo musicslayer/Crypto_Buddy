@@ -126,6 +126,7 @@ public class FiatManagerActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         for(FiatManagerView fiatManagerView : fiatManagerViewArrayList) {
             bundle.putParcelable("fiatManagerView_" + fiatManagerView.fiatManager.getFiatType(), fiatManagerView.onSaveInstanceState());
         }
@@ -134,6 +135,7 @@ public class FiatManagerActivity extends BaseActivity {
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             for(FiatManagerView fiatManagerView : fiatManagerViewArrayList) {
                 fiatManagerView.onRestoreInstanceState(bundle.getParcelable("fiatManagerView_" + fiatManagerView.fiatManager.getFiatType()));

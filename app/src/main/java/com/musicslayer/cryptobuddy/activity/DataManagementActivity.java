@@ -519,6 +519,7 @@ public class DataManagementActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
         bundle.putParcelable("universalFile", universalFile);
         bundle.putParcelable("universalFolder", universalFolder);
         bundle.putString("fileName", fileName);
@@ -529,6 +530,7 @@ public class DataManagementActivity extends BaseActivity {
 
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
         if(bundle != null) {
             universalFile = bundle.getParcelable("universalFile");
             universalFolder = bundle.getParcelable("universalFolder");
