@@ -35,11 +35,10 @@
         android:id="@+id/exchange_explorer_problemButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginEnd="-16dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@id/exchange_explorer_toolbar"
-        app:layout_constraintEnd_toEndOf="@id/exchange_explorer_helpButton"
+        app:layout_constraintEnd_toStartOf="@id/exchange_explorer_helpButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_warning_red_24" />
 
@@ -47,11 +46,10 @@
         android:id="@+id/exchange_explorer_discrepancyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginEnd="-16dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/exchange_explorer_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/exchange_explorer_problemButton"
+        app:layout_constraintEnd_toStartOf="@+id/exchange_explorer_problemButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_balance_red_24" />
 
