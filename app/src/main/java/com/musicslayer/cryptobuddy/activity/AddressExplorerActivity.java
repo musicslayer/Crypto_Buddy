@@ -63,6 +63,11 @@ public class AddressExplorerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.address_explorer_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         confirmBackDialogFragment.show(AddressExplorerActivity.this, "back");
     }

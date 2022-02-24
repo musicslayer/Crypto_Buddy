@@ -75,6 +75,11 @@ public class AddressPortfolioExplorerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.address_portfolio_explorer_progressBar;
+    }
+
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_address_portfolio_explorer);
 

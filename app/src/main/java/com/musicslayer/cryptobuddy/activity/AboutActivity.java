@@ -30,6 +30,11 @@ public class AboutActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return -1;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();

@@ -17,12 +17,9 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.CoinManagerList;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteCoinsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteCoinsDialog;
-import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.asset.CoinManagerView;
@@ -44,6 +41,11 @@ public class CoinManagerActivity extends BaseActivity {
     public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    @Override
+    public int getProgressViewID() {
+        return R.id.coin_manager_progressBar;
     }
 
     @Override

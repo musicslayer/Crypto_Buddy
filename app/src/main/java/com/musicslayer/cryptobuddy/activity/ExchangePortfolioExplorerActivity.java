@@ -69,6 +69,11 @@ public class ExchangePortfolioExplorerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.exchange_portfolio_explorer_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         confirmBackDialogFragment.show(ExchangePortfolioExplorerActivity.this, "back");
     }

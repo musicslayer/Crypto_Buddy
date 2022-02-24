@@ -35,11 +35,11 @@
         android:id="@+id/address_explorer_problemButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="90dp"
-        android:layout_marginRight="90dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/address_explorer_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/address_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/address_explorer_helpButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_warning_red_24" />
 
@@ -47,13 +47,23 @@
         android:id="@+id/address_explorer_discrepancyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="130dp"
-        android:layout_marginRight="130dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/address_explorer_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/address_explorer_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/address_explorer_problemButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_balance_red_24" />
+
+    <ProgressBar
+        android:id="@+id/address_explorer_progressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/address_explorer_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/address_explorer_discrepancyButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/address_explorer_adLayout"

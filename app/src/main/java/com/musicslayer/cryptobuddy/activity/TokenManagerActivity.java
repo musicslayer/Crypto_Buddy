@@ -47,6 +47,11 @@ public class TokenManagerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.token_manager_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();

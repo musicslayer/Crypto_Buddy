@@ -17,12 +17,9 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.FiatManagerList;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
-import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteFiatsDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteFiatsDialog;
-import com.musicslayer.cryptobuddy.settings.setting.Setting;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.asset.FiatManagerView;
@@ -38,6 +35,11 @@ public class FiatManagerActivity extends BaseActivity {
     @Override
     public int getAdLayoutViewID() {
         return R.id.fiat_manager_adLayout;
+    }
+
+    @Override
+    public int getProgressViewID() {
+        return R.id.fiat_manager_progressBar;
     }
 
     @Override

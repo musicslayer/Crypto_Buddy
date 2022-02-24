@@ -33,14 +33,10 @@
         android:id="@+id/main_progressBar"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="106dp"
-        android:layout_marginRight="106dp"
-        android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/main_toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/main_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/main_helpButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 

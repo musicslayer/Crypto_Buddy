@@ -30,6 +30,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
+    <ProgressBar
+        android:id="@+id/token_manager_progressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/token_manager_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/token_manager_helpButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/token_manager_adLayout"
         android:layout_width="wrap_content"

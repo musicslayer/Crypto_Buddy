@@ -40,6 +40,11 @@ public class TransactionPortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.transaction_portfolio_viewer_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();

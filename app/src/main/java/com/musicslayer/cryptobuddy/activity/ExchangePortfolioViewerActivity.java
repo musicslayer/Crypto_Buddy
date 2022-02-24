@@ -40,6 +40,11 @@ public class ExchangePortfolioViewerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.exchange_portfolio_viewer_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         startActivity(new Intent(this, MainActivity.class));
         finish();

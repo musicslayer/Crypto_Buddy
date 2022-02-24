@@ -37,6 +37,11 @@ public class TransactionExplorerActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.transaction_explorer_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         confirmBackDialogFragment.show(TransactionExplorerActivity.this, "back");
     }

@@ -30,17 +30,24 @@ import java.util.Date;
 //  Chart Explorer, Chart Portfolio
 //  Fake trades?
 //  User accounts?
-//  Perform simple operation with ProgressDialog, without having to define listeners. (ex. ReportFeedback can take a long time with many transactions).
 
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Merge isLoss with BigDecimal math.
 // TODO Finish the getSingleAllData Implementations.
+
+// TODO Perform simple operation with ProgressDialog, without having to define listeners. (ex. ReportFeedback can take a long time with many transactions).
+// TODO Cleanup help for Data Management.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
 public class InitialActivity extends BaseActivity {
     @Override
     public int getAdLayoutViewID() {
+        return -1;
+    }
+
+    @Override
+    public int getProgressViewID() {
         return -1;
     }
 

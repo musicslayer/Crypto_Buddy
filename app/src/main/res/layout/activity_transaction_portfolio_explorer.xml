@@ -31,6 +31,16 @@
         app:layout_constraintTop_toTopOf="@+id/transaction_portfolio_explorer_toolbar"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
+    <ProgressBar
+        android:id="@+id/transaction_portfolio_explorer_progressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/transaction_portfolio_explorer_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/transaction_portfolio_explorer_helpButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/transaction_portfolio_explorer_adLayout"
         android:layout_width="wrap_content"

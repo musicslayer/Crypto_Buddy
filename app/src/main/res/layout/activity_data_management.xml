@@ -18,6 +18,28 @@
         app:subtitle="Data Management"
         app:title="@string/app_title" />
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/data_management_helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/data_management_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/data_management_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <ProgressBar
+        android:id="@+id/data_management_progressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/data_management_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/data_management_helpButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/data_management_adLayout"
         android:layout_width="wrap_content"

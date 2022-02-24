@@ -57,6 +57,11 @@ public class DataManagementActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.data_management_progressBar;
+    }
+
+    @Override
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.activity_data_management);
 
