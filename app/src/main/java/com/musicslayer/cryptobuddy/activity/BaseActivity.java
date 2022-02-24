@@ -3,12 +3,15 @@ package com.musicslayer.cryptobuddy.activity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
+import android.os.Looper;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.musicslayer.cryptobuddy.app.App;
 import com.musicslayer.cryptobuddy.crash.CrashActivity;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.monetization.Ad;
 import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
@@ -18,6 +21,9 @@ import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 abstract public class BaseActivity extends CrashActivity {
     abstract public void createLayout(Bundle savedInstanceState);
     abstract public int getAdLayoutViewID();
+    //abstract public int getProgressViewID();
+
+    public int getProgressViewID() { return -1; }
 
     @Override
     public void onCreateImpl(Bundle savedInstanceState) {
@@ -61,6 +67,7 @@ abstract public class BaseActivity extends CrashActivity {
         }
 
         createLayout(savedInstanceState);
+
         adjustActivity();
     }
 
@@ -78,6 +85,42 @@ abstract public class BaseActivity extends CrashActivity {
                 v.setLayoutParams(CL);
                 v.addView(ad);
             }
+        }
+    }
+
+    public void runWithProgressIndicator(Runnable runnable) {
+        new Thread(new CrashRunnable(this) {
+            @Override
+            public void runImpl() {
+                runnable.run();
+                hideProgressIndicator();
+            }
+        }).start();
+
+        showProgressIndicator();
+    }
+
+    private void showProgressIndicator() {
+        if(getProgressViewID() != -1) {
+            runOnUiThread(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    findViewById(getProgressViewID()).setVisibility(View.VISIBLE);
+                    Looper.loop();
+                }
+            });
+        }
+    }
+
+    private void hideProgressIndicator() {
+        if(getProgressViewID() != -1) {
+            runOnUiThread(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    findViewById(getProgressViewID()).setVisibility(View.INVISIBLE);
+                    Looper.loop();
+                }
+            });
         }
     }
 }

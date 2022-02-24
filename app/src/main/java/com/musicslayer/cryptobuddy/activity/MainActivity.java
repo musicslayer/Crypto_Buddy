@@ -47,6 +47,11 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public int getProgressViewID() {
+        return R.id.main_progressBar;
+    }
+
+    @Override
     public void onBackPressedImpl() {
         finish();
     }

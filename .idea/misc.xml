@@ -45,7 +45,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_exchange_portfolio_viewer.xml" value="0.25104166666666666" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_fiat_manager.xml" value="0.23703703703703705" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_in_app_purchases.xml" value="0.33" />
-        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_main_OLD.xml" value="0.2453125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_settings.xml" value="0.3435185185185185" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_token_manager.xml" value="0.25" />
@@ -146,6 +146,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_search.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_search_all.xml" value="0.11930091185410334" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_select_data_types.xml" value="0.24444444444444444" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_simple_progress.xml" value="0.21354166666666666" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_total.xml" value="0.19375" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_view_coins.xml" value="0.2759259259259259" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_view_fiats.xml" value="0.32222222222222224" />

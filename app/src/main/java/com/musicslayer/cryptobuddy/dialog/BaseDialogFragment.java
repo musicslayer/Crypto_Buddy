@@ -83,7 +83,7 @@ public class BaseDialogFragment extends DialogFragment implements DialogInterfac
     }
 
     public void restoreListeners(Context context, String tag) {
-        BaseDialogFragment bdf = (BaseDialogFragment) getFragmentByTag(context, tag);
+        BaseDialogFragment bdf = (BaseDialogFragment)getFragmentByTag(context, tag);
         if (bdf != null) {
             bdf.setOnShowListener(SL);
             bdf.setOnDismissListener(DL);

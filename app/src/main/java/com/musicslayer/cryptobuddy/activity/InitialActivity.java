@@ -23,7 +23,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.util.Date;
 
 // TODO Long Term Items
-//  Data Import/Export
 //  NFT Viewer
 //  Use TradeView API
 //  "Tax" View (i.e. Calculate cost basis of transactions)

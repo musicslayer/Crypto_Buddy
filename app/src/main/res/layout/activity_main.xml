@@ -27,7 +27,22 @@
         app:layout_constraintBottom_toBottomOf="@+id/main_toolbar"
         app:layout_constraintEnd_toEndOf="@+id/main_toolbar"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_help_24"/>
+        app:srcCompat="@drawable/ic_baseline_help_24" />
+
+    <ProgressBar
+        android:id="@+id/main_progressBar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="106dp"
+        android:layout_marginRight="106dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/main_toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/main_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_help_24" />
 
     <LinearLayout
         android:id="@+id/main_adLayout"
@@ -60,8 +75,8 @@
                 android:id="@+id/main_transactionPortfolioViewerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
-                android:text="Transaction\nPortfolio" />
+                android:text="Transaction\nPortfolio"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
 
         </TableRow>
 
@@ -74,15 +89,15 @@
                 android:id="@+id/main_addressExplorerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:drawableLeftCompat="@drawable/ic_baseline_forward_24"
-                android:text="Address\nExplorer" />
+                android:text="Address\nExplorer"
+                app:drawableLeftCompat="@drawable/ic_baseline_forward_24" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/main_addressPortfolioViewerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:drawableLeftCompat="@drawable/ic_baseline_folder_24"
-                android:text="Address\nPortfolio" />
+                android:text="Address\nPortfolio"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
         </TableRow>
 
         <TableRow
