@@ -42,6 +42,11 @@ public class ToastUtil {
         toastMap.put("exchange_data_downloaded", Toast.makeText(context, "Finished downloading exchange information.", duration));
         toastMap.put("incomplete_exchange_data", Toast.makeText(context, "Could not access all exchange information. Ensure exchanges are authorized, check your internet connection, and try again.", duration));
 
+        // Chart
+        toastMap.put("chart_data_downloaded", Toast.makeText(context, "Finished downloading chart information.", duration));
+        toastMap.put("incomplete_chart_data", Toast.makeText(context, "Could not access all chart information. Check your internet connection and try again.", duration));
+        toastMap.put("must_choose_crypto", Toast.makeText(context, "Must choose a crypto to proceed.", duration));
+
         // Price
         toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Some assets may not be supported, or check your internet connection and try again.", duration));
 
@@ -56,6 +61,7 @@ public class ToastUtil {
 
         // Portfolios
         toastMap.put("address_in_portfolio", Toast.makeText(context, "This address is already in the portfolio.", duration));
+        toastMap.put("chart_in_portfolio", Toast.makeText(context, "This chart is already in the portfolio.", duration));
         toastMap.put("exchange_in_portfolio", Toast.makeText(context, "This exchange is already in the portfolio.", duration));
         toastMap.put("portfolio_name_cannot_be_same", Toast.makeText(context, "The new name must be different than the current name.", duration));
         toastMap.put("portfolio_name_used", Toast.makeText(context, "A portfolio with this name already exists.", duration));

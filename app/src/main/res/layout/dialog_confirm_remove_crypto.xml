@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/choose_crypto_dialog"
+    android:id="@+id/confirm_remove_crypto_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/choose_crypto_dialog_toolbar"
+        android:id="@+id/confirm_remove_crypto_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -15,31 +15,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Choose Crypto" />
+        app:title="Delete Crypto From Portfolio?" />
 
-    <TextView
-        android:id="@+id/choose_crypto_dialog_textView"
-        android:layout_width="wrap_content"
+    <com.musicslayer.cryptobuddy.view.ConfirmationView
+        android:id="@+id/confirm_remove_crypto_dialog_confirmationView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_crypto_dialog_toolbar" />
-
-    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
-        android:id="@+id/choose_crypto_dialog_selectAndSearchView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_crypto_dialog_textView">
-
-    </com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView>
+        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_crypto_dialog_toolbar" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choose_crypto_dialog_confirmButton"
+        android:id="@+id/confirm_remove_crypto_dialog_cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
-        android:text="Confirm"
+        android:layout_marginTop="20dp"
+        android:text="Cancel"
+        app:drawableLeftCompat="@drawable/ic_baseline_cancel_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_crypto_dialog_selectAndSearchView" />
-
+        app:layout_constraintTop_toBottomOf="@+id/confirm_remove_crypto_dialog_confirmationView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

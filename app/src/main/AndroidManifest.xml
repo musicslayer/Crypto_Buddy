@@ -67,6 +67,9 @@
                 <data android:scheme="com.musicslayer.cryptobuddy"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activity.ChartExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.ChartPortfolioExplorerActivity" android:screenOrientation="locked"/>
+        <activity android:name=".activity.ChartPortfolioViewerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.CoinManagerActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.DataManagementActivity" android:screenOrientation="locked"/>
         <activity android:name=".activity.ExchangeExplorerActivity" android:screenOrientation="locked"/>

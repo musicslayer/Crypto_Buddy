@@ -1,0 +1,370 @@
+package com.musicslayer.cryptobuddy.activity;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.api.chart.ChartData;
+import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
+import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
+import com.musicslayer.cryptobuddy.crash.CrashRunnable;
+import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.persistent.user.ChartPortfolio;
+import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
+import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ChooseCryptoDialog;
+import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
+import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
+import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
+import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
+import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.RemoveCryptoDialog;
+import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
+import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
+import com.musicslayer.cryptobuddy.filter.Filter;
+import com.musicslayer.cryptobuddy.state.StateObj;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
+
+import java.util.ArrayList;
+
+public class ChartPortfolioExplorerActivity extends BaseActivity {
+    public BaseDialogFragment confirmBackDialogFragment;
+
+    DiscreteFilter chartFilter = new DiscreteFilter();
+
+    public ArrayList<Boolean> includePricePoints;
+    public ArrayList<Boolean> includeCandles;
+
+    @Override
+    public int getAdLayoutViewID() {
+        return R.id.chart_portfolio_explorer_adLayout;
+    }
+
+    @Override
+    public void onBackPressedImpl() {
+        confirmBackDialogFragment.show(ChartPortfolioExplorerActivity.this, "back");
+    }
+
+    @Override
+    public int getProgressViewID() {
+        return R.id.chart_portfolio_explorer_progressBar;
+    }
+
+    @Override
+    public void createLayout(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_chart_portfolio_explorer);
+
+        confirmBackDialogFragment = BaseDialogFragment.newInstance(ConfirmBackDialog.class);
+        confirmBackDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ConfirmBackDialog)dialog).isComplete) {
+                    startActivity(new Intent(ChartPortfolioExplorerActivity.this, ChartPortfolioViewerActivity.class));
+                    finish();
+                }
+            }
+        });
+        confirmBackDialogFragment.restoreListeners(this, "back");
+
+        if(savedInstanceState == null) {
+            StateObj.chartPortfolioObj = PersistentUserDataStore.getInstance(ChartPortfolio.class).getFromName(getIntent().getStringExtra("ChartPortfolioName"));
+        }
+
+        updateFilter();
+
+        for(CryptoChart cryptochart : StateObj.chartPortfolioObj.cryptoChartArrayList) {
+            if(savedInstanceState == null) {
+                HashMapUtil.putValueInMap(StateObj.chartDataMap, cryptochart, ChartData.getNoData(cryptochart));
+                HashMapUtil.putValueInMap(StateObj.chartDataFilterMap, cryptochart, ChartData.getNoData(cryptochart));
+            }
+        }
+
+        TextView T_INFO = findViewById(R.id.chart_portfolio_explorer_infoTextView);
+        T_INFO.setText("Portfolio = " + StateObj.chartPortfolioObj.name);
+
+        Toolbar toolbar = findViewById(R.id.chart_portfolio_explorer_toolbar);
+        setSupportActionBar(toolbar);
+
+        ImageButton helpButton = findViewById(R.id.chart_portfolio_explorer_helpButton);
+        helpButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                HelpUtil.showHelp(ChartPortfolioExplorerActivity.this, R.raw.help_chart_portfolio_explorer);
+            }
+        });
+
+        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class);
+        chooseCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ChooseCryptoDialog)dialog).isComplete) {
+                    // Save new crypto to the portfolio.
+                    CryptoChart newCryptoChart = ((ChooseCryptoDialog)dialog).user_CRYPTOCHART;
+
+                    if(StateObj.chartPortfolioObj.isSaved(newCryptoChart)) {
+                        ToastUtil.showToast("chart_in_portfolio");
+                    }
+                    else {
+                        StateObj.chartPortfolioObj.addData(newCryptoChart);
+                        PersistentUserDataStore.getInstance(ChartPortfolio.class).updatePortfolio(StateObj.chartPortfolioObj);
+
+                        updateFilter();
+
+                        HashMapUtil.putValueInMap(StateObj.chartDataMap, newCryptoChart, ChartData.getNoData(newCryptoChart));
+                        HashMapUtil.putValueInMap(StateObj.chartDataFilterMap, newCryptoChart, ChartData.getNoData(newCryptoChart));
+                    }
+                }
+            }
+        });
+        chooseCryptoDialogFragment.restoreListeners(this, "add");
+
+        FloatingActionButton fab_add = findViewById(R.id.chart_portfolio_explorer_addButton);
+        fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                chooseCryptoDialogFragment.show(ChartPortfolioExplorerActivity.this, "add");
+            }
+        });
+
+        BaseDialogFragment removeCryptoDialogFragment = BaseDialogFragment.newInstance(RemoveCryptoDialog.class, StateObj.chartPortfolioObj.cryptoChartArrayList);
+        removeCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((RemoveCryptoDialog)dialog).isComplete) {
+                    // Remove cryptos from portfolio and then remove their data from the table.
+                    ArrayList<CryptoChart> toRemove = ((RemoveCryptoDialog)dialog).user_cryptoChartArrayList;
+                    for(CryptoChart cryptoChart : toRemove) {
+                        StateObj.chartPortfolioObj.removeData(cryptoChart);
+                        HashMapUtil.removeValueFromMap(StateObj.chartDataMap, cryptoChart);
+                        HashMapUtil.removeValueFromMap(StateObj.chartDataFilterMap, cryptoChart);
+                    }
+
+                    PersistentUserDataStore.getInstance(ChartPortfolio.class).updatePortfolio(StateObj.chartPortfolioObj);
+
+                    updateFilter();
+                    updateLayout();
+                }
+            }
+        });
+        removeCryptoDialogFragment.restoreListeners(this, "remove");
+
+        FloatingActionButton fab_remove = findViewById(R.id.chart_portfolio_explorer_removeButton);
+        fab_remove.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                removeCryptoDialogFragment.show(ChartPortfolioExplorerActivity.this, "remove");
+            }
+        });
+
+        ProgressDialogFragment download_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        download_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
+            @Override
+            public void onShowImpl(DialogInterface dialog) {
+                ProgressDialogFragment.updateProgressTitle("Downloading Chart Data...");
+
+                ArrayList<CryptoChart> cryptoChartArrayList = StateObj.chartPortfolioObj.cryptoChartArrayList;
+
+                ArrayList<ChartData> newChartDataArrayList = new ArrayList<>();
+                for(int i = 0; i < cryptoChartArrayList.size(); i++) {
+                    ProgressDialogFragment.reportProgress(i, cryptoChartArrayList.size(), "Charts Finished");
+
+                    CryptoChart cryptoChart = cryptoChartArrayList.get(i);
+
+                    if(ProgressDialogFragment.isCancelled()) { return; }
+
+                    ChartData newChartData;
+                    if(includePricePoints.get(i) && includeCandles.get(i)) {
+                        newChartData = ChartData.getAllData(cryptoChart);
+                    }
+                    else if(includePricePoints.get(i)) {
+                        newChartData = ChartData.getPricePointsData(cryptoChart);
+                    }
+                    else if(includeCandles.get(i)) {
+                        newChartData = ChartData.getCandlesData(cryptoChart);
+                    }
+                    else {
+                        newChartData = ChartData.getNoData(cryptoChart);
+                    }
+
+                    newChartDataArrayList.add(newChartData);
+                }
+
+                ProgressDialogFragment.setValue(DataBridge.serializeArrayList(newChartDataArrayList, ChartData.class));
+            }
+        });
+
+        download_progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                ArrayList<ChartData> newChartDataArrayList = DataBridge.deserializeArrayList(ProgressDialogFragment.getValue(), ChartData.class);
+
+                for(int i = 0; i < newChartDataArrayList.size(); i++) {
+                    ChartData newChartData = newChartDataArrayList.get(i);
+
+                    boolean isComplete;
+                    if(includePricePoints.get(i) && includeCandles.get(i)) {
+                        isComplete = newChartData.isComplete();
+                    }
+                    else if(includePricePoints.get(i)) {
+                        isComplete = newChartData.isPricePointsComplete();
+                    }
+                    else if(includeCandles.get(i)) {
+                        isComplete = newChartData.isCandlesComplete();
+                    }
+                    else {
+                        isComplete = true;
+                    }
+
+                    if(!isComplete) {
+                        // Only alert once. Others would be redundant.
+                        ToastUtil.showToast("incomplete_chart_data");
+                        break;
+                    }
+                }
+
+                for(int i = 0; i < StateObj.chartPortfolioObj.cryptoChartArrayList.size(); i++) {
+                    CryptoChart cryptoChart = StateObj.chartPortfolioObj.cryptoChartArrayList.get(i);
+                    ChartData newChartData = newChartDataArrayList.get(i);
+                    ChartData oldChartData = HashMapUtil.getValueFromMap(StateObj.chartDataMap, cryptoChart);
+                    ChartData mergedChartData = ChartData.merge(oldChartData, newChartData);
+                    HashMapUtil.putValueInMap(StateObj.chartDataMap, cryptoChart, mergedChartData);
+                }
+
+                // Apply filter after downloading data.
+                ArrayList<String> choices = chartFilter.user_choices;
+
+                StateObj.chartDataFilterMap.clear();
+                for(CryptoChart cryptoChart : new ArrayList<>(StateObj.chartDataMap.keySet())) {
+                    if(choices.contains(cryptoChart.toString())) {
+                        ChartData chartData = HashMapUtil.getValueFromMap(StateObj.chartDataMap, cryptoChart);
+                        HashMapUtil.putValueInMap(StateObj.chartDataFilterMap, cryptoChart, chartData);
+                    }
+                }
+
+                updateLayout();
+
+                ToastUtil.showToast("chart_data_downloaded");
+            }
+        });
+        download_progressDialogFragment.restoreListeners(this, "progress_download");
+
+        BaseDialogFragment chartFilterDialogFragment = chartFilter.getGenericDialogFragment();
+        chartFilterDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((DiscreteFilterDialog)dialog).isComplete) {
+                    chartFilter = ((DiscreteFilterDialog)dialog).discreteFilter;
+
+                    ArrayList<String> choices = chartFilter.user_choices;
+
+                    StateObj.chartDataFilterMap.clear();
+                    for(CryptoChart cryptoChart : new ArrayList<>(StateObj.chartDataMap.keySet())) {
+                        if(choices.contains(cryptoChart.toString())) {
+                            ChartData chartData = HashMapUtil.getValueFromMap(StateObj.chartDataMap, cryptoChart);
+                            HashMapUtil.putValueInMap(StateObj.chartDataFilterMap, cryptoChart, chartData);
+                        }
+                    }
+
+                    updateLayout();
+                }
+            }
+        });
+        chartFilterDialogFragment.restoreListeners(this, "chart_filter");
+
+        AppCompatButton filterChartButton = findViewById(R.id.chart_portfolio_explorer_filterChartButton);
+        filterChartButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                chartFilterDialogFragment.updateArguments(DiscreteFilterDialog.class, chartFilter);
+                chartFilterDialogFragment.show(ChartPortfolioExplorerActivity.this, "chart_filter");
+            }
+        });
+    }
+
+    public void updateLayout() {
+
+    }
+
+    public void updateFilter() {
+        ArrayList<String> data = new ArrayList<>();
+        for(CryptoChart cryptoChart : StateObj.chartPortfolioObj.cryptoChartArrayList) {
+            data.add(cryptoChart.toString());
+        }
+
+        chartFilter.updateFilterData(data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenuImpl(Menu menu) {
+        menu.add(0, 1, 100, "Crypto Prices");
+        menu.add(0, 2, 200, "Crypto Converter");
+        menu.add(0, 3, 300, "Report Feedback");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelectedImpl(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == 1) {
+            BaseDialogFragment.newInstance(CryptoPricesDialog.class).show(ChartPortfolioExplorerActivity.this, "price");
+            return true;
+        }
+        else if (id == 2) {
+            BaseDialogFragment.newInstance(CryptoConverterDialog.class).show(ChartPortfolioExplorerActivity.this, "converter");
+            return true;
+        }
+        else if (id == 3) {
+            runWithProgressIndicator(new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    //StateObj.chartInfo = get chart info...
+                    StateObj.filterInfo = DataBridge.serialize(chartFilter, Filter.class);
+                }
+            }, new CrashRunnable(this) {
+                @Override
+                public void runImpl() {
+                    BaseDialogFragment.newInstance(ReportFeedbackDialog.class, "ChartPortfolio").show(getCurrentActivity(), "feedback");
+                }
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onSaveInstanceStateImpl(@NonNull Bundle bundle) {
+        super.onSaveInstanceStateImpl(bundle);
+        bundle.putSerializable("includePricePoints", includePricePoints);
+        bundle.putSerializable("includeCandles", includeCandles);
+        bundle.putParcelable("filter", chartFilter);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void onRestoreInstanceStateImpl(Bundle bundle) {
+        super.onRestoreInstanceStateImpl(bundle);
+        if(bundle != null) {
+            includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
+            includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
+            chartFilter = bundle.getParcelable("filter");
+        }
+    }
+}

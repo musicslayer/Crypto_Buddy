@@ -6,23 +6,17 @@ import android.view.View;
 import android.widget.Button;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
-import com.musicslayer.cryptobuddy.asset.network.Network;
+import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.crash.CrashView;
-import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView;
 
 public class ChooseCryptoDialog extends BaseDialog {
-    public ArrayList<CryptoAddress> cryptoAddressArrayList;
+    public CryptoChart user_CRYPTOCHART;
 
-    // Info that the user is providing.
-    public CryptoAddress user_CRYPTOADDRESS;
-
-    public ChooseCryptoDialog(Activity activity, ArrayList<CryptoAddress> cryptoAddressArrayList) {
+    public ChooseCryptoDialog(Activity activity) {
         super(activity);
-        this.cryptoAddressArrayList = cryptoAddressArrayList;
     }
 
     public int getBaseViewID() {
@@ -32,26 +26,26 @@ public class ChooseCryptoDialog extends BaseDialog {
     public void createLayout(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_choose_crypto);
 
-        ArrayList<CryptoAddress> sortedCryptoAddressArrayList = new ArrayList<>(cryptoAddressArrayList);
+        SelectAndSearchView ssv = findViewById(R.id.choose_crypto_dialog_selectAndSearchView);
+        ssv.setIncludesFiat(false);
+        ssv.setIncludesCoin(true);
+        ssv.setIncludesToken(true);
+        ssv.setCompleteOptions();
+        ssv.chooseCoin("BASE");
 
-        // Sort by network
-        Collections.sort(sortedCryptoAddressArrayList, (a, b) -> Network.compare(a.network, b.network));
-
-        ArrayList<String> options = new ArrayList<>();
-        for(CryptoAddress ca : sortedCryptoAddressArrayList) {
-            options.add(ca.network.getDisplayName());
-        }
-
-        BorderedSpinnerView bsv = findViewById(R.id.choose_crypto_dialog_spinner);
-        bsv.setOptions(options);
-
-        Button B = findViewById(R.id.choose_crypto_dialog_button);
+        Button B = findViewById(R.id.choose_crypto_dialog_confirmButton);
         B.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                user_CRYPTOADDRESS = sortedCryptoAddressArrayList.get(bsv.spinner.getSelectedItemPosition());
+                Crypto crypto = (Crypto)ssv.getChosenAsset();
 
-                isComplete = true;
-                dismiss();
+                if(crypto == null) {
+                    ToastUtil.showToast("must_choose_crypto");
+                }
+                else {
+                    user_CRYPTOCHART = new CryptoChart(crypto);
+                    isComplete = true;
+                    dismiss();
+                }
             }
         });
     }

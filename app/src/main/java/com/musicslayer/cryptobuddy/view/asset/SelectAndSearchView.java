@@ -44,6 +44,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+// TODO If I tap token twice, it won't bring up the menu again unless I go to another asset kind.
+
 public class SelectAndSearchView extends CrashLinearLayout {
     public BorderedSpinnerView bsv;
     BaseDialogFragment searchAssetDialogFragment;
@@ -941,7 +943,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 }
             }
         }
-        if(includesToken) {
+        if(includesToken && Purchases.isUnlockTokensPurchased()) {
             for(String tokenType : search_options_token_types) {
                 ArrayList<String> searchNames = HashMapUtil.getValueFromMap(search_options_token_names, tokenType);
                 if(searchNames != null) {
@@ -970,7 +972,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 }
             }
         }
-        if(includesToken) {
+        if(includesToken && Purchases.isUnlockTokensPurchased()) {
             for(String tokenType : search_options_token_types) {
                 ArrayList<String> searchDisplayNames = HashMapUtil.getValueFromMap(search_options_token_display_names, tokenType);
                 if(searchDisplayNames != null) {
@@ -999,7 +1001,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 }
             }
         }
-        if(includesToken) {
+        if(includesToken && Purchases.isUnlockTokensPurchased()) {
             for(String tokenType : search_options_token_types) {
                 ArrayList<Token> searchTokens = HashMapUtil.getValueFromMap(search_options_tokens, tokenType);
                 if(searchTokens != null) {

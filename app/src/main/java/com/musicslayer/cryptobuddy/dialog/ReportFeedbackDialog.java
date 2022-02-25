@@ -7,10 +7,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.musicslayer.cryptobuddy.api.address.AddressData;
+import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.user.AddressPortfolioObj;
+import com.musicslayer.cryptobuddy.data.persistent.user.ChartPortfolioObj;
 import com.musicslayer.cryptobuddy.data.persistent.user.ExchangePortfolioObj;
 import com.musicslayer.cryptobuddy.data.persistent.user.TransactionPortfolioObj;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -25,6 +27,8 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+
+// TODO Update ReportFeedbackDialog with new options.
 
 public class ReportFeedbackDialog extends BaseDialog {
     String type;
@@ -65,6 +69,12 @@ public class ReportFeedbackDialog extends BaseDialog {
         }
         else if("ExchangePortfolio".equals(type)) {
             checkBox_info.setText("Attach exchange portfolio information.");
+        }
+        else if("Chart".equals(type)) {
+            checkBox_info.setText("Attach chart information.");
+        }
+        else if("ChartPortfolio".equals(type)) {
+            checkBox_info.setText("Attach chart portfolio information.");
         }
 
         Button B_EMAIL = findViewById(R.id.report_feedback_dialog_button);
@@ -172,6 +182,29 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             s.append("\n\nExchange Filter:\n\n").append(StateObj.filterInfo);
             s.append("\n\nExchange Portfolio:\n\n").append(DataBridge.serialize(StateObj.exchangePortfolioObj, ExchangePortfolioObj.class));
+            s.append("\n\n").append(StateObj.tableInfo);
+        }
+        else if("Chart".equals(type)) {
+            s.append("\n\nChartExplorerActivity");
+
+            // Full info for the chart.
+            s.append("\n\nChart Info:");
+            s.append("\n\n").append(ChartData.getRawFullInfoString(new ArrayList<>(StateObj.chartDataMap.values())));
+
+            s.append("\n\n").append(StateObj.tableInfo);
+        }
+        else if("ChartPortfolio".equals(type)) {
+            s.append("\n\nChartPortfolioExplorerActivity");
+
+            // Full info for all charts.
+            s.append("\n\nChart Info Full:");
+            s.append("\n\n").append(ChartData.getRawFullInfoString(new ArrayList<>(StateObj.chartDataMap.values())));
+
+            s.append("\n\nChart Info Filtered:");
+            s.append("\n\n").append(ChartData.getRawFullInfoString(new ArrayList<>(StateObj.chartDataFilterMap.values())));
+
+            s.append("\n\nChart Filter:\n\n").append(StateObj.filterInfo);
+            s.append("\n\nChart Portfolio:\n\n").append(DataBridge.serialize(StateObj.chartPortfolioObj, ChartPortfolioObj.class));
             s.append("\n\n").append(StateObj.tableInfo);
         }
         else {

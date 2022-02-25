@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
+import com.musicslayer.cryptobuddy.api.chart.ChartAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
@@ -94,15 +95,19 @@ public class AboutActivity extends BaseActivity {
         ArrayList<String> sortedAddressAPIDisplayNames = AddressAPI.address_api_display_names;
         Collections.sort(sortedAddressAPIDisplayNames);
 
-        ArrayList<String> sortedPriceAPIDisplayNames = PriceAPI.price_api_display_names;
-        Collections.sort(sortedPriceAPIDisplayNames);
-
         ArrayList<String> sortedExchangeAPIDisplayNames = ExchangeAPI.exchange_api_display_names;
         Collections.sort(sortedExchangeAPIDisplayNames);
 
+        ArrayList<String> sortedChartAPIDisplayNames = ChartAPI.chart_api_display_names;
+        Collections.sort(sortedChartAPIDisplayNames);
+
+        ArrayList<String> sortedPriceAPIDisplayNames = PriceAPI.price_api_display_names;
+        Collections.sort(sortedPriceAPIDisplayNames);
+
         String apiText = "ADDRESS:\n  " + TextUtils.join("\n  ", sortedAddressAPIDisplayNames) +
-            "\n\nPRICE:\n  " + TextUtils.join("\n  ", sortedPriceAPIDisplayNames) +
-            "\n\nEXCHANGE:\n  " + TextUtils.join("\n  ", sortedExchangeAPIDisplayNames);
+            "\n\nEXCHANGE:\n  " + TextUtils.join("\n  ", sortedExchangeAPIDisplayNames) +
+            "\n\nCHART:\n  " + TextUtils.join("\n  ", sortedChartAPIDisplayNames) +
+            "\n\nPRICE:\n  " + TextUtils.join("\n  ", sortedPriceAPIDisplayNames);
 
         TextView T_SOURCES_TEXT = findViewById(R.id.about_sourcesText);
         T_SOURCES_TEXT.setText(apiText + "\n");

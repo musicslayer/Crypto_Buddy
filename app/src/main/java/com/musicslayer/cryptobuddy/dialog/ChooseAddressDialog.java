@@ -118,12 +118,12 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class, new ArrayList<CryptoAddress>());
+        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseNetworkDialog.class, new ArrayList<CryptoAddress>());
         chooseCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((ChooseCryptoDialog)dialog).isComplete) {
-                    user_CRYPTOADDRESS = ((ChooseCryptoDialog)dialog).user_CRYPTOADDRESS;
+                if(((ChooseNetworkDialog)dialog).isComplete) {
+                    user_CRYPTOADDRESS = ((ChooseNetworkDialog)dialog).user_CRYPTOADDRESS;
 
                     PersistentUserDataStore.getInstance(AddressHistory.class).addAddressToHistory(new AddressHistoryObj(user_CRYPTOADDRESS));
 
@@ -160,7 +160,7 @@ public class ChooseAddressDialog extends BaseDialog {
                     dismiss();
                 }
                 else {
-                    chooseCryptoDialogFragment.updateArguments(ChooseCryptoDialog.class, cryptoAddressArrayList);
+                    chooseCryptoDialogFragment.updateArguments(ChooseNetworkDialog.class, cryptoAddressArrayList);
                     chooseCryptoDialogFragment.show(ChooseAddressDialog.this.activity, "choose");
                 }
             }

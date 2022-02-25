@@ -115,6 +115,26 @@
                 app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
         </TableRow>
 
+        <TableRow
+            android:id="@+id/main_tableRow4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_chartExplorerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chart\nExplorer"
+                app:drawableLeftCompat="@drawable/ic_baseline_forward_24" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/main_chartPortfolioViewerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chart\nPortfolio"
+                app:drawableLeftCompat="@drawable/ic_baseline_folder_24" />
+        </TableRow>
+
     </TableLayout>
 
     <TextView
@@ -135,7 +155,7 @@
         app:layout_constraintTop_toTopOf="@id/main_halfWayVertical">
 
         <TableRow
-            android:id="@+id/main_tableRow4"
+            android:id="@+id/main_tableRow5"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -156,7 +176,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/main_tableRow5"
+            android:id="@+id/main_tableRow6"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -177,7 +197,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/main_tableRow6"
+            android:id="@+id/main_tableRow7"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -198,7 +218,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/main_tableRow7"
+            android:id="@+id/main_tableRow8"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
