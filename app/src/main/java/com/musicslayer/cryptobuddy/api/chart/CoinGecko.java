@@ -1,8 +1,20 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
+import com.musicslayer.cryptobuddy.transaction.Timestamp;
+import com.musicslayer.cryptobuddy.util.ThrowableUtil;
+import com.musicslayer.cryptobuddy.util.WebUtil;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+
+// For these APIs, we can only query one asset at a time.
 
 public class CoinGecko extends ChartAPI {
     public String getName() { return "CoinGecko"; }
@@ -13,126 +25,81 @@ public class CoinGecko extends ChartAPI {
         return true;
     }
 
-    public ArrayList<AssetQuantity> getPricePoints(CryptoChart cryptoChart) {
-        return null;
-        /*
-        Fiat priceFiat = cryptoPrice.fiat;
+    public ArrayList<PricePoint> getPricePoints(CryptoChart cryptoChart) {
+        // For now, just assume USD and that it's a coin.
+        Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
         String priceFiatName = priceFiat.getCoinGeckoID();
 
-        // Separate assetArrayList into fiat, coins, and tokens.
-        // Further separate tokens by blockchain.
-        ArrayList<Fiat> fiatArrayList = new ArrayList<>();
-        ArrayList<Coin> coinArrayList = new ArrayList<>();
-        HashMap<String, ArrayList<Token>> blockchainHashMap = new HashMap<>();
+        Coin coin = (Coin)cryptoChart.crypto;
+        String coinString = coin.getCoinGeckoID();
 
-        for(Asset asset : cryptoPrice.assetArrayList) {
-            if(asset instanceof Fiat) {
-                // All Fiats can be looked up.
-                Fiat fiat = (Fiat)asset;
-                if(!"?".equals(fiat.getCoinGeckoID())) {
-                    fiatArrayList.add(fiat);
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
+
+        ArrayList<PricePoint> pricePointArrayList = new ArrayList<>();
+
+        if(priceDataCoinJSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataCoinJSON);
+                JSONArray prices = json.getJSONArray("prices");
+                for(int i = 0; i < prices.length(); i++) {
+                    JSONArray price = prices.getJSONArray(i);
+
+                    String timeString = price.getString(0);
+                    Date date = new Date(new BigDecimal(timeString).longValue());
+
+                    String priceString = price.getString(1);
+
+                    pricePointArrayList.add(new PricePoint(new Timestamp(date), new BigDecimal(priceString)));
                 }
             }
-            else if(asset instanceof Coin) {
-                Coin coin = (Coin)asset;
-                if(!"?".equals(coin.getCoinGeckoID())) {
-                    coinArrayList.add(coin);
-                }
-            }
-            else if(asset instanceof Token) {
-                Token token = (Token)asset;
-
-                if(!"?".equals(token.getCoinGeckoID())) {
-                    ArrayList<Token> tokenArrayList = blockchainHashMap.get(token.getCoinGeckoBlockchainID());
-                    if(tokenArrayList == null) {
-                        tokenArrayList = new ArrayList<>();
-                    }
-
-                    tokenArrayList.add(token);
-                    blockchainHashMap.put(token.getCoinGeckoBlockchainID(), tokenArrayList);
-                }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
             }
         }
 
-        HashMap<Asset, AssetQuantity> priceHashMap = new HashMap<>();
-
-        // Tokens
-        for(String blockchainID : blockchainHashMap.keySet()) {
-            ArrayList<Token> tokenArrayList = blockchainHashMap.get(blockchainID);
-            if(tokenArrayList == null) { continue; }
-
-            if(!tokenArrayList.isEmpty()) {
-                StringBuilder tokenString = new StringBuilder();
-                for(int i = 0; i < tokenArrayList.size(); i++) {
-                    tokenString.append(tokenArrayList.get(i).getCoinGeckoID());
-                    if(i < tokenArrayList.size() - 1) {
-                        tokenString.append(",");
-                    }
-                }
-
-                ProgressDialogFragment.updateProgressSubtitle("Processing Tokens...");
-                String priceDataTokenJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/token_price/" + blockchainID + "?contract_addresses=" + tokenString + "&vs_currencies=" + priceFiatName + "&include_market_cap=false&include_last_updated_at=true");
-                if(priceDataTokenJSON != null) {
-                    try {
-                        JSONObject json = new JSONObject(priceDataTokenJSON);
-
-                        for(Token token : tokenArrayList) {
-                            if(!json.has(token.getCoinGeckoID())) { continue; }
-
-                            JSONObject json2 = json.getJSONObject(token.getCoinGeckoID());
-                            BigDecimal d = new BigDecimal(json2.getString(priceFiatName));
-                            priceHashMap.put(token, new AssetQuantity(d.toPlainString(), priceFiat));
-                        }
-                    }
-                    catch(Exception e) {
-                        // Ignore error and return null.
-                        // Even though some entries were filled, something went wrong so we assume the data may be suspect.
-                        ThrowableUtil.processThrowable(e);
-                        return null;
-                    }
-                }
-            }
-        }
-
-        // Coins
-        if(!coinArrayList.isEmpty()) {
-            StringBuilder coinString = new StringBuilder();
-            for(int i = 0; i < coinArrayList.size(); i++) {
-                coinString.append(coinArrayList.get(i).getCoinGeckoID());
-                if(i < coinArrayList.size() - 1) {
-                    coinString.append(",");
-                }
-            }
-
-            ProgressDialogFragment.updateProgressSubtitle("Processing Coins...");
-            String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/simple/price?ids=" + coinString + "&vs_currencies=" + priceFiatName + "&include_market_cap=false&include_last_updated_at=true");
-            if(priceDataCoinJSON != null) {
-                try {
-                    JSONObject json = new JSONObject(priceDataCoinJSON);
-
-                    for(Coin coin : coinArrayList) {
-                        if(!json.has(coin.getCoinGeckoID())) { continue; }
-
-                        JSONObject json2 = json.getJSONObject(coin.getCoinGeckoID());
-                        BigDecimal d = new BigDecimal(json2.getString(priceFiatName));
-                        priceHashMap.put(coin, new AssetQuantity(d.toPlainString(), priceFiat));
-                    }
-                }
-                catch(Exception e) {
-                    // Ignore error and return null.
-                    // Even though some entries were filled, something went wrong so we assume the data may be suspect.
-                    ThrowableUtil.processThrowable(e);
-                    return null;
-                }
-            }
-        }
-
-        return priceHashMap;
-
-         */
+        return pricePointArrayList;
     }
 
-    public ArrayList<AssetQuantity> getCandles(CryptoChart cryptoChart) {
-        return null;
+    public ArrayList<Candle> getCandles(CryptoChart cryptoChart) {
+        Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
+        String priceFiatName = priceFiat.getCoinGeckoID();
+
+        Coin coin = (Coin)cryptoChart.crypto;
+        String coinString = coin.getCoinGeckoID();
+
+        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=1");
+
+        ArrayList<Candle> candleArrayList = new ArrayList<>();
+
+        if(priceDataCoinJSON != null) {
+            try {
+                JSONArray candles = new JSONArray(priceDataCoinJSON);
+                for(int i = 0; i < candles.length(); i++) {
+                    JSONArray candle = candles.getJSONArray(i);
+
+                    String timeString = candle.getString(0);
+                    Date date = new Date(new BigDecimal(timeString).longValue());
+
+                    String openPriceString = candle.getString(1);
+                    String highPriceString = candle.getString(2);
+                    String lowPriceString = candle.getString(3);
+                    String closePriceString = candle.getString(4);
+
+
+                    candleArrayList.add(new Candle(new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
+
+        return candleArrayList;
     }
 }

@@ -63,8 +63,8 @@ abstract public class ChartAPI extends API implements Parcelable {
     }
 
     abstract public boolean isSupported(CryptoChart cryptoChart);
-    abstract public ArrayList<AssetQuantity> getPricePoints(CryptoChart cryptoChart);
-    public ArrayList<AssetQuantity> getCandles(CryptoChart cryptoChart) { return null; }
+    abstract public ArrayList<PricePoint> getPricePoints(CryptoChart cryptoChart);
+    public ArrayList<Candle> getCandles(CryptoChart cryptoChart) { return null; }
 
     @NonNull
     @Override

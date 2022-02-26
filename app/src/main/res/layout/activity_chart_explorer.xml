@@ -57,4 +57,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_explorer_adLayout" />
 
+    <HorizontalScrollView
+        android:id="@+id/chart_explorer_horizontalScrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chart_explorer_infoTextView">
+
+        <LinearLayout
+            android:id="@+id/chart_explorer_linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chart_explorer_downloadDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_download_24"
+                android:text="Download Data" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <com.musicslayer.cryptobuddy.chart.ChartView
+        android:id="@+id/chart_explorer_chartView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chart_explorer_horizontalScrollView1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

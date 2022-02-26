@@ -10,11 +10,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
+import com.musicslayer.cryptobuddy.chart.ChartView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -23,6 +25,7 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
+import com.musicslayer.cryptobuddy.dialog.DownloadAddressDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -152,11 +155,42 @@ public class ChartExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        // TODO Every so often, automatically update data.
+        /*
+        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadChartDataDialog.class, cryptoChartArrayList);
+        downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((DownloadChartDataDialog)dialog).isComplete) {
+                    includePricePoints = ((DownloadAddressDataDialog)dialog).user_PRICEPOINTS;
+                    includeCandles = ((DownloadAddressDataDialog)dialog).user_CANDLES;
+                    progressDialogFragment.show(ChartExplorerActivity.this, "progress");
+                }
+            }
+        });
+        downloadDialogFragment.restoreListeners(this, "download");
+
+         */
+
+        AppCompatButton downloadDataButton = findViewById(R.id.chart_explorer_downloadDataButton);
+        downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                // Don't ask user - just download all types of data.
+                includePricePoints = new ArrayList<>();
+                includePricePoints.add(true);
+
+                includeCandles = new ArrayList<>();
+                includeCandles.add(true);
+
+                progressDialogFragment.show(ChartExplorerActivity.this, "progress");
+            }
+        });
     }
 
     public void updateLayout() {
         // Update the graphical chart.
+        ChartView chartView = findViewById(R.id.chart_explorer_chartView);
+        chartView.draw(new ArrayList<>(StateObj.chartDataMap.values()));
     }
 
     @Override

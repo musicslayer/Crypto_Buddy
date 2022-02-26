@@ -37,10 +37,6 @@ import java.util.Date;
 // TODO Finish the getSingleAllData Implementations.
 
 // TODO Chart View
-// Price, MarketCap
-// https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily
-// Candles
-// https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=7    Only accepts 1/7/14/30/90/180/365 days.
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

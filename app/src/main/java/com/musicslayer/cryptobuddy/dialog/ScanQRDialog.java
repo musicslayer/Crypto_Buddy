@@ -52,7 +52,7 @@ public class ScanQRDialog extends BaseDialog {
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
                     cameraSource[0] = new CameraSource.Builder(ScanQRDialog.this.activity, createBarcodeDetector()).build();
-                    cameraSource[0].start(cameraView.getHolder());
+                    cameraSource[0].start(holder);
                 }
                 catch(Exception e) {
                     ThrowableUtil.processThrowable(e);

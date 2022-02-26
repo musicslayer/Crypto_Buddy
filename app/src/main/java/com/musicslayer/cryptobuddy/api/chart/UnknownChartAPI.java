@@ -28,8 +28,8 @@ public class UnknownChartAPI extends ChartAPI {
     }
 
     public boolean isSupported(CryptoChart cryptoChart) { return false; }
-    public ArrayList<AssetQuantity> getPricePoints(CryptoChart cryptoChart) { return null; }
-    public ArrayList<AssetQuantity> getCandles(CryptoChart cryptoChart) { return null; }
+    public ArrayList<PricePoint> getPricePoints(CryptoChart cryptoChart) { return null; }
+    public ArrayList<Candle> getCandles(CryptoChart cryptoChart) { return null; }
 
     public static UnknownChartAPI createUnknownChartAPI(String key) {
         return new UnknownChartAPI(key);
