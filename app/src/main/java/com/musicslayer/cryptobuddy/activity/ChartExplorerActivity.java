@@ -185,12 +185,15 @@ public class ChartExplorerActivity extends BaseActivity {
                 progressDialogFragment.show(ChartExplorerActivity.this, "progress");
             }
         });
+
+        updateLayout();
     }
 
     public void updateLayout() {
         // Update the graphical chart.
+        ChartData chartData = StateObj.chartDataMap.get(cryptoChartArrayList.get(0));
         ChartView chartView = findViewById(R.id.chart_explorer_chartView);
-        chartView.draw(new ArrayList<>(StateObj.chartDataMap.values()));
+        chartView.draw(chartData);
     }
 
     @Override

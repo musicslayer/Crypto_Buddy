@@ -199,6 +199,22 @@ public class ChartData implements DataBridge.SerializableToJSON {
         return true;
     }
 
+    public BigDecimal getMinPrice() {
+        return getMinPricePointsPrice().min(getMinCandlesPrice());
+    }
+
+    public BigDecimal getMaxPrice() {
+        return getMaxPricePointsPrice().min(getMaxCandlesPrice());
+    }
+
+    public BigDecimal getMinTime() {
+        return getMinPricePointsTime().min(getMinCandlesTime());
+    }
+
+    public BigDecimal getMaxTime() {
+        return getMaxPricePointsTime().min(getMaxCandlesTime());
+    }
+
     public BigDecimal getMinPricePointsPrice() {
         BigDecimal minPrice;
         if(!isPricePointsComplete() || pricePointsArrayList.isEmpty()) {
