@@ -734,8 +734,8 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     private BigDecimal getBottomTime() {
-        // The bottom time of any graph is 24H less than the max/top time.
-        BigDecimal maxTime = HashMapUtil.getValueFromMap(chartData.maxTimeHashMap, timeframe);
+        // The bottom time of any graph is the top time minus the timeframe.
+        BigDecimal topTime = getTopTime();
         BigDecimal interval = null;
         if("24H".equals(timeframe)) {
             interval = new BigDecimal(24 * 60 * 60 * 1000);
@@ -744,7 +744,7 @@ public class TraditionalChartView extends CrashLinearLayout {
             interval = new BigDecimal(30L * 24L * 60L * 60L * 1000L);
         }
 
-        return maxTime.subtract(interval);
+        return topTime.subtract(interval);
     }
 
     @Override
