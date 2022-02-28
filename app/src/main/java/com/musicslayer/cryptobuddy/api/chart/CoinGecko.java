@@ -1,6 +1,8 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
@@ -29,18 +31,36 @@ public class CoinGecko extends ChartAPI {
         Fiat priceFiat = cryptoChart.fiat;
         String priceFiatName = priceFiat.getCoinGeckoID();
 
-        Coin coin = (Coin)cryptoChart.crypto;
-        String coinString = coin.getCoinGeckoID();
+        String priceData24HJSON;
+        String priceData30DJSON;
+
+        Crypto crypto = cryptoChart.crypto;
+        if(crypto instanceof Coin) {
+            Coin coin = (Coin)crypto;
+            String coinString = coin.getCoinGeckoID();
+
+            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
+            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
+        }
+        else if(crypto instanceof Token) {
+            Token token = (Token)crypto;
+            String tokenString = token.getCoinGeckoID();
+            String blockchainID = token.getCoinGeckoBlockchainID();
+
+            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
+            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
+        }
+        else {
+            return null;
+        }
 
         ArrayList<PricePoint> pricePointArrayList = new ArrayList<>();
 
         // 24H
-        String priceDataCoin24JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
-
-        if(priceDataCoin24JSON != null) {
+        if(priceData24HJSON != null) {
             try {
                 // Prices, Market Caps, and Volumes all have the same times and are in corresponding order.
-                JSONObject json = new JSONObject(priceDataCoin24JSON);
+                JSONObject json = new JSONObject(priceData24HJSON);
                 JSONArray prices = json.getJSONArray("prices");
                 JSONArray marketCaps = json.getJSONArray("market_caps");
                 JSONArray volumes = json.getJSONArray("total_volumes");
@@ -69,11 +89,9 @@ public class CoinGecko extends ChartAPI {
         }
 
         // 30D
-        String priceDataCoin30JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
-
-        if(priceDataCoin30JSON != null) {
+        if(priceData30DJSON != null) {
             try {
-                JSONObject json = new JSONObject(priceDataCoin30JSON);
+                JSONObject json = new JSONObject(priceData30DJSON);
                 JSONArray prices = json.getJSONArray("prices");
                 JSONArray marketCaps = json.getJSONArray("market_caps");
                 JSONArray volumes = json.getJSONArray("total_volumes");
@@ -108,19 +126,30 @@ public class CoinGecko extends ChartAPI {
         Fiat priceFiat = cryptoChart.fiat;
         String priceFiatName = priceFiat.getCoinGeckoID();
 
-        Coin coin = (Coin)cryptoChart.crypto;
-        String coinString = coin.getCoinGeckoID();
+        String priceData24HJSON;
+        String priceData30DJSON;
+
+        // This API does not support tokens.
+        Crypto crypto = cryptoChart.crypto;
+        if(crypto instanceof Coin) {
+            Coin coin = (Coin)crypto;
+            String coinString = coin.getCoinGeckoID();
+
+            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=1");
+            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=30");
+        }
+        else {
+            return null;
+        }
 
         ArrayList<Candle> candleArrayList = new ArrayList<>();
 
         // 24H
-        String priceDataCoin24JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=1");
-
-        if(priceDataCoin24JSON != null) {
+        if(priceData24HJSON != null) {
             try {
                 // For each hour, we get 2 candles, so we have to combine them.
                 int numCombinedCandles = 2;
-                JSONArray candles = new JSONArray(priceDataCoin24JSON);
+                JSONArray candles = new JSONArray(priceData24HJSON);
                 for(int i = 0; i < candles.length(); i += numCombinedCandles) {
                     ArrayList<Candle> tempCandleArrayList = new ArrayList<>();
 
@@ -150,13 +179,11 @@ public class CoinGecko extends ChartAPI {
         }
 
         // 30D
-        String priceDataCoin30JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=30");
-
-        if(priceDataCoin30JSON != null) {
+        if(priceData30DJSON != null) {
             try {
                 // For each day, we get 6 candles, so we have to combine them.
                 int numCombinedCandles = 6;
-                JSONArray candles = new JSONArray(priceDataCoin30JSON);
+                JSONArray candles = new JSONArray(priceData30DJSON);
                 for(int i = 0; i < candles.length(); i += numCombinedCandles) {
                     ArrayList<Candle> tempCandleArrayList = new ArrayList<>();
 
