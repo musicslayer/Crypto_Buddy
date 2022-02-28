@@ -24,10 +24,14 @@ public class ChartData implements DataBridge.SerializableToJSON {
     // Maps of timeframes to values.
     final public HashMap<String, ArrayList<PricePoint>> pricePointsHashMap;
     final public HashMap<String, ArrayList<Candle>> candlesHashMap;
-    final public HashMap<String, BigDecimal> maxPriceHashMap;
-    final public HashMap<String, BigDecimal> minPriceHashMap;
     final public HashMap<String, BigDecimal> maxTimeHashMap;
     final public HashMap<String, BigDecimal> minTimeHashMap;
+    final public HashMap<String, BigDecimal> maxPriceHashMap;
+    final public HashMap<String, BigDecimal> minPriceHashMap;
+    final public HashMap<String, BigDecimal> maxMarketCapHashMap;
+    final public HashMap<String, BigDecimal> minMarketCapHashMap;
+    final public HashMap<String, BigDecimal> maxVolumeHashMap;
+    final public HashMap<String, BigDecimal> minVolumeHashMap;
 
     @Override
     public void serializeToJSON(DataBridge.Writer o) throws IOException {
@@ -74,6 +78,14 @@ public class ChartData implements DataBridge.SerializableToJSON {
         HashMapUtil.putValueInMap(candlesHashMap, "24H", Candle.filterByTimeframe(candlesArrayList, "24H"));
         HashMapUtil.putValueInMap(candlesHashMap, "30D", Candle.filterByTimeframe(candlesArrayList, "30D"));
 
+        maxTimeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(maxTimeHashMap, "24H", getMaxTime("24H"));
+        HashMapUtil.putValueInMap(maxTimeHashMap, "30D", getMaxTime("30D"));
+
+        minTimeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(minTimeHashMap, "24H", getMinTime("24H"));
+        HashMapUtil.putValueInMap(minTimeHashMap, "30D", getMinTime("30D"));
+
         maxPriceHashMap = new HashMap<>();
         HashMapUtil.putValueInMap(maxPriceHashMap, "24H", getMaxPrice("24H"));
         HashMapUtil.putValueInMap(maxPriceHashMap, "30D", getMaxPrice("30D"));
@@ -82,13 +94,21 @@ public class ChartData implements DataBridge.SerializableToJSON {
         HashMapUtil.putValueInMap(minPriceHashMap, "24H", getMinPrice("24H"));
         HashMapUtil.putValueInMap(minPriceHashMap, "30D", getMinPrice("30D"));
 
-        maxTimeHashMap = new HashMap<>();
-        HashMapUtil.putValueInMap(maxTimeHashMap, "24H", getMaxTime("24H"));
-        HashMapUtil.putValueInMap(maxTimeHashMap, "30D", getMaxTime("30D"));
+        maxMarketCapHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(maxMarketCapHashMap, "24H", getMaxMarketCap("24H"));
+        HashMapUtil.putValueInMap(maxMarketCapHashMap, "30D", getMaxMarketCap("30D"));
 
-        minTimeHashMap = new HashMap<>();
-        HashMapUtil.putValueInMap(minTimeHashMap, "24H", getMinTime("24H"));
-        HashMapUtil.putValueInMap(minTimeHashMap, "30D", getMinTime("30D"));
+        minMarketCapHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(minMarketCapHashMap, "24H", getMinMarketCap("24H"));
+        HashMapUtil.putValueInMap(minMarketCapHashMap, "30D", getMinMarketCap("30D"));
+
+        maxVolumeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(maxVolumeHashMap, "24H", getMaxVolume("24H"));
+        HashMapUtil.putValueInMap(maxVolumeHashMap, "30D", getMaxVolume("30D"));
+
+        minVolumeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(minVolumeHashMap, "24H", getMinVolume("24H"));
+        HashMapUtil.putValueInMap(minVolumeHashMap, "30D", getMinVolume("30D"));
     }
 
     public static ChartData getAllData(CryptoChart cryptoChart) {
@@ -230,28 +250,52 @@ public class ChartData implements DataBridge.SerializableToJSON {
         return true;
     }
 
-    public BigDecimal getMinPrice(String timeframe) {
-        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
-        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
-        return PricePoint.getMinPrice(timeframePricePointsArrayList).min(Candle.getMinPrice(timeframeCandlesArrayList));
-    }
-
-    public BigDecimal getMaxPrice(String timeframe) {
-        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
-        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
-        return PricePoint.getMaxPrice(timeframePricePointsArrayList).max(Candle.getMaxPrice(timeframeCandlesArrayList));
-    }
-
     public BigDecimal getMinTime(String timeframe) {
+        // Check both PricePoints and Candles so graphs look consistent.
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
         ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
         return PricePoint.getMinTime(timeframePricePointsArrayList).min(Candle.getMinTime(timeframeCandlesArrayList));
     }
 
     public BigDecimal getMaxTime(String timeframe) {
+        // Check both PricePoints and Candles so graphs look consistent.
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
         ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
         return PricePoint.getMaxTime(timeframePricePointsArrayList).max(Candle.getMaxTime(timeframeCandlesArrayList));
+    }
+
+    public BigDecimal getMinPrice(String timeframe) {
+        // Check both PricePoints and Candles so graphs look consistent.
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMinPrice(timeframePricePointsArrayList).min(Candle.getMinPrice(timeframeCandlesArrayList));
+    }
+
+    public BigDecimal getMaxPrice(String timeframe) {
+        // Check both PricePoints and Candles so graphs look consistent.
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMaxPrice(timeframePricePointsArrayList).max(Candle.getMaxPrice(timeframeCandlesArrayList));
+    }
+
+    public BigDecimal getMinMarketCap(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        return PricePoint.getMinMarketCap(timeframePricePointsArrayList);
+    }
+
+    public BigDecimal getMaxMarketCap(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        return PricePoint.getMaxMarketCap(timeframePricePointsArrayList);
+    }
+
+    public BigDecimal getMinVolume(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        return PricePoint.getMinVolume(timeframePricePointsArrayList);
+    }
+
+    public BigDecimal getMaxVolume(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        return PricePoint.getMaxVolume(timeframePricePointsArrayList);
     }
 
     public String getInfoString(boolean isRich) {

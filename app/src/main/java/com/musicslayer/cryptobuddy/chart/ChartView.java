@@ -15,6 +15,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -34,12 +36,16 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO Top/Bottom Numbers should be formatted to look good.
+
 // Each ChartView instance represents a single graphical chart.
 public class ChartView extends CrashLinearLayout {
     String timeframe = "24H"; // 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;
     boolean isHollowStyle;
+    String valueType = "PRICE"; // PRICE, MARKETCAP, or VOLUME
+    int LAST_CHECK = 0;
 
     // Graphical properties of the chart.
     int buttonSize = 150;
@@ -62,10 +68,16 @@ public class ChartView extends CrashLinearLayout {
     // Calculate these once and then use them when drawing the rest of the graph.
     int canvasWidth;
     int canvasHeight;
-    BigDecimal topPrice;
-    BigDecimal bottomPrice;
     BigDecimal topTime;
     BigDecimal bottomTime;
+    BigDecimal topPrice;
+    BigDecimal bottomPrice;
+    BigDecimal topMarketCap;
+    BigDecimal bottomMarketCap;
+    BigDecimal topVolume;
+    BigDecimal bottomVolume;
+    BigDecimal topValue;
+    BigDecimal bottomValue;
     int textHeightTop;
     int textHeightBottom;
 
@@ -80,6 +92,8 @@ public class ChartView extends CrashLinearLayout {
     AppCompatImageButton B_POINTS;
     AppCompatImageButton B_SCALE;
     AppCompatImageButton B_STYLE;
+    RadioGroup radioGroup;
+    RadioButton[] rb;
 
     public ChartView(Context context) {
         this(context, null);
@@ -181,6 +195,43 @@ public class ChartView extends CrashLinearLayout {
             public void surfaceDestroyed(SurfaceHolder holder) {}
         });
 
+        radioGroup = new RadioGroup(context);
+        radioGroup.setOrientation(HORIZONTAL);
+        rb = new RadioButton[3];
+
+        rb[0] = new RadioButton(context);
+        rb[0].setText("PRICE");
+        rb[0].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 0;
+                valueType = "PRICE";
+                updateInfo();
+                drawChart();
+            }
+        });
+
+        rb[1] = new RadioButton(context);
+        rb[1].setText("MARKET CAP");
+        rb[1].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 1;
+                valueType = "MARKETCAP";
+                updateInfo();
+                drawChart();
+            }
+        });
+
+        rb[2] = new RadioButton(context);
+        rb[2].setText("VOLUME");
+        rb[2].setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                LAST_CHECK = 2;
+                valueType = "VOLUME";
+                updateInfo();
+                drawChart();
+            }
+        });
+
         L_BUTTONS.addView(B_TIMEFRAME);
         L_BUTTONS.addView(B_POINTS);
         L_BUTTONS.addView(B_SCALE);
@@ -189,14 +240,20 @@ public class ChartView extends CrashLinearLayout {
         L_CHART.addView(L_BUTTONS);
         L_CHART.addView(surfaceView);
 
+        radioGroup.addView(rb[0]);
+        radioGroup.addView(rb[1]);
+        radioGroup.addView(rb[2]);
+
         this.addView(T_INFO);
         this.addView(L_CHART);
+        this.addView(radioGroup);
 
         updateInfo();
         updateTimeframe();
         updatePoints();
         updateScale();
         updateStyle();
+        updateType();
     }
 
     public void updateInfo() {
@@ -258,6 +315,11 @@ public class ChartView extends CrashLinearLayout {
         }
     }
 
+    public void updateType() {
+        radioGroup.check(rb[LAST_CHECK].getId());
+        rb[LAST_CHECK].callOnClick();
+    }
+
     public void draw(ChartData chartData) {
         this.chartData = chartData;
         drawChart();
@@ -278,13 +340,19 @@ public class ChartView extends CrashLinearLayout {
         // Calculate these values upfront.
         canvasWidth = canvas.getWidth();
         canvasHeight = canvas.getHeight();
-        topPrice = getTopPrice();
-        bottomPrice = getBottomPrice();
         topTime = getTopTime();
         bottomTime = getBottomTime();
+        topPrice = getTopValue("PRICE");
+        bottomPrice = getBottomValue("PRICE");
+        topMarketCap = getTopValue("MARKETCAP");
+        bottomMarketCap = getBottomValue("MARKETCAP");
+        topVolume = getTopValue("VOLUME");
+        bottomVolume = getBottomValue("VOLUME");
+        topValue = getTopValue(valueType);
+        bottomValue = getBottomValue(valueType);
 
-        textHeightTop = getTextHeight(topPrice.toPlainString());
-        textHeightBottom = getTextHeight(bottomPrice.toPlainString());
+        textHeightTop = getTextHeight(topValue.toPlainString());
+        textHeightBottom = getTextHeight(bottomValue.toPlainString());
 
         // Draw all the graphical parts of the chart.
         drawBackground(canvas);
@@ -304,8 +372,6 @@ public class ChartView extends CrashLinearLayout {
         return r.height();
     }
 
-
-
     private void drawBackground(Canvas canvas) {
         Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setColor(AppearanceUtil.getPrimaryColor(getContext()));
@@ -319,12 +385,12 @@ public class ChartView extends CrashLinearLayout {
         textPaint.setTextSize(fontSize);
 
         // Top Price Label
-        String topPriceString = topPrice.toPlainString();
+        String topPriceString = topValue.toPlainString();
         textPaint.getTextBounds(topPriceString, 0, topPriceString.length(), r);
         canvas.drawText(topPriceString, -r.left, -r.top, textPaint);
 
         // Bottom Price Label
-        String bottomPriceString = bottomPrice.toPlainString();
+        String bottomPriceString = bottomValue.toPlainString();
         textPaint.getTextBounds(bottomPriceString, 0, bottomPriceString.length(), r);
         canvas.drawText(bottomPriceString, -r.left, canvasHeight - r.bottom, textPaint);
 
@@ -402,18 +468,18 @@ public class ChartView extends CrashLinearLayout {
         }
 
         ArrayList<BigDecimal> time = new ArrayList<>();
-        ArrayList<BigDecimal> price = new ArrayList<>();
+        ArrayList<BigDecimal> value = new ArrayList<>();
 
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and prices here.
-            time.add(normalizeTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
-            price.add(normalizePrice(pricePoint.price));
+            time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
+            value.add(getNormalizedValue(getValueByType(pricePoint)));
         }
 
         for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
-            canvas.drawCircle(getCanvasX(time.get(i)), getCanvasY(price.get(i)), pointRadius, pointPaint);
+            canvas.drawCircle(getCanvasX(time.get(i)), getCanvasY(value.get(i)), pointRadius, pointPaint);
         }
     }
 
@@ -427,23 +493,23 @@ public class ChartView extends CrashLinearLayout {
         }
 
         ArrayList<BigDecimal> time = new ArrayList<>();
-        ArrayList<BigDecimal> price = new ArrayList<>();
+        ArrayList<BigDecimal> value = new ArrayList<>();
 
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and prices here.
-            time.add(normalizeTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
-            price.add(normalizePrice(pricePoint.price));
+            time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
+            value.add(getNormalizedValue(getValueByType(pricePoint)));
         }
 
         Path path = new Path();
         for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
             if(i == 0) {
-                path.moveTo(getCanvasX(time.get(i)), getCanvasY(price.get(i)));
+                path.moveTo(getCanvasX(time.get(i)), getCanvasY(value.get(i)));
             }
             else {
-                path.lineTo(getCanvasX(time.get(i)), getCanvasY(price.get(i)));
+                path.lineTo(getCanvasX(time.get(i)), getCanvasY(value.get(i)));
             }
         }
 
@@ -464,11 +530,11 @@ public class ChartView extends CrashLinearLayout {
 
         for(Candle candle : timeframeCandlesArrayList) {
             // Normalize the times and prices here.
-            BigDecimal time = normalizeTime(new BigDecimal(candle.timestamp.date.getTime()));
-            BigDecimal openPrice = normalizePrice(candle.openPrice);
-            BigDecimal highPrice = normalizePrice(candle.highPrice);
-            BigDecimal lowPrice = normalizePrice(candle.lowPrice);
-            BigDecimal closePrice = normalizePrice(candle.closePrice);
+            BigDecimal time = getNormalizedTime(new BigDecimal(candle.timestamp.date.getTime()));
+            BigDecimal openPrice = getNormalizedPrice(candle.openPrice);
+            BigDecimal highPrice = getNormalizedPrice(candle.highPrice);
+            BigDecimal lowPrice = getNormalizedPrice(candle.lowPrice);
+            BigDecimal closePrice = getNormalizedPrice(candle.closePrice);
             drawCandle(canvas, candlePaint, time, openPrice, highPrice, lowPrice, closePrice);
         }
     }
@@ -511,14 +577,43 @@ public class ChartView extends CrashLinearLayout {
         canvas.drawLine(centerX, boxBottom, centerX, whiskerBottom, paint);
     }
 
-    private BigDecimal normalizeTime(BigDecimal time) {
-        // Input is absolute time, output is the normalized time.
+    private BigDecimal getNormalizedTime(BigDecimal time) {
+        // Convert absolute time to normalized time.
         return time.subtract(bottomTime).divide(topTime.subtract(bottomTime), 50, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal normalizePrice(BigDecimal price) {
-        // Input is absolute price, output is the normalized price.
+    private BigDecimal getNormalizedValue(BigDecimal value) {
+        // Convert absolute value to normalized value.
+        return value.subtract(bottomValue).divide(topValue.subtract(bottomValue), 50, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getNormalizedPrice(BigDecimal price) {
+        // Convert absolute price to normalized price.
         return price.subtract(bottomPrice).divide(topPrice.subtract(bottomPrice), 50, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getNormalizedMarketCap(BigDecimal marketCap) {
+        // Convert absolute market cap to normalized market cap.
+        return marketCap.subtract(bottomMarketCap).divide(topMarketCap.subtract(bottomMarketCap), 50, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getNormalizedVolume(BigDecimal volume) {
+        // Convert absolute volume to normalized volume.
+        return volume.subtract(bottomVolume).divide(topVolume.subtract(bottomVolume), 50, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getValueByType(PricePoint pricePoint) {
+        BigDecimal value = null;
+        if("PRICE".equals(valueType)) {
+            value = pricePoint.price;
+        }
+        else if("MARKETCAP".equals(valueType)) {
+            value = pricePoint.marketCap;
+        }
+        else if("VOLUME".equals(valueType)) {
+            value = pricePoint.volume;
+        }
+        return value;
     }
 
     private float getCanvasX(BigDecimal n) {
@@ -540,28 +635,46 @@ public class ChartView extends CrashLinearLayout {
         return canvasHeight - totalOffsetBottom - (canvasHeight - totalOffsetBottom - totalOffsetTop) * nF;
     }
 
-    private BigDecimal getTopPrice() {
-        // Return a price that is higher than any price in the data.
-        BigDecimal maxPrice = HashMapUtil.getValueFromMap(chartData.maxPriceHashMap, timeframe);
+    private BigDecimal getTopValue(String valueType) {
+        // Return a value that is higher than any value in the data.
+        BigDecimal maxValue = null;
+        if("PRICE".equals(valueType)) {
+            maxValue = HashMapUtil.getValueFromMap(chartData.maxPriceHashMap, timeframe);
+        }
+        else if("MARKETCAP".equals(valueType)) {
+            maxValue = HashMapUtil.getValueFromMap(chartData.maxMarketCapHashMap, timeframe);
+        }
+        else if("VOLUME".equals(valueType)) {
+            maxValue = HashMapUtil.getValueFromMap(chartData.maxVolumeHashMap, timeframe);
+        }
 
-        int scale = maxPrice.scale();
-        int precision = maxPrice.precision();
+        int scale = maxValue.scale();
+        int precision = maxValue.precision();
 
         int tenPower = precision - scale - 1;
-        int firstDigits = maxPrice.movePointLeft(tenPower - zoomLevel).intValue() + 1;
+        int firstDigits = maxValue.movePointLeft(tenPower - zoomLevel).intValue() + 1;
 
         return new BigDecimal(firstDigits).movePointRight(tenPower - zoomLevel);
     }
 
-    private BigDecimal getBottomPrice() {
-        // Return a price that is lower than any price in the data.
-        BigDecimal minPrice = HashMapUtil.getValueFromMap(chartData.minPriceHashMap, timeframe);
+    private BigDecimal getBottomValue(String valueType) {
+        // Return a value that is lower than any value in the data.
+        BigDecimal minValue = null;
+        if("PRICE".equals(valueType)) {
+            minValue = HashMapUtil.getValueFromMap(chartData.minPriceHashMap, timeframe);
+        }
+        else if("MARKETCAP".equals(valueType)) {
+            minValue = HashMapUtil.getValueFromMap(chartData.minMarketCapHashMap, timeframe);
+        }
+        else if("VOLUME".equals(valueType)) {
+            minValue = HashMapUtil.getValueFromMap(chartData.minVolumeHashMap, timeframe);
+        }
 
-        int scale = minPrice.scale();
-        int precision = minPrice.precision();
+        int scale = minValue.scale();
+        int precision = minValue.precision();
 
         int tenPower = precision - scale - 1;
-        int firstDigit = minPrice.movePointLeft(tenPower - zoomLevel).intValue();
+        int firstDigit = minValue.movePointLeft(tenPower - zoomLevel).intValue();
 
         return new BigDecimal(firstDigit).movePointRight(tenPower - zoomLevel);
     }
@@ -605,6 +718,7 @@ public class ChartView extends CrashLinearLayout {
         bundle.putString("pointsType", pointsType);
         bundle.putBoolean("isLogScale", isLogScale);
         bundle.putBoolean("isHollowStyle", isHollowStyle);
+        bundle.putInt("lastcheck", LAST_CHECK);
 
         return bundle;
     }
@@ -621,12 +735,14 @@ public class ChartView extends CrashLinearLayout {
             pointsType = bundle.getString("pointsType");
             isLogScale = bundle.getBoolean("isLogScale");
             isHollowStyle = bundle.getBoolean("isHollowStyle");
+            LAST_CHECK = bundle.getInt("lastcheck");
 
             updateInfo();
             updateTimeframe();
             updatePoints();
             updateScale();
             updateStyle();
+            updateType();
 
             // Don't update graph here. This has to be done via callback when the Surface is created.
         }

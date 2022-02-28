@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.api.chart;
 
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
@@ -40,17 +39,25 @@ public class CoinGecko extends ChartAPI {
 
         if(priceDataCoin24JSON != null) {
             try {
+                // Prices, Market Caps, and Volumes all have the same times and are in corresponding order.
                 JSONObject json = new JSONObject(priceDataCoin24JSON);
                 JSONArray prices = json.getJSONArray("prices");
+                JSONArray marketCaps = json.getJSONArray("market_caps");
+                JSONArray volumes = json.getJSONArray("total_volumes");
                 for(int i = 0; i < prices.length(); i++) {
                     JSONArray price = prices.getJSONArray(i);
+                    JSONArray marketCap = marketCaps.getJSONArray(i);
+                    JSONArray volume = volumes.getJSONArray(i);
 
+                    // All times match, so just take first one.
                     String timeString = price.getString(0);
                     Date date = new Date(new BigDecimal(timeString).longValue());
 
                     String priceString = price.getString(1);
+                    String marketCapString = marketCap.getString(1);
+                    String volumeString = volume.getString(1);
 
-                    pricePointArrayList.add(new PricePoint("24H", new Timestamp(date), new BigDecimal(priceString)));
+                    pricePointArrayList.add(new PricePoint("24H", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
                 }
             }
             catch(Exception e) {
@@ -68,15 +75,22 @@ public class CoinGecko extends ChartAPI {
             try {
                 JSONObject json = new JSONObject(priceDataCoin30JSON);
                 JSONArray prices = json.getJSONArray("prices");
+                JSONArray marketCaps = json.getJSONArray("market_caps");
+                JSONArray volumes = json.getJSONArray("total_volumes");
                 for(int i = 0; i < prices.length(); i++) {
                     JSONArray price = prices.getJSONArray(i);
+                    JSONArray marketCap = marketCaps.getJSONArray(i);
+                    JSONArray volume = volumes.getJSONArray(i);
 
+                    // All times match, so just take first one.
                     String timeString = price.getString(0);
                     Date date = new Date(new BigDecimal(timeString).longValue());
 
                     String priceString = price.getString(1);
+                    String marketCapString = marketCap.getString(1);
+                    String volumeString = volume.getString(1);
 
-                    pricePointArrayList.add(new PricePoint("30D", new Timestamp(date), new BigDecimal(priceString)));
+                    pricePointArrayList.add(new PricePoint("30D", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
                 }
             }
             catch(Exception e) {
