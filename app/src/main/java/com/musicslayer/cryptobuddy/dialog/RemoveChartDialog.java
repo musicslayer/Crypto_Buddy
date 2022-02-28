@@ -17,7 +17,7 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
-public class RemoveCryptoDialog extends BaseDialog {
+public class RemoveChartDialog extends BaseDialog {
     ArrayList<CryptoChart> cryptoChartArrayList;
 
     CheckBox[] C;
@@ -25,7 +25,7 @@ public class RemoveCryptoDialog extends BaseDialog {
 
     public ArrayList<CryptoChart> user_cryptoChartArrayList;
 
-    public RemoveCryptoDialog(Activity activity, ArrayList<CryptoChart> cryptoChartArrayList) {
+    public RemoveChartDialog(Activity activity, ArrayList<CryptoChart> cryptoChartArrayList) {
         super(activity);
         this.cryptoChartArrayList = cryptoChartArrayList;
 
@@ -35,13 +35,13 @@ public class RemoveCryptoDialog extends BaseDialog {
     }
 
     public int getBaseViewID() {
-        return R.id.remove_crypto_dialog;
+        return R.id.remove_chart_dialog;
     }
 
     public void createLayout(Bundle savedInstanceState) {
-        setContentView(R.layout.dialog_remove_crypto);
+        setContentView(R.layout.dialog_remove_chart);
 
-        TextView T_MESSAGE = findViewById(R.id.remove_crypto_dialog_messageTextView);
+        TextView T_MESSAGE = findViewById(R.id.remove_chart_dialog_messageTextView);
         if(cryptoChartArrayList.isEmpty()) {
             T_MESSAGE.setVisibility(View.VISIBLE);
         }
@@ -61,7 +61,7 @@ public class RemoveCryptoDialog extends BaseDialog {
         });
         confirmRemoveCryptoDialogFragment.restoreListeners(activity, "delete");
 
-        Button B_DELETE = findViewById(R.id.remove_crypto_dialog_applyFilterButton);
+        Button B_DELETE = findViewById(R.id.remove_chart_dialog_applyFilterButton);
         B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 user_cryptoChartArrayList = new ArrayList<>();
@@ -80,7 +80,7 @@ public class RemoveCryptoDialog extends BaseDialog {
             }
         });
 
-        Button B_SELECTALL = findViewById(R.id.remove_crypto_dialog_selectAllButton);
+        Button B_SELECTALL = findViewById(R.id.remove_chart_dialog_selectAllButton);
         B_SELECTALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 for(int i = 0; i < cryptoChartArrayList.size(); i++) {
@@ -89,7 +89,7 @@ public class RemoveCryptoDialog extends BaseDialog {
             }
         });
 
-        Button B_CLEARALL = findViewById(R.id.remove_crypto_dialog_clearAllButton);
+        Button B_CLEARALL = findViewById(R.id.remove_chart_dialog_clearAllButton);
         B_CLEARALL.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
                 for(int i = 0; i < cryptoChartArrayList.size(); i++) {
@@ -102,7 +102,7 @@ public class RemoveCryptoDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        LinearLayout L = findViewById(R.id.remove_crypto_dialog_checkBoxLayout);
+        LinearLayout L = findViewById(R.id.remove_chart_dialog_checkBoxLayout);
 
         C = new CheckBox[cryptoChartArrayList.size()];
         for(int i = 0; i < cryptoChartArrayList.size(); i++) {

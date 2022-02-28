@@ -25,7 +25,6 @@ import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
-import com.musicslayer.cryptobuddy.dialog.DownloadAddressDataDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
@@ -81,8 +80,9 @@ public class ChartExplorerActivity extends BaseActivity {
             HashMapUtil.putValueInMap(StateObj.chartDataMap, cryptoChart, ChartData.getNoData(cryptoChart));
         }
 
+        // TODO Do we need info? Maybe auto-update setting?
         TextView T_INFO = findViewById(R.id.chart_explorer_infoTextView);
-        T_INFO.setText(cryptoChartArrayList.get(0).toString());
+        T_INFO.setVisibility(View.GONE);
 
         Toolbar toolbar = findViewById(R.id.chart_explorer_toolbar);
         setSupportActionBar(toolbar);
@@ -194,6 +194,9 @@ public class ChartExplorerActivity extends BaseActivity {
         ChartData chartData = StateObj.chartDataMap.get(cryptoChartArrayList.get(0));
         ChartView chartView = findViewById(R.id.chart_explorer_chartView);
         chartView.draw(chartData);
+
+        //ChartView chartView = findViewById(R.id.chart_explorer_chartView);
+        //chartView.draw(cryptoChartArrayList.get(0));
     }
 
     @Override

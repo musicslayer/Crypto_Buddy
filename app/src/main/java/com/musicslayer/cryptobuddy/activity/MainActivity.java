@@ -22,7 +22,7 @@ import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
 import com.musicslayer.cryptobuddy.dialog.ChooseAddressDialog;
-import com.musicslayer.cryptobuddy.dialog.ChooseCryptoDialog;
+import com.musicslayer.cryptobuddy.dialog.ChooseChartDialog;
 import com.musicslayer.cryptobuddy.dialog.ChooseExchangeDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
@@ -197,12 +197,12 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class);
-        chooseCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment chooseChartDialogFragment = BaseDialogFragment.newInstance(ChooseChartDialog.class);
+        chooseChartDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((ChooseCryptoDialog)dialog).isComplete) {
-                    CryptoChart cryptoChart = ((ChooseCryptoDialog)dialog).user_CRYPTOCHART;
+                if(((ChooseChartDialog)dialog).isComplete) {
+                    CryptoChart cryptoChart = ((ChooseChartDialog)dialog).user_CRYPTOCHART;
 
                     Intent intent = new Intent(MainActivity.this, ChartExplorerActivity.class);
                     intent.putExtra("CryptoChart", cryptoChart);
@@ -212,13 +212,13 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        chooseCryptoDialogFragment.restoreListeners(this, "chart");
+        chooseChartDialogFragment.restoreListeners(this, "chart");
 
         Button B_CHART_EXPLORER = findViewById(R.id.main_chartExplorerButton);
         B_CHART_EXPLORER.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                chooseCryptoDialogFragment.show(MainActivity.this, "chart");
+                chooseChartDialogFragment.show(MainActivity.this, "chart");
             }
         });
 

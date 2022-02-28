@@ -23,9 +23,6 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.PricePoint;
-import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
-import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -203,22 +200,21 @@ public class ChartView extends CrashLinearLayout {
     }
 
     public void updateInfo() {
-        String infoString;
+        // When this View is first inflated, we don't have anything available.
+        if(chartData == null) { return; }
 
+        String infoString = chartData.cryptoChart.toString();
+
+        // If we have the info, add on the start/end times.
         boolean isCandle = "CANDLE".equals(pointsType);
-        if(chartData == null || (isCandle && !chartData.isCandlesComplete()) || (!isCandle && !chartData.isPricePointsComplete())) {
-            infoString = "No Chart Data Found.";
+        if((isCandle && !chartData.isCandlesComplete()) || (!isCandle && !chartData.isPricePointsComplete())) {
+            infoString = infoString + "\nNo Chart Data Found.";
         }
         else {
-            Crypto crypto = chartData.cryptoChart.crypto;
-            Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
             Timestamp bottomTimestamp = new Timestamp(new Date(getBottomTime().longValue()));
             Timestamp topTimestamp = new Timestamp(new Date(getTopTime().longValue()));
 
-            infoString = "Crypto: " + crypto.getSettingName() +
-                    "\nFiat: " + priceFiat.getSettingName() +
-                    "\nChart Start Time: " + bottomTimestamp +
-                    "\nChart End Time: " + topTimestamp;
+            infoString = infoString + "\nChart Start Time: " + bottomTimestamp + "\nChart End Time: " + topTimestamp;
         }
         T_INFO.setText(infoString);
     }

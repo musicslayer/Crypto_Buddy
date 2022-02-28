@@ -74,6 +74,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_exchange_web_view.xml" value="0.18611111111111112" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_web_view.xml" value="0.2972222222222222" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_address.xml" value="0.5" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_chart.xml" value="0.33055555555555555" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_crypto.xml" value="0.33" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_exchange.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_choose_folder.xml" value="0.33" />
@@ -145,6 +146,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_progress.xml" value="0.33" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_reflections_calculator.xml" value="0.24270833333333333" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_remove_address.xml" value="0.25" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_remove_chart.xml" value="0.33055555555555555" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_remove_crypto.xml" value="0.31302083333333336" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_remove_exchange.xml" value="0.18055555555555555" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_rename_portfolio.xml" value="0.2518518518518518" />

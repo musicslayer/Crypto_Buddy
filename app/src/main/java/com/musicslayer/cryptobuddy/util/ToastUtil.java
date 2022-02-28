@@ -45,7 +45,6 @@ public class ToastUtil {
         // Chart
         toastMap.put("chart_data_downloaded", Toast.makeText(context, "Finished downloading chart information.", duration));
         toastMap.put("incomplete_chart_data", Toast.makeText(context, "Could not access all chart information. Check your internet connection and try again.", duration));
-        toastMap.put("must_choose_crypto", Toast.makeText(context, "Must choose a crypto to proceed.", duration));
 
         // Price
         toastMap.put("incomplete_price_data", Toast.makeText(context, "Could not access all price information. Some assets may not be supported, or check your internet connection and try again.", duration));

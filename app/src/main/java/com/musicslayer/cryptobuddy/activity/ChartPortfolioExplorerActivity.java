@@ -24,14 +24,14 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.user.ChartPortfolio;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.dialog.ChooseCryptoDialog;
+import com.musicslayer.cryptobuddy.dialog.ChooseChartDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
 import com.musicslayer.cryptobuddy.dialog.DiscreteFilterDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.dialog.RemoveCryptoDialog;
+import com.musicslayer.cryptobuddy.dialog.RemoveChartDialog;
 import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.filter.DiscreteFilter;
 import com.musicslayer.cryptobuddy.filter.Filter;
@@ -108,13 +108,13 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        BaseDialogFragment chooseCryptoDialogFragment = BaseDialogFragment.newInstance(ChooseCryptoDialog.class);
-        chooseCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment chooseChartDialogFragment = BaseDialogFragment.newInstance(ChooseChartDialog.class);
+        chooseChartDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((ChooseCryptoDialog)dialog).isComplete) {
+                if(((ChooseChartDialog)dialog).isComplete) {
                     // Save new crypto to the portfolio.
-                    CryptoChart newCryptoChart = ((ChooseCryptoDialog)dialog).user_CRYPTOCHART;
+                    CryptoChart newCryptoChart = ((ChooseChartDialog)dialog).user_CRYPTOCHART;
 
                     if(StateObj.chartPortfolioObj.isSaved(newCryptoChart)) {
                         ToastUtil.showToast("chart_in_portfolio");
@@ -131,23 +131,23 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        chooseCryptoDialogFragment.restoreListeners(this, "add");
+        chooseChartDialogFragment.restoreListeners(this, "add");
 
         FloatingActionButton fab_add = findViewById(R.id.chart_portfolio_explorer_addButton);
         fab_add.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                chooseCryptoDialogFragment.show(ChartPortfolioExplorerActivity.this, "add");
+                chooseChartDialogFragment.show(ChartPortfolioExplorerActivity.this, "add");
             }
         });
 
-        BaseDialogFragment removeCryptoDialogFragment = BaseDialogFragment.newInstance(RemoveCryptoDialog.class, StateObj.chartPortfolioObj.cryptoChartArrayList);
-        removeCryptoDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        BaseDialogFragment removeChartDialogFragment = BaseDialogFragment.newInstance(RemoveChartDialog.class, StateObj.chartPortfolioObj.cryptoChartArrayList);
+        removeChartDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
-                if(((RemoveCryptoDialog)dialog).isComplete) {
+                if(((RemoveChartDialog)dialog).isComplete) {
                     // Remove cryptos from portfolio and then remove their data from the table.
-                    ArrayList<CryptoChart> toRemove = ((RemoveCryptoDialog)dialog).user_cryptoChartArrayList;
+                    ArrayList<CryptoChart> toRemove = ((RemoveChartDialog)dialog).user_cryptoChartArrayList;
                     for(CryptoChart cryptoChart : toRemove) {
                         StateObj.chartPortfolioObj.removeData(cryptoChart);
                         HashMapUtil.removeValueFromMap(StateObj.chartDataMap, cryptoChart);
@@ -161,13 +161,13 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                 }
             }
         });
-        removeCryptoDialogFragment.restoreListeners(this, "remove");
+        removeChartDialogFragment.restoreListeners(this, "remove");
 
         FloatingActionButton fab_remove = findViewById(R.id.chart_portfolio_explorer_removeButton);
         fab_remove.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                removeCryptoDialogFragment.show(ChartPortfolioExplorerActivity.this, "remove");
+                removeChartDialogFragment.show(ChartPortfolioExplorerActivity.this, "remove");
             }
         });
 

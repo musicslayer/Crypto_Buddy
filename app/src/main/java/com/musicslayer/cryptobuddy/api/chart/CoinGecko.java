@@ -27,7 +27,7 @@ public class CoinGecko extends ChartAPI {
 
     public ArrayList<PricePoint> getPricePoints(CryptoChart cryptoChart) {
         // For now, just assume USD and that it's a coin.
-        Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
+        Fiat priceFiat = cryptoChart.fiat;
         String priceFiatName = priceFiat.getCoinGeckoID();
 
         Coin coin = (Coin)cryptoChart.crypto;
@@ -91,7 +91,7 @@ public class CoinGecko extends ChartAPI {
     }
 
     public ArrayList<Candle> getCandles(CryptoChart cryptoChart) {
-        Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
+        Fiat priceFiat = cryptoChart.fiat;
         String priceFiatName = priceFiat.getCoinGeckoID();
 
         Coin coin = (Coin)cryptoChart.crypto;

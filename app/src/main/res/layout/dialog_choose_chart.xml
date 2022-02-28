@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/choose_crypto_dialog"
+    android:id="@+id/choose_chart_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/choose_crypto_dialog_toolbar"
+        android:id="@+id/choose_chart_dialog_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
@@ -15,31 +15,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Choose Crypto" />
+        app:title="Choose Chart" />
 
     <TextView
-        android:id="@+id/choose_crypto_dialog_textView"
+        android:id="@+id/choose_chart_dialog_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_crypto_dialog_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/choose_chart_dialog_toolbar" />
 
     <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
-        android:id="@+id/choose_crypto_dialog_selectAndSearchView"
+        android:id="@+id/choose_chart_dialog_selectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_crypto_dialog_textView">
+        app:layout_constraintTop_toBottomOf="@id/choose_chart_dialog_textView">
 
     </com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choose_crypto_dialog_confirmButton"
+    <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
+        android:id="@+id/choose_chart_dialog_fiatSelectAndSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
-        android:text="Confirm"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_crypto_dialog_selectAndSearchView" />
+        app:layout_constraintTop_toBottomOf="@id/choose_chart_dialog_selectAndSearchView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_chart_dialog_confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_chart_dialog_fiatSelectAndSearchView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
