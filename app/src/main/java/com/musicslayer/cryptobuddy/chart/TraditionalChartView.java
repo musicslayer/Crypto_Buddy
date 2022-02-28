@@ -30,6 +30,7 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
+import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -363,8 +364,11 @@ public class TraditionalChartView extends CrashLinearLayout {
         topValue = getTopValue(valueType);
         bottomValue = getBottomValue(valueType);
 
-        textHeightTop = getTextHeight(topValue.toPlainString());
-        textHeightBottom = getTextHeight(bottomValue.toPlainString());
+        //textHeightTop = getTextHeight(topValue.toPlainString());
+        //textHeightBottom = getTextHeight(bottomValue.toPlainString());
+
+        textHeightTop = getTopTextHeight();
+        textHeightBottom = getBottomTextHeight();
 
         // Draw all the graphical parts of the chart.
         drawBackground(canvas);
@@ -372,16 +376,34 @@ public class TraditionalChartView extends CrashLinearLayout {
         drawAxes(canvas);
         drawXAxisTicks(canvas);
         drawYAxisTicks(canvas);
-        drawPriceData(canvas);
+        drawValueData(canvas);
         surfaceView.getHolder().unlockCanvasAndPost(canvas);
     }
 
-    private int getTextHeight(String text) {
+    private int getTopTextHeight() {
+        String topValueText = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
         TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(fontSize);
-        textPaint.getTextBounds(text, 0, text.length(), r);
+        textPaint.getTextBounds(topValueText, 0, topValueText.length(), r);
         return r.height();
+    }
+
+    private int getBottomTextHeight() {
+        // Take the max height of the bottomValue and the timeframe label.
+        TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(fontSize);
+
+        String bottomValueText = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
+        textPaint.getTextBounds(bottomValueText, 0, bottomValueText.length(), r);
+        int valueHeight = r.height();
+
+        String timeLabel = timeframe;
+        textPaint.getTextBounds(timeLabel, 0, timeLabel.length(), r);
+        int labelWidth = r.height();
+
+        return Math.max(valueHeight, labelWidth);
     }
 
     private void drawBackground(Canvas canvas) {
@@ -396,20 +418,29 @@ public class TraditionalChartView extends CrashLinearLayout {
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(fontSize);
 
-        // Top Price Label
-        String topPriceString = topValue.toPlainString();
-        textPaint.getTextBounds(topPriceString, 0, topPriceString.length(), r);
-        canvas.drawText(topPriceString, -r.left, -r.top, textPaint);
+        // Top Value Label
+        String topValueString = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
+        textPaint.getTextBounds(topValueString, 0, topValueString.length(), r);
+        canvas.drawText(topValueString, -r.left, -r.top, textPaint);
 
-        // Bottom Price Label
-        String bottomPriceString = bottomValue.toPlainString();
-        textPaint.getTextBounds(bottomPriceString, 0, bottomPriceString.length(), r);
-        canvas.drawText(bottomPriceString, -r.left, canvasHeight - r.bottom, textPaint);
+        // For the bottom labels, we need the max bottom value.
+        // Bottom Value Label
+        String bottomValueString = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
+        textPaint.getTextBounds(bottomValueString, 0, bottomValueString.length(), r);
+        int valueLeft = r.left;
+        int valueBottom = r.bottom;
 
         // Time Label
         String timeLabel = timeframe;
         textPaint.getTextBounds(timeLabel, 0, timeLabel.length(), r);
-        canvas.drawText(timeLabel, canvasWidth/2f - r.width()/2f -r.left, canvasHeight - r.bottom, textPaint);
+        int labelWidth = r.width();
+        int labelLeft = r.left;
+        int labelBottom = r.bottom;
+
+        int maxBottom = Math.max(valueBottom, labelBottom);
+
+        canvas.drawText(bottomValueString, -valueLeft, canvasHeight - maxBottom, textPaint);
+        canvas.drawText(timeLabel, canvasWidth/2f - labelWidth/2f -labelLeft, canvasHeight - maxBottom, textPaint);
     }
 
     private void drawAxes(Canvas canvas) {
@@ -442,7 +473,7 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     private void drawYAxisTicks(Canvas canvas) {
-        // Draw 10 evenly spaced ticks for price.
+        // Draw 10 evenly spaced ticks for value.
         // We would need 1 more tick than the number, but than we subtract 1 because we don't draw a tick at the origin.
         Paint axisTickYPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         axisTickYPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
@@ -456,7 +487,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         }
     }
 
-    private void drawPriceData(Canvas canvas) {
+    private void drawValueData(Canvas canvas) {
         if("POINT".equals(pointsType)) {
             drawPoints(canvas);
         }
@@ -485,7 +516,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
-            // Normalize the times and prices here.
+            // Normalize the times and values here.
             time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
             value.add(getNormalizedValue(getValueByType(pricePoint)));
         }
@@ -510,7 +541,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
-            // Normalize the times and prices here.
+            // Normalize the times and values here.
             time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
             value.add(getNormalizedValue(getValueByType(pricePoint)));
         }
@@ -541,7 +572,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(chartData.candlesHashMap, timeframe);
 
         for(Candle candle : timeframeCandlesArrayList) {
-            // Normalize the times and prices here.
+            // Normalize the times and values here.
             BigDecimal time = getNormalizedTime(new BigDecimal(candle.timestamp.date.getTime()));
             BigDecimal openPrice = getNormalizedPrice(candle.openPrice);
             BigDecimal highPrice = getNormalizedPrice(candle.highPrice);

@@ -41,6 +41,11 @@ public class AssetQuantity implements LegacySerialization.SerializableToJSON, Le
         return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getSettingName();
     }
 
+    public String toNumberString() {
+        // Only return the number part of the string.
+        return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale());
+    }
+
     public String toRawString() {
         // For raw data, use asset combo name so all information is present.
         return assetAmount.toFormattedScaledString(asset.getScale(), hasSlidingScale()) + " " + asset.getComboName();
