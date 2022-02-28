@@ -15,7 +15,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -24,19 +23,23 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.PricePoint;
+import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
+import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
+import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.transaction.Timestamp;
+import com.musicslayer.cryptobuddy.util.AppearanceUtil;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-
-// TODO Candles going above axis limits?
+import java.util.Date;
 
 // Each ChartView instance represents a single graphical chart.
 public class ChartView extends CrashLinearLayout {
-    String info = "A"; // TODO Later, we can fill in first price, last price, % change
-    String timeLabel = "24H";
+    String timeframe = "24H"; // 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;
     boolean isHollowStyle;
@@ -75,7 +78,8 @@ public class ChartView extends CrashLinearLayout {
     public ChartData chartData;
 
     public SurfaceView surfaceView;
-    AppCompatImageButton B_TIME;
+    AppCompatTextView T_INFO;
+    AppCompatImageButton B_TIMEFRAME;
     AppCompatImageButton B_POINTS;
     AppCompatImageButton B_SCALE;
     AppCompatImageButton B_STYLE;
@@ -94,10 +98,7 @@ public class ChartView extends CrashLinearLayout {
 
         this.setOrientation(VERTICAL);
 
-        TextView T_INFO = new AppCompatTextView(context);
-        if(info != null) {
-            T_INFO.setText(info);
-        }
+        T_INFO = new AppCompatTextView(context);
 
         LinearLayout L_CHART = new LinearLayout(context);
         L_CHART.setOrientation(HORIZONTAL);
@@ -107,12 +108,20 @@ public class ChartView extends CrashLinearLayout {
         L_BUTTONS.setOrientation(VERTICAL);
         L_BUTTONS.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-        B_TIME = new AppCompatImageButton(context);
-        B_TIME.setImageResource(R.drawable.ic_baseline_access_time_24);
-        B_TIME.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
-        B_TIME.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+        B_TIMEFRAME = new AppCompatImageButton(context);
+        B_TIMEFRAME.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
+        B_TIMEFRAME.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                // Open spinner so user can choose timeframe of data.
+                // Toggle between 24H and 30D timeframe.
+                if("24H".equals(timeframe)) {
+                    timeframe = "30D";
+                }
+                else if("30D".equals(timeframe)) {
+                    timeframe = "24H";
+                }
+                updateInfo();
+                updateTimeframe();
+                drawChart();
             }
         });
 
@@ -130,6 +139,7 @@ public class ChartView extends CrashLinearLayout {
                 else if("CANDLE".equals(pointsType)) {
                     pointsType = "POINT";
                 }
+                updateInfo();
                 updatePoints();
                 drawChart();
             }
@@ -141,6 +151,7 @@ public class ChartView extends CrashLinearLayout {
             public void onClickImpl(View v) {
                 // Toggle between linear and log scale.
                 isLogScale = !isLogScale;
+                updateInfo();
                 updateScale();
                 drawChart();
             }
@@ -151,6 +162,7 @@ public class ChartView extends CrashLinearLayout {
         B_STYLE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
                 isHollowStyle = !isHollowStyle;
+                updateInfo();
                 updateStyle();
                 drawChart();
             }
@@ -172,7 +184,7 @@ public class ChartView extends CrashLinearLayout {
             public void surfaceDestroyed(SurfaceHolder holder) {}
         });
 
-        L_BUTTONS.addView(B_TIME);
+        L_BUTTONS.addView(B_TIMEFRAME);
         L_BUTTONS.addView(B_POINTS);
         L_BUTTONS.addView(B_SCALE);
         L_BUTTONS.addView(B_STYLE);
@@ -183,9 +195,41 @@ public class ChartView extends CrashLinearLayout {
         this.addView(T_INFO);
         this.addView(L_CHART);
 
+        updateInfo();
+        updateTimeframe();
         updatePoints();
         updateScale();
         updateStyle();
+    }
+
+    public void updateInfo() {
+        String infoString;
+
+        boolean isCandle = "CANDLE".equals(pointsType);
+        if(chartData == null || (isCandle && !chartData.isCandlesComplete()) || (!isCandle && !chartData.isPricePointsComplete())) {
+            infoString = "No Chart Data Found.";
+        }
+        else {
+            Crypto crypto = chartData.cryptoChart.crypto;
+            Fiat priceFiat = FiatManager.getDefaultFiatManager().getHardcodedFiat("USD");
+            Timestamp bottomTimestamp = new Timestamp(new Date(getBottomTime().longValue()));
+            Timestamp topTimestamp = new Timestamp(new Date(getTopTime().longValue()));
+
+            infoString = "Crypto: " + crypto.getSettingName() +
+                    "\nFiat: " + priceFiat.getSettingName() +
+                    "\nChart Start Time: " + bottomTimestamp +
+                    "\nChart End Time: " + topTimestamp;
+        }
+        T_INFO.setText(infoString);
+    }
+
+    public void updateTimeframe() {
+        if("24H".equals(timeframe)) {
+            B_TIMEFRAME.setImageResource(R.drawable.ic_baseline_access_time_24);
+        }
+        else if("30D".equals(timeframe)) {
+            B_TIMEFRAME.setImageResource(R.drawable.ic_baseline_calendar_month_24);
+        }
     }
 
     public void updatePoints() {
@@ -221,102 +265,38 @@ public class ChartView extends CrashLinearLayout {
     public void draw(ChartData chartData) {
         this.chartData = chartData;
         drawChart();
+        updateInfo();
     }
 
     public void drawChart() {
+        // Early returns if data isn't complete or the canvas isn't ready.
         if(chartData == null) { return; }
+
         boolean isCandle = "CANDLE".equals(pointsType);
         if(isCandle && !chartData.isCandlesComplete()) { return; }
         if(!isCandle && !chartData.isPricePointsComplete()) { return; }
 
         Canvas canvas = surfaceView.getHolder().lockCanvas();
-
         if(canvas == null) { return; }
 
-        // First, calculate these values upfront.
+        // Calculate these values upfront.
         canvasWidth = canvas.getWidth();
         canvasHeight = canvas.getHeight();
-        topPrice = getTopPrice(chartData.getMaxPrice());
-        bottomPrice = getBottomPrice(chartData.getMinPrice());
-        topTime = getTopTime(chartData.getMaxTime());
-        bottomTime = getBottomTime(chartData.getMinTime());
+        topPrice = getTopPrice();
+        bottomPrice = getBottomPrice();
+        topTime = getTopTime();
+        bottomTime = getBottomTime();
 
         textHeightTop = getTextHeight(topPrice.toPlainString());
         textHeightBottom = getTextHeight(bottomPrice.toPlainString());
 
-        Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        backgroundPaint.setColor(Color.WHITE);
-
-        TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setTextSize(fontSize);
-
-        Paint axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        axisPaint.setColor(Color.BLACK);
-        axisPaint.setStrokeWidth(axisStrokeWidth);
-        axisPaint.setStyle(Paint.Style.STROKE);
-
-        Paint axisTickXPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        axisTickXPaint.setColor(Color.BLACK);
-        axisTickXPaint.setStrokeWidth(axisTickStrokeWidthX);
-
-        Paint axisTickYPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        axisTickYPaint.setColor(Color.BLACK);
-        axisTickYPaint.setStrokeWidth(axisTickStrokeWidthY);
-
-        Paint pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pointPaint.setStrokeWidth(candleStrokeWidth);
-        if(isHollowStyle) {
-            pointPaint.setStyle(Paint.Style.STROKE);
-        }
-        else {
-            pointPaint.setStyle(Paint.Style.FILL);
-        }
-
-        Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaint.setColor(Color.BLUE);
-        linePaint.setStrokeWidth(lineStrokeWidth);
-        linePaint.setStyle(Paint.Style.STROKE);
-        if(isHollowStyle) {
-            linePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
-        }
-
-        Paint candlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        candlePaint.setStrokeWidth(candleStrokeWidth);
-        if(isHollowStyle) {
-            candlePaint.setStyle(Paint.Style.STROKE);
-        }
-        else {
-            candlePaint.setStyle(Paint.Style.FILL);
-        }
-
-        // Background
-        canvas.drawRect(0, 0, canvasWidth, canvasHeight, backgroundPaint);
-
-        // Top and bottom price labels.
-        drawPriceTop(canvas, textPaint);
-        drawPriceBottom(canvas, textPaint);
-
-        // Time Label
-        drawTimeLabel(canvas, textPaint, timeLabel);
-
-        // Draw axes
-        drawAxes(canvas, axisPaint);
-        drawXAxisTicks(canvas, axisTickXPaint);
-        drawYAxisTicks(canvas, axisTickYPaint);
-
-        // Draw price points.
-        if("POINT".equals(pointsType)) {
-            drawPoints(canvas, pointPaint);
-        }
-        else if("LINE".equals(pointsType)) {
-            drawLines(canvas, linePaint);
-        }
-        else if("CANDLE".equals(pointsType)) {
-            drawCandles(canvas, candlePaint);
-        }
-
+        // Draw all the graphical parts of the chart.
+        drawBackground(canvas);
+        drawText(canvas);
+        drawAxes(canvas);
+        drawXAxisTicks(canvas);
+        drawYAxisTicks(canvas);
+        drawPriceData(canvas);
         surfaceView.getHolder().unlockCanvasAndPost(canvas);
     }
 
@@ -328,84 +308,141 @@ public class ChartView extends CrashLinearLayout {
         return r.height();
     }
 
-    private void drawPriceTop(Canvas canvas, Paint paint) {
-        String priceString = topPrice.toPlainString();
-        paint.getTextBounds(priceString, 0, priceString.length(), r);
-        canvas.drawText(priceString, -r.left, -r.top, paint);
+
+
+    private void drawBackground(Canvas canvas) {
+        Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setColor(AppearanceUtil.getPrimaryColor(getContext()));
+        canvas.drawRect(0, 0, canvasWidth, canvasHeight, backgroundPaint);
     }
 
-    private void drawPriceBottom(Canvas canvas, Paint paint) {
-        String priceString = bottomPrice.toPlainString();
-        paint.getTextBounds(priceString, 0, priceString.length(), r);
-        canvas.drawText(priceString, -r.left, canvasHeight - r.bottom, paint);
+    private void drawText(Canvas canvas) {
+        TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(fontSize);
+
+        // Top Price Label
+        String topPriceString = topPrice.toPlainString();
+        textPaint.getTextBounds(topPriceString, 0, topPriceString.length(), r);
+        canvas.drawText(topPriceString, -r.left, -r.top, textPaint);
+
+        // Bottom Price Label
+        String bottomPriceString = bottomPrice.toPlainString();
+        textPaint.getTextBounds(bottomPriceString, 0, bottomPriceString.length(), r);
+        canvas.drawText(bottomPriceString, -r.left, canvasHeight - r.bottom, textPaint);
+
+        // Time Label
+        String timeLabel = timeframe;
+        textPaint.getTextBounds(timeLabel, 0, timeLabel.length(), r);
+        canvas.drawText(timeLabel, canvasWidth/2f - r.width()/2f -r.left, canvasHeight - r.bottom, textPaint);
     }
 
-    private void drawTimeLabel(Canvas canvas, Paint paint, String text) {
-        paint.getTextBounds(text, 0, text.length(), r);
-        canvas.drawText(text, canvasWidth/2f - r.width()/2f -r.left, canvasHeight - r.bottom, paint);
-    }
+    private void drawAxes(Canvas canvas) {
+        Paint axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        axisPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        axisPaint.setStrokeWidth(axisStrokeWidth);
+        axisPaint.setStyle(Paint.Style.STROKE);
 
-    private void drawAxes(Canvas canvas, Paint paint) {
         Path path = new Path();
         path.moveTo(axisOffsetLeft, textHeightTop + axisOffsetTop); // Top
         path.lineTo(axisOffsetLeft, canvasHeight - textHeightBottom - axisOffsetBottom); // Origin
         path.lineTo(canvasWidth - axisOffsetRight, canvasHeight - textHeightBottom - axisOffsetBottom); // Right
 
-        canvas.drawPath(path, paint);
+        canvas.drawPath(path, axisPaint);
     }
 
-    private void drawXAxisTicks(Canvas canvas, Paint paint) {
+    private void drawXAxisTicks(Canvas canvas) {
         // Draw evenly spaced ticks based on the time frame chosen.
-
         // We would need 1 more tick than the number, but than we subtract 1 because we don't draw a tick at the origin.
+        Paint axisTickXPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        axisTickXPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        axisTickXPaint.setStrokeWidth(axisTickStrokeWidthX);
+
         int numTicks = 24;
         for(int tick = 1; tick <= numTicks;  tick++) {
             BigDecimal n = new BigDecimal(tick).divide(new BigDecimal(numTicks), 50, RoundingMode.HALF_UP);
             float canvasPositionX = getCanvasX(n);
-            canvas.drawLine(canvasPositionX, canvasHeight - textHeightBottom - axisOffsetBottom + axisTickWidthX/2f, canvasPositionX, canvasHeight - textHeightBottom - axisOffsetBottom - axisTickWidthX/2f, paint);
+            canvas.drawLine(canvasPositionX, canvasHeight - textHeightBottom - axisOffsetBottom + axisTickWidthX/2f, canvasPositionX, canvasHeight - textHeightBottom - axisOffsetBottom - axisTickWidthX/2f, axisTickXPaint);
         }
     }
 
-    private void drawYAxisTicks(Canvas canvas, Paint paint) {
+    private void drawYAxisTicks(Canvas canvas) {
         // Draw 10 evenly spaced ticks for price.
-
         // We would need 1 more tick than the number, but than we subtract 1 because we don't draw a tick at the origin.
+        Paint axisTickYPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        axisTickYPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        axisTickYPaint.setStrokeWidth(axisTickStrokeWidthY);
+
         int numTicks = 10;
         for(int tick = 1; tick <= numTicks;  tick++) {
             BigDecimal n = new BigDecimal(tick).divide(new BigDecimal(numTicks), 50, RoundingMode.HALF_UP);
             float canvasPositionY = getCanvasY(n);
-            canvas.drawLine(axisOffsetLeft - axisTickWidthY/2f, canvasPositionY, axisOffsetLeft + axisTickWidthY/2f, canvasPositionY, paint);
+            canvas.drawLine(axisOffsetLeft - axisTickWidthY/2f, canvasPositionY, axisOffsetLeft + axisTickWidthY/2f, canvasPositionY, axisTickYPaint);
         }
     }
 
-    // TODO Mysterious 25th point?
-    private void drawPoints(Canvas canvas, Paint paint) {
+    private void drawPriceData(Canvas canvas) {
+        if("POINT".equals(pointsType)) {
+            drawPoints(canvas);
+        }
+        else if("LINE".equals(pointsType)) {
+            drawLines(canvas);
+        }
+        else if("CANDLE".equals(pointsType)) {
+            drawCandles(canvas);
+        }
+    }
+
+    private void drawPoints(Canvas canvas) {
+        Paint pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pointPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        pointPaint.setStrokeWidth(candleStrokeWidth);
+        if(isHollowStyle) {
+            pointPaint.setStyle(Paint.Style.STROKE);
+        }
+        else {
+            pointPaint.setStyle(Paint.Style.FILL);
+        }
+
         ArrayList<BigDecimal> time = new ArrayList<>();
         ArrayList<BigDecimal> price = new ArrayList<>();
 
-        for(PricePoint pricePoint : chartData.pricePointsArrayList) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
+
+        for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and prices here.
             time.add(normalizeTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
             price.add(normalizePrice(pricePoint.price));
         }
 
-        for(int i = 0; i < chartData.pricePointsArrayList.size(); i++) {
-            canvas.drawCircle(getCanvasX(time.get(i)), getCanvasY(price.get(i)), pointRadius, paint);
+        for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
+            canvas.drawCircle(getCanvasX(time.get(i)), getCanvasY(price.get(i)), pointRadius, pointPaint);
         }
     }
 
-    private void drawLines(Canvas canvas, Paint paint) {
+    private void drawLines(Canvas canvas) {
+        Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        linePaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        linePaint.setStrokeWidth(lineStrokeWidth);
+        linePaint.setStyle(Paint.Style.STROKE);
+        if(isHollowStyle) {
+            linePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
+        }
+
         ArrayList<BigDecimal> time = new ArrayList<>();
         ArrayList<BigDecimal> price = new ArrayList<>();
 
-        for(PricePoint pricePoint : chartData.pricePointsArrayList) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
+
+        for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and prices here.
             time.add(normalizeTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
             price.add(normalizePrice(pricePoint.price));
         }
 
         Path path = new Path();
-        for(int i = 0; i < chartData.pricePointsArrayList.size(); i++) {
+        for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
             if(i == 0) {
                 path.moveTo(getCanvasX(time.get(i)), getCanvasY(price.get(i)));
             }
@@ -414,22 +451,33 @@ public class ChartView extends CrashLinearLayout {
             }
         }
 
-        canvas.drawPath(path, paint);
+        canvas.drawPath(path, linePaint);
     }
 
-    private void drawCandles(Canvas canvas, Paint paint) {
-        for(Candle candle : chartData.candlesArrayList) {
+    private void drawCandles(Canvas canvas) {
+        Paint candlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        candlePaint.setStrokeWidth(candleStrokeWidth);
+        if(isHollowStyle) {
+            candlePaint.setStyle(Paint.Style.STROKE);
+        }
+        else {
+            candlePaint.setStyle(Paint.Style.FILL);
+        }
+
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(chartData.candlesHashMap, timeframe);
+
+        for(Candle candle : timeframeCandlesArrayList) {
             // Normalize the times and prices here.
             BigDecimal time = normalizeTime(new BigDecimal(candle.timestamp.date.getTime()));
             BigDecimal openPrice = normalizePrice(candle.openPrice);
             BigDecimal highPrice = normalizePrice(candle.highPrice);
             BigDecimal lowPrice = normalizePrice(candle.lowPrice);
             BigDecimal closePrice = normalizePrice(candle.closePrice);
-            drawCandle(canvas, paint, time, openPrice, highPrice, lowPrice, closePrice);
+            drawCandle(canvas, candlePaint, time, openPrice, highPrice, lowPrice, closePrice);
         }
     }
 
-    public void drawCandle(Canvas canvas, Paint paint, BigDecimal time, BigDecimal open, BigDecimal high, BigDecimal low, BigDecimal close) {
+    private void drawCandle(Canvas canvas, Paint paint, BigDecimal time, BigDecimal open, BigDecimal high, BigDecimal low, BigDecimal close) {
         // Draw an individual candle.
         BigDecimal boxMin;
         BigDecimal boxMax;
@@ -451,7 +499,6 @@ public class ChartView extends CrashLinearLayout {
             paint.setColor(Color.BLACK);
         }
 
-        // TODO Filled or hollow candle?
         float centerX = getCanvasX(time);
 
         // Draw the box of the candle.
@@ -468,12 +515,12 @@ public class ChartView extends CrashLinearLayout {
         canvas.drawLine(centerX, boxBottom, centerX, whiskerBottom, paint);
     }
 
-    public BigDecimal normalizeTime(BigDecimal time) {
+    private BigDecimal normalizeTime(BigDecimal time) {
         // Input is absolute time, output is the normalized time.
         return time.subtract(bottomTime).divide(topTime.subtract(bottomTime), 50, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal normalizePrice(BigDecimal price) {
+    private BigDecimal normalizePrice(BigDecimal price) {
         // Input is absolute price, output is the normalized price.
         return price.subtract(bottomPrice).divide(topPrice.subtract(bottomPrice), 50, RoundingMode.HALF_UP);
     }
@@ -486,7 +533,7 @@ public class ChartView extends CrashLinearLayout {
 
     private float getCanvasY(BigDecimal n) {
         // Input is normalized Y value on our graph, output is absolute Y value on the canvas.
-        // Remember that the graph Y-axis and the canvas Y-axis have opposite positive directions.
+        // Remember that the Y-axis is affected by the scale, and that the graph Y-axis and the canvas Y-axis have opposite positive directions.
         float nF = n.floatValue();
         if(isLogScale) {
             nF = (float)Math.log10(1 + 9 * nF);
@@ -497,9 +544,10 @@ public class ChartView extends CrashLinearLayout {
         return canvasHeight - totalOffsetBottom - (canvasHeight - totalOffsetBottom - totalOffsetTop) * nF;
     }
 
-    public BigDecimal getTopPrice(BigDecimal maxPrice) {
-        // Return a price that is higher than any price in the data, rounding up the leftmost digit.
-        // For example, with a max price of 23000, the top price will be 30000.
+    private BigDecimal getTopPrice() {
+        // Return a price that is higher than any price in the data.
+        BigDecimal maxPrice = HashMapUtil.getValueFromMap(chartData.maxPriceHashMap, timeframe);
+
         int scale = maxPrice.scale();
         int precision = maxPrice.precision();
 
@@ -509,9 +557,10 @@ public class ChartView extends CrashLinearLayout {
         return new BigDecimal(firstDigits).movePointRight(tenPower - zoomLevel);
     }
 
-    public BigDecimal getBottomPrice(BigDecimal minPrice) {
-        // Return a price that is lower than any price in the data, rounding down the leftmost digit.
-        // For example, with a min price of 23000, the bottom price will be 20000.
+    private BigDecimal getBottomPrice() {
+        // Return a price that is lower than any price in the data.
+        BigDecimal minPrice = HashMapUtil.getValueFromMap(chartData.minPriceHashMap, timeframe);
+
         int scale = minPrice.scale();
         int precision = minPrice.precision();
 
@@ -521,15 +570,33 @@ public class ChartView extends CrashLinearLayout {
         return new BigDecimal(firstDigit).movePointRight(tenPower - zoomLevel);
     }
 
-    // TODO Do we really need max/min time?
-    public BigDecimal getTopTime(BigDecimal maxTime) {
-        // The top time of any graph is just the max time.
-        return maxTime;
+    private BigDecimal getTopTime() {
+        // For 24H, the top time is the max time rounded up to the hour.
+        // For 30D, the top time is the max time rounded up to the day.
+        BigDecimal maxTime = HashMapUtil.getValueFromMap(chartData.maxTimeHashMap, timeframe);
+        long divisor = 0;
+        if("24H".equals(timeframe)) {
+            divisor = 60 * 60 * 1000;
+        }
+        else if("30D".equals(timeframe)) {
+            divisor = 24L * 60L * 60L * 1000L;
+        }
+
+        return new BigDecimal(divisor * ((maxTime.longValue() / divisor) + 1));
     }
 
-    public BigDecimal getBottomTime(BigDecimal minTime) {
-        // The bottom time of any graph is 24H less than the top time.
-        return topTime.subtract(new BigDecimal(24 * 60 * 60 * 1000));
+    private BigDecimal getBottomTime() {
+        // The bottom time of any graph is 24H less than the max/top time.
+        BigDecimal maxTime = HashMapUtil.getValueFromMap(chartData.maxTimeHashMap, timeframe);
+        BigDecimal interval = null;
+        if("24H".equals(timeframe)) {
+            interval = new BigDecimal(24 * 60 * 60 * 1000);
+        }
+        else if("30D".equals(timeframe)) {
+            interval = new BigDecimal(30L * 24L * 60L * 60L * 1000L);
+        }
+
+        return maxTime.subtract(interval);
     }
 
     @Override
@@ -538,6 +605,7 @@ public class ChartView extends CrashLinearLayout {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", state);
 
+        bundle.putString("timeframe", timeframe);
         bundle.putString("pointsType", pointsType);
         bundle.putBoolean("isLogScale", isLogScale);
         bundle.putBoolean("isHollowStyle", isHollowStyle);
@@ -553,10 +621,13 @@ public class ChartView extends CrashLinearLayout {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
 
+            timeframe = bundle.getString("timeframe");
             pointsType = bundle.getString("pointsType");
             isLogScale = bundle.getBoolean("isLogScale");
             isHollowStyle = bundle.getBoolean("isHollowStyle");
 
+            updateInfo();
+            updateTimeframe();
             updatePoints();
             updateScale();
             updateStyle();

@@ -3,10 +3,14 @@ package com.musicslayer.cryptobuddy.api.chart;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+// TODO Allow user to choose which timeframes we want? Or, use one API call to get all data at once and just split it up?
 
 public class ChartData implements DataBridge.SerializableToJSON {
     final public CryptoChart cryptoChart;
@@ -17,8 +21,13 @@ public class ChartData implements DataBridge.SerializableToJSON {
     final public Timestamp timestamp_pricePoints;
     final public Timestamp timestamp_candles;
 
-    //final public AssetQuantityData pricePointsData;
-    //final public AssetQuantityData candlesData;
+    // Maps of timeframes to values.
+    final public HashMap<String, ArrayList<PricePoint>> pricePointsHashMap;
+    final public HashMap<String, ArrayList<Candle>> candlesHashMap;
+    final public HashMap<String, BigDecimal> maxPriceHashMap;
+    final public HashMap<String, BigDecimal> minPriceHashMap;
+    final public HashMap<String, BigDecimal> maxTimeHashMap;
+    final public HashMap<String, BigDecimal> minTimeHashMap;
 
     @Override
     public void serializeToJSON(DataBridge.Writer o) throws IOException {
@@ -56,8 +65,30 @@ public class ChartData implements DataBridge.SerializableToJSON {
         this.timestamp_pricePoints = timestamp_pricePoints;
         this.timestamp_candles = timestamp_candles;
 
-        //pricePointsData = new AssetQuantityData(pricePointsArrayList);
-        //candlesData = new AssetQuantityData(candlesArrayList);
+        // For now, just hardcode the two timeframes
+        pricePointsHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(pricePointsHashMap, "24H", PricePoint.filterByTimeframe(pricePointsArrayList, "24H"));
+        HashMapUtil.putValueInMap(pricePointsHashMap, "30D", PricePoint.filterByTimeframe(pricePointsArrayList, "30D"));
+
+        candlesHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(candlesHashMap, "24H", Candle.filterByTimeframe(candlesArrayList, "24H"));
+        HashMapUtil.putValueInMap(candlesHashMap, "30D", Candle.filterByTimeframe(candlesArrayList, "30D"));
+
+        maxPriceHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(maxPriceHashMap, "24H", getMaxPrice("24H"));
+        HashMapUtil.putValueInMap(maxPriceHashMap, "30D", getMaxPrice("30D"));
+
+        minPriceHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(minPriceHashMap, "24H", getMinPrice("24H"));
+        HashMapUtil.putValueInMap(minPriceHashMap, "30D", getMinPrice("30D"));
+
+        maxTimeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(maxTimeHashMap, "24H", getMaxTime("24H"));
+        HashMapUtil.putValueInMap(maxTimeHashMap, "30D", getMaxTime("30D"));
+
+        minTimeHashMap = new HashMap<>();
+        HashMapUtil.putValueInMap(minTimeHashMap, "24H", getMinTime("24H"));
+        HashMapUtil.putValueInMap(minTimeHashMap, "30D", getMinTime("30D"));
     }
 
     public static ChartData getAllData(CryptoChart cryptoChart) {
@@ -199,142 +230,28 @@ public class ChartData implements DataBridge.SerializableToJSON {
         return true;
     }
 
-    public BigDecimal getMinPrice() {
-        return getMinPricePointsPrice().min(getMinCandlesPrice());
+    public BigDecimal getMinPrice(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMinPrice(timeframePricePointsArrayList).min(Candle.getMinPrice(timeframeCandlesArrayList));
     }
 
-    public BigDecimal getMaxPrice() {
-        return getMaxPricePointsPrice().min(getMaxCandlesPrice());
+    public BigDecimal getMaxPrice(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMaxPrice(timeframePricePointsArrayList).max(Candle.getMaxPrice(timeframeCandlesArrayList));
     }
 
-    public BigDecimal getMinTime() {
-        return getMinPricePointsTime().min(getMinCandlesTime());
+    public BigDecimal getMinTime(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMinTime(timeframePricePointsArrayList).min(Candle.getMinTime(timeframeCandlesArrayList));
     }
 
-    public BigDecimal getMaxTime() {
-        return getMaxPricePointsTime().min(getMaxCandlesTime());
-    }
-
-    public BigDecimal getMinPricePointsPrice() {
-        BigDecimal minPrice;
-        if(!isPricePointsComplete() || pricePointsArrayList.isEmpty()) {
-            minPrice = BigDecimal.ZERO;
-        }
-        else {
-            minPrice = pricePointsArrayList.get(0).price;
-            for(PricePoint pricePoint : pricePointsArrayList) {
-                minPrice = minPrice.min(pricePoint.price);
-            }
-        }
-
-        return minPrice;
-    }
-
-    public BigDecimal getMaxPricePointsPrice() {
-        BigDecimal maxPrice;
-        if(!isPricePointsComplete() || pricePointsArrayList.isEmpty()) {
-            maxPrice = BigDecimal.ZERO;
-        }
-        else {
-            maxPrice = pricePointsArrayList.get(0).price;
-            for(PricePoint pricePoint : pricePointsArrayList) {
-                maxPrice = maxPrice.max(pricePoint.price);
-            }
-        }
-
-        return maxPrice;
-    }
-
-    public BigDecimal getMinCandlesPrice() {
-        BigDecimal minPrice;
-        if(!isCandlesComplete() || candlesArrayList.isEmpty()) {
-            minPrice = BigDecimal.ZERO;
-        }
-        else {
-            // Assume the data is valid and only check the low price.
-            minPrice = candlesArrayList.get(0).lowPrice;
-            for(Candle candle : candlesArrayList) {
-                minPrice = minPrice.min(candle.lowPrice);
-            }
-        }
-
-        return minPrice;
-    }
-
-    public BigDecimal getMaxCandlesPrice() {
-        BigDecimal maxPrice;
-        if(!isCandlesComplete() || candlesArrayList.isEmpty()) {
-            maxPrice = BigDecimal.ZERO;
-        }
-        else {
-            // Assume the data is valid and only check the high price.
-            maxPrice = candlesArrayList.get(0).highPrice;
-            for(Candle candle : candlesArrayList) {
-                maxPrice = maxPrice.max(candle.highPrice);
-            }
-        }
-
-        return maxPrice;
-    }
-
-    public BigDecimal getMinPricePointsTime() {
-        BigDecimal minTime;
-        if(!isPricePointsComplete() || pricePointsArrayList.isEmpty()) {
-            minTime = BigDecimal.ZERO;
-        }
-        else {
-            minTime = new BigDecimal(pricePointsArrayList.get(0).timestamp.date.getTime());
-            for(PricePoint pricePoint : pricePointsArrayList) {
-                minTime = minTime.min(new BigDecimal(pricePoint.timestamp.date.getTime()));
-            }
-        }
-
-        return minTime;
-    }
-
-    public BigDecimal getMaxPricePointsTime() {
-        BigDecimal maxTime;
-        if(!isPricePointsComplete() || pricePointsArrayList.isEmpty()) {
-            maxTime = BigDecimal.ZERO;
-        }
-        else {
-            maxTime = new BigDecimal(pricePointsArrayList.get(0).timestamp.date.getTime());
-            for(PricePoint pricePoint : pricePointsArrayList) {
-                maxTime = maxTime.max(new BigDecimal(pricePoint.timestamp.date.getTime()));
-            }
-        }
-
-        return maxTime;
-    }
-
-    public BigDecimal getMinCandlesTime() {
-        BigDecimal minTime;
-        if(!isCandlesComplete() || candlesArrayList.isEmpty()) {
-            minTime = BigDecimal.ZERO;
-        }
-        else {
-            minTime = new BigDecimal(candlesArrayList.get(0).timestamp.date.getTime());
-            for(Candle candle : candlesArrayList) {
-                minTime = minTime.min(new BigDecimal(candle.timestamp.date.getTime()));
-            }
-        }
-
-        return minTime;
-    }
-
-    public BigDecimal getMaxCandlesTime() {
-        BigDecimal maxTime;
-        if(!isCandlesComplete() || candlesArrayList.isEmpty()) {
-            maxTime = BigDecimal.ZERO;
-        }
-        else {
-            maxTime = new BigDecimal(candlesArrayList.get(0).timestamp.date.getTime());
-            for(Candle candle : candlesArrayList) {
-                maxTime = maxTime.max(new BigDecimal(candle.timestamp.date.getTime()));
-            }
-        }
-
-        return maxTime;
+    public BigDecimal getMaxTime(String timeframe) {
+        ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
+        ArrayList<Candle> timeframeCandlesArrayList = HashMapUtil.getValueFromMap(candlesHashMap, timeframe);
+        return PricePoint.getMaxTime(timeframePricePointsArrayList).max(Candle.getMaxTime(timeframeCandlesArrayList));
     }
 
     public String getInfoString(boolean isRich) {

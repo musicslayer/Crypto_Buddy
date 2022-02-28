@@ -33,13 +33,14 @@ public class CoinGecko extends ChartAPI {
         Coin coin = (Coin)cryptoChart.crypto;
         String coinString = coin.getCoinGeckoID();
 
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
-
         ArrayList<PricePoint> pricePointArrayList = new ArrayList<>();
 
-        if(priceDataCoinJSON != null) {
+        // 24H
+        String priceDataCoin24JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
+
+        if(priceDataCoin24JSON != null) {
             try {
-                JSONObject json = new JSONObject(priceDataCoinJSON);
+                JSONObject json = new JSONObject(priceDataCoin24JSON);
                 JSONArray prices = json.getJSONArray("prices");
                 for(int i = 0; i < prices.length(); i++) {
                     JSONArray price = prices.getJSONArray(i);
@@ -49,7 +50,33 @@ public class CoinGecko extends ChartAPI {
 
                     String priceString = price.getString(1);
 
-                    pricePointArrayList.add(new PricePoint(new Timestamp(date), new BigDecimal(priceString)));
+                    pricePointArrayList.add(new PricePoint("24H", new Timestamp(date), new BigDecimal(priceString)));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
+
+        // 30D
+        String priceDataCoin30JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
+
+        if(priceDataCoin30JSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataCoin30JSON);
+                JSONArray prices = json.getJSONArray("prices");
+                for(int i = 0; i < prices.length(); i++) {
+                    JSONArray price = prices.getJSONArray(i);
+
+                    String timeString = price.getString(0);
+                    Date date = new Date(new BigDecimal(timeString).longValue());
+
+                    String priceString = price.getString(1);
+
+                    pricePointArrayList.add(new PricePoint("30D", new Timestamp(date), new BigDecimal(priceString)));
                 }
             }
             catch(Exception e) {
@@ -70,26 +97,70 @@ public class CoinGecko extends ChartAPI {
         Coin coin = (Coin)cryptoChart.crypto;
         String coinString = coin.getCoinGeckoID();
 
-        String priceDataCoinJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=1");
-
         ArrayList<Candle> candleArrayList = new ArrayList<>();
 
-        if(priceDataCoinJSON != null) {
+        // 24H
+        String priceDataCoin24JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=1");
+
+        if(priceDataCoin24JSON != null) {
             try {
-                JSONArray candles = new JSONArray(priceDataCoinJSON);
-                for(int i = 0; i < candles.length(); i++) {
-                    JSONArray candle = candles.getJSONArray(i);
+                // For each hour, we get 2 candles, so we have to combine them.
+                int numCombinedCandles = 2;
+                JSONArray candles = new JSONArray(priceDataCoin24JSON);
+                for(int i = 0; i < candles.length(); i += numCombinedCandles) {
+                    ArrayList<Candle> tempCandleArrayList = new ArrayList<>();
 
-                    String timeString = candle.getString(0);
-                    Date date = new Date(new BigDecimal(timeString).longValue());
+                    for(int j = i; j < i + numCombinedCandles && j < candles.length(); j++) {
+                        JSONArray candle = candles.getJSONArray(j);
 
-                    String openPriceString = candle.getString(1);
-                    String highPriceString = candle.getString(2);
-                    String lowPriceString = candle.getString(3);
-                    String closePriceString = candle.getString(4);
+                        String timeString = candle.getString(0);
+                        Date date = new Date(new BigDecimal(timeString).longValue());
 
+                        String openPriceString = candle.getString(1);
+                        String highPriceString = candle.getString(2);
+                        String lowPriceString = candle.getString(3);
+                        String closePriceString = candle.getString(4);
 
-                    candleArrayList.add(new Candle(new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                        tempCandleArrayList.add(new Candle("24H", new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                    }
+
+                    candleArrayList.add(Candle.combine(tempCandleArrayList));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
+
+        // 30D
+        String priceDataCoin30JSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=30");
+
+        if(priceDataCoin30JSON != null) {
+            try {
+                // For each day, we get 6 candles, so we have to combine them.
+                int numCombinedCandles = 6;
+                JSONArray candles = new JSONArray(priceDataCoin30JSON);
+                for(int i = 0; i < candles.length(); i += numCombinedCandles) {
+                    ArrayList<Candle> tempCandleArrayList = new ArrayList<>();
+
+                    for(int j = i; j < i + numCombinedCandles && j < candles.length(); j++) {
+                        JSONArray candle = candles.getJSONArray(j);
+
+                        String timeString = candle.getString(0);
+                        Date date = new Date(new BigDecimal(timeString).longValue());
+
+                        String openPriceString = candle.getString(1);
+                        String highPriceString = candle.getString(2);
+                        String lowPriceString = candle.getString(3);
+                        String closePriceString = candle.getString(4);
+
+                        tempCandleArrayList.add(new Candle("30D", new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                    }
+
+                    candleArrayList.add(Candle.combine(tempCandleArrayList));
                 }
             }
             catch(Exception e) {
