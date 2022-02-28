@@ -363,10 +363,6 @@ public class TraditionalChartView extends CrashLinearLayout {
         bottomVolume = getBottomValue("VOLUME");
         topValue = getTopValue(valueType);
         bottomValue = getBottomValue(valueType);
-
-        //textHeightTop = getTextHeight(topValue.toPlainString());
-        //textHeightBottom = getTextHeight(bottomValue.toPlainString());
-
         textHeightTop = getTopTextHeight();
         textHeightBottom = getBottomTextHeight();
 
@@ -440,7 +436,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         int maxBottom = Math.max(valueBottom, labelBottom);
 
         canvas.drawText(bottomValueString, -valueLeft, canvasHeight - maxBottom, textPaint);
-        canvas.drawText(timeLabel, canvasWidth/2f - labelWidth/2f -labelLeft, canvasHeight - maxBottom, textPaint);
+        canvas.drawText(timeLabel, canvasWidth - labelWidth - labelLeft, canvasHeight - maxBottom, textPaint);
     }
 
     private void drawAxes(Canvas canvas) {
