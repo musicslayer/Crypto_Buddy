@@ -139,7 +139,7 @@ public class CoinGecko extends ChartAPI {
             priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/ohlc?vs_currency=" + priceFiatName + "&days=30");
         }
         else {
-            return null;
+            return new ArrayList<>();
         }
 
         ArrayList<Candle> candleArrayList = new ArrayList<>();

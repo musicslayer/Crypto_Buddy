@@ -16,7 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
-import com.musicslayer.cryptobuddy.chart.ChartView;
+import com.musicslayer.cryptobuddy.chart.ChartHolderView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -190,13 +190,9 @@ public class ChartExplorerActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        // Update the graphical chart.
-        ChartData chartData = StateObj.chartDataMap.get(cryptoChartArrayList.get(0));
-        ChartView chartView = findViewById(R.id.chart_explorer_chartView);
-        chartView.draw(chartData);
-
-        //ChartView chartView = findViewById(R.id.chart_explorer_chartView);
-        //chartView.draw(cryptoChartArrayList.get(0));
+        ChartHolderView chartHolderView = findViewById(R.id.chart_explorer_chartHolderView);
+        chartHolderView.reset();
+        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
     }
 
     @Override

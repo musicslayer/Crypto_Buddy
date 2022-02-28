@@ -81,11 +81,20 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.musicslayer.cryptobuddy.chart.ChartView
-        android:id="@+id/chart_explorer_chartView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.musicslayer.cryptobuddy.view.TwoDScrollView
+        android:id="@+id/chart_explorer_twoDScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chart_explorer_horizontalScrollView1" />
+        app:layout_constraintTop_toBottomOf="@+id/chart_explorer_horizontalScrollView1">
+
+        <com.musicslayer.cryptobuddy.chart.ChartHolderView
+            android:id="@+id/chart_explorer_chartHolderView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.musicslayer.cryptobuddy.view.TwoDScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

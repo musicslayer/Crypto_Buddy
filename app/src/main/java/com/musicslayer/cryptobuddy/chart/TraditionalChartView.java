@@ -24,9 +24,11 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
+import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
 import com.musicslayer.cryptobuddy.api.chart.PricePoint;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
@@ -36,10 +38,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Top/Bottom Numbers should be formatted to look good.
-
-// Each ChartView instance represents a single graphical chart.
-public class ChartView extends CrashLinearLayout {
+// A traditional chart to show price, market caps, and volumes.
+public class TraditionalChartView extends CrashLinearLayout {
     String timeframe = "24H"; // 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;
@@ -95,11 +95,11 @@ public class ChartView extends CrashLinearLayout {
     RadioGroup radioGroup;
     RadioButton[] rb;
 
-    public ChartView(Context context) {
+    public TraditionalChartView(Context context) {
         this(context, null);
     }
 
-    public ChartView(Context context, AttributeSet attributeSet) {
+    public TraditionalChartView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.makeLayout();
     }
@@ -320,8 +320,8 @@ public class ChartView extends CrashLinearLayout {
         rb[LAST_CHECK].callOnClick();
     }
 
-    public void draw(ChartData chartData) {
-        this.chartData = chartData;
+    public void draw(CryptoChart cryptoChart) {
+        this.chartData = HashMapUtil.getValueFromMap(StateObj.chartDataMap, cryptoChart);
         drawChart();
         updateInfo();
     }
