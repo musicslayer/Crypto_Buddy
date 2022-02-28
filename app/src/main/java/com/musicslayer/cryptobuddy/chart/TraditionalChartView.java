@@ -26,6 +26,7 @@ import com.musicslayer.cryptobuddy.api.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
 import com.musicslayer.cryptobuddy.api.chart.PricePoint;
+import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -140,15 +141,26 @@ public class TraditionalChartView extends CrashLinearLayout {
         B_POINTS.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
         B_POINTS.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                // Toggle between point, line, and candle.
-                if("POINT".equals(pointsType)) {
-                    pointsType = "LINE";
+                // For coins, toggle between point, line, and candle.
+                // For tokens, only toggle between point and line.
+                if(chartData.cryptoChart.crypto instanceof Coin) {
+                    if("POINT".equals(pointsType)) {
+                        pointsType = "LINE";
+                    }
+                    else if("LINE".equals(pointsType)) {
+                        pointsType = "CANDLE";
+                    }
+                    else if("CANDLE".equals(pointsType)) {
+                        pointsType = "POINT";
+                    }
                 }
-                else if("LINE".equals(pointsType)) {
-                    pointsType = "CANDLE";
-                }
-                else if("CANDLE".equals(pointsType)) {
-                    pointsType = "POINT";
+                else {
+                    if("POINT".equals(pointsType)) {
+                        pointsType = "LINE";
+                    }
+                    else if("LINE".equals(pointsType)) {
+                        pointsType = "POINT";
+                    }
                 }
                 updateInfo();
                 updatePoints();
