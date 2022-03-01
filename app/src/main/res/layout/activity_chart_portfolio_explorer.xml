@@ -72,6 +72,13 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chart_portfolio_explorer_autoUpdateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24"
+                android:text="Auto Update Off" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/chart_portfolio_explorer_filterChartButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,7 +116,37 @@
                 android:clickable="true"
                 app:srcCompat="@drawable/ic_baseline_remove_24" />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/chart_portfolio_explorer_infoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_info_24" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/chart_portfolio_explorer_refreshButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_refresh_24" />
+
         </LinearLayout>
     </HorizontalScrollView>
+
+    <com.musicslayer.cryptobuddy.view.TwoDScrollView
+        android:id="@+id/chart_portfolio_explorer_twoDScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chart_portfolio_explorer_horizontalScrollView2">
+
+        <com.musicslayer.cryptobuddy.chart.ChartHolderView
+            android:id="@+id/chart_portfolio_explorer_chartHolderView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.musicslayer.cryptobuddy.view.TwoDScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

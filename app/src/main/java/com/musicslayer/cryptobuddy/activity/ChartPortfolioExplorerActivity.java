@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
+import com.musicslayer.cryptobuddy.chart.ChartHolderView;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -24,6 +25,7 @@ import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.user.ChartPortfolio;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ChartInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.ChooseChartDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
@@ -47,8 +49,13 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
 
     DiscreteFilter chartFilter = new DiscreteFilter();
 
+    // For now, these are always true.
     public ArrayList<Boolean> includePricePoints;
     public ArrayList<Boolean> includeCandles;
+
+    public boolean isAutoUpdate;
+
+    FloatingActionButton refreshButton;
 
     @Override
     public int getAdLayoutViewID() {
@@ -123,10 +130,11 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                         StateObj.chartPortfolioObj.addData(newCryptoChart);
                         PersistentUserDataStore.getInstance(ChartPortfolio.class).updatePortfolio(StateObj.chartPortfolioObj);
 
-                        updateFilter();
-
                         HashMapUtil.putValueInMap(StateObj.chartDataMap, newCryptoChart, ChartData.getNoData(newCryptoChart));
                         HashMapUtil.putValueInMap(StateObj.chartDataFilterMap, newCryptoChart, ChartData.getNoData(newCryptoChart));
+
+                        updateFilter();
+                        updateLayout();
                     }
                 }
             }
@@ -168,6 +176,14 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 removeChartDialogFragment.show(ChartPortfolioExplorerActivity.this, "remove");
+            }
+        });
+
+        FloatingActionButton fab_info = findViewById(R.id.chart_portfolio_explorer_infoButton);
+        fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(ChartInfoDialog.class, StateObj.chartPortfolioObj.cryptoChartArrayList).show(ChartPortfolioExplorerActivity.this, "info");
             }
         });
 
@@ -294,10 +310,62 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                 chartFilterDialogFragment.show(ChartPortfolioExplorerActivity.this, "chart_filter");
             }
         });
+
+        AppCompatButton autoUpdateButton = findViewById(R.id.chart_portfolio_explorer_autoUpdateButton);
+        autoUpdateButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                isAutoUpdate = !isAutoUpdate;
+                updateAutoUpdateButton();
+            }
+        });
+
+        refreshButton = findViewById(R.id.chart_portfolio_explorer_refreshButton);
+        refreshButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                // Don't ask user - just download all types of data.
+                includePricePoints = new ArrayList<>();
+                includeCandles = new ArrayList<>();
+
+                for(int i = 0; i < StateObj.chartPortfolioObj.cryptoChartArrayList.size(); i++) {
+                    includePricePoints.add(true);
+                    includeCandles.add(true);
+                }
+
+                download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress");
+            }
+        });
+
+        updateAutoUpdateButton();
+        updateLayout();
+
+        // On first creation, download chart data.
+        if(savedInstanceState == null && !StateObj.chartPortfolioObj.cryptoChartArrayList.isEmpty()) {
+            doChartUpdate();
+        }
+    }
+
+    public void updateAutoUpdateButton() {
+        AppCompatButton autoUpdateButton = findViewById(R.id.chart_portfolio_explorer_autoUpdateButton);
+        if(isAutoUpdate) {
+            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
+            autoUpdateButton.setText("Auto Update On");
+        }
+        else {
+            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
+            autoUpdateButton.setText("Auto Update Off");
+        }
+    }
+
+    public void doChartUpdate() {
+        refreshButton.callOnClick();
     }
 
     public void updateLayout() {
-
+        ChartHolderView chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
+        chartHolderView.reset();
+        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
     }
 
     public void updateFilter() {
@@ -354,6 +422,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includePricePoints", includePricePoints);
         bundle.putSerializable("includeCandles", includeCandles);
+        bundle.putBoolean("isAutoUpdate", isAutoUpdate);
         bundle.putParcelable("filter", chartFilter);
     }
 
@@ -364,6 +433,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         if(bundle != null) {
             includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
             includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
+            isAutoUpdate = bundle.getBoolean("isAutoUpdate");
             chartFilter = bundle.getParcelable("filter");
         }
     }

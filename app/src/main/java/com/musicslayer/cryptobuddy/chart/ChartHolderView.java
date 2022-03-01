@@ -13,8 +13,6 @@ import com.musicslayer.cryptobuddy.util.WindowUtil;
 
 import java.util.ArrayList;
 
-// TODO Top/Bottom Numbers should be formatted to look good.
-
 // Each ChartView instance represents a single graphical chart.
 public class ChartHolderView extends CrashLinearLayout {
     public ArrayList<TraditionalChartView> chartViewArrayList = new ArrayList<>();

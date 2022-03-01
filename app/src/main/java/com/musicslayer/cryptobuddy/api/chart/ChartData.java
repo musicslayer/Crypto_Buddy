@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO Allow user to choose which timeframes we want? Or, use one API call to get all data at once and just split it up?
+// TODO Use one API call to get all data at once and just split it up?
 
 public class ChartData implements DataBridge.SerializableToJSON {
     final public CryptoChart cryptoChart;
@@ -312,6 +313,9 @@ public class ChartData implements DataBridge.SerializableToJSON {
 
         if(chartAPI_candles == null || candlesArrayList == null) {
             s.appendRich("\n(Candles information not present.)");
+        }
+        else if(cryptoChart.crypto instanceof Token) {
+            s.appendRich("\n(Candles are not supported for tokens.)");
         }
         else {
             s.appendRich("\nCandles Data Source = ").appendRich(chartAPI_candles.getDisplayName());

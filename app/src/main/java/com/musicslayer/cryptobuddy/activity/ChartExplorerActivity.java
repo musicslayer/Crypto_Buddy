@@ -41,6 +41,7 @@ public class ChartExplorerActivity extends BaseActivity {
 
     ArrayList<CryptoChart> cryptoChartArrayList = new ArrayList<>();
 
+    // For now, these are always true.
     public ArrayList<Boolean> includePricePoints;
     public ArrayList<Boolean> includeCandles;
 
@@ -191,7 +192,7 @@ public class ChartExplorerActivity extends BaseActivity {
         updateAutoUpdateButton();
         updateLayout();
 
-        // On first creation, try to get data to display chart.
+        // On first creation, download chart data.
         if(savedInstanceState == null) {
             doChartUpdate();
         }
