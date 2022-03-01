@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api;
 
 import com.musicslayer.cryptobuddy.api.address.AddressAPI;
+import com.musicslayer.cryptobuddy.api.chart.ChartAPI;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeAPI;
 import com.musicslayer.cryptobuddy.api.price.PriceAPI;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
@@ -84,6 +85,9 @@ abstract public class API implements LegacySerialization.SerializableToJSON, Leg
         }
         else if("!EXCHANGEAPI!".equals(apiType)) {
             return ExchangeAPI.getExchangeAPIFromKey(key);
+        }
+        else if("!CHARTAPI!".equals(apiType)) {
+            return ChartAPI.getChartAPIFromKey(key);
         }
         else {
             return null;

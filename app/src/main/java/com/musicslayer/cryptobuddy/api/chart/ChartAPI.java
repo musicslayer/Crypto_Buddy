@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
-import com.musicslayer.cryptobuddy.settings.setting.MaxNumberTransactionsSetting;
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 

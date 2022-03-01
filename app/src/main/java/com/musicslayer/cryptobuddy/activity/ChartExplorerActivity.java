@@ -7,12 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
@@ -22,6 +22,7 @@ import com.musicslayer.cryptobuddy.crash.CrashRunnable;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
+import com.musicslayer.cryptobuddy.dialog.ChartInfoDialog;
 import com.musicslayer.cryptobuddy.dialog.ConfirmBackDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoConverterDialog;
 import com.musicslayer.cryptobuddy.dialog.CryptoPricesDialog;
@@ -42,6 +43,10 @@ public class ChartExplorerActivity extends BaseActivity {
 
     public ArrayList<Boolean> includePricePoints;
     public ArrayList<Boolean> includeCandles;
+
+    public boolean isAutoUpdate;
+
+    FloatingActionButton refreshButton;
 
     @Override
     public int getAdLayoutViewID() {
@@ -80,10 +85,6 @@ public class ChartExplorerActivity extends BaseActivity {
             HashMapUtil.putValueInMap(StateObj.chartDataMap, cryptoChart, ChartData.getNoData(cryptoChart));
         }
 
-        // TODO Do we need info? Maybe auto-update setting?
-        TextView T_INFO = findViewById(R.id.chart_explorer_infoTextView);
-        T_INFO.setVisibility(View.GONE);
-
         Toolbar toolbar = findViewById(R.id.chart_explorer_toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,6 +93,14 @@ public class ChartExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 HelpUtil.showHelp(ChartExplorerActivity.this, R.raw.help_chart_explorer);
+            }
+        });
+
+        FloatingActionButton fab_info = findViewById(R.id.chart_explorer_infoButton);
+        fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(ChartInfoDialog.class, cryptoChartArrayList).show(ChartExplorerActivity.this, "info");
             }
         });
 
@@ -155,24 +164,17 @@ public class ChartExplorerActivity extends BaseActivity {
         });
         progressDialogFragment.restoreListeners(this, "progress");
 
-        /*
-        BaseDialogFragment downloadDialogFragment = BaseDialogFragment.newInstance(DownloadChartDataDialog.class, cryptoChartArrayList);
-        downloadDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
+        AppCompatButton autoUpdateButton = findViewById(R.id.chart_explorer_autoUpdateButton);
+        autoUpdateButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((DownloadChartDataDialog)dialog).isComplete) {
-                    includePricePoints = ((DownloadAddressDataDialog)dialog).user_PRICEPOINTS;
-                    includeCandles = ((DownloadAddressDataDialog)dialog).user_CANDLES;
-                    progressDialogFragment.show(ChartExplorerActivity.this, "progress");
-                }
+            public void onClickImpl(View view) {
+                isAutoUpdate = !isAutoUpdate;
+                updateAutoUpdateButton();
             }
         });
-        downloadDialogFragment.restoreListeners(this, "download");
 
-         */
-
-        AppCompatButton downloadDataButton = findViewById(R.id.chart_explorer_downloadDataButton);
-        downloadDataButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+        refreshButton = findViewById(R.id.chart_explorer_refreshButton);
+        refreshButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
                 // Don't ask user - just download all types of data.
@@ -186,7 +188,29 @@ public class ChartExplorerActivity extends BaseActivity {
             }
         });
 
+        updateAutoUpdateButton();
         updateLayout();
+
+        // On first creation, try to get data to display chart.
+        if(savedInstanceState == null) {
+            doChartUpdate();
+        }
+    }
+
+    public void updateAutoUpdateButton() {
+        AppCompatButton autoUpdateButton = findViewById(R.id.chart_explorer_autoUpdateButton);
+        if(isAutoUpdate) {
+            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
+            autoUpdateButton.setText("Auto Update On");
+        }
+        else {
+            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
+            autoUpdateButton.setText("Auto Update Off");
+        }
+    }
+
+    public void doChartUpdate() {
+        refreshButton.callOnClick();
     }
 
     public void updateLayout() {
@@ -239,6 +263,7 @@ public class ChartExplorerActivity extends BaseActivity {
         super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includePricePoints", includePricePoints);
         bundle.putSerializable("includeCandles", includeCandles);
+        bundle.putBoolean("isAutoUpdate", isAutoUpdate);
     }
 
     @Override
@@ -248,6 +273,7 @@ public class ChartExplorerActivity extends BaseActivity {
         if(bundle != null) {
             includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
             includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
+            isAutoUpdate = bundle.getBoolean("isAutoUpdate");
         }
     }
 }

@@ -300,7 +300,7 @@ public class ChartData implements DataBridge.SerializableToJSON {
 
     public String getInfoString(boolean isRich) {
         RichStringBuilder s = new RichStringBuilder(isRich);
-        s.appendRich("Chart = " + cryptoChart.crypto.getSettingName());
+        s.appendRich("Chart = " + cryptoChart.toString());
 
         if(chartAPI_pricePoints == null || pricePointsArrayList == null) {
             s.appendRich("\n(Price points information not present.)");

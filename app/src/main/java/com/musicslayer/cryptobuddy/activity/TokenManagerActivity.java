@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+// TODO Tokens that cannot be downloaded.
+//  Find Custom Token option.
+//  Paste in contract, confirm details.
+
 public class TokenManagerActivity extends BaseActivity {
     ArrayList<TokenManagerView> tokenManagerViewArrayList;
     public ArrayList<String> choices;
