@@ -132,6 +132,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         Context context = getContext();
 
         this.setOrientation(VERTICAL);
+        this.setPadding(0, 0, 0, 50);
 
         T_INFO = new AppCompatTextView(context);
 

@@ -45,8 +45,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
-// TODO Space between charts.
-
 public class ChartPortfolioExplorerActivity extends BaseActivity {
     // Every five minutes, allow an auto update the charts.
     // Every ten seconds, check if we need an update.
