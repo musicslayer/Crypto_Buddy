@@ -243,8 +243,7 @@ public class ChartExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         ChartHolderView chartHolderView = findViewById(R.id.chart_explorer_chartHolderView);
-        chartHolderView.reset();
-        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
+        chartHolderView.updateChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
     }
 
     @Override

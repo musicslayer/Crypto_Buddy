@@ -45,6 +45,8 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
+// TODO Space between charts.
+
 public class ChartPortfolioExplorerActivity extends BaseActivity {
     // Every five minutes, allow an auto update the charts.
     // Every ten seconds, check if we need an update.
@@ -401,7 +403,6 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
 
     public void updateLayout() {
         ChartHolderView chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
-        chartHolderView.reset();
 
         // Don't show plots that are filtered. Use this to preserve the same ordering as the user added the charts to the portfolio.
         ArrayList<ChartData> filteredChartDataArrayList = new ArrayList<>();
@@ -412,7 +413,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             }
         }
 
-        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(filteredChartDataArrayList));
+        chartHolderView.updateChartsFromChartDataArray(new ArrayList<>(filteredChartDataArrayList));
     }
 
     public void updateFilter() {

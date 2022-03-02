@@ -100,12 +100,32 @@ public class TraditionalChartView extends CrashLinearLayout {
     RadioButton[] rb;
 
     public TraditionalChartView(Context context) {
-        this(context, null);
+        this(context, (AttributeSet)null);
     }
 
     public TraditionalChartView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.makeLayout();
+    }
+
+    public TraditionalChartView(Context context, ChartConfig chartConfig) {
+        super(context, null);
+        setChartConfig(chartConfig);
+        this.makeLayout();
+    }
+
+    public ChartConfig getChartConfig() {
+        return new ChartConfig(timeframe, pointsType, isLogScale, isHollowStyle, LAST_CHECK);
+    }
+
+    public void setChartConfig(ChartConfig config) {
+        if(config != null) {
+            this.timeframe = config.timeframe;
+            this.pointsType = config.pointsType;
+            this.isLogScale = config.isLogScale;
+            this.isHollowStyle = config.isHollowStyle;
+            this.LAST_CHECK = config.LAST_CHECK;
+        }
     }
 
     public void makeLayout() {

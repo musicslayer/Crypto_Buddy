@@ -9,12 +9,15 @@ import android.widget.LinearLayout;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.WindowUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // Each ChartView instance represents a single graphical chart.
 public class ChartHolderView extends CrashLinearLayout {
+    HashMap<CryptoChart, ChartConfig> chartConfigHashMap = new HashMap<>();
     public ArrayList<TraditionalChartView> chartViewArrayList = new ArrayList<>();
     public ArrayList<CryptoChart> cryptoChartArrayList = new ArrayList<>();
 
@@ -33,7 +36,15 @@ public class ChartHolderView extends CrashLinearLayout {
         cryptoChartArrayList.clear();
     }
 
-    public void addChartsFromChartDataArray(ArrayList<ChartData> chartDataArrayList) {
+    public void updateChartsFromChartDataArray(ArrayList<ChartData> chartDataArrayList) {
+        // We want to maintain the config settings of any charts that already existed before the update.
+        chartConfigHashMap.clear();
+        for(int i = 0; i < getChildCount(); i++) {
+            TraditionalChartView v = (TraditionalChartView)getChildAt(i);
+            HashMapUtil.putValueInMap(chartConfigHashMap, v.chartData.cryptoChart, v.getChartConfig());
+        }
+
+        this.reset();
         for(ChartData chartData : chartDataArrayList) {
             cryptoChartArrayList.add(chartData.cryptoChart);
         }
@@ -53,7 +64,8 @@ public class ChartHolderView extends CrashLinearLayout {
 
         for(CryptoChart cryptoChart : cryptoChartArrayList) {
             // For now, we only have one type of ChartView.
-            TraditionalChartView v = new TraditionalChartView(context);
+            ChartConfig chartConfig = HashMapUtil.getValueFromMap(chartConfigHashMap, cryptoChart);
+            TraditionalChartView v = new TraditionalChartView(context, chartConfig);
             this.addView(v, L);
 
             chartViewArrayList.add(v);
