@@ -45,8 +45,6 @@ import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
-// TODO When charts are added, be mindful of the order they are plotted in.
-
 public class ChartPortfolioExplorerActivity extends BaseActivity {
     // Every five minutes, allow an auto update the charts.
     // Every ten seconds, check if we need an update.
@@ -339,7 +337,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 // Don't ask user - just download all types of data.
-                // If chart is filtered, download no data.
+                // However, if the chart is filtered, then download no data.
                 includePricePoints = new ArrayList<>();
                 includeCandles = new ArrayList<>();
 
@@ -405,8 +403,16 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         ChartHolderView chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
         chartHolderView.reset();
 
-        // Don't show plots that are filtered, but do show charts that have no data.
-        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataFilterMap.values()));
+        // Don't show plots that are filtered. Use this to preserve the same ordering as the user added the charts to the portfolio.
+        ArrayList<ChartData> filteredChartDataArrayList = new ArrayList<>();
+        for(CryptoChart cryptoChart : StateObj.chartPortfolioObj.cryptoChartArrayList) {
+            ChartData chartData = HashMapUtil.getValueFromMap(StateObj.chartDataFilterMap, cryptoChart);
+            if(chartData != null) {
+                filteredChartDataArrayList.add(chartData);
+            }
+        }
+
+        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(filteredChartDataArrayList));
     }
 
     public void updateFilter() {

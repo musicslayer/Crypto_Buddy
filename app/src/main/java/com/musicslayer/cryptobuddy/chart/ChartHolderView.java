@@ -40,16 +40,6 @@ public class ChartHolderView extends CrashLinearLayout {
         this.makeLayout();
     }
 
-    public void addChart(CryptoChart cryptoChart) {
-        cryptoChartArrayList.add(cryptoChart);
-        this.makeLayout();
-    }
-
-    public void removeChart(CryptoChart cryptoChart) {
-        cryptoChartArrayList.remove(cryptoChart);
-        this.makeLayout();
-    }
-
     public void makeLayout() {
         Context context = getContext();
 
