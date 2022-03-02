@@ -518,7 +518,17 @@ public class TraditionalChartView extends CrashLinearLayout {
         axisTickXPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
         axisTickXPaint.setStrokeWidth(axisTickStrokeWidthX);
 
-        int numTicks = 24;
+        int numTicks = 0;
+        if("60M".equals(timeframe)) {
+            numTicks = 6;
+        }
+        else if("24H".equals(timeframe)) {
+            numTicks = 24;
+        }
+        else if("30D".equals(timeframe)) {
+            numTicks = 30;
+        }
+
         for(int tick = 1; tick <= numTicks;  tick++) {
             BigDecimal n = new BigDecimal(tick).divide(new BigDecimal(numTicks), 50, RoundingMode.HALF_UP);
             float canvasPositionX = getCanvasX(n);
