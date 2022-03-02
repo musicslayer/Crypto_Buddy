@@ -16,7 +16,7 @@ import java.math.RoundingMode;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
     public static final long MAX_TIME = 3600000L; // 60 minutes
-    public static final long UPDATE_TIME = 100L; // 1 second
+    public static final long UPDATE_TIME = 100L; // 0.1 second
 
     public final static String START = "!START!";
     public final static String IN_PROGRESS = "!IN_PROGRESS!";
@@ -105,7 +105,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
         // This will cancel any prior timer, and make sure callbacks fire on the current dialog.
         // Note that it's OK to keep starting new timers since the actual information will be in progress_title/progress_display.
         // This timer only tells the text to keep checking for new info.
-        TimerUtil.startTimer(MAX_TIME, UPDATE_TIME, new TimerUtil.TimerUtilListener() {
+        TimerUtil.startTimer("progress", MAX_TIME, UPDATE_TIME, new TimerUtil.TimerUtilListener() {
             @Override
             public void onTickCallback(long millisUntilFinished) {
                 currentProgressDialog.activity.runOnUiThread(() -> {
@@ -154,7 +154,7 @@ public class ProgressDialogFragment extends BaseDialogFragment {
     @Override
     public void doDismiss(@NonNull DialogInterface dialog) {
         // Stop the progress update timer.
-        TimerUtil.stopTimer();
+        TimerUtil.stopTimer("progress");
 
         // Unlike in the superclass, here we do not want to use the onDismiss listener.
         // Instead, any dialog that gets dismissed needs to be cancelled.

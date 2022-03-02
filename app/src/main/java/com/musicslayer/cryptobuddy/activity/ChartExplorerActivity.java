@@ -32,11 +32,20 @@ import com.musicslayer.cryptobuddy.dialog.ReportFeedbackDialog;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.TimerUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
 public class ChartExplorerActivity extends BaseActivity {
+    // Every five minutes, allow an auto update the charts.
+    // Every ten seconds, check if we need an update.
+    // Note that manual updates also count and will reset the timer.
+    public static final long MAX_TIME = 3600000L; // 60 minutes
+    public static final long UPDATE_CHECK_TIME = 10000L; // 10 second
+    public static final long UPDATE_INTERVAL_TIME = 300000L; // 5 minutes
+    public long lastUpdateTime;
+
     public BaseDialogFragment confirmBackDialogFragment;
 
     ArrayList<CryptoChart> cryptoChartArrayList = new ArrayList<>();
@@ -161,6 +170,9 @@ public class ChartExplorerActivity extends BaseActivity {
                 updateLayout();
 
                 ToastUtil.showToast("chart_data_downloaded");
+
+                // Update the time, regardless of how the update was started or ended up.
+                lastUpdateTime = System.currentTimeMillis();
             }
         });
         progressDialogFragment.restoreListeners(this, "progress");
@@ -196,6 +208,21 @@ public class ChartExplorerActivity extends BaseActivity {
         if(savedInstanceState == null) {
             doChartUpdate();
         }
+
+        // Create timer to periodically update the charts.
+        TimerUtil.startTimer("auto_update", MAX_TIME, UPDATE_CHECK_TIME, new TimerUtil.TimerUtilListener() {
+            @Override
+            public void onTickCallback(long millisUntilFinished) {
+                long currentTime = System.currentTimeMillis();
+
+                if(isAutoUpdate && lastUpdateTime + UPDATE_INTERVAL_TIME < currentTime) {
+                    doChartUpdate();
+                }
+            }
+
+            @Override
+            public void onFinishCallback() {}
+        });
     }
 
     public void updateAutoUpdateButton() {
@@ -265,6 +292,7 @@ public class ChartExplorerActivity extends BaseActivity {
         bundle.putSerializable("includePricePoints", includePricePoints);
         bundle.putSerializable("includeCandles", includeCandles);
         bundle.putBoolean("isAutoUpdate", isAutoUpdate);
+        bundle.putLong("lastUpdateTime", lastUpdateTime);
     }
 
     @Override
@@ -275,6 +303,9 @@ public class ChartExplorerActivity extends BaseActivity {
             includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
             includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
             isAutoUpdate = bundle.getBoolean("isAutoUpdate");
+            lastUpdateTime = bundle.getLong("lastUpdateTime");
+
+            updateAutoUpdateButton();
         }
     }
 }

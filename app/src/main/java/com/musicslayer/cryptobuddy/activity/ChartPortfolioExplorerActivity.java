@@ -40,11 +40,22 @@ import com.musicslayer.cryptobuddy.filter.Filter;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.util.TimerUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.util.ArrayList;
 
+// TODO When charts are added, be mindful of the order they are plotted in.
+
 public class ChartPortfolioExplorerActivity extends BaseActivity {
+    // Every five minutes, allow an auto update the charts.
+    // Every ten seconds, check if we need an update.
+    // Note that manual updates also count and will reset the timer.
+    public static final long MAX_TIME = 3600000L; // 60 minutes
+    public static final long UPDATE_CHECK_TIME = 10000L; // 10 second
+    public static final long UPDATE_INTERVAL_TIME = 300000L; // 5 minutes
+    public long lastUpdateTime;
+
     public BaseDialogFragment confirmBackDialogFragment;
 
     DiscreteFilter chartFilter = new DiscreteFilter();
@@ -275,6 +286,9 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                 updateLayout();
 
                 ToastUtil.showToast("chart_data_downloaded");
+
+                // Update the time, regardless of how the update was started or ended up.
+                lastUpdateTime = System.currentTimeMillis();
             }
         });
         download_progressDialogFragment.restoreListeners(this, "progress_download");
@@ -325,12 +339,22 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             @Override
             public void onClickImpl(View view) {
                 // Don't ask user - just download all types of data.
+                // If chart is filtered, download no data.
                 includePricePoints = new ArrayList<>();
                 includeCandles = new ArrayList<>();
 
+                ArrayList<String> choices = chartFilter.user_choices;
+
                 for(int i = 0; i < StateObj.chartPortfolioObj.cryptoChartArrayList.size(); i++) {
-                    includePricePoints.add(true);
-                    includeCandles.add(true);
+                    CryptoChart cryptoChart = StateObj.chartPortfolioObj.cryptoChartArrayList.get(i);
+                    if(choices.contains(cryptoChart.toString())) {
+                        includePricePoints.add(true);
+                        includeCandles.add(true);
+                    }
+                    else {
+                        includePricePoints.add(false);
+                        includeCandles.add(false);
+                    }
                 }
 
                 download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress");
@@ -344,6 +368,21 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         if(savedInstanceState == null && !StateObj.chartPortfolioObj.cryptoChartArrayList.isEmpty()) {
             doChartUpdate();
         }
+
+        // Create timer to periodically update the charts.
+        TimerUtil.startTimer("auto_update", MAX_TIME, UPDATE_CHECK_TIME, new TimerUtil.TimerUtilListener() {
+            @Override
+            public void onTickCallback(long millisUntilFinished) {
+                long currentTime = System.currentTimeMillis();
+
+                if(isAutoUpdate && lastUpdateTime + UPDATE_INTERVAL_TIME < currentTime) {
+                    doChartUpdate();
+                }
+            }
+
+            @Override
+            public void onFinishCallback() {}
+        });
     }
 
     public void updateAutoUpdateButton() {
@@ -365,7 +404,9 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
     public void updateLayout() {
         ChartHolderView chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
         chartHolderView.reset();
-        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
+
+        // Don't show plots that are filtered, but do show charts that have no data.
+        chartHolderView.addChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataFilterMap.values()));
     }
 
     public void updateFilter() {
@@ -423,6 +464,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         bundle.putSerializable("includePricePoints", includePricePoints);
         bundle.putSerializable("includeCandles", includeCandles);
         bundle.putBoolean("isAutoUpdate", isAutoUpdate);
+        bundle.putLong("lastUpdateTime", lastUpdateTime);
         bundle.putParcelable("filter", chartFilter);
     }
 
@@ -434,7 +476,10 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
             includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
             isAutoUpdate = bundle.getBoolean("isAutoUpdate");
+            lastUpdateTime = bundle.getLong("lastUpdateTime");
             chartFilter = bundle.getParcelable("filter");
+
+            updateAutoUpdateButton();
         }
     }
 }

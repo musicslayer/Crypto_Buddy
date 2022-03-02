@@ -19,6 +19,7 @@ import com.musicslayer.cryptobuddy.monetization.InAppPurchase;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
+import com.musicslayer.cryptobuddy.util.TimerUtil;
 
 abstract public class BaseActivity extends CrashActivity {
     // Needed when the current activity is different than the activity captured in a closure.
@@ -68,10 +69,11 @@ abstract public class BaseActivity extends CrashActivity {
         // By default, do nothing when a new purchase is made.
         InAppPurchase.setInAppPurchaseListener(null);
 
-        // On the first creation, reset all state.
+        // On the first creation, reset all state and timers.
         if(savedInstanceState == null) {
             CallbackActivity.resetState();
             StateObj.resetState();
+            TimerUtil.reset();
         }
 
         createLayout(savedInstanceState);
