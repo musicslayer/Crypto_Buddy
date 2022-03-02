@@ -31,6 +31,7 @@ public class CoinGecko extends ChartAPI {
         Fiat priceFiat = cryptoChart.fiat;
         String priceFiatName = priceFiat.getCoinGeckoID();
 
+        String priceData60MJSON;
         String priceData24HJSON;
         String priceData30DJSON;
 
@@ -39,6 +40,7 @@ public class CoinGecko extends ChartAPI {
             Coin coin = (Coin)crypto;
             String coinString = coin.getCoinGeckoID();
 
+            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05&interval=minutely");
             priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
             priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
         }
@@ -47,6 +49,7 @@ public class CoinGecko extends ChartAPI {
             String tokenString = token.getCoinGeckoID();
             String blockchainID = token.getCoinGeckoBlockchainID();
 
+            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05&interval=minutely");
             priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
             priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
         }
@@ -55,6 +58,38 @@ public class CoinGecko extends ChartAPI {
         }
 
         ArrayList<PricePoint> pricePointArrayList = new ArrayList<>();
+
+        // 60M
+        if(priceData60MJSON != null) {
+            try {
+                // Prices, Market Caps, and Volumes all have the same times and are in corresponding order.
+                JSONObject json = new JSONObject(priceData60MJSON);
+                JSONArray prices = json.getJSONArray("prices");
+                JSONArray marketCaps = json.getJSONArray("market_caps");
+                JSONArray volumes = json.getJSONArray("total_volumes");
+                for(int i = 0; i < prices.length(); i++) {
+                    JSONArray price = prices.getJSONArray(i);
+                    JSONArray marketCap = marketCaps.getJSONArray(i);
+                    JSONArray volume = volumes.getJSONArray(i);
+
+                    // All times match, so just take first one.
+                    String timeString = price.getString(0);
+                    Date date = new Date(new BigDecimal(timeString).longValue());
+
+                    String priceString = price.getString(1);
+                    String marketCapString = marketCap.getString(1);
+                    String volumeString = volume.getString(1);
+
+                    pricePointArrayList.add(new PricePoint("60M", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
+                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
+            }
+        }
 
         // 24H
         if(priceData24HJSON != null) {
@@ -129,7 +164,7 @@ public class CoinGecko extends ChartAPI {
         String priceData24HJSON;
         String priceData30DJSON;
 
-        // This API does not support tokens.
+        // This API does not support tokens or the 60M timeframe.
         Crypto crypto = cryptoChart.crypto;
         if(crypto instanceof Coin) {
             Coin coin = (Coin)crypto;

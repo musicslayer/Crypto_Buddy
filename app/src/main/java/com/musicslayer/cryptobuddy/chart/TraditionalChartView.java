@@ -26,7 +26,7 @@ import com.musicslayer.cryptobuddy.api.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
 import com.musicslayer.cryptobuddy.api.chart.PricePoint;
-import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
+import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
@@ -42,7 +42,7 @@ import java.util.Date;
 
 // A traditional chart to show price, market caps, and volumes.
 public class TraditionalChartView extends CrashLinearLayout {
-    String timeframe = "24H"; // 24H or 30D
+    String timeframe = "60M"; // 60M, 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;
     boolean isHollowStyle;
@@ -125,12 +125,15 @@ public class TraditionalChartView extends CrashLinearLayout {
         B_TIMEFRAME.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
         B_TIMEFRAME.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                // Toggle between 24H and 30D timeframe.
-                if("24H".equals(timeframe)) {
+                // Cycle between timeframes.
+                if("60M".equals(timeframe)) {
+                    timeframe = "24H";
+                }
+                else if("24H".equals(timeframe)) {
                     timeframe = "30D";
                 }
                 else if("30D".equals(timeframe)) {
-                    timeframe = "24H";
+                    timeframe = "60M";
                 }
                 updateInfo();
                 updateTimeframe();
@@ -142,27 +145,17 @@ public class TraditionalChartView extends CrashLinearLayout {
         B_POINTS.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
         B_POINTS.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
-                // For coins, toggle between point, line, and candle.
-                // For tokens, only toggle between point and line.
-                if(chartData.cryptoChart.crypto instanceof Coin) {
-                    if("POINT".equals(pointsType)) {
-                        pointsType = "LINE";
-                    }
-                    else if("LINE".equals(pointsType)) {
-                        pointsType = "CANDLE";
-                    }
-                    else if("CANDLE".equals(pointsType)) {
-                        pointsType = "POINT";
-                    }
+                // Cycle between point, line, and candle.
+                if("POINT".equals(pointsType)) {
+                    pointsType = "LINE";
                 }
-                else {
-                    if("POINT".equals(pointsType)) {
-                        pointsType = "LINE";
-                    }
-                    else if("LINE".equals(pointsType)) {
-                        pointsType = "POINT";
-                    }
+                else if("LINE".equals(pointsType)) {
+                    pointsType = "CANDLE";
                 }
+                else if("CANDLE".equals(pointsType)) {
+                    pointsType = "POINT";
+                }
+
                 updateInfo();
                 updatePoints();
                 drawChart();
@@ -185,6 +178,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         B_STYLE.setLayoutParams(new LayoutParams(buttonSize, buttonSize));
         B_STYLE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
             public void onClickImpl(View v) {
+                // Toggle between regular and hollow scale.
                 isHollowStyle = !isHollowStyle;
                 updateInfo();
                 updateStyle();
@@ -290,7 +284,10 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     public void updateTimeframe() {
-        if("24H".equals(timeframe)) {
+        if("60M".equals(timeframe)) {
+            B_TIMEFRAME.setImageResource(R.drawable.ic_baseline_hourglass_top_24);
+        }
+        else if("24H".equals(timeframe)) {
             B_TIMEFRAME.setImageResource(R.drawable.ic_baseline_access_time_24);
         }
         else if("30D".equals(timeframe)) {
@@ -331,6 +328,21 @@ public class TraditionalChartView extends CrashLinearLayout {
     public void updateType() {
         radioGroup.check(rb[LAST_CHECK].getId());
         rb[LAST_CHECK].callOnClick();
+    }
+
+    public boolean isCandleAvailable() {
+        if("60M".equals(timeframe)) {
+            return false;
+        }
+        else if(chartData == null) {
+            return false;
+        }
+        else if(chartData.cryptoChart.crypto instanceof Token) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public void draw(CryptoChart cryptoChart) {
@@ -419,7 +431,6 @@ public class TraditionalChartView extends CrashLinearLayout {
         textPaint.getTextBounds(topValueString, 0, topValueString.length(), r);
         canvas.drawText(topValueString, -r.left, -r.top, textPaint);
 
-        // For the bottom labels, we need the max bottom value.
         // Bottom Value Label
         String bottomValueString = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
         textPaint.getTextBounds(bottomValueString, 0, bottomValueString.length(), r);
@@ -433,6 +444,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         int labelLeft = r.left;
         int labelBottom = r.bottom;
 
+        // For the bottom labels, we need the max bottom value.
         int maxBottom = Math.max(valueBottom, labelBottom);
 
         canvas.drawText(bottomValueString, -valueLeft, canvasHeight - maxBottom, textPaint);
@@ -556,6 +568,11 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     private void drawCandles(Canvas canvas) {
+        if(!isCandleAvailable()) {
+            drawCandlesText(canvas);
+            return;
+        }
+
         Paint candlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         candlePaint.setStrokeWidth(candleStrokeWidth);
         if(isHollowStyle) {
@@ -576,6 +593,18 @@ public class TraditionalChartView extends CrashLinearLayout {
             BigDecimal closePrice = getNormalizedPrice(candle.closePrice);
             drawCandle(canvas, candlePaint, time, openPrice, highPrice, lowPrice, closePrice);
         }
+    }
+
+    private void drawCandlesText(Canvas canvas) {
+        // Display text saying that candles are not available.
+        TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(AppearanceUtil.getSecondaryColor(getContext()));
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(fontSize);
+
+        String text = "(Candles Not Available)";
+        textPaint.getTextBounds(text, 0, text.length(), r);
+        canvas.drawText(text, axisOffsetLeft + axisStrokeWidth - r.left, canvasHeight - textHeightBottom - axisOffsetBottom - axisStrokeWidth - r.bottom, textPaint);
     }
 
     private void drawCandle(Canvas canvas, Paint paint, BigDecimal time, BigDecimal open, BigDecimal high, BigDecimal low, BigDecimal close) {
@@ -719,11 +748,15 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     private BigDecimal getTopTime() {
+        // For 60M, the top time is the max time rounded up to the minute.
         // For 24H, the top time is the max time rounded up to the hour.
         // For 30D, the top time is the max time rounded up to the day.
         BigDecimal maxTime = HashMapUtil.getValueFromMap(chartData.maxTimeHashMap, timeframe);
         long divisor = 0;
-        if("24H".equals(timeframe)) {
+        if("60M".equals(timeframe)) {
+            divisor = 60 * 1000;
+        }
+        else if("24H".equals(timeframe)) {
             divisor = 60 * 60 * 1000;
         }
         else if("30D".equals(timeframe)) {
@@ -737,7 +770,10 @@ public class TraditionalChartView extends CrashLinearLayout {
         // The bottom time of any graph is the top time minus the timeframe.
         BigDecimal topTime = getTopTime();
         BigDecimal interval = null;
-        if("24H".equals(timeframe)) {
+        if("60M".equals(timeframe)) {
+            interval = new BigDecimal(60 * 60 * 1000);
+        }
+        else if("24H".equals(timeframe)) {
             interval = new BigDecimal(24 * 60 * 60 * 1000);
         }
         else if("30D".equals(timeframe)) {
