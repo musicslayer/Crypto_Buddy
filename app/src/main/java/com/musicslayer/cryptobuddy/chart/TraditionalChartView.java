@@ -543,19 +543,23 @@ public class TraditionalChartView extends CrashLinearLayout {
             pointPaint.setStyle(Paint.Style.FILL);
         }
 
-        ArrayList<BigDecimal> time = new ArrayList<>();
-        ArrayList<BigDecimal> value = new ArrayList<>();
+        ArrayList<BigDecimal> timeArrayList = new ArrayList<>();
+        ArrayList<BigDecimal> valueArrayList = new ArrayList<>();
 
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and values here.
-            time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
-            value.add(getNormalizedValue(getValueByType(pricePoint)));
+            // Anything that would be before the bottom time should be skipped.
+            BigDecimal time = getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime()));
+            if(time.compareTo(BigDecimal.ZERO) >= 0) {
+                timeArrayList.add(time);
+                valueArrayList.add(getNormalizedValue(getValueByType(pricePoint)));
+            }
         }
 
-        for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
-            canvas.drawCircle(getCanvasX(time.get(i)), getCanvasY(value.get(i)), pointRadius, pointPaint);
+        for(int i = 0; i < timeArrayList.size(); i++) {
+            canvas.drawCircle(getCanvasX(timeArrayList.get(i)), getCanvasY(valueArrayList.get(i)), pointRadius, pointPaint);
         }
     }
 
@@ -568,24 +572,28 @@ public class TraditionalChartView extends CrashLinearLayout {
             linePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
         }
 
-        ArrayList<BigDecimal> time = new ArrayList<>();
-        ArrayList<BigDecimal> value = new ArrayList<>();
+        ArrayList<BigDecimal> timeArrayList = new ArrayList<>();
+        ArrayList<BigDecimal> valueArrayList = new ArrayList<>();
 
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(chartData.pricePointsHashMap, timeframe);
 
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and values here.
-            time.add(getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime())));
-            value.add(getNormalizedValue(getValueByType(pricePoint)));
+            // Anything that would be before the bottom time should be skipped.
+            BigDecimal time = getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime()));
+            if(time.compareTo(BigDecimal.ZERO) >= 0) {
+                timeArrayList.add(time);
+                valueArrayList.add(getNormalizedValue(getValueByType(pricePoint)));
+            }
         }
 
         Path path = new Path();
-        for(int i = 0; i < timeframePricePointsArrayList.size(); i++) {
+        for(int i = 0; i < timeArrayList.size(); i++) {
             if(i == 0) {
-                path.moveTo(getCanvasX(time.get(i)), getCanvasY(value.get(i)));
+                path.moveTo(getCanvasX(timeArrayList.get(i)), getCanvasY(valueArrayList.get(i)));
             }
             else {
-                path.lineTo(getCanvasX(time.get(i)), getCanvasY(value.get(i)));
+                path.lineTo(getCanvasX(timeArrayList.get(i)), getCanvasY(valueArrayList.get(i)));
             }
         }
 
@@ -611,12 +619,15 @@ public class TraditionalChartView extends CrashLinearLayout {
 
         for(Candle candle : timeframeCandlesArrayList) {
             // Normalize the times and values here.
+            // Anything that would be before the bottom time should be skipped.
             BigDecimal time = getNormalizedTime(new BigDecimal(candle.timestamp.date.getTime()));
-            BigDecimal openPrice = getNormalizedPrice(candle.openPrice);
-            BigDecimal highPrice = getNormalizedPrice(candle.highPrice);
-            BigDecimal lowPrice = getNormalizedPrice(candle.lowPrice);
-            BigDecimal closePrice = getNormalizedPrice(candle.closePrice);
-            drawCandle(canvas, candlePaint, time, openPrice, highPrice, lowPrice, closePrice);
+            if(time.compareTo(BigDecimal.ZERO) >= 0) {
+                BigDecimal openPrice = getNormalizedPrice(candle.openPrice);
+                BigDecimal highPrice = getNormalizedPrice(candle.highPrice);
+                BigDecimal lowPrice = getNormalizedPrice(candle.lowPrice);
+                BigDecimal closePrice = getNormalizedPrice(candle.closePrice);
+                drawCandle(canvas, candlePaint, time, openPrice, highPrice, lowPrice, closePrice);
+            }
         }
     }
 
