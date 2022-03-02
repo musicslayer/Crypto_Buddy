@@ -1,1 +1,5 @@
-TODO Write Help
+View charts of cryptos vs. fiats.
+
+Symbol buttons left to right:
+--> Chart information
+--> Refresh Chart Data

@@ -1,1 +1,8 @@
-TODO Write Help
+View all charts in the portfolio.
+Any changes you make to the portfolio (i.e. adding or removing charts) are instantly saved.
+
+Symbol buttons left to right:
+--> Add new chart to portfolio
+--> Remove chart from portfolio
+--> Chart information
+--> Refresh Chart Data

@@ -1,1 +1,3 @@
-TODO Write Help
+Create and view chart portfolios here. A chart portfolio can contain multiple charts comparing any supported crypto vs. any supported fiat.
+
+*All Portfolio data is stored in the app and may be deleted if you uninstall the app or clear the app data.
