@@ -80,6 +80,8 @@ public class TraditionalChartView extends CrashLinearLayout {
     BigDecimal bottomVolume;
     BigDecimal topValue;
     BigDecimal bottomValue;
+    String topValueString;
+    String bottomValueString;
     int textHeightTop;
     int textHeightBottom;
 
@@ -375,6 +377,21 @@ public class TraditionalChartView extends CrashLinearLayout {
         bottomVolume = getBottomValue("VOLUME");
         topValue = getTopValue(valueType);
         bottomValue = getBottomValue(valueType);
+
+        // Top and Bottom Value Label
+        topValueString = null;
+        bottomValueString = null;
+
+        // If top and bottom value text are the same, we need more digits. But only allow for a few extra.
+        for(int additionalScale = 0; additionalScale < 5; additionalScale++) {
+            topValueString = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString(additionalScale);
+            bottomValueString = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString(additionalScale);
+
+            if(!topValueString.equals(bottomValueString)) {
+                break;
+            }
+        }
+
         textHeightTop = getTopTextHeight();
         textHeightBottom = getBottomTextHeight();
 
@@ -389,11 +406,10 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     private int getTopTextHeight() {
-        String topValueText = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
         TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(fontSize);
-        textPaint.getTextBounds(topValueText, 0, topValueText.length(), r);
+        textPaint.getTextBounds(topValueString, 0, topValueString.length(), r);
         return r.height();
     }
 
@@ -403,8 +419,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(fontSize);
 
-        String bottomValueText = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
-        textPaint.getTextBounds(bottomValueText, 0, bottomValueText.length(), r);
+        textPaint.getTextBounds(bottomValueString, 0, bottomValueString.length(), r);
         int valueHeight = r.height();
 
         String timeLabel = timeframe;
@@ -426,13 +441,23 @@ public class TraditionalChartView extends CrashLinearLayout {
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(fontSize);
 
-        // Top Value Label
-        String topValueString = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
+        // Top and Bottom Value Label
+        String topValueString = null;
+        String bottomValueString = null;
+
+        // If top and bottom value text are the same, we need more digits. But only allow up to a certain amoount.
+        for(int additionalScale = 0; additionalScale < 20; additionalScale++) {
+            topValueString = new AssetQuantity(topValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString(additionalScale);
+            bottomValueString = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString(additionalScale);
+
+            if(!topValueString.equals(bottomValueString)) {
+                break;
+            }
+        }
+
         textPaint.getTextBounds(topValueString, 0, topValueString.length(), r);
         canvas.drawText(topValueString, -r.left, -r.top, textPaint);
 
-        // Bottom Value Label
-        String bottomValueString = new AssetQuantity(bottomValue.toPlainString(), chartData.cryptoChart.fiat).toNumberString();
         textPaint.getTextBounds(bottomValueString, 0, bottomValueString.length(), r);
         int valueLeft = r.left;
         int valueBottom = r.bottom;
