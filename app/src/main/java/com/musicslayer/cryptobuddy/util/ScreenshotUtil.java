@@ -14,6 +14,7 @@ public class ScreenshotUtil {
     public static File writeScreenshotFile(Activity activity) {
         // Captures the view of the Activity (without dialogs or anything else that is on top of it) and writes it to a file.
         // This only includes what is currently visible on the screen, not offscreen content (for example, the rest of a ScrollView).
+        // This also does not include charts or other SurfaceViews.
         File file;
         FileOutputStream outputStream = null;
 
