@@ -83,8 +83,7 @@ public class ChartHolderView extends CrashLinearLayout {
         // Add in each child chart's info.
         for(int i = 0; i < getChildCount(); i++) {
             TraditionalChartView v = (TraditionalChartView)getChildAt(i);
-            s.append("\n\nChart ").append(i + 1).append(":\n");
-            s.append(v.getInfo());
+            s.append("\n\n").append(v.getInfo());
         }
 
         return s.toString();

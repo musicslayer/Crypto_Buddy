@@ -361,7 +361,10 @@ public class ChartData implements DataBridge.SerializableToJSON {
         else {
             s.appendRich("\nPrice Points Data Source = ").appendRich(chartAPI_pricePoints.getDisplayName());
             s.appendRich("\nPrice Points Data Timestamp = ").appendRich(timestamp_pricePoints.toString());
-            // TODO Add Price Points
+            s.appendRich("\nPrice Points:");
+            for(PricePoint pricePoint : pricePointsArrayList) {
+                s.appendRich("\n  ").appendRich(pricePoint.toString());
+            }
         }
 
         if(chartAPI_candles == null || candlesArrayList == null) {
@@ -370,7 +373,10 @@ public class ChartData implements DataBridge.SerializableToJSON {
         else {
             s.appendRich("\nCandles Data Source = ").appendRich(chartAPI_candles.getDisplayName());
             s.appendRich("\nCandles Data Timestamp = ").appendRich(timestamp_candles.toString());
-            // TODO Add Candles
+            s.appendRich("\nCandles:");
+            for(Candle candle : candlesArrayList) {
+                s.appendRich("\n  ").appendRich(candle.toString());
+            }
         }
 
         return s.toString();

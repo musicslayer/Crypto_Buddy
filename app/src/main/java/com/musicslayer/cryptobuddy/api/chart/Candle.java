@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
+import androidx.annotation.NonNull;
+
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 
@@ -31,6 +33,19 @@ public class Candle implements DataBridge.SerializableToJSON{
         this.closePrice = closePrice;
 
         timestampL = timestamp.date.getTime();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "[" +
+                timeframe + ", " +
+                timestamp.toString() + ", " +
+                openPrice.toPlainString() + ", " +
+                highPrice.toPlainString() + ", " +
+                lowPrice.toPlainString() + ", " +
+                closePrice.toPlainString()
+                + "]";
     }
 
     public static Candle combine(ArrayList<Candle> candlesArrayList) {

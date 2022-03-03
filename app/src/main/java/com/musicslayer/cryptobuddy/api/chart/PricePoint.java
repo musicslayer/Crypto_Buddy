@@ -1,5 +1,7 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
+import androidx.annotation.NonNull;
+
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 
@@ -21,6 +23,18 @@ public class PricePoint implements DataBridge.SerializableToJSON {
         this.price = price;
         this.marketCap = marketCap;
         this.volume = volume;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "[" +
+                timeframe + ", " +
+                timestamp.toString() + ", " +
+                price.toPlainString() + ", " +
+                marketCap.toPlainString() + ", " +
+                volume.toPlainString()
+                + "]";
     }
 
     public static ArrayList<PricePoint> filterByTimeframe(ArrayList<PricePoint> pricePointsArrayList, String timeframe) {
