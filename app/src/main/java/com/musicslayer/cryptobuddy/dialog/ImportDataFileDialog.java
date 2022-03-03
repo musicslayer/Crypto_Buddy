@@ -25,6 +25,7 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.file.UniversalFile;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.ToggleButton;
 import com.musicslayer.cryptobuddy.view.red.FileEditText;
 
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import java.util.Comparator;
 public class ImportDataFileDialog extends BaseDialog {
     public final static String DATA_FOLDER = "exports";
 
-    public boolean isFolder = false;
     public UniversalFile universalFile;
     public UniversalFile universalFolder;
 
@@ -101,13 +101,13 @@ public class ImportDataFileDialog extends BaseDialog {
             }
         });
 
-        Button B_TOGGLE = findViewById(R.id.import_data_file_dialog_toggleButton);
+        ToggleButton B_TOGGLE = findViewById(R.id.import_data_file_dialog_toggleButton);
+        B_TOGGLE.setOptions("File View", "Folder View");
 
         if(Build.VERSION.SDK_INT >= 19) {
-            B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            B_TOGGLE.setVisibility(View.VISIBLE);
+            B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
                 public void onClickImpl(View v) {
-                    isFolder = !isFolder;
-
                     updateLayout();
                 }
             });
@@ -115,25 +115,21 @@ public class ImportDataFileDialog extends BaseDialog {
         else {
             // Older devices only have the folder option.
             B_TOGGLE.setVisibility(View.GONE);
-            isFolder = true;
+            B_TOGGLE.toggleState = true;
         }
 
         updateLayout();
     }
 
     public void updateLayout() {
-        Button B_TOGGLE = findViewById(R.id.import_data_file_dialog_toggleButton);
+        ToggleButton B_TOGGLE = findViewById(R.id.import_data_file_dialog_toggleButton);
         LinearLayout L_FILE = findViewById(R.id.import_data_file_dialog_fileLinearLayout);
         LinearLayout L_FOLDER = findViewById(R.id.import_data_file_dialog_folderLinearLayout);
-        if(isFolder) {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-            B_TOGGLE.setText("Folder View");
+        if(B_TOGGLE.toggleState) {
             L_FILE.setVisibility(View.GONE);
             L_FOLDER.setVisibility(View.VISIBLE);
         }
         else {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-            B_TOGGLE.setText("File View");
             L_FILE.setVisibility(View.VISIBLE);
             L_FOLDER.setVisibility(View.GONE);
         }
@@ -287,7 +283,6 @@ public class ImportDataFileDialog extends BaseDialog {
 
     @Override
     public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putBoolean("isFolder", isFolder);
         bundle.putParcelable("universalFile", universalFile);
         bundle.putParcelable("universalFolder", universalFolder);
         return bundle;
@@ -296,7 +291,6 @@ public class ImportDataFileDialog extends BaseDialog {
     @Override
     public void onRestoreInstanceStateImpl(Bundle bundle) {
         if(bundle != null) {
-            isFolder = bundle.getBoolean("isFolder");
             universalFile = bundle.getParcelable("universalFile");
             universalFolder = bundle.getParcelable("universalFolder");
         }

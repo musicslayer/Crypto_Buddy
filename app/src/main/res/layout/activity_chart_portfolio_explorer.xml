@@ -71,12 +71,11 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.musicslayer.cryptobuddy.view.ToggleButton
                 android:id="@+id/chart_portfolio_explorer_autoUpdateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24"
-                android:text="Auto Update Off" />
+                android:text="ToggleButton"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/chart_portfolio_explorer_filterChartButton"

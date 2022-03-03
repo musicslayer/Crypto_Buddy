@@ -43,7 +43,6 @@ import java.util.Date;
 
 // A traditional chart to show price, market caps, and volumes.
 public class TraditionalChartView extends CrashLinearLayout {
-    // TODO Standardize all this (all strings, all in an array)
     String timeframe = "60M"; // 60M, 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;

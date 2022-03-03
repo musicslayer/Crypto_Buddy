@@ -43,6 +43,7 @@ import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.TimerUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -65,9 +66,8 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
     public ArrayList<Boolean> includePricePoints;
     public ArrayList<Boolean> includeCandles;
 
-    public boolean isAutoUpdate;
-
     FloatingActionButton refreshButton;
+    ToggleButton autoUpdateButton;
 
     @Override
     public int getAdLayoutViewID() {
@@ -328,14 +328,8 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        AppCompatButton autoUpdateButton = findViewById(R.id.chart_portfolio_explorer_autoUpdateButton);
-        autoUpdateButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
-            @Override
-            public void onClickImpl(View view) {
-                isAutoUpdate = !isAutoUpdate;
-                updateAutoUpdateButton();
-            }
-        });
+        autoUpdateButton = findViewById(R.id.chart_portfolio_explorer_autoUpdateButton);
+        autoUpdateButton.setOptions("Auto Update Off", "Auto Update On");
 
         refreshButton = findViewById(R.id.chart_portfolio_explorer_refreshButton);
         refreshButton.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -364,7 +358,6 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        updateAutoUpdateButton();
         updateLayout();
 
         // On first creation, download chart data.
@@ -372,32 +365,27 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             doChartUpdate();
         }
 
+        startTimer();
+    }
+
+    public void startTimer() {
         // Create timer to periodically update the charts.
         TimerUtil.startTimer("auto_update", MAX_TIME, UPDATE_CHECK_TIME, new TimerUtil.TimerUtilListener() {
             @Override
             public void onTickCallback(long millisUntilFinished) {
                 long currentTime = System.currentTimeMillis();
 
-                if(isAutoUpdate && lastUpdateTime + UPDATE_INTERVAL_TIME < currentTime) {
+                if(autoUpdateButton.toggleState && lastUpdateTime + UPDATE_INTERVAL_TIME < currentTime) {
                     doChartUpdate();
                 }
             }
 
             @Override
-            public void onFinishCallback() {}
+            public void onFinishCallback() {
+                // Start the timer again.
+                startTimer();
+            }
         });
-    }
-
-    public void updateAutoUpdateButton() {
-        AppCompatButton autoUpdateButton = findViewById(R.id.chart_portfolio_explorer_autoUpdateButton);
-        if(isAutoUpdate) {
-            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-            autoUpdateButton.setText("Auto Update On");
-        }
-        else {
-            autoUpdateButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-            autoUpdateButton.setText("Auto Update Off");
-        }
     }
 
     public void doChartUpdate() {
@@ -475,7 +463,6 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         super.onSaveInstanceStateImpl(bundle);
         bundle.putSerializable("includePricePoints", includePricePoints);
         bundle.putSerializable("includeCandles", includeCandles);
-        bundle.putBoolean("isAutoUpdate", isAutoUpdate);
         bundle.putLong("lastUpdateTime", lastUpdateTime);
         bundle.putParcelable("filter", chartFilter);
     }
@@ -487,11 +474,8 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
         if(bundle != null) {
             includePricePoints = (ArrayList<Boolean>)bundle.getSerializable("includePricePoints");
             includeCandles = (ArrayList<Boolean>)bundle.getSerializable("includeCandles");
-            isAutoUpdate = bundle.getBoolean("isAutoUpdate");
             lastUpdateTime = bundle.getLong("lastUpdateTime");
             chartFilter = bundle.getParcelable("filter");
-
-            updateAutoUpdateButton();
         }
     }
 }

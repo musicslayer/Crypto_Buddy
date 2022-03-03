@@ -225,21 +225,6 @@ public class ChartData implements DataBridge.SerializableToJSON {
         return new ChartData(newChartData.cryptoChart, chartAPI_pricePoints_f, chartAPI_candles_f, pricePointsArrayList_f, candlesArrayList_f, timestamp_pricePoints_f, timestamp_candles_f);
     }
 
-    public boolean isPricePointsValid() {
-        // There must be at least 1 price to be valid.
-        // If any prices are negative, the data is generally considered to be invalid.
-        // TODO Implement and use this.
-        return true;
-    }
-
-    public boolean isCandlesValid() {
-        // There must be at least 1 candle to be valid.
-        // If any prices are negative, the data is generally considered to be invalid.
-        // Also, any candles present must obey the OHLC condition.
-        // TODO Implement and use this.
-        return true;
-    }
-
     public BigDecimal getMinTime(String timeframe) {
         // Check both PricePoints and Candles so graphs look consistent.
         ArrayList<PricePoint> timeframePricePointsArrayList = HashMapUtil.getValueFromMap(pricePointsHashMap, timeframe);
