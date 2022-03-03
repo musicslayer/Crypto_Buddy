@@ -42,6 +42,7 @@ import java.util.Date;
 
 // A traditional chart to show price, market caps, and volumes.
 public class TraditionalChartView extends CrashLinearLayout {
+    // TODO Standardize all this (all strings, all in an array)
     String timeframe = "60M"; // 60M, 24H or 30D
     String pointsType = "POINT"; // POINT, LINE, or CANDLE
     boolean isLogScale;
@@ -848,6 +849,41 @@ public class TraditionalChartView extends CrashLinearLayout {
         }
 
         return topTime.subtract(interval);
+    }
+
+    public String getInfo() {
+        // Get a String representation of this chart's state.
+        // Different than serialization because the info cannot be used to reconstruct the chart.
+        StringBuilder s = new StringBuilder();
+        s.append("Chart: ").append(this.chartData.cryptoChart.toString());
+        s.append("\nChart Type: ").append(getClass().getSimpleName());
+
+        // Add info for button states.
+        s.append("\nTimeframe: ").append(timeframe);
+        s.append("\nPoints Type: ").append(pointsType);
+        s.append("\nisLogScale: ").append(isLogScale);
+        s.append("\nisHollowStyle: ").append(isHollowStyle);
+        s.append("\nValue Type: ").append(valueType);
+
+        // Add precalculated values.
+        s.append("\nCanvas Width: ").append(canvasWidth);
+        s.append("\nCanvas Height: ").append(canvasHeight);
+        s.append("\nTop Time: ").append(topTime);
+        s.append("\nBottom Time: ").append(bottomTime);
+        s.append("\nTop Price: ").append(topPrice);
+        s.append("\nBottom Price: ").append(bottomPrice);
+        s.append("\nTop Market Cap: ").append(topMarketCap);
+        s.append("\nBottom Market Cap: ").append(bottomMarketCap);
+        s.append("\nTop Volume: ").append(topVolume);
+        s.append("\nBottom Volume: ").append(bottomVolume);
+        s.append("\nTop Value: ").append(topValue);
+        s.append("\nBottom Value: ").append(bottomValue);
+        s.append("\nTop Value String: ").append(topValueString);
+        s.append("\nBottom Value String: ").append(bottomValueString);
+        s.append("\nText Height Top: ").append(textHeightTop);
+        s.append("\nText Height Bottom: ").append(textHeightBottom);
+
+        return s.toString();
     }
 
     @Override

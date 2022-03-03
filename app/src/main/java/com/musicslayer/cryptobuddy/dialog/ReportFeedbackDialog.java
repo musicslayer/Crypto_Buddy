@@ -28,8 +28,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Update ReportFeedbackDialog with new options.
-
 public class ReportFeedbackDialog extends BaseDialog {
     String type;
 
@@ -191,7 +189,7 @@ public class ReportFeedbackDialog extends BaseDialog {
             s.append("\n\nChart Info:");
             s.append("\n\n").append(ChartData.getRawFullInfoString(new ArrayList<>(StateObj.chartDataMap.values())));
 
-            s.append("\n\n").append(StateObj.tableInfo);
+            s.append("\n\n").append(StateObj.chartInfo);
         }
         else if("ChartPortfolio".equals(type)) {
             s.append("\n\nChartPortfolioExplorerActivity");
@@ -205,7 +203,7 @@ public class ReportFeedbackDialog extends BaseDialog {
 
             s.append("\n\nChart Filter:\n\n").append(StateObj.filterInfo);
             s.append("\n\nChart Portfolio:\n\n").append(DataBridge.serialize(StateObj.chartPortfolioObj, ChartPortfolioObj.class));
-            s.append("\n\n").append(StateObj.tableInfo);
+            s.append("\n\n").append(StateObj.chartInfo);
         }
         else {
             s.append("\n\nNo Available Information.");

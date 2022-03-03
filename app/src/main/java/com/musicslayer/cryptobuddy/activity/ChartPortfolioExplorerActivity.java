@@ -56,6 +56,8 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
 
     public BaseDialogFragment confirmBackDialogFragment;
 
+    ChartHolderView chartHolderView;
+
     DiscreteFilter chartFilter = new DiscreteFilter();
 
     // For now, these are always true.
@@ -123,6 +125,8 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                 HelpUtil.showHelp(ChartPortfolioExplorerActivity.this, R.raw.help_chart_portfolio_explorer);
             }
         });
+
+        chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
 
         BaseDialogFragment chooseChartDialogFragment = BaseDialogFragment.newInstance(ChooseChartDialog.class);
         chooseChartDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this) {
@@ -400,8 +404,6 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        ChartHolderView chartHolderView = findViewById(R.id.chart_portfolio_explorer_chartHolderView);
-
         // Don't show plots that are filtered. Use this to preserve the same ordering as the user added the charts to the portfolio.
         ArrayList<ChartData> filteredChartDataArrayList = new ArrayList<>();
         for(CryptoChart cryptoChart : StateObj.chartPortfolioObj.cryptoChartArrayList) {
@@ -447,7 +449,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             runWithProgressIndicator(new CrashRunnable(this) {
                 @Override
                 public void runImpl() {
-                    //StateObj.chartInfo = get chart info...
+                    StateObj.chartInfo = chartHolderView.getInfo();
                     StateObj.filterInfo = DataBridge.serialize(chartFilter, Filter.class);
                 }
             }, new CrashRunnable(this) {

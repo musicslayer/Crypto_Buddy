@@ -46,6 +46,7 @@ public class StateObj {
     public static ArrayList<Transaction> filteredTransactionArrayList = new ArrayList<>();
 
     public static String tableInfo;
+    public static String chartInfo;
     public static String filterInfo;
 
     public static void resetState() {
@@ -67,6 +68,7 @@ public class StateObj {
         transactionArrayList = new ArrayList<>();
         filteredTransactionArrayList = new ArrayList<>();
         tableInfo = null;
+        chartInfo = null;
         filterInfo = null;
     }
 }

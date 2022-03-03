@@ -353,7 +353,7 @@ public class ChartData implements DataBridge.SerializableToJSON {
     public String getRawFullInfoString() {
         // Same as regular info, but add price points and candles.
         RichStringBuilder s = new RichStringBuilder(false);
-        s.appendRich("Chart = " + cryptoChart.crypto.getSettingName());
+        s.appendRich("Chart = " + cryptoChart.toString());
 
         if(chartAPI_pricePoints == null || pricePointsArrayList == null) {
             s.appendRich("\n(Price points information not present.)");

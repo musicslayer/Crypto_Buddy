@@ -73,6 +73,22 @@ public class ChartHolderView extends CrashLinearLayout {
         }
     }
 
+    public String getInfo() {
+        // Get a String representation of all the charts' state.
+        // Different than serialization because the info cannot be used to reconstruct the charts.
+        StringBuilder s = new StringBuilder();
+        s.append("Chart Info:");
+
+        // Add in each child chart's info.
+        for(int i = 0; i < getChildCount(); i++) {
+            TraditionalChartView v = (TraditionalChartView)getChildAt(i);
+            s.append("\n\nChart ").append(i + 1).append(":\n");
+            s.append(v.getInfo());
+        }
+
+        return s.toString();
+    }
+
     @Override
     public Parcelable onSaveInstanceStateImpl(Parcelable state)
     {

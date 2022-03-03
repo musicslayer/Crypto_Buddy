@@ -48,6 +48,8 @@ public class ChartExplorerActivity extends BaseActivity {
 
     public BaseDialogFragment confirmBackDialogFragment;
 
+    ChartHolderView chartHolderView;
+
     ArrayList<CryptoChart> cryptoChartArrayList = new ArrayList<>();
 
     // For now, these are always true.
@@ -105,6 +107,8 @@ public class ChartExplorerActivity extends BaseActivity {
                 HelpUtil.showHelp(ChartExplorerActivity.this, R.raw.help_chart_explorer);
             }
         });
+
+        chartHolderView = findViewById(R.id.chart_explorer_chartHolderView);
 
         FloatingActionButton fab_info = findViewById(R.id.chart_explorer_infoButton);
         fab_info.setOnClickListener(new CrashView.CrashOnClickListener(this) {
@@ -242,7 +246,6 @@ public class ChartExplorerActivity extends BaseActivity {
     }
 
     public void updateLayout() {
-        ChartHolderView chartHolderView = findViewById(R.id.chart_explorer_chartHolderView);
         chartHolderView.updateChartsFromChartDataArray(new ArrayList<>(StateObj.chartDataMap.values()));
     }
 
@@ -270,7 +273,7 @@ public class ChartExplorerActivity extends BaseActivity {
             runWithProgressIndicator(new CrashRunnable(this) {
                 @Override
                 public void runImpl() {
-                    //StateObj.chartInfo = // get chart info...
+                    StateObj.chartInfo = chartHolderView.getInfo();
                 }
             }, new CrashRunnable(this) {
                 @Override
