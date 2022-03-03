@@ -39,12 +39,13 @@ public class ToggleButton extends CrashButton {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // Use same height.
+        int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+
         // Change the width to be the width that would hold the largest option.
         this.getPaint().getTextBounds(optionOff, 0, optionOff.length(), boundsOff);
         this.getPaint().getTextBounds(optionOn, 0, optionOn.length(), boundsOn);
-
         int width = Math.max(boundsOff.width(), boundsOn.width()) + 200;
-        int height = 135;
 
         setMeasuredDimension(width, height);
     }
