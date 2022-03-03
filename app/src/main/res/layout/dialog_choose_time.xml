@@ -32,13 +32,12 @@
             android:text="Confirm"
             app:drawableLeftCompat="@drawable/ic_baseline_check_24" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.musicslayer.cryptobuddy.view.ToggleButton
             android:id="@+id/choose_time_dialog_toggleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="AM/PM"
-            app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24" />
+            android:text="ToggleButton" />
     </LinearLayout>
 
     <LinearLayout

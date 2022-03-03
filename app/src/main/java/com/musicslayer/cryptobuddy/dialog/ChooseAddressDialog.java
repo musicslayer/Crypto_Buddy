@@ -21,14 +21,15 @@ import com.musicslayer.cryptobuddy.util.ClipboardUtil;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
 import com.musicslayer.cryptobuddy.util.PermissionUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
+import com.musicslayer.cryptobuddy.view.ToggleButton;
 import com.musicslayer.cryptobuddy.view.red.AnythingEditText;
 
 import java.util.ArrayList;
 
 public class ChooseAddressDialog extends BaseDialog {
-    public boolean includeTokens = Purchases.isUnlockTokensPurchased();
-
     public CryptoAddress user_CRYPTOADDRESS;
+
+    ToggleButton B_TOGGLE;
 
     public ChooseAddressDialog(Activity activity) {
         super(activity);
@@ -49,14 +50,18 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        if(Purchases.isUnlockTokensPurchased()) {
-            Button B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
-            B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-                public void onClickImpl(View v) {
-                    includeTokens = !includeTokens;
-                    updateLayout();
-                }
-            });
+        B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
+        B_TOGGLE.setOptions("Coins", "Coins + Tokens");
+        B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                updateLayout();
+            }
+        });
+
+        // On first creation, set the toggle state based on whether tokens are purchased.
+        if(savedInstanceState == null) {
+            B_TOGGLE.toggleState = Purchases.isUnlockTokensPurchased();
+            B_TOGGLE.updateLayout();
         }
 
         final AnythingEditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
@@ -147,7 +152,7 @@ public class ChooseAddressDialog extends BaseDialog {
                     return;
                 }
 
-                ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.getAllValidCryptoAddress(address, includeTokens);
+                ArrayList<CryptoAddress> cryptoAddressArrayList = CryptoAddress.getAllValidCryptoAddress(address, B_TOGGLE.toggleState);
 
                 if(cryptoAddressArrayList.isEmpty()) {
                     ToastUtil.showToast("unrecognized_address");
@@ -170,21 +175,12 @@ public class ChooseAddressDialog extends BaseDialog {
     }
 
     public void updateLayout() {
-        Button B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
+        B_TOGGLE = findViewById(R.id.choose_address_dialog_toggleButton);
         TextView T = findViewById(R.id.choose_address_dialog_messageTextView);
 
         if(Purchases.isUnlockTokensPurchased()) {
             B_TOGGLE.setVisibility(View.VISIBLE);
             T.setVisibility(View.GONE);
-
-            if(includeTokens) {
-                B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-                B_TOGGLE.setText("Coins + Tokens");
-            }
-            else {
-                B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-                B_TOGGLE.setText("Coins");
-            }
         }
         else {
             B_TOGGLE.setVisibility(View.GONE);
@@ -197,19 +193,6 @@ public class ChooseAddressDialog extends BaseDialog {
         }
         else {
             T2.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putBoolean("includeTokens", includeTokens);
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceStateImpl(Bundle bundle) {
-        if(bundle != null) {
-            includeTokens = bundle.getBoolean("includeTokens");
         }
     }
 }

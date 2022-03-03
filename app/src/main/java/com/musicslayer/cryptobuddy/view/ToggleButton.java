@@ -93,6 +93,10 @@ public class ToggleButton extends CrashButton {
             optionOnAdjusted = bundle.getString("optionOnAdjusted");
 
             updateLayout();
+
+            if(toggleState && additionalOnClickListener != null) {
+                additionalOnClickListener.onClick(ToggleButton.this);
+            }
         }
         return state;
     }

@@ -29,13 +29,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_help_24" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.musicslayer.cryptobuddy.view.ToggleButton
         android:id="@+id/search_dialog_toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="46dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Symbols"
-        app:drawableLeftCompat="@drawable/ic_baseline_toggle_off_24"
+        android:text="ToggleButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_dialog_toolbar" />
 

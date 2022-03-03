@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,6 +17,7 @@ import com.musicslayer.cryptobuddy.crash.CrashSearchView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.HelpUtil;
+import com.musicslayer.cryptobuddy.view.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,9 +29,9 @@ public class SearchDialog extends BaseDialog {
     public ArrayList<String> search_options_asset_display_names_SORTED;
     public ArrayList<String> search_options_asset_display_names_LC_SORTED;
 
-    public boolean isDisplayNames = false;
     public String searchText = "";
     TableLayout table;
+    ToggleButton B_TOGGLE;
 
     public Asset user_OPTION;
 
@@ -92,11 +92,10 @@ public class SearchDialog extends BaseDialog {
 
         table = findViewById(R.id.search_dialog_tableLayout);
 
-        Button B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+        B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
+        B_TOGGLE.setOptions("Symbols", "Names");
+        B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                isDisplayNames = !isDisplayNames;
-                updateLayout();
                 updateList();
             }
         });
@@ -118,20 +117,7 @@ public class SearchDialog extends BaseDialog {
             }
         });
 
-        updateLayout();
         updateList();
-    }
-
-    public void updateLayout() {
-        Button B_TOGGLE = findViewById(R.id.search_dialog_toggleButton);
-        if(isDisplayNames) {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-            B_TOGGLE.setText("Names");
-        }
-        else {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-            B_TOGGLE.setText("Symbols");
-        }
     }
 
     public void updateList() {
@@ -139,7 +125,7 @@ public class SearchDialog extends BaseDialog {
 
         ArrayList<String> search_options_SORTED;
         ArrayList<String> search_options_LC_SORTED;
-        if(isDisplayNames) {
+        if(B_TOGGLE.toggleState) {
             search_options_SORTED = search_options_asset_display_names_SORTED;
             search_options_LC_SORTED = search_options_asset_display_names_LC_SORTED;
         }
@@ -178,7 +164,7 @@ public class SearchDialog extends BaseDialog {
                 B.setOnClickListener(new CrashView.CrashOnClickListener(SearchDialog.this.activity) {
                     public void onClickImpl(View v) {
                         // Sort assetArrayList in the same way as the options we used so that the index lines up.
-                        if(isDisplayNames) {
+                        if(B_TOGGLE.toggleState) {
                             Collections.sort(search_options_assets, (a, b) -> {
                                 // Sort by length so shorter options will be higher. If longer options are desired, the user can use more letters to filter more.
                                 // If length is equal, just go alphabetically.
@@ -236,19 +222,6 @@ public class SearchDialog extends BaseDialog {
 
                 break;
             }
-        }
-    }
-
-    @Override
-    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putBoolean("isDisplayNames", isDisplayNames);
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceStateImpl(Bundle bundle) {
-        if(bundle != null) {
-            isDisplayNames = bundle.getBoolean("isDisplayNames");
         }
     }
 }

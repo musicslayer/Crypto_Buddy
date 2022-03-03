@@ -10,13 +10,14 @@ import android.widget.TimePicker;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.view.ToggleButton;
 
 public class ChooseTimeDialog extends BaseDialog {
     public int user_HOUR;
     public int user_MINUTE;
     public int user_SECOND;
 
-    public boolean is24 = false;
+    ToggleButton B_TOGGLE;
     TimePicker timePicker;
 
     public ChooseTimeDialog(Activity activity) {
@@ -34,7 +35,6 @@ public class ChooseTimeDialog extends BaseDialog {
         timePicker = new TimePicker(this.activity);
         timePicker.setSaveEnabled(true);
         timePicker.setSaveFromParentEnabled(true); // Must explicitly set this to the default value of "true" again.
-        timePicker.setIs24HourView(is24);
 
         timePickerLinearLayout.addView(timePicker);
 
@@ -52,15 +52,14 @@ public class ChooseTimeDialog extends BaseDialog {
             }
         });
 
-        Button B_TOGGLE = findViewById(R.id.choose_time_dialog_toggleButton);
-        B_TOGGLE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+        B_TOGGLE = findViewById(R.id.choose_time_dialog_toggleButton);
+        B_TOGGLE.setOptions("AM/PM", "24 Hour");
+        B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                is24 = !is24;
-
                 // setIs24HourView doesn't perform operations in the correct order, so we need to get/set the time ourselves
                 int h = timePicker.getCurrentHour();
                 int m = timePicker.getCurrentMinute();
-                timePicker.setIs24HourView(is24);
+                timePicker.setIs24HourView(B_TOGGLE.toggleState);
                 timePicker.setCurrentHour(h);
                 timePicker.setCurrentMinute(m);
 
@@ -69,12 +68,10 @@ public class ChooseTimeDialog extends BaseDialog {
 
                 timePickerLinearLayout.removeAllViews();
                 timePickerLinearLayout.addView(timePicker);
-
-                updateLayout();
             }
         });
 
-        updateLayout();
+        timePicker.setIs24HourView(B_TOGGLE.toggleState);
     }
 
     public TimePicker recreate(Context context, TimePicker timePicker) {
@@ -85,30 +82,5 @@ public class ChooseTimeDialog extends BaseDialog {
         newTimePicker.setCurrentMinute(timePicker.getCurrentMinute());
 
         return newTimePicker;
-    }
-
-    public void updateLayout() {
-        Button B_TOGGLE = findViewById(R.id.choose_time_dialog_toggleButton);
-        if(is24) {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-            B_TOGGLE.setText("24 Hour");
-        }
-        else {
-            B_TOGGLE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-            B_TOGGLE.setText("AM/PM");
-        }
-    }
-
-    @Override
-    public Bundle onSaveInstanceStateImpl(Bundle bundle) {
-        bundle.putBoolean("is24", is24);
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceStateImpl(Bundle bundle) {
-        if(bundle != null) {
-            is24 = bundle.getBoolean("is24");
-        }
     }
 }
