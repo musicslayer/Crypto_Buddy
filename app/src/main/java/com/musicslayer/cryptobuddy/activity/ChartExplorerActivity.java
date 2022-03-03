@@ -2,6 +2,7 @@ package com.musicslayer.cryptobuddy.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -286,6 +287,10 @@ public class ChartExplorerActivity extends BaseActivity {
         }
 
         return false;
+    }
+
+    public ArrayList<Bitmap> getSurfaceBitmaps() {
+        return chartHolderView.getChartBitmaps();
     }
 
     @Override

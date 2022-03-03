@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.activity;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 import com.musicslayer.cryptobuddy.util.TimerUtil;
+
+import java.util.ArrayList;
 
 abstract public class BaseActivity extends CrashActivity {
     // Needed when the current activity is different than the activity captured in a closure.
@@ -139,6 +142,11 @@ abstract public class BaseActivity extends CrashActivity {
                 }
             });
         }
+    }
+
+    public ArrayList<Bitmap> getSurfaceBitmaps() {
+        // By default return null, but subclasses can return any surface bitmaps they have.
+        return null;
     }
 
     @Override

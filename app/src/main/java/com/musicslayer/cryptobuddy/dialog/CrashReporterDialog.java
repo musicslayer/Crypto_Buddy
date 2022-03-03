@@ -83,16 +83,18 @@ public class CrashReporterDialog extends BaseDialog {
         Button B_EMAIL_SCREENSHOT = findViewById(R.id.crash_reporter_dialog_emailScreenshotButton);
         B_EMAIL_SCREENSHOT.setOnClickListener(v -> {
             try {
-                // Attach three files. One has the Exception that caused the crash, one has the DataDump data, and one has a screenshot.
+                // Attach four files. One has the Exception that caused the crash, one has the DataDump data, and two have screenshots.
                 // Some of the Exception may be obfuscated by ProGuard.
                 File fileA = FileUtil.writeTempFile(crashException.toString());
                 File fileB = FileUtil.writeTempFile(DataDumpUtil.getAllData(activity));
                 File fileC = ScreenshotUtil.writeScreenshotFile(activity);
+                File fileD = ScreenshotUtil.writeSurfaceFile(activity);
 
                 ArrayList<File> fileArrayList = new ArrayList<>();
                 fileArrayList.add(fileA);
                 fileArrayList.add(fileB);
                 fileArrayList.add(fileC);
+                fileArrayList.add(fileD);
 
                 MessageUtil.sendEmail(activity, "musicslayer@gmail.com", "Crypto Buddy - Crash Info", "Crash information and screenshot are attached.\n\nFeel free to add any other information below:\n\n", fileArrayList);
             }

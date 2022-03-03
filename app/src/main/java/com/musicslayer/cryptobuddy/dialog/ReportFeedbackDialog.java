@@ -85,6 +85,7 @@ public class ReportFeedbackDialog extends BaseDialog {
                 if(checkBox_screenshot.isChecked()) {
                     try {
                         fileArrayList.add(ScreenshotUtil.writeScreenshotFile(activity));
+                        fileArrayList.add(ScreenshotUtil.writeSurfaceFile(activity));
                     }
                     catch(Exception e) {
                         ThrowableUtil.processThrowable(e);

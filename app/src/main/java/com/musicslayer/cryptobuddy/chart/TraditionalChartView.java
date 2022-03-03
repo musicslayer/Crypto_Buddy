@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.chart;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -88,6 +89,9 @@ public class TraditionalChartView extends CrashLinearLayout {
 
     // Reuse this so we do not have to keep allocating these objects.
     final private Rect r = new Rect();
+
+    // Store the image that is drawn in the SurfaceView.
+    Bitmap bitmap;
 
     public ChartData chartData;
 
@@ -383,9 +387,23 @@ public class TraditionalChartView extends CrashLinearLayout {
         if(isCandle && !chartData.isCandlesComplete()) { return; }
         if(!isCandle && !chartData.isPricePointsComplete()) { return; }
 
-        Canvas canvas = surfaceView.getHolder().lockCanvas();
-        if(canvas == null) { return; }
+        Canvas canvasScreen = surfaceView.getHolder().lockCanvas();
+        if(canvasScreen == null) { return; }
 
+        int width = canvasScreen.getWidth();
+        int height = canvasScreen.getHeight();
+
+        // Draw to screen.
+        drawChartImpl(canvasScreen);
+        surfaceView.getHolder().unlockCanvasAndPost(canvasScreen);
+
+        // Draw same thing to a bitmap so we can access it later.
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas canvasBitmap = new Canvas(bitmap);
+        drawChartImpl(canvasBitmap);
+    }
+
+    public void drawChartImpl(Canvas canvas) {
         // Calculate these values upfront.
         canvasWidth = canvas.getWidth();
         canvasHeight = canvas.getHeight();
@@ -424,7 +442,6 @@ public class TraditionalChartView extends CrashLinearLayout {
         drawXAxisTicks(canvas);
         drawYAxisTicks(canvas);
         drawValueData(canvas);
-        surfaceView.getHolder().unlockCanvasAndPost(canvas);
     }
 
     private int getTopTextHeight() {

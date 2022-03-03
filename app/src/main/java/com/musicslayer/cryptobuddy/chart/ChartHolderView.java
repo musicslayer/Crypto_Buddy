@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.chart;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -87,6 +88,20 @@ public class ChartHolderView extends CrashLinearLayout {
         }
 
         return s.toString();
+    }
+
+    public ArrayList<Bitmap> getChartBitmaps() {
+        ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
+
+        for(int i = 0; i < getChildCount(); i++) {
+            TraditionalChartView v = (TraditionalChartView)getChildAt(i);
+            Bitmap bitmap = v.bitmap;
+            if(bitmap != null) {
+                bitmapArrayList.add(bitmap);
+            }
+        }
+
+        return bitmapArrayList;
     }
 
     @Override
