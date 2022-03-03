@@ -780,7 +780,6 @@ public class SelectAndSearchView extends CrashLinearLayout {
             @Override
             protected void onMeasure(int width, int height) {
                 // Change Width to match Height so we get a square.
-                super.onMeasure(width, height);
                 setMeasuredDimension(height, height);
             }
         };

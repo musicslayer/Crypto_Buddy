@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.view;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -12,10 +13,13 @@ import com.musicslayer.cryptobuddy.crash.CrashView;
 
 public class ToggleButton extends CrashButton {
     public boolean toggleState;
-    String optionOffAdjusted;
-    String optionOnAdjusted;
+    String optionOff;
+    String optionOn;
 
     OnClickListener additionalOnClickListener;
+
+    Rect boundsOff = new Rect();
+    Rect boundsOn = new Rect();
 
     public ToggleButton(Context context) {
         this(context, null);
@@ -23,17 +27,26 @@ public class ToggleButton extends CrashButton {
 
     public ToggleButton(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-
         makeLayout();
     }
 
     public void setOptions(String optionOff, String optionOn) {
-        optionOffAdjusted = optionOff;
-        optionOnAdjusted = optionOn;
-
-        // TODO Make the two adjusted strings of equal length so the button has the same width for any state.
+        this.optionOff = optionOff;
+        this.optionOn = optionOn;
 
         updateLayout();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // Change the width to be the width that would hold the largest option.
+        this.getPaint().getTextBounds(optionOff, 0, optionOff.length(), boundsOff);
+        this.getPaint().getTextBounds(optionOn, 0, optionOn.length(), boundsOn);
+
+        int width = Math.max(boundsOff.width(), boundsOn.width()) + 200;
+        int height = 135;
+
+        setMeasuredDimension(width, height);
     }
 
     public void setAdditionalOnClickListener(OnClickListener additionalOnClickListener) {
@@ -59,11 +72,11 @@ public class ToggleButton extends CrashButton {
     public void updateLayout() {
         if(toggleState) {
             this.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_on_24, 0, 0, 0);
-            this.setText(optionOnAdjusted);
+            this.setText(optionOn);
         }
         else {
             this.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_toggle_off_24, 0, 0, 0);
-            this.setText(optionOffAdjusted);
+            this.setText(optionOff);
         }
     }
 
@@ -74,8 +87,8 @@ public class ToggleButton extends CrashButton {
         bundle.putParcelable("superState", state);
 
         bundle.putBoolean("toggleState", toggleState);
-        bundle.putString("optionOffAdjusted", optionOffAdjusted);
-        bundle.putString("optionOnAdjusted", optionOnAdjusted);
+        bundle.putString("optionOff", optionOff);
+        bundle.putString("optionOn", optionOn);
 
         return bundle;
     }
@@ -89,8 +102,8 @@ public class ToggleButton extends CrashButton {
             state = bundle.getParcelable("superState");
 
             toggleState = bundle.getBoolean("toggleState");
-            optionOffAdjusted = bundle.getString("optionOffAdjusted");
-            optionOnAdjusted = bundle.getString("optionOnAdjusted");
+            optionOff = bundle.getString("optionOff");
+            optionOn = bundle.getString("optionOn");
 
             updateLayout();
 
