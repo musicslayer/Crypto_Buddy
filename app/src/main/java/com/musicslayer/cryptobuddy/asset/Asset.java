@@ -24,20 +24,27 @@ import java.util.HashMap;
 abstract public class Asset implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, DataBridge.ReferenceableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        // Within the app, we can just store the key so we can lookup the asset.
-        // We don't need to write full info.
         out.writeString(getAssetKind());
-        out.writeString(getAssetType());
         out.writeString(getKey());
+        out.writeString(getName());
+        out.writeString(getDisplayName());
+        out.writeInt(getScale());
+        out.writeString(getAssetType());
+        out.writeString(DataBridge.serializeHashMap(getOriginalAdditionalInfo(), String.class, String.class));
     }
 
     public static final Parcelable.Creator<Asset> CREATOR = new Parcelable.Creator<Asset>() {
         @Override
         public Asset createFromParcel(Parcel in) {
             String assetKind = in.readString();
-            String assetType = in.readString();
             String key = in.readString();
-            return Asset.lookupAsset(assetKind, assetType, key);
+            String name = in.readString();
+            String displayName = in.readString();
+            int scale = in.readInt();
+            String assetType = in.readString();
+            HashMap<String, String> additionalInfo = DataBridge.deserializeHashMap(in.readString(), String.class, String.class);
+
+            return Asset.lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }
 
         @Override
@@ -187,7 +194,7 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
             String assetType = o.deserialize("assetType", String.class);
             String key = o.deserialize("key", String.class);
 
-            asset = lookupAsset(assetKind, assetType, key);
+            asset = legacy_lookupAsset(assetKind, assetType, key);
         }
         else if("1".equals(version)) {
             // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
@@ -206,13 +213,28 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
                 assetKind = "!TOKEN!";
             }
 
-            asset = lookupAsset(assetKind, assetType, key);
+            asset = legacy_lookupAsset(assetKind, assetType, key);
         }
         else {
             throw new IllegalStateException();
         }
 
         return asset;
+    }
+
+    public static Asset legacy_lookupAsset(String assetKind, String assetType, String key) {
+        if("!FIAT!".equals(assetKind)) {
+            return FiatManager.getFiatManagerFromFiatType(assetType).getFiat(key, null, null, 0);
+        }
+        else if("!COIN!".equals(assetKind)) {
+            return CoinManager.getCoinManagerFromCoinType(assetType).getCoin(key, null, null, 0, null);
+        }
+        else if("!TOKEN!".equals(assetKind)) {
+            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
+        }
+        else {
+            return null;
+        }
     }
 
     @Override
@@ -306,6 +328,9 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
         else if("!TOKEN!".equals(assetKind)) {
             return new Token(key, name, displayName, scale, assetType, additionalInfo);
         }
+        else if("!GENERIC!".equals(assetKind)) {
+            return GenericAsset.createGenericAsset(key, name, displayName, scale, assetType, additionalInfo);
+        }
         else {
             return null;
         }
@@ -321,20 +346,9 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
         else if("!TOKEN!".equals(assetKind)) {
             return TokenManager.getTokenManagerFromTokenType(assetType).getExistingToken(key, name, displayName, scale, additionalInfo);
         }
-        else {
-            return null;
-        }
-    }
-
-    public static Asset lookupAsset(String assetKind, String assetType, String key) {
-        if("!FIAT!".equals(assetKind)) {
-            return FiatManager.getFiatManagerFromFiatType(assetType).getFiat(key, null, null, 0);
-        }
-        else if("!COIN!".equals(assetKind)) {
-            return CoinManager.getCoinManagerFromCoinType(assetType).getCoin(key, null, null, 0, null);
-        }
-        else if("!TOKEN!".equals(assetKind)) {
-            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
+        else if("!GENERIC!".equals(assetKind)) {
+            // Just create these from scratch, since we cannot look them up.
+            return GenericAsset.createGenericAsset(key, name, displayName, scale, assetType, additionalInfo);
         }
         else {
             return null;

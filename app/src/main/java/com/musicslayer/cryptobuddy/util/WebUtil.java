@@ -93,7 +93,10 @@ public class WebUtil {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("accept", "application/json");
+
+            // TODO These are Coinbase specific. We really should have a way of inputting these.
             connection.setRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("CB-VERSION", "2022-03-04");
 
             result = WebUtil.request(connection);
 
