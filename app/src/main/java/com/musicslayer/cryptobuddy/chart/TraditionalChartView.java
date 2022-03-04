@@ -214,7 +214,6 @@ public class TraditionalChartView extends CrashLinearLayout {
         });
 
         surfaceView = new SurfaceView(context);
-        surfaceView.setZOrderOnTop(true);
         surfaceView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -379,27 +378,39 @@ public class TraditionalChartView extends CrashLinearLayout {
     }
 
     public void drawChart() {
-        // Early returns if data isn't complete or the canvas isn't ready.
-        if(chartData == null) { return; }
-
-        boolean isCandle = "CANDLE".equals(pointsType);
-        if(isCandle && !chartData.isCandlesComplete()) { return; }
-        if(!isCandle && !chartData.isPricePointsComplete()) { return; }
-
         Canvas canvasScreen = surfaceView.getHolder().lockCanvas();
         if(canvasScreen == null) { return; }
 
         int width = canvasScreen.getWidth();
         int height = canvasScreen.getHeight();
 
-        // Draw to screen.
-        drawChartImpl(canvasScreen);
-        surfaceView.getHolder().unlockCanvasAndPost(canvasScreen);
+        // At this point, draw a white background to the screen no matter what.
+        Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setColor(AppearanceUtil.getPrimaryColor(getContext()));
+        canvasScreen.drawRect(0, 0, width, height, backgroundPaint);
 
-        // Draw same thing to a bitmap so we can access it later.
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        Canvas canvasBitmap = new Canvas(bitmap);
-        drawChartImpl(canvasBitmap);
+        // Early returns if data isn't complete or the canvas isn't ready.
+        boolean isEarlyReturn = false;
+
+        if(chartData == null) { isEarlyReturn = true; }
+        boolean isCandle = "CANDLE".equals(pointsType);
+        if(isCandle && !chartData.isCandlesComplete()) { isEarlyReturn = true; }
+        if(!isCandle && !chartData.isPricePointsComplete()) { isEarlyReturn = true; }
+
+        if(isEarlyReturn) {
+            // Finish drawing background to screen but do nothing else.
+            surfaceView.getHolder().unlockCanvasAndPost(canvasScreen);
+        }
+        else {
+            // Draw to screen.
+            drawChartImpl(canvasScreen);
+            surfaceView.getHolder().unlockCanvasAndPost(canvasScreen);
+
+            // Draw same thing to a bitmap so we can access it later.
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            Canvas canvasBitmap = new Canvas(bitmap);
+            drawChartImpl(canvasBitmap);
+        }
     }
 
     public void drawChartImpl(Canvas canvas) {

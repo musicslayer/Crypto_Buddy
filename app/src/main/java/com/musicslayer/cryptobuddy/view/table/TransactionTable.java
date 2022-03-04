@@ -24,6 +24,8 @@ import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
 
+// TODO Table boxes are shifted down.
+
 public class TransactionTable extends Table {
     public BaseRow getRow(Transaction transaction) {
         return new TransactionTable.TransactionRow(getContext(), transaction);
