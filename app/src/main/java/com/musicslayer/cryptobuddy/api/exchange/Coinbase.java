@@ -75,6 +75,9 @@ public class Coinbase extends ExchangeAPI {
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoExchange cryptoExchange) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
+        String token = oAuthToken.getToken();
+        String addressDataJSON = WebUtil.getWithToken("https://api.coinbase.com/v2/accounts", token);
+
         return currentBalanceArrayList;
     }
 

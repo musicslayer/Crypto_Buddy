@@ -132,6 +132,8 @@ public class CryptoExchange implements LegacySerialization.SerializableToJSON, L
         if("2".equals(version)) {
             Exchange exchange = o.deserialize("exchange", Exchange.class);
             ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);
+            o.endObject();
+
             cryptoExchange = new CryptoExchange(exchange, exchangeAPI);
         }
         else {

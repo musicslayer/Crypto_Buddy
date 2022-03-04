@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -650,7 +651,8 @@ public class DataBridge {
                 }
                 jsonReader.endArray();
 
-                return (T[])arrayList.toArray();
+                // Give an empty array as the input to ensure we return the right type.
+                return arrayList.toArray((T[])Array.newInstance(clazzT, 0));
             }
         }
 

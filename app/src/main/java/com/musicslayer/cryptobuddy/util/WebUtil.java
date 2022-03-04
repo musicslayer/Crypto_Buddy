@@ -70,6 +70,43 @@ public class WebUtil {
         return result;
     }
 
+    public static String getWithToken(String urlString, String token) {
+        String result = null;
+
+        for(int r = 0; r < numRetries; r++) {
+            ProgressDialogFragment.checkForInterrupt();
+            rateLimit();
+            result = getWithToken_impl(urlString, token);
+            if(result != null) { break; }
+        }
+
+        return result;
+    }
+
+    private static String getWithToken_impl(String urlString, String token) {
+        String result = null;
+
+        HttpURLConnection connection = null;
+
+        try {
+            URL url = new URL(urlString);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("accept", "application/json");
+            connection.setRequestProperty("Authorization", "Bearer " + token);
+
+            result = WebUtil.request(connection);
+
+            safeDisconnect(connection);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            safeDisconnect(connection);
+        }
+
+        return result;
+    }
+
     public static String post(String urlString, String body) {
         String result = null;
 
