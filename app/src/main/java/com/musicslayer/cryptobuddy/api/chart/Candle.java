@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-// TODO Do these Chart classes need to be Parcelable?
-
 // A candle represents an OHLC quartet at a specific point in time.
 // (Open, High, Low, Close)
 public class Candle implements DataBridge.SerializableToJSON{

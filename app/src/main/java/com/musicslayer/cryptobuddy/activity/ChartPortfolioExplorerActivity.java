@@ -47,6 +47,8 @@ import com.musicslayer.cryptobuddy.view.ToggleButton;
 
 import java.util.ArrayList;
 
+// TODO When I rotate, updateChart ProgressDialog closes.
+
 public class ChartPortfolioExplorerActivity extends BaseActivity {
     // Every five minutes, allow an auto update the charts.
     // Every ten seconds, check if we need an update.
@@ -68,6 +70,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
 
     FloatingActionButton refreshButton;
     ToggleButton autoUpdateButton;
+    ProgressDialogFragment download_progressDialogFragment;
 
     @Override
     public int getAdLayoutViewID() {
@@ -149,6 +152,24 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
 
                         updateFilter();
                         updateLayout();
+
+                        // Update this chart only.
+                        includePricePoints = new ArrayList<>();
+                        includeCandles = new ArrayList<>();
+
+                        for(int i = 0; i < StateObj.chartPortfolioObj.cryptoChartArrayList.size(); i++) {
+                            CryptoChart cryptoChart = StateObj.chartPortfolioObj.cryptoChartArrayList.get(i);
+                            if(newCryptoChart.equals(cryptoChart)) {
+                                includePricePoints.add(true);
+                                includeCandles.add(true);
+                            }
+                            else {
+                                includePricePoints.add(false);
+                                includeCandles.add(false);
+                            }
+                        }
+
+                        download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress");
                     }
                 }
             }
@@ -201,7 +222,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
             }
         });
 
-        ProgressDialogFragment download_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        download_progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
         download_progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(this) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
