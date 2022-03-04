@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 import com.musicslayer.cryptobuddy.settings.setting.LossValuesSetting;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 
-import java.math.BigDecimal;
-
 public class RichStringBuilder {
     public StringBuilder s = new StringBuilder();
     boolean isRich;

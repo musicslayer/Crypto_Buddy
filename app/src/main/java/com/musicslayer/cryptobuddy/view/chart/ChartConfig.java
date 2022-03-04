@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.chart;
+package com.musicslayer.cryptobuddy.view.chart;
 
 public class ChartConfig {
     String timeframe;

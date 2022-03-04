@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.chart;
+package com.musicslayer.cryptobuddy.view.chart;
 
 import android.content.Context;
 import android.graphics.Bitmap;

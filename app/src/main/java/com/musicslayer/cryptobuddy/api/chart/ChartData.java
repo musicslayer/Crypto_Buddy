@@ -1,6 +1,8 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
+import com.musicslayer.cryptobuddy.chart.Candle;
+import com.musicslayer.cryptobuddy.chart.PricePoint;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
@@ -10,8 +12,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-// TODO Use one API call to get all data at once and just split it up?
 
 public class ChartData implements DataBridge.SerializableToJSON {
     final public CryptoChart cryptoChart;

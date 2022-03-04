@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.api.chart;
+package com.musicslayer.cryptobuddy.chart;
 
 import androidx.annotation.NonNull;
 

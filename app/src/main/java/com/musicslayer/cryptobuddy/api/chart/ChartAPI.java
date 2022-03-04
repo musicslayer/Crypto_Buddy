@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.API;
+import com.musicslayer.cryptobuddy.chart.Candle;
+import com.musicslayer.cryptobuddy.chart.PricePoint;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 

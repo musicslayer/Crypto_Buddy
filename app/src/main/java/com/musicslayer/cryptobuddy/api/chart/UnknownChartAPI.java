@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.chart;
 
-import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
+import com.musicslayer.cryptobuddy.chart.Candle;
+import com.musicslayer.cryptobuddy.chart.PricePoint;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.musicslayer.cryptobuddy.chart;
+package com.musicslayer.cryptobuddy.view.chart;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,10 +23,10 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
-import com.musicslayer.cryptobuddy.api.chart.Candle;
+import com.musicslayer.cryptobuddy.chart.Candle;
 import com.musicslayer.cryptobuddy.api.chart.ChartData;
 import com.musicslayer.cryptobuddy.api.chart.CryptoChart;
-import com.musicslayer.cryptobuddy.api.chart.PricePoint;
+import com.musicslayer.cryptobuddy.chart.PricePoint;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
 import com.musicslayer.cryptobuddy.crash.CrashView;

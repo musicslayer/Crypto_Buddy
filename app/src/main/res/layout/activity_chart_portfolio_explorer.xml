@@ -142,7 +142,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_portfolio_explorer_horizontalScrollView2">
 
-        <com.musicslayer.cryptobuddy.chart.ChartHolderView
+        <com.musicslayer.cryptobuddy.view.chart.ChartHolderView
             android:id="@+id/chart_portfolio_explorer_chartHolderView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
