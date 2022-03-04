@@ -32,6 +32,7 @@ import java.util.Date;
 //  Fake trades?
 //  User accounts?
 //  Direct Blockchain API calls?
+//  Mainnet vs. Testnet tokens.
 
 // TODO Actually implement Coinbase/Gemini API.
 // TODO Finish the getSingleAllData Implementations.
