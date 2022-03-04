@@ -25,17 +25,15 @@ import java.util.Date;
 
 // TODO Long Term Items
 //  NFT Viewer
-//  Use TradeView API
 //  "Tax" View (i.e. Calculate cost basis of transactions)
 //  Create collection of bridges (and separate classes) to get access to those transactions (for example: MATIC Proof of Stake Bridge).
-//  Chart Explorer, Chart Portfolio
-//  Fake trades?
+//  Trades Simulator?
 //  User accounts?
 //  Direct Blockchain API calls?
 //  Mainnet vs. Testnet tokens.
+//  Turn on exchange explorer in a future version.
 
-// TODO Actually implement Coinbase/Gemini API.
-// TODO Finish the getSingleAllData Implementations.
+// TODO Finish the getSingleAllData Implementations (for reflection calculator).
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.
