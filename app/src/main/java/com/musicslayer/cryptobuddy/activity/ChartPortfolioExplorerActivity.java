@@ -47,8 +47,6 @@ import com.musicslayer.cryptobuddy.view.ToggleButton;
 
 import java.util.ArrayList;
 
-// TODO When I rotate, updateChart ProgressDialog closes.
-
 public class ChartPortfolioExplorerActivity extends BaseActivity {
     // Every five minutes, allow an auto update the charts.
     // Every ten seconds, check if we need an update.
@@ -169,7 +167,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                             }
                         }
 
-                        download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress");
+                        download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress_download");
                     }
                 }
             }
@@ -375,7 +373,7 @@ public class ChartPortfolioExplorerActivity extends BaseActivity {
                     }
                 }
 
-                download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress");
+                download_progressDialogFragment.show(ChartPortfolioExplorerActivity.this, "progress_download");
             }
         });
 
