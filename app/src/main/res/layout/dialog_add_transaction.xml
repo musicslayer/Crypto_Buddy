@@ -39,7 +39,7 @@
 
     <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/add_transaction_dialog_primarySelectAndSearchView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_primaryEditText" />
@@ -66,7 +66,7 @@
 
     <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/add_transaction_dialog_secondarySelectAndSearchView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_transaction_dialog_secondaryEditText" />
@@ -139,7 +139,7 @@
 
     <com.musicslayer.cryptobuddy.view.red.AnythingEditText
         android:id="@+id/add_transaction_dialog_infoEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Optional Transaction Info"

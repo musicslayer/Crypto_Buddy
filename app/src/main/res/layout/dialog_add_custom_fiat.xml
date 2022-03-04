@@ -31,7 +31,7 @@
 
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_fiat_dialog_nameEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Name"
@@ -41,7 +41,7 @@
 
     <com.musicslayer.cryptobuddy.view.red.PlainTextEditText
         android:id="@+id/add_custom_fiat_dialog_symbolEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Symbol"
@@ -51,7 +51,7 @@
 
     <com.musicslayer.cryptobuddy.view.red.Int2EditText
         android:id="@+id/add_custom_fiat_dialog_decimalsEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Decimals (0 - 99)"

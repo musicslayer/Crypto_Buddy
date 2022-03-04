@@ -93,6 +93,7 @@ public class TransactionTable extends Table {
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
                 @Override
                 public void onClickImpl(View view) {
+                    // TODO This only works for Build.VERSION.SDK_INT >= 21
                     if(DrawableCompat.getColorFilter(B_II.getBackground()) != null) {
                         // Second click -> Confirm deletion. Also reset button status in case user backs out of deletion.
                         B_II.setBackgroundResource(R.drawable.border_round);

@@ -83,7 +83,7 @@
 
     <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/reflections_calculator_dialog_selectAndSearchView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reflections_calculator_dialog_cryptoInstructionTextView" />
@@ -99,7 +99,7 @@
 
     <com.musicslayer.cryptobuddy.view.red.NumericEditText
         android:id="@+id/reflections_calculator_dialog_percentageTaxEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Tax %"

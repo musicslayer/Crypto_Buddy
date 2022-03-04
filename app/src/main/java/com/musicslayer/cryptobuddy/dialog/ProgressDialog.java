@@ -41,6 +41,7 @@ public class ProgressDialog extends BaseDialog {
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
             @Override
             public void onClickImpl(View view) {
+                // TODO This only works for Build.VERSION.SDK_INT >= 21
                 if(DrawableCompat.getColorFilter(B_CANCEL.getBackground()) != null) {
                     // Second click -> Cancel dialog.
                     // Do not use any confirmation, since we are only backing out and not deleting anything.
