@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
@@ -50,7 +51,7 @@ public class FiatManagerView extends CrashTableRow {
         LinearLayout L = new LinearLayout(context);
         L.setGravity(Gravity.CENTER_VERTICAL);
 
-        T = new TextView(context);
+        T = new AppCompatTextView(context);
 
         BaseDialogFragment addCustomFiatDialogFragment = BaseDialogFragment.newInstance(AddCustomFiatDialog.class, fiatManager.getFiatType());
         addCustomFiatDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {

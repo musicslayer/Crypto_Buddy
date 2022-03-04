@@ -10,10 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.musicslayer.cryptobuddy.R;
@@ -152,7 +152,7 @@ abstract public class Table extends CrashTableLayout {
             LinearLayout[] l = new LinearLayout[numColumns];
 
             AppCompatButton[] b = new AppCompatButton[numColumns];
-            TextView[] t = new TextView[numColumns];
+            AppCompatTextView[] t = new AppCompatTextView[numColumns];
 
             for(int i = 0; i < numColumns; i++) {
                 l[i] = new LinearLayout(context);
@@ -163,7 +163,7 @@ abstract public class Table extends CrashTableLayout {
                 b[i].setText("Filter");
                 b[i].setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_filter_list_24, 0, 0, 0);
 
-                t[i] = new TextView(context);
+                t[i] = new AppCompatTextView(context);
                 t[i].setBackgroundResource(R.drawable.border);
 
                 l[i].addView(b[i]);
@@ -272,7 +272,7 @@ abstract public class Table extends CrashTableLayout {
 
         public void makeRow() {
             for(String h : columnHeaders) {
-                TextView t = new TextView(getContext());
+                AppCompatTextView t = new AppCompatTextView(getContext());
                 t.setText(h);
                 t.setBackgroundResource(R.drawable.border);
                 this.addView(t);

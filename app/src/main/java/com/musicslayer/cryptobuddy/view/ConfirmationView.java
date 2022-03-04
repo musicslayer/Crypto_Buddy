@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashLinearLayout;
@@ -94,10 +95,10 @@ public class ConfirmationView extends CrashLinearLayout {
 
         Context context = getContext();
 
-        TextView messageText = new TextView(context);
+        TextView messageText = new AppCompatTextView(context);
         messageText.setText("Confirm by pressing these buttons in sequence: " + getIntArrayText(randomCode));
 
-        TextView lastDigitsText = new TextView(context);
+        TextView lastDigitsText = new AppCompatTextView(context);
         lastDigitsText.setTextSize(18);
         lastDigitsText.setText(getIntArrayText(lastDigits));
 

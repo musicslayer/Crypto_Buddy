@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
@@ -120,7 +122,7 @@ public class DownloadAddressDataDialog extends BaseDialog {
         C_T = new CheckBox[cryptoAddressArrayList.size()];
 
         for(int i = 0; i < cryptoAddressArrayList.size(); i++) {
-            TextView T = new TextView(this.activity);
+            TextView T = new AppCompatTextView(this.activity);
             T.setText(cryptoAddressArrayList.get(i).toString());
 
             LinearLayout L_ROW = new LinearLayout(activity);

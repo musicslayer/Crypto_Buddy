@@ -9,6 +9,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
 
 import com.musicslayer.cryptobuddy.R;
@@ -214,7 +215,7 @@ public class SearchDialog extends BaseDialog {
                 TableRow TR = new TableRow(this.activity);
                 TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
-                TextView T = new TextView(this.activity);
+                TextView T = new AppCompatTextView(this.activity);
                 T.setText("(" + maxResults + " Results Max)");
 
                 TR.addView(T, TRP);

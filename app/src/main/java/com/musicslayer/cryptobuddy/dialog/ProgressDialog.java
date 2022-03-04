@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import androidx.core.graphics.BlendModeCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashView;
@@ -51,10 +50,10 @@ public class ProgressDialog extends BaseDialog {
                 }
                 else {
                     // First click -> Change color filter.
-                    state = true;
                     B_CANCEL.setBackgroundResource(R.drawable.border_round_red);
-                    B_CANCEL.getBackground().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(0xFFFF0000, BlendModeCompat.SRC_ATOP));
                 }
+
+                state = !state;
             }
         });
 

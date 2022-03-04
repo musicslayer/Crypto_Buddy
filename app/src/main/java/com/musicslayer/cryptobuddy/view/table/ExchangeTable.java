@@ -3,7 +3,8 @@ package com.musicslayer.cryptobuddy.view.table;
 import android.content.Context;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.exchange.ExchangeData;
@@ -73,37 +74,37 @@ public class ExchangeTable extends Table {
         public void makeRow(Transaction transaction) {
             Context context = getContext();
 
-            TextView t0 = new TextView(context);
+            AppCompatTextView t0 = new AppCompatTextView(context);
             t0.setText(transaction.action.toString());
             t0.setBackgroundResource(R.drawable.border);
 
-            TextView t1 = new TextView(context);
+            AppCompatTextView t1 = new AppCompatTextView(context);
             t1.setBackgroundResource(R.drawable.border);
 
             RichStringBuilder s1 = new RichStringBuilder(true);
             s1.appendAssetQuantity(transaction.actionedAssetQuantity);
             t1.setText(Html.fromHtml(s1.toString()));
 
-            TextView t2 = new TextView(context);
+            AppCompatTextView t2 = new AppCompatTextView(context);
             t2.setBackgroundResource(R.drawable.border);
 
             RichStringBuilder s2 = new RichStringBuilder(true);
             s2.appendAssetQuantity(transaction.otherAssetQuantity);
             t2.setText(Html.fromHtml(s2.toString()));
 
-            TextView t3 = new TextView(context);
+            AppCompatTextView t3 = new AppCompatTextView(context);
             t3.setText(transaction.forwardPrice.toString());
             t3.setBackgroundResource(R.drawable.border);
 
-            TextView t4 = new TextView(context);
+            AppCompatTextView t4 = new AppCompatTextView(context);
             t4.setText(transaction.backwardPrice.toString());
             t4.setBackgroundResource(R.drawable.border);
 
-            TextView t5 = new TextView(context);
+            AppCompatTextView t5 = new AppCompatTextView(context);
             t5.setText(transaction.timestamp.toString());
             t5.setBackgroundResource(R.drawable.border);
 
-            TextView t6 = new TextView(context);
+            AppCompatTextView t6 = new AppCompatTextView(context);
             t6.setText(transaction.info);
             t6.setBackgroundResource(R.drawable.border);
 

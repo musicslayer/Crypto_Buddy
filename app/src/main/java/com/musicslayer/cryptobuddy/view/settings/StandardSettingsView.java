@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.data.persistent.user.PersistentUserDataStore;
 import com.musicslayer.cryptobuddy.data.persistent.user.SettingList;
@@ -29,7 +31,7 @@ public class StandardSettingsView extends SettingsView {
         L_Row.setOrientation(LinearLayout.HORIZONTAL);
         L_Row.setGravity(Gravity.CENTER_VERTICAL);
 
-        final TextView T=new TextView(context);
+        final TextView T=new AppCompatTextView(context);
         T.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         T.setText(setting.getDisplayName() + ":");
 
@@ -37,7 +39,7 @@ public class StandardSettingsView extends SettingsView {
         bsv.setOptions(setting.getModifiedOptionNames());
         bsv.setMargins(10, 0, 10, 0);
 
-        final TextView prefText=new TextView(context);
+        final TextView prefText=new AppCompatTextView(context);
         prefText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         prefText.setText(setting.chosenOptionDisplay);
 

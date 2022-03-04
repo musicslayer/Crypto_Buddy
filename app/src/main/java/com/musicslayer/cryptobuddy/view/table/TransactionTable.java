@@ -7,12 +7,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
-import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.graphics.BlendModeColorFilterCompat;
-import androidx.core.graphics.BlendModeCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -23,8 +19,6 @@ import com.musicslayer.cryptobuddy.rich.RichStringBuilder;
 import com.musicslayer.cryptobuddy.settings.setting.PriceDisplaySetting;
 import com.musicslayer.cryptobuddy.state.StateObj;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
-
-// TODO Table boxes are shifted down.
 
 public class TransactionTable extends Table {
     public BaseRow getRow(Transaction transaction) {
@@ -88,8 +82,9 @@ public class TransactionTable extends Table {
             });
             confirmDeleteTransactionDialogFragment.restoreListeners(context, "delete" + ii);
 
-            AppCompatButton B_DELETE = new AppCompatButton(context);
-            final AppCompatButton B_II = B_DELETE;
+            // Use a TextView that acts like a Button so heights are consistent.
+            AppCompatTextView B_DELETE = new AppCompatTextView(context);
+            final AppCompatTextView B_DELETE_F = B_DELETE;
 
             B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_12, 0, 0, 0);
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
@@ -99,15 +94,12 @@ public class TransactionTable extends Table {
                 public void onClickImpl(View view) {
                     if(state) {
                         // Second click -> Confirm deletion. Also reset button status in case user backs out of deletion.
-                        B_II.setBackgroundResource(R.drawable.border_round);
-                        B_II.getBackground().clearColorFilter();
+                        B_DELETE_F.setBackgroundResource(R.drawable.border);
 
                         confirmDeleteTransactionDialogFragment.show(context, "delete" + ii);
                     }
                     else {
                         // First click -> Set button status, and reset all other button statuses.
-                        state = true;
-
                         for(int i = numHeaderRows; i < TransactionTable.this.getChildCount(); i++) {
                             ViewGroup childRow = (ViewGroup)TransactionTable.this.getChildAt(i);
 
@@ -117,55 +109,58 @@ public class TransactionTable extends Table {
                             child.getBackground().clearColorFilter();
                         }
 
-                        B_II.setBackgroundResource(R.drawable.border_round_red);
-                        B_II.getBackground().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(0xFFFF0000, BlendModeCompat.SRC_ATOP));
+                        B_DELETE_F.setBackgroundResource(R.drawable.border_red);
                     }
+
+                    state = !state;
                 }
             });
-            B_DELETE.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+            B_DELETE.setBackgroundResource(R.drawable.border);
 
-            TextView t0 = new TextView(context);
+            TableRow.LayoutParams TL = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+
+            AppCompatTextView t0 = new AppCompatTextView(context);
             t0.setText(transaction.action.toString());
             t0.setBackgroundResource(R.drawable.border);
 
-            TextView t1 = new TextView(context);
+            AppCompatTextView t1 = new AppCompatTextView(context);
             t1.setBackgroundResource(R.drawable.border);
 
             RichStringBuilder s1 = new RichStringBuilder(true);
             s1.appendAssetQuantity(transaction.actionedAssetQuantity);
             t1.setText(Html.fromHtml(s1.toString()));
 
-            TextView t2 = new TextView(context);
+            AppCompatTextView t2 = new AppCompatTextView(context);
             t2.setBackgroundResource(R.drawable.border);
 
             RichStringBuilder s2 = new RichStringBuilder(true);
             s2.appendAssetQuantity(transaction.otherAssetQuantity);
             t2.setText(Html.fromHtml(s2.toString()));
 
-            TextView t3 = new TextView(context);
+            AppCompatTextView t3 = new AppCompatTextView(context);
             t3.setText(transaction.forwardPrice.toString());
             t3.setBackgroundResource(R.drawable.border);
 
-            TextView t4 = new TextView(context);
+            AppCompatTextView t4 = new AppCompatTextView(context);
             t4.setText(transaction.backwardPrice.toString());
             t4.setBackgroundResource(R.drawable.border);
 
-            TextView t5 = new TextView(context);
+            AppCompatTextView t5 = new AppCompatTextView(context);
             t5.setText(transaction.timestamp.toString());
             t5.setBackgroundResource(R.drawable.border);
 
-            TextView t6 = new TextView(context);
+            AppCompatTextView t6 = new AppCompatTextView(context);
             t6.setText(transaction.info);
             t6.setBackgroundResource(R.drawable.border);
 
-            this.addView(B_DELETE);
-            this.addView(t0);
-            this.addView(t1);
-            this.addView(t2);
-            if(shouldAddForwardsPrice()){this.addView(t3);}
-            if(shouldAddBackwardsPrice()){this.addView(t4);}
-            this.addView(t5);
-            this.addView(t6);
+            this.addView(B_DELETE, TL);
+            this.addView(t0, TL);
+            this.addView(t1, TL);
+            this.addView(t2, TL);
+            if(shouldAddForwardsPrice()){this.addView(t3, TL);}
+            if(shouldAddBackwardsPrice()){this.addView(t4, TL);}
+            this.addView(t5, TL);
+            this.addView(t6, TL);
         }
     }
 }

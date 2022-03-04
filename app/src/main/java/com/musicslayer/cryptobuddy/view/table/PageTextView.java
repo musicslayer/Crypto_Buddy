@@ -3,8 +3,8 @@ package com.musicslayer.cryptobuddy.view.table;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.ViewCompat;
@@ -14,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 // A workaround to have a classic FloatingActionButton with text inside.
 public class PageTextView extends ConstraintLayout {
     FloatingActionButton fab;
-    TextView T;
+    AppCompatTextView T;
 
     public PageTextView(Context context) {
         this(context, null);
@@ -31,7 +31,7 @@ public class PageTextView extends ConstraintLayout {
         fab = new FloatingActionButton(context);
         fab.setId(ViewCompat.generateViewId());
 
-        T = new TextView(context);
+        T = new AppCompatTextView(context);
         T.setId(ViewCompat.generateViewId());
 
         addView(fab);

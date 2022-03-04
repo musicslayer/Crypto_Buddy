@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
@@ -50,7 +51,7 @@ public class CoinManagerView extends CrashTableRow {
         LinearLayout L = new LinearLayout(context);
         L.setGravity(Gravity.CENTER_VERTICAL);
 
-        T = new TextView(context);
+        T = new AppCompatTextView(context);
 
         BaseDialogFragment addCustomCoinDialogFragment = BaseDialogFragment.newInstance(AddCustomCoinDialog.class, coinManager.getCoinType());
         addCustomCoinDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
