@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.api.chart;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.transaction.Timestamp;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -12,14 +11,14 @@ import java.util.ArrayList;
 // A price point represents a price at a specific point in time.
 public class PricePoint implements DataBridge.SerializableToJSON {
     public String timeframe;
-    public Timestamp timestamp;
+    public BigDecimal time;
     public BigDecimal price;
     public BigDecimal marketCap;
     public BigDecimal volume;
 
-    public PricePoint(String timeframe, Timestamp timestamp, BigDecimal price, BigDecimal marketCap, BigDecimal volume) {
+    public PricePoint(String timeframe, BigDecimal time, BigDecimal price, BigDecimal marketCap, BigDecimal volume) {
         this.timeframe = timeframe;
-        this.timestamp = timestamp;
+        this.time = time;
         this.price = price;
         this.marketCap = marketCap;
         this.volume = volume;
@@ -30,7 +29,7 @@ public class PricePoint implements DataBridge.SerializableToJSON {
     public String toString() {
         return "[" +
                 timeframe + ", " +
-                timestamp.toString() + ", " +
+                time.toPlainString() + ", " +
                 price.toPlainString() + ", " +
                 marketCap.toPlainString() + ", " +
                 volume.toPlainString()
@@ -55,9 +54,9 @@ public class PricePoint implements DataBridge.SerializableToJSON {
             minTime = BigDecimal.ZERO;
         }
         else {
-            minTime = new BigDecimal(pricePointsArrayList.get(0).timestamp.date.getTime());
+            minTime = pricePointsArrayList.get(0).time;
             for(PricePoint pricePoint : pricePointsArrayList) {
-                minTime = minTime.min(new BigDecimal(pricePoint.timestamp.date.getTime()));
+                minTime = minTime.min(pricePoint.time);
             }
         }
 
@@ -70,9 +69,9 @@ public class PricePoint implements DataBridge.SerializableToJSON {
             maxTime = BigDecimal.ZERO;
         }
         else {
-            maxTime = new BigDecimal(pricePointsArrayList.get(0).timestamp.date.getTime());
+            maxTime = pricePointsArrayList.get(0).time;
             for(PricePoint pricePoint : pricePointsArrayList) {
-                maxTime = maxTime.max(new BigDecimal(pricePoint.timestamp.date.getTime()));
+                maxTime = maxTime.max(pricePoint.time);
             }
         }
 
@@ -173,7 +172,7 @@ public class PricePoint implements DataBridge.SerializableToJSON {
     public void serializeToJSON(DataBridge.Writer o) throws IOException {
         o.beginObject()
                 .serialize("timeframe", timeframe, String.class)
-                .serialize("timestamp", timestamp, Timestamp.class)
+                .serialize("time", time, BigDecimal.class)
                 .serialize("price", price, BigDecimal.class)
                 .serialize("marketCap", marketCap, BigDecimal.class)
                 .serialize("volume", volume, BigDecimal.class)
@@ -183,12 +182,12 @@ public class PricePoint implements DataBridge.SerializableToJSON {
     public static PricePoint deserializeFromJSON(DataBridge.Reader o) throws IOException {
         o.beginObject();
         String timeframe = o.deserialize("timeframe", String.class);
-        Timestamp timestamp = o.deserialize("timestamp", Timestamp.class);
+        BigDecimal time = o.deserialize("time", BigDecimal.class);
         BigDecimal price = o.deserialize("price", BigDecimal.class);
         BigDecimal marketCap = o.deserialize("marketCap", BigDecimal.class);
         BigDecimal volume = o.deserialize("volume", BigDecimal.class);
         o.endObject();
 
-        return new PricePoint(timeframe, timestamp, price, marketCap, volume);
+        return new PricePoint(timeframe, time, price, marketCap, volume);
     }
 }

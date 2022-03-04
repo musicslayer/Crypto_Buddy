@@ -3,36 +3,32 @@ package com.musicslayer.cryptobuddy.api.chart;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.transaction.Timestamp;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 // TODO Do these Chart classes need to be Parcelable?
-// TODO Should we be storing Timestamp, or just the long value.
 
 // A candle represents an OHLC quartet at a specific point in time.
 // (Open, High, Low, Close)
 public class Candle implements DataBridge.SerializableToJSON{
     public String timeframe;
-    public Timestamp timestamp;
-    public long timestampL;
+    public BigDecimal time;
     public BigDecimal openPrice;
     public BigDecimal highPrice;
     public BigDecimal lowPrice;
     public BigDecimal closePrice;
 
-    public Candle(String timeframe, Timestamp timestamp, BigDecimal openPrice, BigDecimal highPrice, BigDecimal lowPrice, BigDecimal closePrice) {
+    public Candle(String timeframe, BigDecimal time, BigDecimal openPrice, BigDecimal highPrice, BigDecimal lowPrice, BigDecimal closePrice) {
         this.timeframe = timeframe;
-        this.timestamp = timestamp;
+        this.time = time;
         this.openPrice = openPrice;
         this.highPrice = highPrice;
         this.lowPrice = lowPrice;
         this.closePrice = closePrice;
-
-        timestampL = timestamp.date.getTime();
     }
 
     @NonNull
@@ -40,7 +36,7 @@ public class Candle implements DataBridge.SerializableToJSON{
     public String toString() {
         return "[" +
                 timeframe + ", " +
-                timestamp.toString() + ", " +
+                time.toPlainString() + ", " +
                 openPrice.toPlainString() + ", " +
                 highPrice.toPlainString() + ", " +
                 lowPrice.toPlainString() + ", " +
@@ -55,13 +51,13 @@ public class Candle implements DataBridge.SerializableToJSON{
         }
 
         ArrayList<Candle> sortedCandlesArrayList = new ArrayList<>(candlesArrayList);
-        Collections.sort(sortedCandlesArrayList, (a, b) -> Timestamp.compare(a.timestamp, b.timestamp));
+        Collections.sort(sortedCandlesArrayList, Comparator.comparing(a -> a.time));
 
         // Assume all the timeframes are the same.
         String timeframe_combine = sortedCandlesArrayList.get(0).timeframe;
 
-        // Timestamp should be the first one.
-        Timestamp timestamp_combine = sortedCandlesArrayList.get(0).timestamp;
+        // Time should be the first one.
+        BigDecimal time_combine = sortedCandlesArrayList.get(0).time;
 
         // Take first candle's openPrice.
         BigDecimal openPrice_combine = sortedCandlesArrayList.get(0).openPrice;
@@ -81,7 +77,7 @@ public class Candle implements DataBridge.SerializableToJSON{
         // Take last candle's closePrice.
         BigDecimal closePrice_combine = sortedCandlesArrayList.get(sortedCandlesArrayList.size() - 1).closePrice;
 
-        return new Candle(timeframe_combine, timestamp_combine, openPrice_combine, highPrice_combine, lowPrice_combine, closePrice_combine);
+        return new Candle(timeframe_combine, time_combine, openPrice_combine, highPrice_combine, lowPrice_combine, closePrice_combine);
     }
 
     public static ArrayList<Candle> filterByTimeframe(ArrayList<Candle> candlesArrayList, String timeframe) {
@@ -102,9 +98,9 @@ public class Candle implements DataBridge.SerializableToJSON{
             minTime = BigDecimal.ZERO;
         }
         else {
-            minTime = new BigDecimal(candlesArrayList.get(0).timestamp.date.getTime());
+            minTime = candlesArrayList.get(0).time;
             for(Candle candle : candlesArrayList) {
-                minTime = minTime.min(new BigDecimal(candle.timestamp.date.getTime()));
+                minTime = minTime.min(candle.time);
             }
         }
 
@@ -117,9 +113,9 @@ public class Candle implements DataBridge.SerializableToJSON{
             maxTime = BigDecimal.ZERO;
         }
         else {
-            maxTime = new BigDecimal(candlesArrayList.get(0).timestamp.date.getTime());
+            maxTime = candlesArrayList.get(0).time;
             for(Candle candle : candlesArrayList) {
-                maxTime = maxTime.max(new BigDecimal(candle.timestamp.date.getTime()));
+                maxTime = maxTime.max(candle.time);
             }
         }
 
@@ -162,7 +158,7 @@ public class Candle implements DataBridge.SerializableToJSON{
     public void serializeToJSON(DataBridge.Writer o) throws IOException {
         o.beginObject()
                 .serialize("timeframe", timeframe, String.class)
-                .serialize("timestamp", timestamp, Timestamp.class)
+                .serialize("time", time, BigDecimal.class)
                 .serialize("openPrice", openPrice, BigDecimal.class)
                 .serialize("highPrice", highPrice, BigDecimal.class)
                 .serialize("lowPrice", lowPrice, BigDecimal.class)
@@ -173,13 +169,13 @@ public class Candle implements DataBridge.SerializableToJSON{
     public static Candle deserializeFromJSON(DataBridge.Reader o) throws IOException {
         o.beginObject();
         String timeframe = o.deserialize("timeframe", String.class);
-        Timestamp timestamp = o.deserialize("timestamp", Timestamp.class);
+        BigDecimal time = o.deserialize("time", BigDecimal.class);
         BigDecimal openPrice = o.deserialize("openPrice", BigDecimal.class);
         BigDecimal highPrice = o.deserialize("highPrice", BigDecimal.class);
         BigDecimal lowPrice = o.deserialize("lowPrice", BigDecimal.class);
         BigDecimal closePrice = o.deserialize("closePrice", BigDecimal.class);
         o.endObject();
 
-        return new Candle(timeframe, timestamp, openPrice, highPrice, lowPrice, closePrice);
+        return new Candle(timeframe, time, openPrice, highPrice, lowPrice, closePrice);
     }
 }

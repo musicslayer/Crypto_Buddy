@@ -610,7 +610,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and values here.
             // Anything that would be before the bottom time should be skipped.
-            BigDecimal time = getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime()));
+            BigDecimal time = getNormalizedTime(pricePoint.time);
             if(time.compareTo(BigDecimal.ZERO) >= 0) {
                 timeArrayList.add(time);
                 valueArrayList.add(getNormalizedValue(getValueByType(pricePoint)));
@@ -639,7 +639,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         for(PricePoint pricePoint : timeframePricePointsArrayList) {
             // Normalize the times and values here.
             // Anything that would be before the bottom time should be skipped.
-            BigDecimal time = getNormalizedTime(new BigDecimal(pricePoint.timestamp.date.getTime()));
+            BigDecimal time = getNormalizedTime(pricePoint.time);
             if(time.compareTo(BigDecimal.ZERO) >= 0) {
                 timeArrayList.add(time);
                 valueArrayList.add(getNormalizedValue(getValueByType(pricePoint)));
@@ -679,7 +679,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         for(Candle candle : timeframeCandlesArrayList) {
             // Normalize the times and values here.
             // Anything that would be before the bottom time should be skipped.
-            BigDecimal time = getNormalizedTime(new BigDecimal(candle.timestamp.date.getTime()));
+            BigDecimal time = getNormalizedTime(candle.time);
             if(time.compareTo(BigDecimal.ZERO) >= 0) {
                 BigDecimal openPrice = getNormalizedPrice(candle.openPrice);
                 BigDecimal highPrice = getNormalizedPrice(candle.highPrice);

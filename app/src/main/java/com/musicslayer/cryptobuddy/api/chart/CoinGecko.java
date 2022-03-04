@@ -4,7 +4,6 @@ import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
-import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -13,7 +12,6 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 
 // For these APIs, we can only query one asset at a time.
 
@@ -74,13 +72,12 @@ public class CoinGecko extends ChartAPI {
 
                     // All times match, so just take first one.
                     String timeString = price.getString(0);
-                    Date date = new Date(new BigDecimal(timeString).longValue());
 
                     String priceString = price.getString(1);
                     String marketCapString = marketCap.getString(1);
                     String volumeString = volume.getString(1);
 
-                    pricePointArrayList.add(new PricePoint("60M", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
+                    pricePointArrayList.add(new PricePoint("60M", new BigDecimal(timeString), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
                 }
             }
             catch(Exception e) {
@@ -106,13 +103,12 @@ public class CoinGecko extends ChartAPI {
 
                     // All times match, so just take first one.
                     String timeString = price.getString(0);
-                    Date date = new Date(new BigDecimal(timeString).longValue());
 
                     String priceString = price.getString(1);
                     String marketCapString = marketCap.getString(1);
                     String volumeString = volume.getString(1);
 
-                    pricePointArrayList.add(new PricePoint("24H", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
+                    pricePointArrayList.add(new PricePoint("24H", new BigDecimal(timeString), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
                 }
             }
             catch(Exception e) {
@@ -137,13 +133,12 @@ public class CoinGecko extends ChartAPI {
 
                     // All times match, so just take first one.
                     String timeString = price.getString(0);
-                    Date date = new Date(new BigDecimal(timeString).longValue());
 
                     String priceString = price.getString(1);
                     String marketCapString = marketCap.getString(1);
                     String volumeString = volume.getString(1);
 
-                    pricePointArrayList.add(new PricePoint("30D", new Timestamp(date), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
+                    pricePointArrayList.add(new PricePoint("30D", new BigDecimal(timeString), new BigDecimal(priceString), new BigDecimal(marketCapString), new BigDecimal(volumeString)));
                 }
             }
             catch(Exception e) {
@@ -192,14 +187,13 @@ public class CoinGecko extends ChartAPI {
                         JSONArray candle = candles.getJSONArray(j);
 
                         String timeString = candle.getString(0);
-                        Date date = new Date(new BigDecimal(timeString).longValue());
 
                         String openPriceString = candle.getString(1);
                         String highPriceString = candle.getString(2);
                         String lowPriceString = candle.getString(3);
                         String closePriceString = candle.getString(4);
 
-                        tempCandleArrayList.add(new Candle("24H", new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                        tempCandleArrayList.add(new Candle("24H", new BigDecimal(timeString), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
                     }
 
                     candleArrayList.add(Candle.combine(tempCandleArrayList));
@@ -226,14 +220,13 @@ public class CoinGecko extends ChartAPI {
                         JSONArray candle = candles.getJSONArray(j);
 
                         String timeString = candle.getString(0);
-                        Date date = new Date(new BigDecimal(timeString).longValue());
 
                         String openPriceString = candle.getString(1);
                         String highPriceString = candle.getString(2);
                         String lowPriceString = candle.getString(3);
                         String closePriceString = candle.getString(4);
 
-                        tempCandleArrayList.add(new Candle("30D", new Timestamp(date), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
+                        tempCandleArrayList.add(new Candle("30D", new BigDecimal(timeString), new BigDecimal(openPriceString), new BigDecimal(highPriceString), new BigDecimal(lowPriceString), new BigDecimal(closePriceString)));
                     }
 
                     candleArrayList.add(Candle.combine(tempCandleArrayList));
