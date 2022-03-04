@@ -91,10 +91,11 @@ public class TransactionTable extends Table {
 
             B_DELETE.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_delete_12, 0, 0, 0);
             B_DELETE.setOnClickListener(new CrashView.CrashOnClickListener(context) {
+                boolean state = false;
+
                 @Override
                 public void onClickImpl(View view) {
-                    // TODO This only works for Build.VERSION.SDK_INT >= 21
-                    if(DrawableCompat.getColorFilter(B_II.getBackground()) != null) {
+                    if(state) {
                         // Second click -> Confirm deletion. Also reset button status in case user backs out of deletion.
                         B_II.setBackgroundResource(R.drawable.border_round);
                         B_II.getBackground().clearColorFilter();
@@ -103,6 +104,8 @@ public class TransactionTable extends Table {
                     }
                     else {
                         // First click -> Set button status, and reset all other button statuses.
+                        state = true;
+
                         for(int i = numHeaderRows; i < TransactionTable.this.getChildCount(); i++) {
                             ViewGroup childRow = (ViewGroup)TransactionTable.this.getChildAt(i);
 

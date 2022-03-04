@@ -39,10 +39,11 @@ public class ProgressDialog extends BaseDialog {
 
         Button B_CANCEL = findViewById(R.id.progress_dialog_cancelButton);
         B_CANCEL.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            boolean state = false;
+
             @Override
             public void onClickImpl(View view) {
-                // TODO This only works for Build.VERSION.SDK_INT >= 21
-                if(DrawableCompat.getColorFilter(B_CANCEL.getBackground()) != null) {
+                if(state) {
                     // Second click -> Cancel dialog.
                     // Do not use any confirmation, since we are only backing out and not deleting anything.
                     ProgressDialogFragment.setCancelled();
@@ -50,6 +51,7 @@ public class ProgressDialog extends BaseDialog {
                 }
                 else {
                     // First click -> Change color filter.
+                    state = true;
                     B_CANCEL.setBackgroundResource(R.drawable.border_round_red);
                     B_CANCEL.getBackground().setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(0xFFFF0000, BlendModeCompat.SRC_ATOP));
                 }
