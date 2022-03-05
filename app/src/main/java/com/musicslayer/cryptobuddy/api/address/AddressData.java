@@ -420,7 +420,6 @@ public class AddressData implements LegacySerialization.SerializableToJSON, Data
     }
 
     public String getProblem() {
-        // TODO Add back in Solana Rent?
         String cryptoName = cryptoAddress.getPrimaryCoin().getKey();
         boolean isMainnet = cryptoAddress.network.isMainnet();
         String cryptoDisplayName = cryptoAddress.getPrimaryCoin().getDisplayName();
@@ -445,6 +444,9 @@ public class AddressData implements LegacySerialization.SerializableToJSON, Data
                 else {
                     info = "Token balances for testnet addresses are not available.";
                 }
+                break;
+            case "SOL":
+                info = "Some block-level rent payments may not show up as transactions.";
                 break;
             case "VET":
                 info = "VeThor (VTHO) balance includes generated rewards from holding VeChain (VET), but these rewards do not show up as transactions.";
