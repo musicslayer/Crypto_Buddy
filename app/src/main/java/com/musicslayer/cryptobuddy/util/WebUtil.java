@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class WebUtil {
     // This is the amount of time we want between web requests, to avoid overloading other APIs and triggering their rate limiting.
@@ -35,19 +36,35 @@ public class WebUtil {
     }
 
     public static String get(String urlString) {
+        ArrayList<String> keyNameArrayList = new ArrayList<>();
+        ArrayList<String> keyArrayList = new ArrayList<>();
+        return get(urlString, keyNameArrayList, keyArrayList);
+    }
+
+    public static String get(String urlString, String keyName, String key) {
+        ArrayList<String> keyNameArrayList = new ArrayList<>();
+        keyNameArrayList.add(keyName);
+
+        ArrayList<String> keyArrayList = new ArrayList<>();
+        keyArrayList.add(key);
+
+        return get(urlString, keyNameArrayList, keyArrayList);
+    }
+
+    public static String get(String urlString, ArrayList<String> keyNameArrayList, ArrayList<String> keyArrayList) {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
             ProgressDialogFragment.checkForInterrupt();
             rateLimit();
-            result = get_impl(urlString);
+            result = get_impl(urlString, keyNameArrayList, keyArrayList);
             if(result != null) { break; }
         }
 
         return result;
     }
 
-    private static String get_impl(String urlString) {
+    private static String get_impl(String urlString, ArrayList<String> keyNameArrayList, ArrayList<String> keyArrayList) {
         String result = null;
 
         HttpURLConnection connection = null;
@@ -58,45 +75,10 @@ public class WebUtil {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("accept", "application/json");
 
-            result = WebUtil.request(connection);
-
-            safeDisconnect(connection);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            safeDisconnect(connection);
-        }
-
-        return result;
-    }
-
-    public static String getWithToken(String urlString, String token) {
-        String result = null;
-
-        for(int r = 0; r < numRetries; r++) {
-            ProgressDialogFragment.checkForInterrupt();
-            rateLimit();
-            result = getWithToken_impl(urlString, token);
-            if(result != null) { break; }
-        }
-
-        return result;
-    }
-
-    private static String getWithToken_impl(String urlString, String token) {
-        String result = null;
-
-        HttpURLConnection connection = null;
-
-        try {
-            URL url = new URL(urlString);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("accept", "application/json");
-
-            // TODO These are Coinbase specific. We really should have a way of inputting these.
-            connection.setRequestProperty("Authorization", "Bearer " + token);
-            connection.setRequestProperty("CB-VERSION", "2022-03-04");
+            // Assume arraylists are non-null and the same size.
+            for(int i = 0; i < keyNameArrayList.size(); i++) {
+                connection.setRequestProperty(keyNameArrayList.get(i), keyArrayList.get(i));
+            }
 
             result = WebUtil.request(connection);
 
@@ -111,19 +93,35 @@ public class WebUtil {
     }
 
     public static String post(String urlString, String body) {
+        ArrayList<String> keyNameArrayList = new ArrayList<>();
+        ArrayList<String> keyArrayList = new ArrayList<>();
+        return post(urlString, body, keyNameArrayList, keyArrayList);
+    }
+
+    public static String post(String urlString, String body, String keyName, String key) {
+        ArrayList<String> keyNameArrayList = new ArrayList<>();
+        keyNameArrayList.add(keyName);
+
+        ArrayList<String> keyArrayList = new ArrayList<>();
+        keyArrayList.add(key);
+
+        return post(urlString, body, keyNameArrayList, keyArrayList);
+    }
+
+    public static String post(String urlString, String body, ArrayList<String> keyNameArrayList, ArrayList<String> keyArrayList) {
         String result = null;
 
         for(int r = 0; r < numRetries; r++) {
             ProgressDialogFragment.checkForInterrupt();
             rateLimit();
-            result = post_impl(urlString, body);
+            result = post_impl(urlString, body, keyNameArrayList, keyArrayList);
             if(result != null) { break; }
         }
 
         return result;
     }
 
-    private static String post_impl(String urlString, String body) {
+    private static String post_impl(String urlString, String body, ArrayList<String> keyNameArrayList, ArrayList<String> keyArrayList) {
         String result = null;
 
         OutputStream stream = null;
@@ -136,49 +134,10 @@ public class WebUtil {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
 
-            stream = connection.getOutputStream();
-            StreamUtil.writeFromString(stream, body);
-            StreamUtil.safeFlushAndClose(stream);
-
-            result = WebUtil.request(connection);
-
-            safeDisconnect(connection);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            StreamUtil.safeFlushAndClose(stream);
-            safeDisconnect(connection);
-        }
-
-        return result;
-    }
-
-    public static String postWithKey(String urlString, String body, String keyName, String key) {
-        String result = null;
-
-        for(int r = 0; r < numRetries; r++) {
-            ProgressDialogFragment.checkForInterrupt();
-            rateLimit();
-            result = postWithKey_impl(urlString, body, keyName, key);
-            if(result != null) { break; }
-        }
-
-        return result;
-    }
-
-    private static String postWithKey_impl(String urlString, String body, String keyName, String key) {
-        String result = null;
-
-        OutputStream stream = null;
-        HttpURLConnection connection = null;
-
-        try {
-            URL url = new URL(urlString);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            connection.setRequestProperty(keyName, key);
-            connection.setRequestProperty("Content-Type", "application/json");
+            // Assume arraylists are non-null and the same size.
+            for(int i = 0; i < keyNameArrayList.size(); i++) {
+                connection.setRequestProperty(keyNameArrayList.get(i), keyArrayList.get(i));
+            }
 
             stream = connection.getOutputStream();
             StreamUtil.writeFromString(stream, body);

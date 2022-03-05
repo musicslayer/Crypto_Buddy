@@ -82,13 +82,24 @@ public class Coinbase extends ExchangeAPI {
         }
     }
 
+    public String getWithToken(String url) {
+        ArrayList<String> keyNameArrayList = new ArrayList<>();
+        keyNameArrayList.add("Authorization");
+        keyNameArrayList.add("CB-VERSION");
+
+        ArrayList<String> keyArrayList = new ArrayList<>();
+        keyArrayList.add("Bearer " + oAuthToken.getToken());
+        keyArrayList.add("2022-03-04");
+
+        return WebUtil.get(url, keyNameArrayList, keyArrayList);
+    }
+
     public ArrayList<AssetQuantity> getCurrentBalance(CryptoExchange cryptoExchange) {
         ArrayList<AssetQuantity> currentBalanceArrayList = new ArrayList<>();
 
-        String token = oAuthToken.getToken();
         String url = "https://api.coinbase.com/v2/accounts?limit=300";
         for(;;) {
-            url = processBalance(url, token, currentBalanceArrayList);
+            url = processBalance(url, currentBalanceArrayList);
 
             if(ERROR.equals(url)) {
                 return null;
@@ -101,8 +112,8 @@ public class Coinbase extends ExchangeAPI {
         return currentBalanceArrayList;
     }
 
-    public String processBalance(String url, String token, ArrayList<AssetQuantity> currentBalanceArrayList) {
-        String addressDataJSON = WebUtil.getWithToken(url, token);
+    public String processBalance(String url, ArrayList<AssetQuantity> currentBalanceArrayList) {
+        String addressDataJSON = getWithToken(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -159,10 +170,9 @@ public class Coinbase extends ExchangeAPI {
         // The strategy is to look at all the accounts like in "getCurrentBalance", and then for any account that has been updated, search for transactions.
         ArrayList<Transaction> transactionArrayList = new ArrayList<>();
 
-        String token = oAuthToken.getToken();
         String url = "https://api.coinbase.com/v2/accounts?limit=300";
         for(;;) {
-            url = processAllTransactions(url, token, transactionArrayList);
+            url = processAllTransactions(url, transactionArrayList);
 
             if(ERROR.equals(url)) {
                 return null;
@@ -176,8 +186,8 @@ public class Coinbase extends ExchangeAPI {
     }
 
     // Return null for error/no data, DONE to stop and any other non-null string to keep going.
-    private String processAllTransactions(String url, String token, ArrayList<Transaction> transactionArrayList) {
-        String addressDataJSON = WebUtil.getWithToken(url, token);
+    private String processAllTransactions(String url, ArrayList<Transaction> transactionArrayList) {
+        String addressDataJSON = getWithToken(url);
         if(addressDataJSON == null) {
             return ERROR;
         }
@@ -222,7 +232,7 @@ public class Coinbase extends ExchangeAPI {
                 String transactionUrl = "https://api.coinbase.com/v2/accounts/" + id + "/transactions";
                 for(;;) {
                     // Pass in asset because we don't have enough info to reconstruct it from transaction data.
-                    transactionUrl = processTransaction(transactionUrl, token, transactionArrayList, asset);
+                    transactionUrl = processTransaction(transactionUrl, transactionArrayList, asset);
 
                     if(ERROR.equals(transactionUrl)) {
                         return null;
@@ -241,8 +251,8 @@ public class Coinbase extends ExchangeAPI {
         }
     }
 
-    private String processTransaction(String transactionUrl, String token, ArrayList<Transaction> transactionArrayList, Asset asset) {
-        String transactionDataJSON = WebUtil.getWithToken(transactionUrl, token);
+    private String processTransaction(String transactionUrl, ArrayList<Transaction> transactionArrayList, Asset asset) {
+        String transactionDataJSON = getWithToken(transactionUrl);
         if(transactionDataJSON == null) {
             return ERROR;
         }

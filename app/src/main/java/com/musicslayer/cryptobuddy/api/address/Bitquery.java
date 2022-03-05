@@ -155,8 +155,8 @@ public class Bitquery extends AddressAPI {
         String APIKEYNAME = "X-API-KEY";
         String APIKEY = "BQYLR11ACrzwoU3N6iTNHKtZfgoNdWfI";
 
-        String addressDataJSONReceive = WebUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = WebUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = WebUtil.post("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = WebUtil.post("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;

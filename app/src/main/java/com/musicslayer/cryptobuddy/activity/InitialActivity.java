@@ -31,7 +31,6 @@ import java.util.Date;
 //  User accounts?
 //  Direct Blockchain API calls?
 //  Mainnet vs. Testnet tokens.
-//  Turn on exchange explorer in a future version.
 
 // TODO Finish the getSingleAllData Implementations (for reflection calculator).
 

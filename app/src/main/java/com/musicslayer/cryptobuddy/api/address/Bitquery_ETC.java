@@ -42,7 +42,7 @@ public class Bitquery_ETC extends AddressAPI {
             "}" +
             "\"\n}";
 
-        String addressDataJSON = WebUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+        String addressDataJSON = WebUtil.post("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
         if(addressDataJSON == null) {
             return null;
         }
@@ -111,8 +111,8 @@ public class Bitquery_ETC extends AddressAPI {
                 "}" +
                 "\"\n}";
 
-        String addressDataJSONReceive = WebUtil.postWithKey("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
-        String addressDataJSONSend = WebUtil.postWithKey("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
+        String addressDataJSONReceive = WebUtil.post("https://graphql.bitquery.io", bodyR, APIKEYNAME, APIKEY);
+        String addressDataJSONSend = WebUtil.post("https://graphql.bitquery.io", bodyS, APIKEYNAME, APIKEY);
 
         if(addressDataJSONReceive == null || addressDataJSONSend == null) {
             return null;

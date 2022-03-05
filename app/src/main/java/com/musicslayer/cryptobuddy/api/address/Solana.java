@@ -267,7 +267,7 @@ public class Solana extends AddressAPI {
                 "}" +
                 "\"\n}";
 
-        String addressDataJSON = WebUtil.postWithKey("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
+        String addressDataJSON = WebUtil.post("https://graphql.bitquery.io", body, APIKEYNAME, APIKEY);
 
         if(addressDataJSON == null) {
             return null;
