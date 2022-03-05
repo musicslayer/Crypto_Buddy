@@ -15,12 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 // Bitquery has no pagination on its results, but https://api.binance.org does.
 
@@ -110,7 +106,7 @@ public class Bitquery extends AddressAPI {
             "    transfers(options: {desc: \\\"block.timestamp.time\\\"}, receiver: {is: \\\"" + cryptoAddress.address + "\\\"}) {" +
             "      block{" +
             "        timestamp{" +
-            "          time(format: \\\"%Y-%m-%d %H:%M:%S\\\")" +
+            "          time(format: \\\"%Y-%m-%dT%H:%M:%S\\\")" +
             "        }" +
             "        height" +
             "      }" +
@@ -136,7 +132,7 @@ public class Bitquery extends AddressAPI {
             "    transfers(options: {desc: \\\"block.timestamp.time\\\"}, sender: {is: \\\"" + cryptoAddress.address + "\\\"}) {" +
             "      block{" +
             "        timestamp{" +
-            "          time(format: \\\"%Y-%m-%d %H:%M:%S\\\")" +
+            "          time(format: \\\"%Y-%m-%dT%H:%M:%SZ\\\")" +
             "        }" +
             "        height" +
             "      }" +
@@ -182,12 +178,6 @@ public class Bitquery extends AddressAPI {
                 String action = "Receive";
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                //String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
-                //DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                //format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                //Date block_time_date = format.parse(block_time);
-
-                // TODO Check this. Check other example. Check Bitquery_ETC
                 String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
                 Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
@@ -247,10 +237,7 @@ public class Bitquery extends AddressAPI {
                 String balance_diff_s = balance_diff_d.toPlainString();
 
                 String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
-
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
                 String cryptoName = o.getJSONObject("currency").getString("tokenId");
                 Crypto crypto;
@@ -354,10 +341,7 @@ public class Bitquery extends AddressAPI {
                 String balance_diff_s = oRewards.getString("reward");
 
                 String block_time = oRewards.getString("rewardTime");
-
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000+00:00", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 String validatorName = oRewards.getString("valName");
 
