@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 
@@ -16,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -303,10 +303,8 @@ public class Solana extends AddressAPI {
                 }
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                String unixtime = o.getJSONObject("time").getString("unixtime");
-                BigInteger block_time = new BigInteger(unixtime);
-                block_time = block_time.multiply(new BigInteger("1000"));
-                Date block_time_date = new Date(block_time.longValue());
+                String block_time = o.getJSONObject("time").getString("unixtime");
+                Date block_time_date = DateTimeUtil.parseSeconds(block_time);
 
                 Crypto crypto = cryptoAddress.getPrimaryCoin();
                 String info = o.getString("rewardType") + " (Block Level)";
@@ -384,9 +382,8 @@ public class Solana extends AddressAPI {
                 if(signatureList.contains(lastID)) { continue; }
                 signatureList.add(lastID);
 
-                BigDecimal block_time = new BigDecimal(o.getString("blockTime"));
-                block_time = block_time.multiply(new BigDecimal(1000));
-                Date block_time_date = new Date(block_time.longValue());
+                String block_time = o.getString("blockTime");
+                Date block_time_date = DateTimeUtil.parseSeconds(block_time);
 
                 // Get the individual transaction info.
                 String transactionBody =

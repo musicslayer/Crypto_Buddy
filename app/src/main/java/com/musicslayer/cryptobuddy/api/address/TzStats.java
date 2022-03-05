@@ -8,6 +8,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -15,13 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 // Negative token balances???
 // tz1RKWsgCD3X1uXsDDb9dxQZFmbFwSJNo4id
@@ -272,7 +268,9 @@ public class TzStats extends AddressAPI {
 
                 boolean isSuccess = "1".equals(jsonTransaction.getString(0));
 
-                Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
+                String block_time = jsonTransaction.getString(4);
+                Date block_time_date = DateTimeUtil.parseMilliseconds(block_time);
+
                 BigDecimal value = new BigDecimal(jsonTransaction.getString(3));
 
                 if(isSuccess && value.compareTo(BigDecimal.ZERO) > 0) {
@@ -306,7 +304,9 @@ public class TzStats extends AddressAPI {
 
                 boolean isSuccess = "1".equals(jsonTransaction.getString(0));
 
-                Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
+                String block_time = jsonTransaction.getString(4);
+                Date block_time_date = DateTimeUtil.parseMilliseconds(block_time);
+
                 BigDecimal value = new BigDecimal(jsonTransaction.getString(3));
 
                 BigDecimal fee = new BigDecimal(jsonTransaction.getString(6));
@@ -412,7 +412,8 @@ public class TzStats extends AddressAPI {
                 // Fee and Burned are always taken into account, whether or not we succeed.
                 //boolean isSuccess = "1".equals(jsonTransaction.getString(0));
 
-                Date block_time_date = new Date(new BigInteger(jsonTransaction.getString(4)).longValue());
+                String block_time = jsonTransaction.getString(4);
+                Date block_time_date = DateTimeUtil.parseMilliseconds(block_time);
 
                 BigDecimal fee = new BigDecimal(jsonTransaction.getString(6));
                 BigDecimal burned = new BigDecimal(jsonTransaction.getString(7));
@@ -496,9 +497,7 @@ public class TzStats extends AddressAPI {
                 }
 
                 String block_time = jsonTransaction.getString("timestamp");
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
                 BigDecimal value = new BigDecimal(jsonTransaction.getString("amount"));
                 value = value.movePointLeft(token.getScale());

@@ -7,6 +7,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -15,13 +16,9 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class CardanoExplorer extends AddressAPI {
     public String getName() { return "CardanoExplorer"; }
@@ -161,10 +158,7 @@ public class CardanoExplorer extends AddressAPI {
                 JSONObject tx = jsonArray.getJSONObject(i);
 
                 String block_time = tx.getString("includedAt");
-
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
                 boolean fee_enabled = false;
                 BigDecimal fee = new BigDecimal(tx.getString("fee"));

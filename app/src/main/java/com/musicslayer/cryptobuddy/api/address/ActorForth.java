@@ -4,6 +4,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -11,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -142,9 +142,8 @@ public class ActorForth extends AddressAPI {
                     continue;
                 }
 
-                BigInteger block_time = new BigInteger(jsonTransaction.getString("blocktime"));
-                block_time = block_time.multiply(new BigInteger("1000"));
-                Date block_time_date = new Date(block_time.longValue());
+                String block_time = jsonTransaction.getString("blocktime");
+                Date block_time_date = DateTimeUtil.parseSeconds(block_time);
 
                 transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance.toPlainString(), cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Transaction"));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }

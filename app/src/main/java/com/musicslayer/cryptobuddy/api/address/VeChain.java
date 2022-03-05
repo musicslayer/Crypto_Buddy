@@ -7,6 +7,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -146,9 +147,9 @@ public class VeChain extends AddressAPI {
                 JSONObject o = transfers.getJSONObject(j);
 
                 JSONObject meta = o.getJSONObject("meta");
-                BigInteger block_time = new BigInteger(meta.getString("blockTimestamp"));
-                block_time = block_time.multiply(new BigInteger("1000"));
-                Date block_time_date = new Date(block_time.longValue());
+
+                String block_time = meta.getString("blockTimestamp");
+                Date block_time_date = DateTimeUtil.parseSeconds(block_time);
 
                 String from = o.getString("sender");
                 String to = o.getString("recipient");

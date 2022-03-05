@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -14,12 +15,8 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 // 0x1f4540338ced73d5c7a7a986e32df91f6902357d
 // Take into account trades.
@@ -379,11 +376,7 @@ public class TomoScan extends AddressAPI {
                 String fee_s = fee.toPlainString();
 
                 String block_time = o.getString("timestamp");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 if(fee.compareTo(BigDecimal.ZERO) > 0) {
                     transactionNormalArrayList.add(new Transaction(new Action("Fee"), new AssetQuantity(fee_s, cryptoAddress.getFeeCoin()), null, new Timestamp(block_time_date),"Transaction Fee"));
@@ -462,11 +455,7 @@ public class TomoScan extends AddressAPI {
                 String balance_diff_s = balance_diff.toPlainString();
 
                 String block_time = oI.getString("timestamp");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 transactionInternalArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), "Transaction"));
                 if(transactionInternalArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -505,11 +494,7 @@ public class TomoScan extends AddressAPI {
                 String balance_diff_s = oR.getString("reward");
 
                 String block_time = oR.getString("rewardTime");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 transactionRewardsArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date),"Reward"));
                 if(transactionRewardsArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -564,11 +549,7 @@ public class TomoScan extends AddressAPI {
                 String balance_diff_s = balance_diff_d.toPlainString();
 
                 String block_time = oV.getString("createdAt");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 transactionVotesArrayList.add(new Transaction(new Action(action), new AssetQuantity(balance_diff_s, cryptoAddress.getPrimaryCoin()), null, new Timestamp(block_time_date), event));
                 if(transactionVotesArrayList.size() == getMaxTransactions()) { return DONE; }
@@ -635,11 +616,7 @@ public class TomoScan extends AddressAPI {
                 String fee_s = fee.toPlainString();
 
                 String block_time = oT.getString("blockTime");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 String key = oT.getString("address");
                 String name = oT.getString("symbol");
@@ -720,11 +697,7 @@ public class TomoScan extends AddressAPI {
                 String fee_s = fee.toPlainString();
 
                 String block_time = oT.getString("blockTime");
-
-                // Z means UTC time zone, but older Android cannot parse the Z correctly, so we must manually do it ourselves.
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                Date block_time_date = DateTimeUtil.parseExtended(block_time);
 
                 String key = oT.getString("address");
                 String name = oT.getString("symbol");

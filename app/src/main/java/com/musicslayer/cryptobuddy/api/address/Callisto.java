@@ -6,6 +6,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -129,9 +130,8 @@ public class Callisto extends AddressAPI {
 
                 BigInteger confirmations = new BigInteger(o.getString("confirmations"));
                 if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
-                    BigInteger block_time = new BigInteger(o.getString("timeStamp"));
-                    block_time = block_time.multiply(new BigInteger("1000"));
-                    block_time_date = new Date(block_time.longValue());
+                    String block_time = o.getString("timeStamp");
+                    block_time_date = DateTimeUtil.parseSeconds(block_time);
                 }
 
                 String from = o.getString("from");
@@ -191,9 +191,8 @@ public class Callisto extends AddressAPI {
                 JSONObject oI = jsonInternalArray.getJSONObject(j);
 
                 // Internal transfers do not use confirmations.
-                BigInteger block_time = new BigInteger(oI.getString("timeStamp"));
-                block_time = block_time.multiply(new BigInteger("1000"));
-                Date block_time_date = new Date(block_time.longValue());
+                String block_time = oI.getString("timeStamp");
+                Date block_time_date = DateTimeUtil.parseSeconds(block_time);
 
                 String from = oI.getString("from");
                 String to = oI.getString("to");
@@ -286,9 +285,8 @@ public class Callisto extends AddressAPI {
 
                     BigInteger confirmations = new BigInteger(oT.getString("confirmations"));
                     if(confirmations.compareTo(BigInteger.valueOf(0)) > 0) {
-                        BigInteger block_time = new BigInteger(oT.getString("timeStamp"));
-                        block_time = block_time.multiply(new BigInteger("1000"));
-                        block_time_date = new Date(block_time.longValue());
+                        String block_time = oT.getString("timeStamp");
+                        block_time_date = DateTimeUtil.parseSeconds(block_time);
                     }
 
                     String name = oT.getString("tokenSymbol");

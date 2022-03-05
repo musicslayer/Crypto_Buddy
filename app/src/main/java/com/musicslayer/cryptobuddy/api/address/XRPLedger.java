@@ -9,6 +9,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -16,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -239,10 +239,8 @@ public class XRPLedger extends AddressAPI {
                 JSONObject meta = jsonTransaction.getJSONObject("meta");
                 JSONObject tx = jsonTransaction.getJSONObject("tx");
 
-                BigInteger block_time = new BigInteger(tx.getString("date"));
-                //The Ripple Epoch is 946684800 seconds after the Unix Epoch
-                block_time = block_time.add(new BigInteger("946684800")).multiply(new BigInteger("1000"));
-                Date block_time_date = new Date(block_time.longValue());
+                String block_time = tx.getString("date");
+                Date block_time_date = DateTimeUtil.parseRippleSeconds(block_time);
 
                 String type = tx.getString("TransactionType");
 

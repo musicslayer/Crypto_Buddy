@@ -7,6 +7,7 @@ import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
 import com.musicslayer.cryptobuddy.transaction.Timestamp;
 import com.musicslayer.cryptobuddy.transaction.Transaction;
+import com.musicslayer.cryptobuddy.util.DateTimeUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.WebUtil;
 
@@ -181,11 +182,14 @@ public class Bitquery extends AddressAPI {
                 String action = "Receive";
                 String balance_diff_s = balance_diff_d.toPlainString();
 
-                String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
+                //String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
+                //DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                //format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                //Date block_time_date = format.parse(block_time);
 
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date block_time_date = format.parse(block_time);
+                // TODO Check this. Check other example. Check Bitquery_ETC
+                String block_time = o.getJSONObject("block").getJSONObject("timestamp").getString("time");
+                Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
                 String cryptoName = o.getJSONObject("currency").getString("tokenId");
                 Crypto crypto;
