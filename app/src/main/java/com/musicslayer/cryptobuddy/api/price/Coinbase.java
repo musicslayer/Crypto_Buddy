@@ -63,7 +63,7 @@ public class Coinbase extends PriceAPI {
 
                 for(Asset crypto : cryptoArrayList) {
                     if(rates.has(crypto.getName())) {
-                        // These prices are the inverse of the quantity we want.
+                        // These prices are the inverse of the quantities we want.
                         BigDecimal d = new BigDecimal(rates.getString(crypto.getName()));
                         d = BigDecimal.ONE.divide(d, 50, RoundingMode.HALF_UP);
                         priceHashMap.put(crypto, new AssetQuantity(d.toPlainString(), priceFiat));
@@ -81,50 +81,34 @@ public class Coinbase extends PriceAPI {
         // Fiats
         // The strategy is to get the price of Bitcoin in all our fiats, and then use that for the conversion.
         ProgressDialogFragment.updateProgressSubtitle("Processing Fiats...");
-
         Crypto conversionCrypto = CoinManager.getDefaultCoinManager().getHardcodedCoin("BTC");
-        String priceDataPriceFiatJSON = WebUtil.get("https://api.coinbase.com/v2/prices/" + conversionCrypto.getName() + "-" + priceFiatName + "/spot");
+        String priceDataFiatJSON = WebUtil.get("https://api.coinbase.com/v2/exchange-rates?currency=" + conversionCrypto.getName());
+        if(priceDataFiatJSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataFiatJSON);
+                JSONObject data = json.getJSONObject("data");
+                JSONObject rates = data.getJSONObject("rates");
+                BigDecimal dPrice = new BigDecimal(rates.getString(priceFiatName));
 
-        BigDecimal dPrice;
-        try {
-            JSONObject json = new JSONObject(priceDataPriceFiatJSON);
-            JSONObject data = json.getJSONObject("data");
-            dPrice = new BigDecimal(data.getString("amount"));
-        }
-        catch(Exception e) {
-            // Ignore error and return null.
-            // Even though some entries were filled, something went wrong so we assume the data may be suspect.
-            ThrowableUtil.processThrowable(e);
-            return null;
-        }
+                for(Asset fiat : fiatArrayList) {
+                    if(rates.has(fiat.getName())) {
+                        // These prices are the quantities we want.
+                        BigDecimal dFiat = new BigDecimal(rates.getString(fiat.getName()));
 
-        for(Asset fiat : fiatArrayList) {
-            // Hardcode this to be exact.
-            if(priceFiatName.equals(fiat.getName())) {
-                priceHashMap.put(fiat, new AssetQuantity("1", priceFiat));
-                continue;
+                        AssetQuantity fiatAssetQuantity = new AssetQuantity("1", fiat);
+                        AssetPrice fiatAssetPrice = new AssetPrice(new AssetQuantity(dFiat.toPlainString(), fiat), new AssetQuantity("1", conversionCrypto));
+                        AssetPrice priceAssetPrice = new AssetPrice(new AssetQuantity(dPrice.toPlainString(), priceFiat), new AssetQuantity("1", conversionCrypto));
+                        AssetQuantity priceAssetQuantity = fiatAssetQuantity.convert(fiatAssetPrice).convert(priceAssetPrice.reverseAssetPrice());
+
+                        priceHashMap.put(fiat, priceAssetQuantity);
+                    }
+                }
             }
-
-            String priceDataFiatJSON = WebUtil.get("https://api.coinbase.com/v2/prices/" + conversionCrypto.getName() + "-" + fiat.getName() + "/spot");
-            if(priceDataFiatJSON != null) {
-                try {
-                    JSONObject json = new JSONObject(priceDataFiatJSON);
-                    JSONObject data = json.getJSONObject("data");
-                    BigDecimal dFiat = new BigDecimal(data.getString("amount"));
-
-                    AssetQuantity fiatAssetQuantity = new AssetQuantity("1", fiat);
-                    AssetPrice fiatAssetPrice = new AssetPrice(new AssetQuantity(dFiat.toPlainString(), fiat), new AssetQuantity("1", conversionCrypto));
-                    AssetPrice priceAssetPrice = new AssetPrice(new AssetQuantity(dPrice.toPlainString(), priceFiat), new AssetQuantity("1", conversionCrypto));
-                    AssetQuantity priceAssetQuantity = fiatAssetQuantity.convert(fiatAssetPrice).convert(priceAssetPrice.reverseAssetPrice());
-
-                    priceHashMap.put(fiat, priceAssetQuantity);
-                }
-                catch(Exception e) {
-                    // Ignore error and return null.
-                    // Even though some entries were filled, something went wrong so we assume the data may be suspect.
-                    ThrowableUtil.processThrowable(e);
-                    return null;
-                }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
             }
         }
 
