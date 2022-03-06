@@ -14,10 +14,9 @@ import com.musicslayer.cryptobuddy.util.WebUtil;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-// For these APIs, we can only query one asset at a time.
 
 public class Coinbase extends PriceAPI {
     public String getName() { return "Coinbase"; }
@@ -55,21 +54,27 @@ public class Coinbase extends PriceAPI {
 
         // Cryptos
         ProgressDialogFragment.updateProgressSubtitle("Processing Crypto...");
-        for(Asset crypto : cryptoArrayList) {
-            String priceDataCryptoJSON = WebUtil.get("https://api.coinbase.com/v2/prices/" + crypto.getName() + "-" + priceFiatName + "/spot");
-            if(priceDataCryptoJSON != null) {
-                try {
-                    JSONObject json = new JSONObject(priceDataCryptoJSON);
-                    JSONObject data = json.getJSONObject("data");
-                    BigDecimal d = new BigDecimal(data.getString("amount"));
-                    priceHashMap.put(crypto, new AssetQuantity(d.toPlainString(), priceFiat));
+        String priceDataCryptoJSON = WebUtil.get("https://api.coinbase.com/v2/exchange-rates?currency=" + priceFiatName);
+        if(priceDataCryptoJSON != null) {
+            try {
+                JSONObject json = new JSONObject(priceDataCryptoJSON);
+                JSONObject data = json.getJSONObject("data");
+                JSONObject rates = data.getJSONObject("rates");
+
+                for(Asset crypto : cryptoArrayList) {
+                    if(rates.has(crypto.getName())) {
+                        // These prices are the inverse of the quantity we want.
+                        BigDecimal d = new BigDecimal(rates.getString(crypto.getName()));
+                        d = BigDecimal.ONE.divide(d, 50, RoundingMode.HALF_UP);
+                        priceHashMap.put(crypto, new AssetQuantity(d.toPlainString(), priceFiat));
+                    }
                 }
-                catch(Exception e) {
-                    // Ignore error and return null.
-                    // Even though some entries were filled, something went wrong so we assume the data may be suspect.
-                    ThrowableUtil.processThrowable(e);
-                    return null;
-                }
+            }
+            catch(Exception e) {
+                // Ignore error and return null.
+                // Even though some entries were filled, something went wrong so we assume the data may be suspect.
+                ThrowableUtil.processThrowable(e);
+                return null;
             }
         }
 
