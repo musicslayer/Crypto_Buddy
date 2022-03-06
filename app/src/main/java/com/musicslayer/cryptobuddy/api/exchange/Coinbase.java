@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.asset.Asset;
-import com.musicslayer.cryptobuddy.asset.GenericAsset;
+import com.musicslayer.cryptobuddy.asset.CoinbaseAsset;
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.transaction.Action;
 import com.musicslayer.cryptobuddy.transaction.AssetQuantity;
@@ -148,12 +148,13 @@ public class Coinbase extends ExchangeAPI {
                     continue;
                 }
 
-                // Just create a completely generic asset.
+                // Create an exchange asset.
                 String key = currency.getString("code");
                 String name = key;
                 String display_name = currency.getString("name");
                 int scale = currency.getInt("exponent");
-                Asset asset = GenericAsset.createGenericAsset(key, name, display_name, scale, null);
+                String coinbase_type = currency.getString("type");
+                Asset asset = CoinbaseAsset.createCoinbaseAsset(key, name, display_name, scale, coinbase_type);
 
                 currentBalanceArrayList.add(new AssetQuantity(value.toPlainString(), asset));
             }
@@ -219,16 +220,16 @@ public class Coinbase extends ExchangeAPI {
                     continue;
                 }
 
-                // Just create a completely generic asset.
+                // Create an exchange asset.
                 String key = currency.getString("code");
                 String name = key;
                 String display_name = currency.getString("name");
                 int scale = currency.getInt("exponent");
-                Asset asset = GenericAsset.createGenericAsset(key, name, display_name, scale, null);
-
-                String id = account.getString("id");
+                String coinbase_type = currency.getString("type");
+                Asset asset = CoinbaseAsset.createCoinbaseAsset(key, name, display_name, scale, coinbase_type);
 
                 // Within transactions, we must now process them, including potential pagination.
+                String id = account.getString("id");
                 String transactionUrl = "https://api.coinbase.com/v2/accounts/" + id + "/transactions?limit=300";
                 for(;;) {
                     // Pass in asset because we don't have enough info to reconstruct it from transaction data.

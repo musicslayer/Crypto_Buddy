@@ -1,6 +1,7 @@
 package com.musicslayer.cryptobuddy.api.price;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
+import com.musicslayer.cryptobuddy.asset.ExchangeAsset;
 import com.musicslayer.cryptobuddy.asset.coinmanager.CoinManager;
 import com.musicslayer.cryptobuddy.asset.crypto.Crypto;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
@@ -54,7 +55,12 @@ public class CoinGecko extends PriceAPI {
     public String getDisplayName() { return "CoinGecko API V3"; }
 
     public boolean isSupported(CryptoPrice cryptoPrice) {
-        // Right now, everything is supported.
+        // Support anything that is not an exchange asset.
+        for(Asset asset : cryptoPrice.assetArrayList) {
+            if(asset instanceof ExchangeAsset) {
+                return false;
+            }
+        }
         return true;
     }
 

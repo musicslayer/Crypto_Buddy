@@ -319,6 +319,7 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
     }
 
     public static Asset createAsset(String assetKind, String key, String name, String displayName, int scale, String assetType, HashMap<String, String> additionalInfo) {
+        // Only the three "core" asset kinds can be dealt with here.
         if("!FIAT!".equals(assetKind)) {
             return new Fiat(key, name, displayName, scale, assetType, additionalInfo);
         }
@@ -327,9 +328,6 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
         }
         else if("!TOKEN!".equals(assetKind)) {
             return new Token(key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else if("!GENERIC!".equals(assetKind)) {
-            return GenericAsset.createGenericAsset(key, name, displayName, scale, assetType, additionalInfo);
         }
         else {
             return null;
@@ -346,9 +344,9 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
         else if("!TOKEN!".equals(assetKind)) {
             return TokenManager.getTokenManagerFromTokenType(assetType).getExistingToken(key, name, displayName, scale, additionalInfo);
         }
-        else if("!GENERIC!".equals(assetKind)) {
+        else if("!EXCHANGE!".equals(assetKind)) {
             // Just create these from scratch, since we cannot look them up.
-            return GenericAsset.createGenericAsset(key, name, displayName, scale, assetType, additionalInfo);
+            return CoinbaseAsset.createCoinbaseAsset(key, name, displayName, scale, assetType, additionalInfo);
         }
         else {
             return null;

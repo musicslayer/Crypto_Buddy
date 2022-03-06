@@ -1,10 +1,12 @@
 package com.musicslayer.cryptobuddy.asset;
 
+import com.musicslayer.cryptobuddy.util.HashMapUtil;
+
 import java.util.HashMap;
 
-// This asset could be any kind.
+// This represents an asset on the Coinbase exchange.
 
-public class GenericAsset extends Asset {
+public class CoinbaseAsset extends ExchangeAsset {
     public String original_key;
     public String original_name;
     public String original_display_name;
@@ -20,16 +22,21 @@ public class GenericAsset extends Asset {
     public String asset_type;
     public HashMap<String, String> additional_info;
 
-    public static GenericAsset createGenericAsset(String key, String name, String display_name, int scale, String asset_type) {
+    public static CoinbaseAsset createCoinbaseAsset(String key, String name, String display_name, int scale, String coinbase_type) {
+        // Asset type is always "?" for exchange assets.
+        String asset_type = "?";
+
         HashMap<String, String> additional_info = new HashMap<>();
-        return createGenericAsset(key, name, display_name, scale, asset_type, additional_info);
+        HashMapUtil.putValueInMap(additional_info, "coinbase_type", coinbase_type);
+
+        return createCoinbaseAsset(key, name, display_name, scale, asset_type, additional_info);
     }
 
-    public static GenericAsset createGenericAsset(String key, String name, String display_name, int scale, String asset_type, HashMap<String, String> additional_info) {
-        return new GenericAsset(key, name, display_name, scale, asset_type, additional_info);
+    public static CoinbaseAsset createCoinbaseAsset(String key, String name, String display_name, int scale, String asset_type, HashMap<String, String> additional_info) {
+        return new CoinbaseAsset(key, name, display_name, scale, asset_type, additional_info);
     }
 
-    private GenericAsset(String key, String name, String display_name, int scale, String asset_type, HashMap<String, String> additional_info) {
+    private CoinbaseAsset(String key, String name, String display_name, int scale, String asset_type, HashMap<String, String> additional_info) {
         this.original_key = key;
         this.original_name = name;
         this.original_display_name = display_name;
@@ -90,5 +97,13 @@ public class GenericAsset extends Asset {
     public HashMap<String, String> getAdditionalInfo() { return additional_info; }
 
     // This is a special type of asset that could be any one of the other 3.
-    public String getAssetKind() { return "!GENERIC!"; }
+    public String getAssetKind() { return "!EXCHANGE!"; }
+
+    public String getCoinbaseType() {
+        String s = HashMapUtil.getValueFromMap(getAdditionalInfo(), "coinbase_type");
+        if(s == null) {
+            s = "?";
+        }
+        return s;
+    }
 }
