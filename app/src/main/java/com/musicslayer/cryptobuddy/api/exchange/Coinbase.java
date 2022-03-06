@@ -229,7 +229,7 @@ public class Coinbase extends ExchangeAPI {
                 String id = account.getString("id");
 
                 // Within transactions, we must now process them, including potential pagination.
-                String transactionUrl = "https://api.coinbase.com/v2/accounts/" + id + "/transactions";
+                String transactionUrl = "https://api.coinbase.com/v2/accounts/" + id + "/transactions?limit=300";
                 for(;;) {
                     // Pass in asset because we don't have enough info to reconstruct it from transaction data.
                     transactionUrl = processTransaction(transactionUrl, transactionArrayList, asset);
@@ -271,23 +271,30 @@ public class Coinbase extends ExchangeAPI {
                 JSONObject transaction = transactions.getJSONObject(i);
 
                 JSONObject details = transaction.getJSONObject("details");
-                String info = details.getString("title");
+                String infoTitle = details.getString("title");
+                String infoSubtitle = details.getString("subtitle");
+                String info = infoTitle + " (" + infoSubtitle + ")";
 
                 String block_time = transaction.getString("created_at");
                 Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
-                // TODO Buys/Sells?
+                JSONObject amount = transaction.getJSONObject("amount");
+                BigDecimal value = new BigDecimal(amount.getString("amount"));
+
                 String action;
-                if(0 == 1) {
+                if (value.compareTo(BigDecimal.ZERO) > 0) {
                     action = "Receive";
                 }
-                else {
+                else if (value.compareTo(BigDecimal.ZERO) < 0) {
+                    value = value.negate();
                     action = "Send";
                 }
+                else {
+                    // If nothing was sent either way, just skip this.
+                    continue;
+                }
 
-                BigDecimal value = BigDecimal.ONE;
-
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(value.toString(), asset), null, new Timestamp(block_time_date),info));
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(value.toPlainString(), asset), null, new Timestamp(block_time_date),info));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 
