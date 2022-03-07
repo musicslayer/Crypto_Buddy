@@ -140,15 +140,14 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             public void onDismissImpl(DialogInterface dialog) {
                 AddressData reflectionsAddressData = DataBridge.deserialize(ProgressDialogFragment.getValue(), AddressData.class);
 
-                if(reflectionsAddressData.isComplete()) {
+                // If the balance is not present, or if there are multiple balances, we cannot calculate this.
+                if(reflectionsAddressData.isComplete() && reflectionsAddressData.currentBalanceArrayList.size() == 1) {
                     // Convert percentage to decimal.
                     // With reflections, only sends are taxed.
                     BigDecimal D_RECEIVETAX = BigDecimal.ONE;
                     BigDecimal D_SENDTAX = BigDecimal.ONE.add(new BigDecimal(E_TAX.getTextString()).movePointLeft(2));
 
                     ArrayList<AssetQuantity> reflectionsCurrentBalanceArrayList = reflectionsAddressData.currentBalanceArrayList;
-
-                    // TODO There may not be any elements here.
                     AssetQuantity reflectionsCurrentBalanceAssetQuantity = reflectionsCurrentBalanceArrayList.get(0);
 
                     HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets(reflectionsAddressData.transactionArrayList, D_RECEIVETAX, D_SENDTAX);
