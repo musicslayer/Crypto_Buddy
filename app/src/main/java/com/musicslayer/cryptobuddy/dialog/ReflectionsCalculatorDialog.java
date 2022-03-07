@@ -147,6 +147,8 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                     BigDecimal D_SENDTAX = BigDecimal.ONE.add(new BigDecimal(E_TAX.getTextString()).movePointLeft(2));
 
                     ArrayList<AssetQuantity> reflectionsCurrentBalanceArrayList = reflectionsAddressData.currentBalanceArrayList;
+
+                    // TODO There may not be any elements here.
                     AssetQuantity reflectionsCurrentBalanceAssetQuantity = reflectionsCurrentBalanceArrayList.get(0);
 
                     HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets(reflectionsAddressData.transactionArrayList, D_RECEIVETAX, D_SENDTAX);

@@ -40,17 +40,34 @@ abstract public class AddressAPI extends API {
 
     abstract public boolean isSupported(CryptoAddress cryptoAddress);
     abstract public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress);
-    //abstract public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto);
     abstract public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress);
-    //abstract public ArrayList<Transaction> getSingleTransactions(CryptoAddress cryptoAddress, Crypto crypto);
 
-    // Most APIs don't support getting single data.
+    // Most APIs don't support getting single data, so by default just get all data and filter it for the crypto we want.
+    // This may be inefficient because we have to process data involving cryptos we don't care about.
+    // Subclasses can override these methods with specific APIs to only process the specific crypto.
     public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto) {
-        return null;
+        // Get all balances and just filter for the one we want.
+        ArrayList<AssetQuantity> currentBalanceArrayList = getCurrentBalance(cryptoAddress);
+        ArrayList<AssetQuantity> singleCurrentBalanceArrayList = new ArrayList<>();
+        for(AssetQuantity currentBalance : currentBalanceArrayList) {
+            if(crypto.equals(currentBalance.asset)) {
+                singleCurrentBalanceArrayList.add(currentBalance);
+            }
+        }
+        return singleCurrentBalanceArrayList;
     }
 
     public ArrayList<Transaction> getSingleTransactions(CryptoAddress cryptoAddress, Crypto crypto) {
-        return null;
+        // Get all transactions and just filter for the one we want.
+        ArrayList<Transaction> transactionArrayList = getTransactions(cryptoAddress);
+        ArrayList<Transaction> singleTransactionArrayList = new ArrayList<>();
+        for(Transaction transaction : transactionArrayList) {
+            // Only the actioned AssetQuantity is non-null.
+            if(crypto.equals(transaction.actionedAssetQuantity.asset)) {
+                singleTransactionArrayList.add(transaction);
+            }
+        }
+        return singleTransactionArrayList;
     }
 
     public static AddressAPI getAddressAPIFromKey(String key) {

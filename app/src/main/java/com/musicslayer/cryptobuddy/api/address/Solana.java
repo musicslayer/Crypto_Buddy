@@ -160,7 +160,7 @@ public class Solana extends AddressAPI {
             return null;
         }
 
-        // Create an ArrayList with all the accounts owned by this one (i.e. token accounts).
+        // If needed, this can be used to create an ArrayList with all the accounts owned by this one (i.e. token accounts).
         String ownerBody =
                 "{" +
                         "  \"jsonrpc\": \"2.0\"," +
@@ -173,11 +173,6 @@ public class Solana extends AddressAPI {
                         "  ]" +
                         "}";
 
-        String ownerDataJSON = WebUtil.post(baseURL, ownerBody);
-        if(ownerDataJSON == null) {
-            return null;
-        }
-
         ArrayList<String> ownerList = new ArrayList<>(); // Accounts owned by this one.
         HashMap<String, Token> tokenMap = new HashMap<>();
 
@@ -188,6 +183,11 @@ public class Solana extends AddressAPI {
             // Fill up "ownerList" and "tokenMap" if tokens are included.
             // Otherwise, this information will not be needed.
             if(shouldIncludeTokens(cryptoAddress)) {
+                String ownerDataJSON = WebUtil.post(baseURL, ownerBody);
+                if(ownerDataJSON == null) {
+                    return null;
+                }
+
                 JSONObject jsonOwner = new JSONObject(ownerDataJSON);
                 JSONArray jsonOwnerArray = jsonOwner.getJSONObject("result").getJSONArray("value");
                 for(int i = 0; i < jsonOwnerArray.length(); i++) {

@@ -20,6 +20,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
+// In the future, we may need to switch to this different API.
+// https://indexer.algoexplorerapi.io/rl/v1/transactions?address=LZOF3SVVS5MDWHG3Y2YLYTGBF4NNRLSWBJTWHS5BPATY5UTKLZJJDPGTGI&&page=1&&limit=10&&asset-id=31566704
+
 public class AlgoExplorer extends AddressAPI {
     public String getName() { return "AlgoExplorer"; }
     public String getDisplayName() { return "AlgoExplorer REST API"; }
@@ -112,7 +115,7 @@ public class AlgoExplorer extends AddressAPI {
 
         String next = "";
         for(;;) {
-            String url = baseURL + "/idx2/v2/accounts/" + cryptoAddress.address + "/transactions" + "?limit=1000&next=" + next;
+            String url = baseURL + "/idx2/v2/accounts/" + cryptoAddress.address + "/transactions?limit=1000&next=" + next;
             next = process(url, cryptoAddress, transactionArrayList);
 
             if(ERROR.equals(next)) {
@@ -266,7 +269,7 @@ public class AlgoExplorer extends AddressAPI {
                     crypto = TokenManager.getTokenManagerFromKey("AlgoTokenManager").getToken(cryptoAddress, id, name, display_name, scale, id);
 
                     value = new BigDecimal(jsonTransaction.getJSONObject("asset-transfer-transaction").getString("amount"));
-                    value = value.movePointLeft(cryptoAddress.getPrimaryCoin().getScale());
+                    value = value.movePointLeft(crypto.getScale());
                 }
                 else { // application-transaction ?
                     // No transaction, but there could still be a fee and reward.

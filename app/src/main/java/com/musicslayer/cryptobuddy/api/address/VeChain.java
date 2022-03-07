@@ -137,8 +137,8 @@ public class VeChain extends AddressAPI {
         try {
             String status = DONE;
 
-            JSONObject jsonAddress3 = new JSONObject(addressDataJSONTransfers);
-            JSONArray transfers = jsonAddress3.getJSONArray("transfers");
+            JSONObject jsonAddress = new JSONObject(addressDataJSONTransfers);
+            JSONArray transfers = jsonAddress.getJSONArray("transfers");
             for(int j = 0; j < transfers.length(); j++)
             {
                 // If there is anything to process, we may not be done yet.
