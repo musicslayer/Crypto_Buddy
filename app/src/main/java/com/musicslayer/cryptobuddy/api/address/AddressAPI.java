@@ -42,9 +42,6 @@ abstract public class AddressAPI extends API {
     abstract public ArrayList<AssetQuantity> getCurrentBalance(CryptoAddress cryptoAddress);
     abstract public ArrayList<Transaction> getTransactions(CryptoAddress cryptoAddress);
 
-    // Most APIs don't support getting single data, so by default just get all data and filter it for the crypto we want.
-    // This may be inefficient because we have to process data involving cryptos we don't care about.
-    // Subclasses can override these methods with specific APIs to only process the specific crypto.
     public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto) {
         // Get all balances and just filter for the one we want.
         ArrayList<AssetQuantity> currentBalanceArrayList = getCurrentBalance(cryptoAddress);
