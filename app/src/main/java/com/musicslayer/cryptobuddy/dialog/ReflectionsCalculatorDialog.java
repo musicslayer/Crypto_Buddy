@@ -83,8 +83,8 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
             }
         });
 
-        ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
-        progressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(activity) {
+        ProgressDialogFragment scanProgressDialogFragment = ProgressDialogFragment.newInstance(ProgressDialog.class);
+        scanProgressDialogFragment.setOnShowListener(new CrashDialogInterface.CrashOnShowListener(activity) {
             @Override
             public void onShowImpl(DialogInterface dialog) {
                 ProgressDialogFragment.updateProgressTitle("Scanning For Tokens...");
@@ -96,13 +96,13 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                 PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
             }
         });
-        progressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+        scanProgressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 updateLayout();
             }
         });
-        progressDialogFragment.restoreListeners(activity, "progress");
+        scanProgressDialogFragment.restoreListeners(activity, "progress_scan");
 
         AppCompatButton scanButton = findViewById(R.id.reflections_calculator_dialog_scanButton);
         scanButton.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
@@ -112,7 +112,7 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                     ToastUtil.showToast("must_choose_address");
                 }
                 else {
-                    progressDialogFragment.show(activity, "progress");
+                    scanProgressDialogFragment.show(activity, "progress_scan");
                 }
             }
         });
