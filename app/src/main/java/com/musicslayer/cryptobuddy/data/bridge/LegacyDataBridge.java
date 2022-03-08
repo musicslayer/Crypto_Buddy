@@ -86,14 +86,29 @@ public class LegacyDataBridge {
         }
 
         public <T> JSONObjectDataBridge reference(String key, T obj, Class<T> clazzT) throws JSONException {
-            String s = DataBridge.reference(obj, clazzT);
-            jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
+            String type = LegacyReferentiation.getCurrentType(clazzT);
+            String s = LegacyReferentiation.reference(obj, clazzT);
+
+            if("!STRING!".equals(type)) {
+                jsonObjectWithNull = jsonObjectWithNull.putString(key, s);
+            }
+            else if("!OBJECT!".equals(type)) {
+                jsonObjectWithNull = jsonObjectWithNull.putJSONObjectString(key, s);
+            }
+            else if("!ARRAY!".equals(type)) {
+                jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
             return this;
         }
 
         public <T> JSONObjectDataBridge referenceArrayList(String key, ArrayList<T> obj, Class<T> clazzT) throws JSONException {
             // ArrayList always uses type !ARRAY!.
-            String s = DataBridge.referenceArrayList(obj, clazzT);
+            String s = LegacyReferentiation.referenceArrayList(obj, clazzT);
             jsonObjectWithNull = jsonObjectWithNull.putJSONArrayString(key, s);
             return this;
         }
@@ -146,14 +161,38 @@ public class LegacyDataBridge {
         }
 
         public <T> T dereference(String key, Class<T> clazzT) throws JSONException {
-            String s = jsonObjectWithNull.getJSONObjectString(key);
-            return DataBridge.dereference(s, clazzT);
+            String version;
+            try {
+                version = LegacyReferentiation.getVersion(jsonObjectWithNull.getJSONObjectString(key));
+            }
+            catch(Exception ignored) {
+                version = "0";
+            }
+
+            String type = LegacyReferentiation.getTypeForVersion(version, clazzT);
+            String s;
+
+            if("!STRING!".equals(type)) {
+                s = jsonObjectWithNull.getString(key);
+            }
+            else if("!OBJECT!".equals(type)) {
+                s = jsonObjectWithNull.getJSONObjectString(key);
+            }
+            else if("!ARRAY!".equals(type)) {
+                s = jsonObjectWithNull.getJSONArrayString(key);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
+            return LegacyReferentiation.dereference(s, clazzT);
         }
 
         public <T> ArrayList<T> dereferenceArrayList(String key, Class<T> clazzT) throws JSONException {
             // ArrayList always uses type !ARRAY!.
             String s = jsonObjectWithNull.getJSONArrayString(key);
-            return DataBridge.dereferenceArrayList(s, clazzT);
+            return LegacyReferentiation.dereferenceArrayList(s, clazzT);
         }
     }
 
@@ -226,9 +265,54 @@ public class LegacyDataBridge {
             return LegacySerialization.deserialize(s, clazzT);
         }
 
+        public <T> JSONArrayDataBridge reference(T obj, Class<T> clazzT) throws JSONException {
+            String type = LegacyReferentiation.getCurrentType(clazzT);
+            String s = LegacyReferentiation.reference(obj, clazzT);
+
+            if("!STRING!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putString(s);
+            }
+            else if("!OBJECT!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putJSONObjectString(s);
+            }
+            else if("!ARRAY!".equals(type)) {
+                jsonArrayWithNull = jsonArrayWithNull.putJSONArrayString(s);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
+            return this;
+        }
+
         public <T> T dereference(int i, Class<T> clazzT) throws JSONException {
-            String s = jsonArrayWithNull.getJSONObjectString(i);
-            return DataBridge.dereference(s, clazzT);
+            String version;
+            try {
+                version = LegacyReferentiation.getVersion(jsonArrayWithNull.getJSONObjectString(i));
+            }
+            catch(Exception ignored) {
+                version = "0";
+            }
+
+            String type = LegacyReferentiation.getTypeForVersion(version, clazzT);
+            String s;
+
+            if("!STRING!".equals(type)) {
+                s = jsonArrayWithNull.getString(i);
+            }
+            else if("!OBJECT!".equals(type)) {
+                s = jsonArrayWithNull.getJSONObjectString(i);
+            }
+            else if("!ARRAY!".equals(type)) {
+                s = jsonArrayWithNull.getJSONArrayString(i);
+            }
+            else {
+                // Other types are not supported.
+                throw new IllegalStateException();
+            }
+
+            return LegacyReferentiation.dereference(s, clazzT);
         }
     }
 }

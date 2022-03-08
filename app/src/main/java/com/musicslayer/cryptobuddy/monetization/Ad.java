@@ -31,7 +31,7 @@ public class Ad {
         AdView mAdView = new AdView(context);
         mAdView.setAdSize(AdSize.BANNER);
 
-        if(App.DEBUG) {
+        if(App.TEST_ADS) {
             mAdView.setAdUnitId(BuildConfig.ad_unit_id_test); // TEST
         }
         else {
