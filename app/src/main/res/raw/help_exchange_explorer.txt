@@ -5,8 +5,7 @@ Symbol buttons left to right:
 --> Get net values**
 --> Authorize***
 
-*In order to provide accurate accounting of all assets, we break up buys and sells into individual receives and sends.
-Also, any Fiat values given are based on that particular exchange only.
+*In order to provide accurate accounting of all assets, we break up buys and sells into individual receives and sends. Also, any Fiat values given are based on that particular exchange only.
 
 **This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances of all assets on the exchange.
 
