@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
+import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -121,7 +122,22 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Dat
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("transaction_portfolio" + i, DEFAULT);
-            editor.putString("transaction_portfolio" + i, DataBridge.cycleSerialization(serialString, TransactionPortfolioObj.class));
+            //editor.putString("transaction_portfolio" + i, DataBridge.cycleSerialization(serialString, TransactionPortfolioObj.class));
+
+            // REMOVE
+            // For now, do this in two different steps.
+            TransactionPortfolioObj obj;
+            try {
+                // Deserialize the new way.
+                obj = DataBridge.deserialize(serialString, TransactionPortfolioObj.class);
+            }
+            catch(Exception ignored) {
+                // Deserialize the legacy way
+                obj = LegacySerialization.deserialize(serialString, TransactionPortfolioObj.class);
+            }
+
+            // Always serialize the new way.
+            editor.putString("transaction_portfolio" + i, DataBridge.serialize(obj, TransactionPortfolioObj.class));
         }
 
         editor.apply();

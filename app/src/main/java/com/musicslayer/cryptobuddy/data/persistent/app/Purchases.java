@@ -69,20 +69,8 @@ public class Purchases extends PersistentAppDataStore {
                 editor.putBoolean("purchases_remove_ads", isPurchased);
                 break;
             case "premium":
-                boolean hasChanged = isUnlockPremiumFeaturesPurchased != isPurchased;
-
                 isUnlockPremiumFeaturesPurchased = isPurchased;
                 editor.putBoolean("purchases_unlock_premium_features", isPurchased);
-
-                // If we changed the purchase status, update TokenManagers right now.
-                if(hasChanged) {
-                    TokenManager.initialize();
-                    if(!isPurchased) {
-                        TokenManager.resetAllTokens();
-                        PersistentAppDataStore.getInstance(TokenManagerList.class).resetAllData();
-                    }
-                }
-
                 break;
             case "support_developer_1":
                 if(isPurchased) {
