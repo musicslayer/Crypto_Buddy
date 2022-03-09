@@ -406,6 +406,26 @@ abstract public class TokenManager implements LegacySerialization.SerializableTo
         return displayNames;
     }
 
+    public static ArrayList<String> getAllTokenSettingNames() {
+        ArrayList<String> settingNames = new ArrayList<>();
+
+        for(TokenManager tokenManager : tokenManagers) {
+            settingNames.addAll(tokenManager.getTokenSettingNames());
+        }
+
+        return settingNames;
+    }
+
+    public ArrayList<String> getTokenSettingNames() {
+        ArrayList<String> settingNames = new ArrayList<>();
+
+        for(Token token : getTokens()) {
+            settingNames.add(token.getSettingName());
+        }
+
+        return settingNames;
+    }
+
     public String getFixedJSON() {
         ProgressDialogFragment.updateProgressTitle("Downloading " + getTokenType() + " Tokens...");
         return WebUtil.get("https://raw.githubusercontent.com/musicslayer/token_hub/main/token_info/" + getSettingsKey());

@@ -148,7 +148,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
         setFiatManagerOptions(FiatManager.fiatManagers);
         setCoinOptions(CoinManager.getAllCoins());
         setCoinManagerOptions(CoinManager.coinManagers);
-        setTokenOptions(TokenManager.getAllTokens());
+        setAllTokenOptions(); // For performance, use a specially built method.
         setTokenManagerOptions(TokenManager.tokenManagers);
     }
 
@@ -281,6 +281,36 @@ public class SelectAndSearchView extends CrashLinearLayout {
                 Collections.sort(coinSettingNamesSorted, getComparatorString());
             }
             HashMapUtil.putValueInMap(options_coin_setting_names_sorted, coinType, coinSettingNamesSorted);
+        }
+    }
+
+    private void setAllTokenOptions() {
+        // Similar to "setTokenOptions", but written for better performance.
+        // This should only be called when all tokens are desired.
+        // Reset the maps for Tokens.
+        search_options_tokens.clear();
+        search_options_token_names.clear();
+        search_options_token_display_names.clear();
+        options_tokens_sorted.clear();
+        options_token_setting_names_sorted.clear();
+
+        for(TokenManager tokenManager : TokenManager.tokenManagers) {
+            String tokenType = tokenManager.getTokenType();
+
+            ArrayList<Token> tokens = new ArrayList<>(tokenManager.getTokens());
+            ArrayList<String> names = new ArrayList<>(tokenManager.getTokenNames());
+            ArrayList<String> displayNames = new ArrayList<>(tokenManager.getTokenDisplayNames());
+            ArrayList<Token> tokensSorted = new ArrayList<>(tokenManager.getTokens());
+            ArrayList<String> tokenSettingNamesSorted = new ArrayList<>(tokenManager.getTokenSettingNames());
+
+            Collections.sort(tokensSorted, getSettingComparatorAsset());
+            Collections.sort(tokenSettingNamesSorted, getComparatorString());
+
+            HashMapUtil.putValueInMap(search_options_tokens, tokenType, tokens);
+            HashMapUtil.putValueInMap(search_options_token_names, tokenType, names);
+            HashMapUtil.putValueInMap(search_options_token_display_names, tokenType, displayNames);
+            HashMapUtil.putValueInMap(options_tokens_sorted, tokenType, tokensSorted);
+            HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
         }
     }
 
