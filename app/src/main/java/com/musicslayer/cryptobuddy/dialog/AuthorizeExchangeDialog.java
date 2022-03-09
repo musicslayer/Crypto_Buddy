@@ -12,6 +12,7 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.crash.CrashAdapterView;
 import com.musicslayer.cryptobuddy.crash.CrashView;
+import com.musicslayer.cryptobuddy.util.AppearanceUtil;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.view.BorderedSpinnerView;
@@ -74,7 +75,7 @@ public class AuthorizeExchangeDialog extends BaseDialog {
         TextView T = findViewById(R.id.authorize_exchange_dialog_exchangeStatusView);
         if(isAuthorized) {
             T.setText(cryptoExchange.toString() + " = Authorized");
-            T.setTextColor(0xFF000000);
+            T.setTextColor(AppearanceUtil.getSecondaryColor(activity));
         }
         else {
             T.setText(cryptoExchange.toString() + " = Unauthorized");
