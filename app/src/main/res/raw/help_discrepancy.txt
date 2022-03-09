@@ -1,5 +1,4 @@
-For a single address or exchange, it is expected that the net sum of all transactions of an asset will equal the current balance of that asset.
-Sometimes, however, there may exist a discrepancy between these two amounts.
+For a single address or exchange, it is expected that the net sum of all transactions of an asset will equal the current balance of that asset. Sometimes, however, there may exist a discrepancy between these two amounts.
 
 There are legitimate reasons why such a discrepancy may exist, such as:
 --> We do not include any mining rewards in the transactions.

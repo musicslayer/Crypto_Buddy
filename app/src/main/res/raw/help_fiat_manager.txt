@@ -1,9 +1,9 @@
 The app is hardcoded to recognize a list of fiats. However if you wish to record a transaction for a different fiat, you may use the Fiat Manager to add it yourself.
 
 Key:
-Hardcoded Fiats - Fiats built into the app by the developer.
-Found Fiats* - Fiats seen while analyzing an exchange account.
-Custom Fiats - Fiats the user manually added.
+--> Hardcoded Fiats - Fiats built into the app by the developer.
+--> Found Fiats* - Fiats seen while analyzing an exchange account.
+--> Custom Fiats - Fiats the user manually added.
 
 (x, y, z) -> x fiats hardcoded, y fiats found, and z custom fiats
 

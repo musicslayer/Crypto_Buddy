@@ -21,4 +21,5 @@ Managers:
 --> Coin Manager - Add your own custom coins.
 --> Token Manager* - Download token lists or add your own custom tokens.
 
+
 *Premium Feature (Requires In-app Purchase)

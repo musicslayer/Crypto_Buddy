@@ -3,9 +3,9 @@ The app will often automatically recognize tokens. However for some blockchain n
 You can use the Token Manager to download lists of tokens into the app's database. If your token is newer and/or not officially recognized, you can also manually add a custom token yourself.
 
 Key:
-Downloaded Tokens - Tokens from lists downloaded from the internet.
-Found Tokens - Tokens seen while analyzing a crypto address or an exchange account.
-Custom Tokens - Tokens the user manually added.
+--> Downloaded Tokens - Tokens from lists downloaded from the internet.
+--> Found Tokens - Tokens seen while analyzing a crypto address or an exchange account.
+--> Custom Tokens - Tokens the user manually added.
 
 (x, y, z) -> x tokens downloaded*, y tokens found, and z custom tokens
 
