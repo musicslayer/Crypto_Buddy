@@ -2,11 +2,9 @@ View balances and transactions* on a crypto exchange.
 
 Symbol buttons left to right:
 --> Exchange information
---> Get net values**
---> Authorize***
+--> Transaction net sums
+--> Authorize**
 
 *In order to provide accurate accounting of all assets, we break up buys and sells into individual receives and sends. Also, any fiat conversions are done using prices from that particular exchange only.
 
-**This is the net sum of all transactions we have detected. This may not equal the sum of current balances of all assets on the exchange.
-
-***Read-only permission must be granted to access your account balances and transaction history on an exchange. This app does not trade or withdraw your assets, or place orders on your behalf. For security, the authorization to obtain data from an exchange may expire, requiring you to use this button to grant authorization again.
+**Read-only permission must be granted to access your account balances and transaction history on an exchange. This app does not trade or withdraw your assets, or place orders on your behalf. For security, the authorization to obtain data from an exchange may expire, requiring you to use this button to grant authorization again.

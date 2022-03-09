@@ -4,4 +4,4 @@ Any changes you make to the portfolio (i.e. adding or removing transactions) are
 
 Symbol buttons left to right:
 --> Add new transaction to portfolio
---> Get net values
+--> Transaction net sums

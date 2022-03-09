@@ -2,5 +2,5 @@ Manually enter transactions, real or hypothetical, and then get the net values o
 
 Symbol buttons left to right:
 --> Add new transaction
---> Get net values
+--> Transaction net sums
 --> Reset table
