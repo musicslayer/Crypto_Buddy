@@ -366,6 +366,9 @@ public class TraditionalChartView extends CrashLinearLayout {
         else if(chartData.cryptoChart.crypto instanceof Token) {
             return false;
         }
+        else if(!valueType.equals("PRICE")) {
+            return false;
+        }
         else {
             return true;
         }
