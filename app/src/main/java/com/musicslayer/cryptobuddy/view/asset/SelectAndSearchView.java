@@ -287,6 +287,7 @@ public class SelectAndSearchView extends CrashLinearLayout {
     private void setAllTokenOptions() {
         // Similar to "setTokenOptions", but written for better performance.
         // This should only be called when all tokens are desired.
+
         // Reset the maps for Tokens.
         search_options_tokens.clear();
         search_options_token_names.clear();
@@ -303,8 +304,9 @@ public class SelectAndSearchView extends CrashLinearLayout {
             ArrayList<Token> tokensSorted = new ArrayList<>(tokenManager.getTokens());
             ArrayList<String> tokenSettingNamesSorted = new ArrayList<>(tokenManager.getTokenSettingNames());
 
-            Collections.sort(tokensSorted, getSettingComparatorAsset());
-            Collections.sort(tokenSettingNamesSorted, getComparatorString());
+            // Don't sort tokens. This takes too long and would be noticeable to the user.
+            //Collections.sort(tokensSorted, getSettingComparatorAsset());
+            //Collections.sort(tokenSettingNamesSorted, getComparatorString());
 
             HashMapUtil.putValueInMap(search_options_tokens, tokenType, tokens);
             HashMapUtil.putValueInMap(search_options_token_names, tokenType, names);
@@ -363,6 +365,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
             HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
         }
 
+        // Don't sort tokens. This takes too long and would be noticeable to the user.
+        /*
         for(String tokenType : new ArrayList<>(options_tokens_sorted.keySet())) {
             ArrayList<Token> tokensSorted = HashMapUtil.getValueFromMap(options_tokens_sorted, tokenType);
             if(tokensSorted != null) {
@@ -378,6 +382,8 @@ public class SelectAndSearchView extends CrashLinearLayout {
             }
             HashMapUtil.putValueInMap(options_token_setting_names_sorted, tokenType, tokenSettingNamesSorted);
         }
+
+         */
     }
 
     public void setFiatManagerOptions(ArrayList<FiatManager> fiatManagerArrayList) {
