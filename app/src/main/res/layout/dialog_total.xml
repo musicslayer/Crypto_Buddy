@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitle="(Does not include filtered data)"
-        app:title="Table Transaction Net Sums" />
+        app:title="Transaction Net Sums" />
 
     <com.musicslayer.cryptobuddy.view.asset.SelectAndSearchView
         android:id="@+id/total_dialog_fiatSelectAndSearchView"
