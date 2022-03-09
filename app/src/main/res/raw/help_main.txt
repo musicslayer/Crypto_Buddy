@@ -1,7 +1,7 @@
 Explorers - Quickly view or calculate values without storing any data.
 --> Transaction Explorer - Manually enter transactions to get net values of assets.
---> Address Explorer - View all transactions that have taken place on an address.
---> Exchange Explorer* - View all transactions that have taken place on an exchange account.
+--> Address Explorer - View all balances and transactions on an address.
+--> Exchange Explorer* - View all balances and transactions on an exchange account.
 --> Chart Explorer* - View charts of cryptos vs. fiats.
 
 Portfolios - Store collections of data.
@@ -19,6 +19,6 @@ Managers:
 --> Data Management - Import* and export* data, delete data, and reset the app.
 --> Fiat Manager - Add your own custom fiats.
 --> Coin Manager - Add your own custom coins.
---> Token Manager* - Download token lists, or add your own custom tokens, to help the app recognize them.
+--> Token Manager* - Download token lists or add your own custom tokens.
 
 *Premium Feature (Requires In-app Purchase)

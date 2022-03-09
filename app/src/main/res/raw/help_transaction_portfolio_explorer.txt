@@ -1,4 +1,5 @@
 Manually enter transactions, real or hypothetical, which will be stored in the portfolio, and then get the net values of all assets involved, including a total fiat value.
+
 Any changes you make to the portfolio (i.e. adding or removing transactions) are instantly saved.
 
 Symbol buttons left to right:

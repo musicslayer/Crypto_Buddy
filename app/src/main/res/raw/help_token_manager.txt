@@ -1,8 +1,6 @@
-The app will often automatically recognize tokens.
-However for some blockchain networks or particular tokens this is not possible.
+The app will often automatically recognize tokens. However for some blockchain networks or particular tokens this is not possible.
 
-You can use the Token Manager to download lists of tokens into the app's database.
-If your token is newer and/or not officially recognized, you can also manually add a custom token yourself.
+You can use the Token Manager to download lists of tokens into the app's database. If your token is newer and/or not officially recognized, you can also manually add a custom token yourself.
 
 Key:
 Downloaded Tokens - Tokens from lists downloaded from the internet.
@@ -14,5 +12,4 @@ Custom Tokens - Tokens the user manually added.
 (*Some token types, such as Binance Smart Chain, have too many tokens to feasibly download and store a complete collection upfront.)
 
 
-There is a precedence ordering when tokens are in more than one category.
-The app will recognize a downloaded token first, then a found token, and lastly a custom token.
+There is a precedence ordering when tokens are in more than one category. The app will recognize a downloaded token first, then a found token, and lastly a custom token.

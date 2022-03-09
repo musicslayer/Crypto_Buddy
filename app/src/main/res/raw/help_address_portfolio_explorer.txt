@@ -1,4 +1,5 @@
 View balances and transactions on all crypto addresses in the portfolio.
+
 Any changes you make to the portfolio (i.e. adding or removing addresses) are instantly saved.
 
 Symbol buttons left to right:
@@ -8,5 +9,4 @@ Symbol buttons left to right:
 --> Get net values*
 --> QR Codes
 
-*This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances at all the addresses in the portfolio.
-For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.
+*This is the net sum of all transactions we have detected. This may not equal the sum of current balances at all the addresses in the portfolio. For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.

@@ -1,4 +1,5 @@
 View balances and transactions* on all exchanges in the portfolio.
+
 Any changes you make to the portfolio (i.e. adding or removing exchanges) are instantly saved.
 
 Symbol buttons left to right:
@@ -8,8 +9,8 @@ Symbol buttons left to right:
 --> Get net values**
 --> Authorize***
 
-*In order to provide accurate accounting of all assets, we break up buys and sells into individual receives and sends. Also, any Fiat values given are based on that particular exchange only.
+*In order to provide accurate accounting of all assets, we break up buys and sells into individual receives and sends. Also, any fiat conversions are done using prices from that particular exchange only.
 
-**This is the net sum of all transactions we have detected. This may NOT equal the sum of current balances of all assets on all the exchanges in the portfolio.
+**This is the net sum of all transactions we have detected. This may not equal the sum of current balances of all assets on all the exchanges in the portfolio.
 
 ***Read-only permission must be granted to access your account balances and transaction history on an exchange. This app does not trade or withdraw your assets, or place orders on your behalf. For security, the authorization to obtain data from an exchange may expire, requiring you to use this button to grant authorization again.

@@ -5,5 +5,4 @@ Symbol buttons left to right:
 --> Get net values*
 --> QR Codes
 
-*This is the net sum of all transactions we have detected. This may NOT equal the current balance at the address.
-For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.
+*This is the net sum of all transactions we have detected. This may not equal the current balance at the address. For example, many smart contract operations (reflections, taxes, bridges, etc.) are not included.

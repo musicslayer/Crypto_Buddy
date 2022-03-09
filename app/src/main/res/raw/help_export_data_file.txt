@@ -1,8 +1,5 @@
-Export app data to a file.
-On newer devices, you can use a document browser to select a file to create or overwrite.
-On older devices, however, you are limited to a fixed set of folders specified by your device.
+Export app data to a file. On newer devices, you can use a document browser to select a file to create or overwrite. On older devices, however, you are limited to a fixed set of folders specified by your device.
 
-Files in these device-specific folders can sometimes be accessed by mounting your device to a computer.
-Otherwise, we recommend using the EMAIL option instead to make the data more easily available.
+Files in these device-specific folders can sometimes be accessed by mounting your device to a computer. Otherwise, we recommend using the EMAIL option instead to make the data more easily available.
 
 IMPORTANT - Any files in these device-specific folders may be erased if the app is uninstalled, unless you explicitly choose to keep app data.

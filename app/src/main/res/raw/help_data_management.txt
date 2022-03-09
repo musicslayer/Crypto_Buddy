@@ -5,12 +5,19 @@ There are various methods of importing* and exporting* data:
 --> Using the clipboard
 --> Using email attachments (export only)
 
-Individual types of data can be erased using "Delete Data". If you wish to completely wipe the app of all data, "Reset App" will make your app act like a new install.
-
-Lastly, please note that the following items will not be exported or imported:
+Please note that the following items will not be imported or exported:
 --> Hardcoded Fiats
 --> Hardcoded Coins
 --> Downloaded Tokens
+
+Individual types of data can be erased using "Delete Data". If you wish to completely wipe the app of all data, "Reset App" will make your app act like a new install.
+
+
+IMPORTANT - Data that is imported will overwrite any matching existing data.
+
+For example, if you currently have 3 Transaction Portfolios named "A", "B", and "C",
+and you import a Transaction Portfolio named "B", then "A" and "C" will remain untouched,
+but "B" will be completely overwritten with the data that was taken from the file.
 
 
 *Premium Feature (Requires In-app Purchase)

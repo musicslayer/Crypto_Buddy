@@ -1,5 +1,3 @@
-Here you can select which types of data to download for which addresses.
-By default, only the types of data which are not already downloaded are selected.
+Here you can select which types of data to download for which addresses. By default, only the types of data which are not already downloaded are selected.
 
-You can select types of data that have already been downloaded to replace them with more up-to-date data.
-Whenever a type of data cannot be successfully downloaded, any existing data will remain.
+You can select types of data that have already been downloaded to replace them with more up-to-date data. Whenever a type of data cannot be successfully downloaded, any existing data will remain.

@@ -1,13 +1,13 @@
-The app is hardcoded to recognize a list of fiats.
-However if you wish to record a transaction for a different fiat, you may use the Fiat Manager to add it yourself.
+The app is hardcoded to recognize a list of fiats. However if you wish to record a transaction for a different fiat, you may use the Fiat Manager to add it yourself.
 
 Key:
 Hardcoded Fiats - Fiats built into the app by the developer.
-Found Fiats - Fiats seen while analyzing an exchange account.
+Found Fiats* - Fiats seen while analyzing an exchange account.
 Custom Fiats - Fiats the user manually added.
 
 (x, y, z) -> x fiats hardcoded, y fiats found, and z custom fiats
 
 
-There is a precedence ordering when fiats are in more than one category.
-The app will recognize a hardcoded fiat first, then a found fiat, and lastly a custom fiat.
+There is a precedence ordering when fiats are in more than one category. The app will recognize a hardcoded fiat first, then a found fiat, and lastly a custom fiat.
+
+*These are not currently used but may be used in a future update.

@@ -1,5 +1,4 @@
-View all charts in the portfolio.
-Any changes you make to the portfolio (i.e. adding or removing charts) are instantly saved.
+View all charts in the portfolio. Any changes you make to the portfolio (i.e. adding or removing charts) are instantly saved.
 
 Symbol buttons left to right:
 --> Add new chart to portfolio

@@ -16,6 +16,4 @@ Sometimes, however, a discrepancy is caused by a real problem, such as:
 If you feel a discrepancy is not expected, feel free to use the "Report Feedback" menu option to alert the developer.
 
 
-Notes:
-    If an asset has a stated amount of zero in one place, and that same asset does not appear in the other place, that is considered a match and not a discrepancy.
-    Discrepancies are only shown if both balance and transaction data are downloaded for that address or exchange.
+Note: If an asset has a stated amount of zero in one place, and that same asset does not appear in the other place, that is considered a match and not a discrepancy. Also, discrepancies are only shown if both balance and transaction data are downloaded for that address or exchange.

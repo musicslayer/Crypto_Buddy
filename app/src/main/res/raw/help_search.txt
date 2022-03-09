@@ -1,4 +1,1 @@
-All queries are case-insensitive.
-The query is broken into phrases of contiguous non-space characters.
-Options are shown only if they contain every phrase.
-Thus, the addition of phrases can further filter search options shown.
+All queries are case-insensitive. The query is broken into phrases of contiguous non-space characters. Options are shown only if they contain every phrase. Thus, the addition of phrases can further filter search options shown.
