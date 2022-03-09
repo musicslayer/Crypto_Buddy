@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class App extends MultiDexApplication {
     // These all need to be changed to false before creating a public release.
     public static boolean DEBUG = false;
-    public static boolean TEST_ADS = true;
+    public static boolean TEST_ADS = false;
 
     public static boolean isGooglePlayAvailable = true;
     public static boolean isAppInitialized = false;
