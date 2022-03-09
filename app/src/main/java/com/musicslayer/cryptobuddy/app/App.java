@@ -20,8 +20,8 @@ import java.util.ArrayList;
 // The code in this class must be especially crash free because we cannot use CrashReporterDialog here, or even AlertDialog.
 public class App extends MultiDexApplication {
     // These all need to be changed to false before creating a public release.
-    public static boolean DEBUG = false;
-    public static boolean TEST_ADS = false;
+    public static boolean DEBUG = true;
+    public static boolean TEST_ADS = true;
 
     public static boolean isGooglePlayAvailable = true;
     public static boolean isAppInitialized = false;

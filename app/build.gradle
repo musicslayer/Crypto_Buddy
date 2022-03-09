@@ -62,7 +62,6 @@ android {
 
     buildTypes {
         // TEST
-        /*
         debug {
         }
         release {
@@ -70,8 +69,7 @@ android {
             debuggable true
         }
 
-         */
-
+/*
         // REAL
         debug {
             minifyEnabled true
@@ -86,6 +84,8 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
+
+ */
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
