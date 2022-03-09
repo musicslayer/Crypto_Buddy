@@ -2,13 +2,13 @@ Explorers - Quickly view or calculate values without storing any data.
 --> Transaction Explorer - Manually enter transactions to get net values of assets.
 --> Address Explorer - View all balances and transactions on an address.
 --> Exchange Explorer* - View all balances and transactions on an exchange account.
---> Chart Explorer* - View charts of cryptos vs. fiats.
+--> Chart Explorer - View charts of cryptos vs. fiats.
 
 Portfolios - Store collections of data.
 --> Transaction Portfolio - Store a collection of transactions.
 --> Address Portfolio - Store a collection of addresses.
 --> Exchange Portfolio* - Store a collection of exchange accounts.
---> Chart Portfolio* - Store a collection of charts.
+--> Chart Portfolio - Store a collection of charts.
 
 Crypto Tools:
 --> Crypto Prices - View up-to-date prices for various crypto.
