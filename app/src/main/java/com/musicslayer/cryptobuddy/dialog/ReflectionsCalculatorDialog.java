@@ -153,6 +153,11 @@ public class ReflectionsCalculatorDialog extends BaseDialog {
                     HashMap<Asset, AssetAmount> reflectionsTransactionsMap = Transaction.resolveAssets(reflectionsAddressData.transactionArrayList, D_RECEIVETAX, D_SENDTAX);
                     AssetAmount reflectionsTransactionsAssetAmount = HashMapUtil.getValueFromMap(reflectionsTransactionsMap, ssv.getChosenAsset());
 
+                    // If there were no transactions involving our asset, then we use a resolved value of zero.
+                    if(reflectionsTransactionsAssetAmount == null) {
+                        reflectionsTransactionsAssetAmount = new AssetAmount("0");
+                    }
+
                     AssetQuantity resultAssetQuantity = new AssetQuantity(reflectionsCurrentBalanceAssetQuantity.assetAmount.subtract(reflectionsTransactionsAssetAmount), (Crypto)ssv.getChosenAsset());
 
                     RichStringBuilder s = new RichStringBuilder(true);

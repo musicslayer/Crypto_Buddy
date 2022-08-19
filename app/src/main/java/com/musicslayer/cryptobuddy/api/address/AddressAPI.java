@@ -45,9 +45,15 @@ abstract public class AddressAPI extends API {
     public ArrayList<AssetQuantity> getSingleCurrentBalance(CryptoAddress cryptoAddress, Crypto crypto) {
         // Get all balances and just filter for the one we want.
         ArrayList<AssetQuantity> currentBalanceArrayList = getCurrentBalance(cryptoAddress);
+
+        if(currentBalanceArrayList == null) {
+            return null;
+        }
+
         ArrayList<AssetQuantity> singleCurrentBalanceArrayList = new ArrayList<>();
         for(AssetQuantity currentBalance : currentBalanceArrayList) {
             if(crypto.equals(currentBalance.asset)) {
+                // One would hope this only executes once, but it may be possible that the same crypto has two different balances listed.
                 singleCurrentBalanceArrayList.add(currentBalance);
             }
         }
@@ -57,6 +63,11 @@ abstract public class AddressAPI extends API {
     public ArrayList<Transaction> getSingleTransactions(CryptoAddress cryptoAddress, Crypto crypto) {
         // Get all transactions and just filter for the one we want.
         ArrayList<Transaction> transactionArrayList = getTransactions(cryptoAddress);
+
+        if(transactionArrayList == null) {
+            return null;
+        }
+
         ArrayList<Transaction> singleTransactionArrayList = new ArrayList<>();
         for(Transaction transaction : transactionArrayList) {
             // Only the actioned AssetQuantity is non-null.
