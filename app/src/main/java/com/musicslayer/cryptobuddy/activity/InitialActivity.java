@@ -32,7 +32,6 @@ import java.util.Date;
 //  Mainnet vs. Testnet tokens.
 
 // TODO Overhaul of exceptions. Causes and Stacks are lost in propagation.
-// TODO Choose Address "History" falls off edge, and we need a clear button...
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

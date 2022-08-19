@@ -27,11 +27,17 @@ abstract public class RedEditText extends CrashEditText {
         test();
     }
 
-    // Use this to work around warnings regarding getText() potentially returning null.
+    // Use these wrappers to work around warnings regarding getText() potentially returning null.
     public String getTextString() {
         Editable E = getText();
         assert E != null;
         return E.toString();
+    }
+
+    public void clearTextString() {
+        Editable E = getText();
+        assert E != null;
+        E.clear();
     }
 
     public void setMaxLength(int maxLength) {

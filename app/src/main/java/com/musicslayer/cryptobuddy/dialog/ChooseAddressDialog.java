@@ -64,6 +64,27 @@ public class ChooseAddressDialog extends BaseDialog {
             B_TOGGLE.updateLayout();
         }
 
+        BaseDialogFragment chooseHistoryAddressDialogFragment = BaseDialogFragment.newInstance(ChooseHistoryAddressDialog.class);
+        chooseHistoryAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                if(((ChooseHistoryAddressDialog)dialog).isComplete) {
+                    user_CRYPTOADDRESS = ((ChooseHistoryAddressDialog)dialog).user_CRYPTOADDRESS;
+
+                    isComplete = true;
+                    dismiss();
+                }
+            }
+        });
+        chooseHistoryAddressDialogFragment.restoreListeners(this.activity, "address_history");
+
+        Button B_HISTORY = findViewById(R.id.choose_address_dialog_historyButton);
+        B_HISTORY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                chooseHistoryAddressDialogFragment.show(ChooseAddressDialog.this.activity, "address_history");
+            }
+        });
+
         final AnythingEditText E_ADDRESS = findViewById(R.id.choose_address_dialog_editText);
 
         Button B_PASTE = findViewById(R.id.choose_address_dialog_pasteButton);
@@ -102,24 +123,10 @@ public class ChooseAddressDialog extends BaseDialog {
             }
         });
 
-        BaseDialogFragment chooseHistoryAddressDialogFragment = BaseDialogFragment.newInstance(ChooseHistoryAddressDialog.class);
-        chooseHistoryAddressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(this.activity) {
-            @Override
-            public void onDismissImpl(DialogInterface dialog) {
-                if(((ChooseHistoryAddressDialog)dialog).isComplete) {
-                    user_CRYPTOADDRESS = ((ChooseHistoryAddressDialog)dialog).user_CRYPTOADDRESS;
-
-                    isComplete = true;
-                    dismiss();
-                }
-            }
-        });
-        chooseHistoryAddressDialogFragment.restoreListeners(this.activity, "address_history");
-
-        Button B_HISTORY = findViewById(R.id.choose_address_dialog_historyButton);
-        B_HISTORY.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+        Button B_CLEAR = findViewById(R.id.choose_address_dialog_clearButton);
+        B_CLEAR.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                chooseHistoryAddressDialogFragment.show(ChooseAddressDialog.this.activity, "address_history");
+                E_ADDRESS.clearTextString();
             }
         });
 

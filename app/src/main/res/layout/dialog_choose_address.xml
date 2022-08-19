@@ -38,6 +38,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_exchange_dialog_toolbar" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/choose_address_dialog_historyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="History"
+        app:drawableLeftCompat="@drawable/ic_baseline_history_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_exchange_dialog_toolbar" />
+
     <TextView
         android:id="@+id/choose_address_dialog_messageTextView"
         android:layout_width="0dp"
@@ -69,8 +78,8 @@
         android:id="@+id/choose_address_dialog_pasteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
         android:text="Paste"
+        app:drawableLeftCompat="@drawable/ic_baseline_content_paste_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_editText" />
 
@@ -78,26 +87,26 @@
         android:id="@+id/choose_address_dialog_scanQRButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_qr_code_scanner_24"
         android:text="Scan QR"
+        app:drawableLeftCompat="@drawable/ic_baseline_qr_code_scanner_24"
         app:layout_constraintStart_toEndOf="@+id/choose_address_dialog_pasteButton"
         app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_editText" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choose_address_dialog_historyButton"
+        android:id="@+id/choose_address_dialog_clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_history_24"
-        android:text="History"
+        android:text="Clear"
+        app:drawableLeftCompat="@drawable/ic_baseline_clear_all_24"
         app:layout_constraintStart_toEndOf="@+id/choose_address_dialog_scanQRButton"
-        app:layout_constraintTop_toTopOf="@+id/choose_address_dialog_scanQRButton" />
+        app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_editText" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/choose_address_dialog_confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
         android:text="Confirm"
+        app:drawableLeftCompat="@drawable/ic_baseline_check_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_address_dialog_pasteButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
