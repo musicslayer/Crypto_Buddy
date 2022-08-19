@@ -40,17 +40,22 @@
     </style>
 
     <style name="ActionBarTheme.Title" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size_title</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="AlertDialogTheme" parent="@style/Theme.AppCompat.Dialog.Alert">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <!-- Don't include android:windowBackground so we can get the default grey instead of black.-->
         <item name="materialButtonStyle">@style/MaterialButtonTheme</item>
     </style>
 
     <style name="ButtonTheme" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="strokeColor">@android:color/white</item>
         <item name="strokeWidth">1dp</item>
@@ -70,11 +75,15 @@
     </style>
 
     <style name="FloatingActionButtonStyle" parent="@style/Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="elevation">0dp</item>
         <item name="pressedTranslationZ">0dp</item>
     </style>
 
     <style name="ImageButtonTheme" parent="@style/Widget.AppCompat.ImageButton">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="strokeColor">@android:color/white</item>
         <item name="strokeWidth">1dp</item>
@@ -92,6 +101,8 @@
     </style>
 
     <style name="TextInverseTheme" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
 
@@ -100,11 +111,14 @@
     </style>
 
     <style name="ToolbarTheme.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size_title</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="MaterialButtonTheme" parent="@style/Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:fontFamily">@string/font_family</item>
+        <item name="android:textSize">@dimen/font_size</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="strokeColor">@android:color/white</item>
         <item name="strokeWidth">1dp</item>
