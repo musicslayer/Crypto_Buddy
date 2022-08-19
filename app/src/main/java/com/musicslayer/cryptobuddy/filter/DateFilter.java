@@ -1,11 +1,8 @@
 package com.musicslayer.cryptobuddy.filter;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.DateFilterDialog;
 import com.musicslayer.cryptobuddy.util.DateTimeUtil;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,26 +11,6 @@ import java.util.Date;
 public class DateFilter extends Filter {
     public Date user_startDate;
     public Date user_endDate;
-
-    @Override
-    public String legacy_serializeToJSON_sub() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("filterType", getFilterType(), String.class)
-            .serialize("user_startDate", user_startDate, Date.class)
-            .serialize("user_endDate", user_endDate, Date.class)
-            .toStringOrNull();
-    }
-
-    public static DateFilter legacy_deserializeFromJSON_sub(String s) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        Date user_startDate = o.deserialize("user_startDate", Date.class);
-        Date user_endDate = o.deserialize("user_endDate", Date.class);
-
-        DateFilter dateFilter = new DateFilter();
-        dateFilter.user_startDate = user_startDate;
-        dateFilter.user_endDate = user_endDate;
-        return dateFilter;
-    }
 
     @Override
     public void serializeToJSON_sub(DataBridge.Writer o) throws IOException {

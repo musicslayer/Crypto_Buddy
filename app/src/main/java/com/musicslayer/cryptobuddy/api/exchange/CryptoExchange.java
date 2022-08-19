@@ -7,15 +7,11 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.asset.exchange.Exchange;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CryptoExchange implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
+public class CryptoExchange implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeParcelable(exchange, flags);
@@ -89,29 +85,6 @@ public class CryptoExchange implements LegacySerialization.SerializableToJSON, L
     public String getInfo() {
         // Include authorization info.
         return "Exchange: " + exchange.toString() + "\nExchangeAPI: " + exchangeAPI.toString() + "\n" + exchangeAPI.getAuthorizationInfo();
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("exchange", exchange, Exchange.class)
-            .serialize("exchangeAPI", exchangeAPI, ExchangeAPI.class)
-            .toStringOrNull();
-    }
-
-    public static CryptoExchange legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        Exchange exchange = o.deserialize("exchange", Exchange.class);
-        ExchangeAPI exchangeAPI = o.deserialize("exchangeAPI", ExchangeAPI.class);
-        return new CryptoExchange(exchange, exchangeAPI);
     }
 
     @Override

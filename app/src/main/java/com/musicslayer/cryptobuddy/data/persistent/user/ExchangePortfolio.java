@@ -136,21 +136,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements DataBr
 
         for(int i = 0; i < size; i++) {
             String name;
-            if(sharedPreferences.contains("exchange_portfolio_names" + i)) {
-                name = sharedPreferences.getString("exchange_portfolio_names" + i, DEFAULT);
-            }
-            else {
-                // Older installations won't have the name saved.
-                // REMOVE
-                String serialString = sharedPreferences.getString("exchange_portfolio" + i, DEFAULT);
-                ExchangePortfolioObj exchangePortfolioObj = DataBridge.deserialize(serialString, ExchangePortfolioObj.class);
-                name = exchangePortfolioObj.name;
-
-                // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("exchange_portfolio_names" + i, name);
-                editor.apply();
-            }
+            name = sharedPreferences.getString("exchange_portfolio_names" + i, DEFAULT);
             settings_exchange_portfolio_names.add(name);
         }
     }

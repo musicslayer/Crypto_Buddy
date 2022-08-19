@@ -4,20 +4,16 @@ import android.content.Context;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 import com.musicslayer.cryptobuddy.view.settings.SettingsView;
 import com.musicslayer.cryptobuddy.view.settings.StandardSettingsView;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class Setting implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+abstract public class Setting implements DataBridge.SerializableToJSON {
     public static ArrayList<Setting> settings;
     public static HashMap<String, Setting> setting_map;
     public static HashMap<String, Setting> setting_settings_map;
@@ -129,38 +125,6 @@ abstract public class Setting implements LegacySerialization.SerializableToJSON,
     public void resetSetting() {
         // Resets a setting to its default value.
         this.setSetting(this.getDefaultOptionName());
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("key", getKey(), String.class)
-            .serialize("settingsKey", getSettingsKey(), String.class)
-            .serialize("chosenOptionName", chosenOptionName, String.class)
-            .toStringOrNull();
-    }
-
-    public static Setting legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String key = o.deserialize("key", String.class);
-        String settingsKey = o.deserialize("settingsKey", String.class);
-        String chosenOptionName = o.deserialize("chosenOptionName", String.class);
-
-        // This is a dummy object that only has to hold onto the data.
-        Setting setting = UnknownSetting.createUnknownSetting(key, settingsKey);
-
-        // The option may not actually exist anymore, but it did at the time of serialization.
-        setting.chosenOptionName = chosenOptionName;
-
-        return setting;
     }
 
     @Override

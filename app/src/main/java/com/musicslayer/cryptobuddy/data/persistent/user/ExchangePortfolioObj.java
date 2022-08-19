@@ -2,15 +2,11 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import com.musicslayer.cryptobuddy.api.exchange.CryptoExchange;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ExchangePortfolioObj implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+public class ExchangePortfolioObj implements DataBridge.SerializableToJSON {
     public String name;
     public ArrayList<CryptoExchange> cryptoExchangeArrayList = new ArrayList<>();
 
@@ -38,33 +34,6 @@ public class ExchangePortfolioObj implements LegacySerialization.SerializableToJ
             }
         }
         return false;
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("name", name, String.class)
-            .serializeArrayList("cryptoExchangeArrayList", cryptoExchangeArrayList, CryptoExchange.class)
-            .toStringOrNull();
-    }
-
-    public static ExchangePortfolioObj legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String name = o.deserialize("name", String.class);
-        ArrayList<CryptoExchange> cryptoExchangeArrayList = o.deserializeArrayList("cryptoExchangeArrayList", CryptoExchange.class);
-
-        ExchangePortfolioObj exchangePortfolioObj = new ExchangePortfolioObj(name);
-        exchangePortfolioObj.cryptoExchangeArrayList = cryptoExchangeArrayList;
-
-        return exchangePortfolioObj;
     }
 
     @Override

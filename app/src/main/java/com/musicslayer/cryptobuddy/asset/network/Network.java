@@ -7,12 +7,8 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +20,7 @@ import java.util.HashMap;
 // addr1v9s96gdnn9nmhmyz2duu0ghgnt6wvzdjkavkcv92smj69uc4rsp5h
 // CardanoExplorer.java can get balance but not transactions.
 
-abstract public class Network implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
+abstract public class Network implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());
@@ -133,27 +129,6 @@ abstract public class Network implements LegacySerialization.SerializableToJSON,
         // Null is always smaller than a real action.
         if(isValidA & isValidB) { return a.compare(b); }
         else { return Boolean.compare(isValidA, isValidB); }
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("key", getKey(), String.class)
-            .toStringOrNull();
-    }
-
-    public static Network legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String key = o.deserialize("key", String.class);
-        return Network.getNetworkFromKey(key);
     }
 
     @Override

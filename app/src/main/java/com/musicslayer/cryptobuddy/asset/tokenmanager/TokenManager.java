@@ -4,12 +4,9 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.data.persistent.app.Purchases;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ThrowableUtil;
 import com.musicslayer.cryptobuddy.util.FileUtil;
@@ -17,14 +14,13 @@ import com.musicslayer.cryptobuddy.util.WebUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class TokenManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+abstract public class TokenManager implements DataBridge.SerializableToJSON {
     public static ArrayList<TokenManager> tokenManagers;
     public static HashMap<String, TokenManager> tokenManagers_map;
     public static HashMap<String, TokenManager> tokenManagers_settings_map;
@@ -453,109 +449,6 @@ abstract public class TokenManager implements LegacySerialization.SerializableTo
         catch(Exception e) {
             ThrowableUtil.processThrowable(e);
             return false;
-        }
-    }
-
-    public static String legacy_serializationVersion() {
-        return "2";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("key", getKey(), String.class)
-            .serialize("token_type", getTokenType(), String.class)
-            .serializeArrayList("downloaded_tokens", downloaded_tokens, Token.class)
-            .serializeArrayList("found_tokens", found_tokens, Token.class)
-            .serializeArrayList("custom_tokens", custom_tokens, Token.class)
-            .toStringOrNull();
-    }
-
-    public static TokenManager legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        TokenManager tokenManager;
-
-        if("2".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String token_type = o.deserialize("token_type", String.class);
-            ArrayList<Token> downloaded_tokens = o.deserializeArrayList("downloaded_tokens", Token.class);
-            ArrayList<Token> found_tokens = o.deserializeArrayList("found_tokens", Token.class);
-            ArrayList<Token> custom_tokens = o.deserializeArrayList("custom_tokens", Token.class);
-
-            // This is a dummy object that only has to hold onto the token array lists.
-            // We don't need to call the proper add* methods here.
-            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
-            tokenManager.downloaded_tokens = downloaded_tokens;
-            tokenManager.found_tokens = found_tokens;
-            tokenManager.custom_tokens = custom_tokens;
-        }
-        else if("1".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String token_type = o.deserialize("token_type", String.class);
-
-            // We have to manually deserialize this legacy data.
-            ArrayList<Token> downloaded_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("downloaded_tokens"));
-            ArrayList<Token> found_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("found_tokens"));
-            ArrayList<Token> custom_tokens = legacy_token_deserializeArrayList(o.getJSONArrayString("custom_tokens"));
-
-            // This is a dummy object that only has to hold onto the token array lists.
-            // We don't need to call the proper add* methods here.
-            tokenManager = UnknownTokenManager.createUnknownTokenManager(key, token_type);
-            tokenManager.downloaded_tokens = downloaded_tokens;
-            tokenManager.found_tokens = found_tokens;
-            tokenManager.custom_tokens = custom_tokens;
-
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return tokenManager;
-    }
-
-    public static Token legacy_token_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String display_name = o.deserialize("display_name", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String id = o.deserialize("id", String.class);
-            String blockchain_id = o.deserialize("blockchain_id", String.class);
-            String token_type = o.deserialize("token_type", String.class);
-
-            return Token.buildToken(key, name, display_name, scale, token_type, id, blockchain_id);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Token> legacy_token_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Token> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(legacy_token_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
         }
     }
 

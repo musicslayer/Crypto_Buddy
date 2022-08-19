@@ -79,10 +79,6 @@ public class InitialActivity extends BaseActivity {
         PersistentAppDataStore.loadAllStoredData();
         PersistentUserDataStore.loadAllStoredData();
 
-        // REMOVE
-        // At this point, everyone should use newer Serialization.
-        DataBridge.setIsLegacy(false);
-
         // Save all the stored data right after loading it.
         // This makes sure the stored data is initialized and helps remove data with outdated versions.
         PersistentAppDataStore.saveAllStoredData();

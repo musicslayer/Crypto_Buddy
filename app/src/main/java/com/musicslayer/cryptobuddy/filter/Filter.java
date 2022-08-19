@@ -4,16 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-abstract public class Filter implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON, Parcelable {
+abstract public class Filter implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getType());
@@ -44,31 +40,7 @@ abstract public class Filter implements LegacySerialization.SerializableToJSON, 
     abstract public String getFilterType();
 
     // Each subclass is serialized and deserialized differently.
-    abstract public String legacy_serializeToJSON_sub() throws JSONException;
     abstract public void serializeToJSON_sub(DataBridge.Writer o) throws IOException;
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return legacy_serializeToJSON_sub();
-    }
-
-    public static Filter legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String filterType = o.deserialize("filterType", String.class);
-        if("!DISCRETE!".equals(filterType)) {
-            return DiscreteFilter.legacy_deserializeFromJSON_sub(s);
-        }
-        else if("!DATE!".equals(filterType)) {
-            return DateFilter.legacy_deserializeFromJSON_sub(s);
-        }
-        else {
-            return null;
-        }
-    }
 
     @Override
     public void serializeToJSON(DataBridge.Writer o) throws IOException {

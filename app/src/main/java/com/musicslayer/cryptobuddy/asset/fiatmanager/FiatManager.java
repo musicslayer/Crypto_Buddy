@@ -4,21 +4,15 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiat.UnknownFiat;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class FiatManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+abstract public class FiatManager implements DataBridge.SerializableToJSON {
     public static ArrayList<FiatManager> fiatManagers;
     public static HashMap<String, FiatManager> fiatManagers_map;
     public static HashMap<String, FiatManager> fiatManagers_settings_map;
@@ -402,107 +396,6 @@ abstract public class FiatManager implements LegacySerialization.SerializableToJ
         }
 
         return displayNames;
-    }
-
-    public static String legacy_serializationVersion() {
-        return "2";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        // Just serialize the fiat array lists. FiatManagerList keeps track of which FiatManager had these.
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("key", getKey(), String.class)
-            .serialize("fiat_type", getFiatType(), String.class)
-            .serializeArrayList("hardcoded_fiats", hardcoded_fiats, Fiat.class)
-            .serializeArrayList("found_fiats", found_fiats, Fiat.class)
-            .serializeArrayList("custom_fiats", custom_fiats, Fiat.class)
-            .toStringOrNull();
-    }
-
-    public static FiatManager legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        FiatManager fiatManager;
-
-        if("2".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String fiat_type = o.deserialize("fiat_type", String.class);
-            ArrayList<Fiat> hardcoded_fiats = o.deserializeArrayList("hardcoded_fiats", Fiat.class);
-            ArrayList<Fiat> found_fiats = o.deserializeArrayList("found_fiats", Fiat.class);
-            ArrayList<Fiat> custom_fiats = o.deserializeArrayList("custom_fiats", Fiat.class);
-
-            // This is a dummy object that only has to hold onto the fiat array lists.
-            // We don't need to call the proper add* methods here.
-            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
-            fiatManager.hardcoded_fiats = hardcoded_fiats;
-            fiatManager.found_fiats = found_fiats;
-            fiatManager.custom_fiats = custom_fiats;
-        }
-        else if("1".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String fiat_type = o.deserialize("fiat_type", String.class);
-
-            // We have to manually deserialize this legacy data.
-            ArrayList<Fiat> hardcoded_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("hardcoded_fiats"));
-            ArrayList<Fiat> found_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("found_fiats"));
-            ArrayList<Fiat> custom_fiats = legacy_fiat_deserializeArrayList(o.getJSONArrayString("custom_fiats"));
-
-            // This is a dummy object that only has to hold onto the fiat array lists.
-            // We don't need to call the proper add* methods here.
-            fiatManager = UnknownFiatManager.createUnknownFiatManager(key, fiat_type);
-            fiatManager.hardcoded_fiats = hardcoded_fiats;
-            fiatManager.found_fiats = found_fiats;
-            fiatManager.custom_fiats = custom_fiats;
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return fiatManager;
-    }
-
-    public static Fiat legacy_fiat_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String display_name = o.deserialize("display_name", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String fiat_type = o.deserialize("fiat_type", String.class);
-
-            return Fiat.buildFiat(key, name, display_name, scale, fiat_type);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Fiat> legacy_fiat_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Fiat> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(legacy_fiat_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
     }
 
     @Override

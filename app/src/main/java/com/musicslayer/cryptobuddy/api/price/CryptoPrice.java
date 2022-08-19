@@ -6,15 +6,11 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CryptoPrice implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
+public class CryptoPrice implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         // Writing a List directly requires a higher Android API.
@@ -55,29 +51,6 @@ public class CryptoPrice implements LegacySerialization.SerializableToJSON, Lega
         return (other instanceof CryptoPrice) &&
             ((assetArrayList == null && ((CryptoPrice)other).assetArrayList == null) || (assetArrayList != null && ((CryptoPrice) other).assetArrayList != null && assetArrayList.equals(((CryptoPrice) other).assetArrayList))) &&
             ((fiat == null && ((CryptoPrice)other).fiat == null) || (fiat != null && ((CryptoPrice) other).fiat != null && fiat.equals(((CryptoPrice) other).fiat)));
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .referenceArrayList("assetArrayList", assetArrayList, Asset.class)
-            .reference("fiat", fiat, Fiat.class)
-            .toStringOrNull();
-    }
-
-    public static CryptoPrice legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        ArrayList<Asset> assetArrayList = o.dereferenceArrayList("assetArrayList", Asset.class);
-        Fiat fiat = o.dereference("fiat", Fiat.class);
-        return new CryptoPrice(assetArrayList, fiat);
     }
 
     @Override

@@ -9,20 +9,15 @@ import com.musicslayer.cryptobuddy.asset.crypto.token.Token;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.asset.fiatmanager.FiatManager;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyReferentiation;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.settings.setting.AssetDisplaySetting;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract public class Asset implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, LegacyReferentiation.ReferenceableToJSON, LegacyReferentiation.Versionable, DataBridge.SerializableToJSON, DataBridge.ReferenceableToJSON, Parcelable {
+abstract public class Asset implements DataBridge.SerializableToJSON, DataBridge.ReferenceableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getAssetKind());
@@ -132,199 +127,6 @@ abstract public class Asset implements LegacySerialization.SerializableToJSON, L
 
     public static void sortAscendingByType(ArrayList<Asset> assetArrayList) {
         Collections.sort(assetArrayList, (a, b) -> compare(a, b));
-    }
-
-    public static String legacy_serializationVersion() {
-        return "4";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        // For both serialize and reference, write all information.
-        // Use original properties directly, not the potentially modified ones from getter functions.
-        return new LegacyDataBridge.JSONObjectDataBridge()
-                .serialize("assetKind", getAssetKind(), String.class)
-                .serialize("key", getOriginalKey(), String.class)
-                .serialize("name", getOriginalName(), String.class)
-                .serialize("displayName", getOriginalDisplayName(), String.class)
-                .serialize("scale", getOriginalScale(), Integer.class)
-                .serialize("assetType", getOriginalAssetType(), String.class)
-                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
-                .toStringOrNull();
-    }
-
-    public static Asset legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        Asset asset;
-
-        if("4".equals(version)) {
-            // Reconstruct the asset from the deserialized info.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String displayName = o.deserialize("displayName", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String assetType = o.deserialize("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-
-            asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else if("3".equals(version)) {
-            // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String displayName = o.deserialize("displayName", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String assetType = o.deserialize("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-
-            asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else if("2".equals(version)) {
-            // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String assetType = o.deserialize("assetType", String.class);
-            String key = o.deserialize("key", String.class);
-
-            asset = legacy_lookupAsset(assetKind, assetType, key);
-        }
-        else if("1".equals(version)) {
-            // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetType = o.deserialize("assetType", String.class);
-            String key = o.deserialize("key", String.class);
-
-            String assetKind;
-            if("!FIAT!".equals(assetType) || "!COIN!".equals(assetType)) {
-                assetKind = assetType;
-                assetType = "BASE";
-            }
-            else {
-                // Everything else was a token.
-                assetKind = "!TOKEN!";
-            }
-
-            asset = legacy_lookupAsset(assetKind, assetType, key);
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return asset;
-    }
-
-    public static String legacy_referentiationVersion() {
-        return "4";
-    }
-
-    public static String legacy_referentiationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_referenceToJSON() throws JSONException {
-        // For both serialize and reference, write all information.
-        // Use original properties directly, not the potentially modified ones from getter functions.
-        return new LegacyDataBridge.JSONObjectDataBridge()
-                .serialize("assetKind", getAssetKind(), String.class)
-                .serialize("key", getOriginalKey(), String.class)
-                .serialize("name", getOriginalName(), String.class)
-                .serialize("displayName", getOriginalDisplayName(), String.class)
-                .serialize("scale", getOriginalScale(), Integer.class)
-                .serialize("assetType", getOriginalAssetType(), String.class)
-                .serializeHashMap("additionalInfo", getOriginalAdditionalInfo(), String.class, String.class)
-                .toStringOrNull();
-    }
-
-    public static Asset legacy_dereferenceFromJSON(String s, String version) throws JSONException {
-        Asset asset;
-
-        if("4".equals(version)) {
-            // Reconstruct the asset from the deserialized info.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String displayName = o.deserialize("displayName", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String assetType = o.deserialize("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-
-            asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else if("3".equals(version)) {
-            // When we deserialize, we lookup by key, but we use the extra info in case we cannot find an existing asset.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String displayName = o.deserialize("displayName", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String assetType = o.deserialize("assetType", String.class);
-            HashMap<String, String> additionalInfo = o.deserializeHashMap("additionalInfo", String.class, String.class);
-
-            asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
-        }
-        else if("2".equals(version)) {
-            // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetKind = o.deserialize("assetKind", String.class);
-            String assetType = o.deserialize("assetType", String.class);
-            String key = o.deserialize("key", String.class);
-
-            asset = legacy_lookupAsset(assetKind, assetType, key);
-        }
-        else if("1".equals(version)) {
-            // We have to do this based on whether it's a FIAT, COIN, or a TOKEN, rather than just the properties.
-            // In older versions, serialization was performing the role of referentiation.
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String assetType = o.deserialize("assetType", String.class);
-            String key = o.deserialize("key", String.class);
-
-            String assetKind;
-            if("!FIAT!".equals(assetType) || "!COIN!".equals(assetType)) {
-                assetKind = assetType;
-                assetType = "BASE";
-            }
-            else {
-                // Everything else was a token.
-                assetKind = "!TOKEN!";
-            }
-
-            asset = legacy_lookupAsset(assetKind, assetType, key);
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return asset;
-    }
-
-    public static Asset legacy_lookupAsset(String assetKind, String assetType, String key) {
-        if("!FIAT!".equals(assetKind)) {
-            return FiatManager.getFiatManagerFromFiatType(assetType).getFiat(key, null, null, 0);
-        }
-        else if("!COIN!".equals(assetKind)) {
-            return CoinManager.getCoinManagerFromCoinType(assetType).getCoin(key, null, null, 0, null);
-        }
-        else if("!TOKEN!".equals(assetKind)) {
-            return TokenManager.getTokenManagerFromTokenType(assetType).getToken(null, key, null, null, 0, null);
-        }
-        else {
-            return null;
-        }
     }
 
     @Override

@@ -8,15 +8,12 @@ import android.os.Parcelable;
 import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
 import com.musicslayer.cryptobuddy.encryption.Encryption;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -186,28 +183,9 @@ public class AuthUtil {
         }
     }
 
-    public static class OAuthToken implements LegacySerialization.SerializableToJSON, DataBridge.SerializableToJSON {
+    public static class OAuthToken implements DataBridge.SerializableToJSON {
         private final byte[] token_e; // Only encrypted token should be stored.
         private final long expiryTime;
-
-        public static String legacy_serializationType(String version) {
-            return "!OBJECT!";
-        }
-
-        @Override
-        public String legacy_serializeToJSON() throws JSONException {
-            return new LegacyDataBridge.JSONObjectDataBridge()
-                    .serializeArray("token_e", toObjectArray(token_e), Byte.class)
-                    .serialize("expiryTime", expiryTime, Long.class)
-                    .toStringOrNull();
-        }
-
-        public static OAuthToken legacy_deserializeFromJSON(String s, String version) throws JSONException {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
-            long expiryTime = o.deserialize("expiryTime", Long.class);
-            return new OAuthToken(token_e, expiryTime);
-        }
 
         @Override
         public void serializeToJSON(DataBridge.Writer o) throws IOException {

@@ -2,15 +2,11 @@ package com.musicslayer.cryptobuddy.data.persistent.user;
 
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AddressPortfolioObj implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+public class AddressPortfolioObj implements DataBridge.SerializableToJSON {
     public String name;
     public ArrayList<CryptoAddress> cryptoAddressArrayList = new ArrayList<>();
 
@@ -39,33 +35,6 @@ public class AddressPortfolioObj implements LegacySerialization.SerializableToJS
             }
         }
         return false;
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("name", name, String.class)
-            .serializeArrayList("cryptoAddressArrayList", cryptoAddressArrayList, CryptoAddress.class)
-            .toStringOrNull();
-    }
-
-    public static AddressPortfolioObj legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String name = o.deserialize("name", String.class);
-        ArrayList<CryptoAddress> cryptoAddressArrayList = o.deserializeArrayList("cryptoAddressArrayList", CryptoAddress.class);
-
-        AddressPortfolioObj addressPortfolioObj = new AddressPortfolioObj(name);
-        addressPortfolioObj.cryptoAddressArrayList = cryptoAddressArrayList;
-
-        return addressPortfolioObj;
     }
 
     @Override

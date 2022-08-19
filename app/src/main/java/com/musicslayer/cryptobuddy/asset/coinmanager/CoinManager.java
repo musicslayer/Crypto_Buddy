@@ -4,21 +4,15 @@ import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.json.JSONWithNull;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-import com.musicslayer.cryptobuddy.util.ThrowableUtil;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract public class CoinManager implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON  {
+abstract public class CoinManager implements DataBridge.SerializableToJSON  {
     public static ArrayList<CoinManager> coinManagers;
     public static HashMap<String, CoinManager> coinManagers_map;
     public static HashMap<String, CoinManager> coinManagers_settings_map;
@@ -402,108 +396,6 @@ abstract public class CoinManager implements LegacySerialization.SerializableToJ
         }
 
         return displayNames;
-    }
-
-    public static String legacy_serializationVersion() {
-        return "2";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        // Just serialize the coin array lists. CoinManagerList keeps track of which CoinManager had these.
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("key", getKey(), String.class)
-            .serialize("coin_type", getCoinType(), String.class)
-            .serializeArrayList("hardcoded_coins", hardcoded_coins, Coin.class)
-            .serializeArrayList("found_coins", found_coins, Coin.class)
-            .serializeArrayList("custom_coins", custom_coins, Coin.class)
-            .toStringOrNull();
-    }
-
-    public static CoinManager legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        CoinManager coinManager;
-
-        if("2".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String coin_type = o.deserialize("coin_type", String.class);
-            ArrayList<Coin> hardcoded_coins = o.deserializeArrayList("hardcoded_coins", Coin.class);
-            ArrayList<Coin> found_coins = o.deserializeArrayList("found_coins", Coin.class);
-            ArrayList<Coin> custom_coins = o.deserializeArrayList("custom_coins", Coin.class);
-
-            // This is a dummy object that only has to hold onto the coin array lists.
-            // We don't need to call the proper add* methods here.
-            coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
-            coinManager.hardcoded_coins = hardcoded_coins;
-            coinManager.found_coins = found_coins;
-            coinManager.custom_coins = custom_coins;
-        }
-        else if("1".equals(version)) {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String coin_type = o.deserialize("coin_type", String.class);
-
-            // We have to manually deserialize this legacy data.
-            ArrayList<Coin> hardcoded_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("hardcoded_coins"));
-            ArrayList<Coin> found_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("found_coins"));
-            ArrayList<Coin> custom_coins = legacy_coin_deserializeArrayList(o.getJSONArrayString("custom_coins"));
-
-            // This is a dummy object that only has to hold onto the coin array lists.
-            // We don't need to call the proper add* methods here.
-            coinManager = UnknownCoinManager.createUnknownCoinManager(key, coin_type);
-            coinManager.hardcoded_coins = hardcoded_coins;
-            coinManager.found_coins = found_coins;
-            coinManager.custom_coins = custom_coins;
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        return coinManager;
-    }
-
-    public static Coin legacy_coin_deserialize(String s) {
-        if(s == null) { return null; }
-
-        try {
-            LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-            String key = o.deserialize("key", String.class);
-            String name = o.deserialize("name", String.class);
-            String display_name = o.deserialize("display_name", String.class);
-            int scale = o.deserialize("scale", Integer.class);
-            String id = o.deserialize("id", String.class);
-            String coin_type = o.deserialize("coin_type", String.class);
-
-            return Coin.buildCoin(key, name, display_name, scale, coin_type, id);
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ArrayList<Coin> legacy_coin_deserializeArrayList(String s) {
-        if(s == null) { return null; }
-
-        try {
-            ArrayList<Coin> arrayList = new ArrayList<>();
-
-            JSONWithNull.JSONArrayWithNull a = new JSONWithNull.JSONArrayWithNull(s);
-            for(int i = 0; i < a.length(); i++) {
-                String o = a.getString(i);
-                arrayList.add(legacy_coin_deserialize(o));
-            }
-
-            return arrayList;
-        }
-        catch(Exception e) {
-            ThrowableUtil.processThrowable(e);
-            throw new IllegalStateException(e);
-        }
     }
 
     @Override

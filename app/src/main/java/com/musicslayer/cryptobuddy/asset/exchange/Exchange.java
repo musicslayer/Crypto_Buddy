@@ -7,19 +7,15 @@ import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.FileUtil;
 import com.musicslayer.cryptobuddy.util.ReflectUtil;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract public class Exchange implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
+abstract public class Exchange implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(getKey());
@@ -107,27 +103,6 @@ abstract public class Exchange implements LegacySerialization.SerializableToJSON
 
     public static void sortAscendingByType(ArrayList<Exchange> exchangeArrayList) {
         Collections.sort(exchangeArrayList, (a, b) -> compare(a, b));
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-                .serialize("key", getKey(), String.class)
-                .toStringOrNull();
-    }
-
-    public static Exchange legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String key = o.deserialize("key", String.class);
-        return Exchange.getExchangeFromKey(key);
     }
 
     @Override

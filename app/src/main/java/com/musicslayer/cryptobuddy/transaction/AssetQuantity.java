@@ -7,16 +7,12 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.UnknownCoin;
 import com.musicslayer.cryptobuddy.asset.crypto.token.UnknownToken;
 import com.musicslayer.cryptobuddy.asset.fiat.Fiat;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AssetQuantity implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+public class AssetQuantity implements DataBridge.SerializableToJSON {
     public AssetAmount assetAmount;
     public Asset asset;
 
@@ -78,29 +74,6 @@ public class AssetQuantity implements LegacySerialization.SerializableToJSON, Le
 
     public static void sortAscendingByType(ArrayList<AssetQuantity> assetQuantityArrayList) {
         Collections.sort(assetQuantityArrayList, (a, b) -> compare(a, b));
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("assetAmount", assetAmount, AssetAmount.class)
-            .reference("asset", asset, Asset.class)
-            .toStringOrNull();
-    }
-
-    public static AssetQuantity legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        AssetAmount assetAmount = o.deserialize("assetAmount", AssetAmount.class);
-        Asset asset = o.dereference("asset", Asset.class);
-        return new AssetQuantity(assetAmount, asset);
     }
 
     @Override

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
 import com.musicslayer.cryptobuddy.util.SharedPreferencesUtil;
 
@@ -122,22 +121,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements DataBri
 
             // Portfolios have to be loaded and then saved again.
             String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
-            //editor.putString("address_portfolio" + i, DataBridge.cycleSerialization(serialString, AddressPortfolioObj.class));
-
-            // REMOVE
-            // For now, do this in two different steps.
-            AddressPortfolioObj obj;
-            try {
-                // Deserialize the new way.
-                obj = DataBridge.deserialize(serialString, AddressPortfolioObj.class);
-            }
-            catch(Exception ignored) {
-                // Deserialize the legacy way
-                obj = LegacySerialization.deserialize(serialString, AddressPortfolioObj.class);
-            }
-
-            // Always serialize the new way.
-            editor.putString("address_portfolio" + i, DataBridge.serialize(obj, AddressPortfolioObj.class));
+            editor.putString("address_portfolio" + i, DataBridge.cycleSerialization(serialString, AddressPortfolioObj.class));
         }
 
         editor.apply();
@@ -152,21 +136,7 @@ public class AddressPortfolio extends PersistentUserDataStore implements DataBri
 
         for(int i = 0; i < size; i++) {
             String name;
-            if(sharedPreferences.contains("address_portfolio_names" + i)) {
-                name = sharedPreferences.getString("address_portfolio_names" + i, DEFAULT);
-            }
-            else {
-                // Older installations won't have the name saved.
-                // REMOVE
-                String serialString = sharedPreferences.getString("address_portfolio" + i, DEFAULT);
-                AddressPortfolioObj addressPortfolioObj = DataBridge.deserialize(serialString, AddressPortfolioObj.class);
-                name = addressPortfolioObj.name;
-
-                // Save the name now so this never has to be done again.
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("address_portfolio_names" + i, name);
-                editor.apply();
-            }
+            name = sharedPreferences.getString("address_portfolio_names" + i, DEFAULT);
             settings_address_portfolio_names.add(name);
         }
     }

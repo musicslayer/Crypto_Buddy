@@ -3,15 +3,11 @@ package com.musicslayer.cryptobuddy.transaction;
 import androidx.annotation.NonNull;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Action implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+public class Action implements DataBridge.SerializableToJSON {
     final public static ArrayList<String> actions;
     static {
         actions = new ArrayList<>();
@@ -116,27 +112,6 @@ public class Action implements LegacySerialization.SerializableToJSON, LegacySer
         // Null is always smaller than a real action.
         if(isValidA & isValidB) { return a.compare(b); }
         else { return Boolean.compare(isValidA, isValidB); }
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("actionString", actionString, String.class)
-            .toStringOrNull();
-    }
-
-    public static Action legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String actionString = o.deserialize("actionString", String.class);
-        return new Action(actionString);
     }
 
     @Override

@@ -9,16 +9,12 @@ import com.musicslayer.cryptobuddy.asset.crypto.coin.Coin;
 import com.musicslayer.cryptobuddy.asset.network.Network;
 import com.musicslayer.cryptobuddy.asset.tokenmanager.TokenManager;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.settings.setting.NetworksSetting;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CryptoAddress implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON, Parcelable {
+public class CryptoAddress implements DataBridge.SerializableToJSON, Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(address);
@@ -159,31 +155,6 @@ public class CryptoAddress implements LegacySerialization.SerializableToJSON, Le
         }
 
         return cryptoAddressArrayList;
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("address", address, String.class)
-            .serialize("network", network, Network.class)
-            .serialize("includeTokens", includeTokens, Boolean.class)
-            .toStringOrNull();
-    }
-
-    public static CryptoAddress legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        String address = o.deserialize("address", String.class);
-        Network network = o.deserialize("network", Network.class);
-        boolean includeTokens = o.deserialize("includeTokens", Boolean.class);
-        return new CryptoAddress(address, network, includeTokens);
     }
 
     @Override

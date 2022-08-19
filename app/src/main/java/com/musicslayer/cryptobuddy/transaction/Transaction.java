@@ -2,12 +2,8 @@ package com.musicslayer.cryptobuddy.transaction;
 
 import com.musicslayer.cryptobuddy.asset.Asset;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
-import com.musicslayer.cryptobuddy.data.bridge.LegacyDataBridge;
 import com.musicslayer.cryptobuddy.filter.Filter;
-import com.musicslayer.cryptobuddy.data.bridge.LegacySerialization;
 import com.musicslayer.cryptobuddy.util.HashMapUtil;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -16,7 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class Transaction implements LegacySerialization.SerializableToJSON, LegacySerialization.Versionable, DataBridge.SerializableToJSON {
+public class Transaction implements DataBridge.SerializableToJSON {
     public Action action;
     public AssetQuantity actionedAssetQuantity;
     public AssetQuantity otherAssetQuantity;
@@ -281,35 +277,6 @@ public class Transaction implements LegacySerialization.SerializableToJSON, Lega
 
         AssetAmount newValue = oldValue.subtract(assetQuantity.assetAmount.multiply(new AssetAmount(sendTaxMultiplier.toPlainString())));
         HashMapUtil.putValueInMap(map, assetQuantity.asset, newValue);
-    }
-
-    public static String legacy_serializationVersion() {
-        return "1";
-    }
-
-    public static String legacy_serializationType(String version) {
-        return "!OBJECT!";
-    }
-
-    @Override
-    public String legacy_serializeToJSON() throws JSONException {
-        return new LegacyDataBridge.JSONObjectDataBridge()
-            .serialize("action", action, Action.class)
-            .serialize("actionedAssetQuantity", actionedAssetQuantity, AssetQuantity.class)
-            .serialize("otherAssetQuantity", otherAssetQuantity, AssetQuantity.class)
-            .serialize("timestamp", timestamp, Timestamp.class)
-            .serialize("info", info, String.class)
-            .toStringOrNull();
-    }
-
-    public static Transaction legacy_deserializeFromJSON(String s, String version) throws JSONException {
-        LegacyDataBridge.JSONObjectDataBridge o = new LegacyDataBridge.JSONObjectDataBridge(s);
-        Action action = o.deserialize("action", Action.class);
-        AssetQuantity actionedAssetQuantity = o.deserialize("actionedAssetQuantity", AssetQuantity.class);
-        AssetQuantity otherAssetQuantity = o.deserialize("otherAssetQuantity", AssetQuantity.class);
-        Timestamp timestamp = o.deserialize("timestamp", Timestamp.class);
-        String info = o.deserialize("info", String.class);
-        return new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
     }
 
     @Override

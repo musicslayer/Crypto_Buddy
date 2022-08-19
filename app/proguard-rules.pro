@@ -29,26 +29,8 @@
 -keepclassmembers class * {
     public static *** dereferenceFromJSON(...);
 }
--keepclassmembers class * {
-    public static *** legacy_dereferenceFromJSON(...);
-}
--keepclassmembers class * {
-    public static *** legacy_referentiationType(...);
-}
--keepclassmembers class * {
-    public static *** legacy_referentiationVersion(...);
-}
 
 # Serialization
 -keepclassmembers class * {
     public static *** deserializeFromJSON(...);
-}
--keepclassmembers class * {
-    public static *** legacy_deserializeFromJSON(...);
-}
--keepclassmembers class * {
-    public static *** legacy_serializationType(...);
-}
--keepclassmembers class * {
-    public static *** legacy_serializationVersion(...);
 }
