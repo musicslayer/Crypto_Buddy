@@ -61,7 +61,6 @@ android {
     }
 
     buildTypes {
-/*
         // TEST
         debug {
         }
@@ -70,8 +69,7 @@ android {
             debuggable true
         }
 
-
- */
+        /*
 
 
         // REAL
@@ -89,6 +87,8 @@ android {
             }
         }
 
+
+         */
 
 
     }
