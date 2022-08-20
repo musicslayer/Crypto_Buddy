@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.musicslayer.cryptobuddy.R;
+import com.musicslayer.cryptobuddy.activity.TokenManagerActivity;
 import com.musicslayer.cryptobuddy.api.address.AddressData;
 import com.musicslayer.cryptobuddy.api.address.CryptoAddress;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
@@ -65,6 +66,13 @@ public class AddressScannerDialog extends BaseDialog {
                 // If any new tokens are found, save them here.
                 AddressData.getAllData(cryptoAddress);
                 PersistentAppDataStore.getInstance(TokenManagerList.class).saveAllData();
+            }
+        });
+        scanProgressDialogFragment.setOnDismissListener(new CrashDialogInterface.CrashOnDismissListener(activity) {
+            @Override
+            public void onDismissImpl(DialogInterface dialog) {
+                // Currently, we only use this with TokenManagerActivity.
+                ((TokenManagerActivity)activity).updateLayout();
             }
         });
         scanProgressDialogFragment.restoreListeners(activity, "progress_scan");
