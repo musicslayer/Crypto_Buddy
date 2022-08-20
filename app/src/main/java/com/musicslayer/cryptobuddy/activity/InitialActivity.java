@@ -52,7 +52,7 @@ public class InitialActivity extends BaseActivity {
     }
 
     public void initialize() {
-        // Set time zone base date.
+        // Store the current time.
         TimeZoneManager.nowInstant = new Date().toInstant();
 
         // Initialize all the local app objects.

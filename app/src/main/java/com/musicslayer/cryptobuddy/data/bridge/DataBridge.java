@@ -562,7 +562,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -581,7 +581,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -607,7 +607,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -632,7 +632,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -663,7 +663,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -680,7 +680,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -698,7 +698,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -724,7 +724,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
                 }
             }
 

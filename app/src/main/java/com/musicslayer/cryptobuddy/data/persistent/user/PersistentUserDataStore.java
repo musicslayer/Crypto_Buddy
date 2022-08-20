@@ -160,23 +160,13 @@ abstract public class PersistentUserDataStore {
 
     public static void saveAllStoredData() {
         for(PersistentUserDataStore persistentUserDataStore : persistent_user_data_stores) {
-            try {
-                persistentUserDataStore.saveAllData();
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-            }
+            persistentUserDataStore.saveAllData();
         }
     }
 
     public static void loadAllStoredData() {
         for(PersistentUserDataStore persistentUserDataStore : persistent_user_data_stores) {
-            try {
-                persistentUserDataStore.loadAllData();
-            }
-            catch(Exception e) {
-                ThrowableUtil.processThrowable(e);
-            }
+            persistentUserDataStore.loadAllData();
         }
     }
 
