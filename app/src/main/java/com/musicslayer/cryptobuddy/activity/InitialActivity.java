@@ -30,7 +30,6 @@ import java.util.Date;
 //  User accounts?
 //  Direct Blockchain API calls?
 //  Mainnet vs. Testnet tokens.
-//  Scan Tokens Feature (like in reflections, but available outside).
 
 // This Activity class only exists for initialization code, not to be seen by the user.
 // Unlike App.java, this class can show CrashReporterDialog if there is a problem.

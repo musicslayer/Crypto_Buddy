@@ -67,8 +67,7 @@
             <TableRow
                 android:id="@+id/token_manager_tableRow1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="20dp">
+                android:layout_height="match_parent">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/token_manager_deleteAllTokensButton"
@@ -83,6 +82,30 @@
                     android:layout_height="wrap_content"
                     android:text="Download\nAll Tokens"
                     app:drawableLeftCompat="@drawable/ic_baseline_download_24" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/token_manager_tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="20dp">
+
+                <!-- This button is just a placeholder to take up space. -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/token_manager_dummyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dummy\nDummy"
+                    app:drawableLeftCompat="@drawable/ic_baseline_radar_24"
+                    android:visibility="invisible"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/token_manager_scanForTokensButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan\nFor Tokens"
+                    app:drawableLeftCompat="@drawable/ic_baseline_radar_24" />
 
             </TableRow>
 

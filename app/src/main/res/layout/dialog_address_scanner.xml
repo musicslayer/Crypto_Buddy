@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/address_scanner_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/address_scanner_dialog_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Address Scanner" />
+
+    <TextView
+        android:id="@+id/address_scanner_dialog_addressInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 1 - Choose address\n(Tokens will always be included)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_scanner_dialog_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/address_scanner_dialog_addressButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Address"
+        app:drawableLeftCompat="@drawable/ic_baseline_forward_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_scanner_dialog_addressInstructionTextView" />
+
+    <TextView
+        android:id="@+id/address_scanner_dialog_addressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_scanner_dialog_addressButton" />
+
+    <TextView
+        android:id="@+id/address_scanner_dialog_scanInstructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Step 2 - Scan address for new tokens"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_scanner_dialog_addressTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/address_scanner_dialog_scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan for Tokens"
+        app:drawableLeftCompat="@drawable/ic_baseline_radar_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_scanner_dialog_scanInstructionTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

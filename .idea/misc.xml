@@ -56,7 +56,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_main_OLD.xml" value="0.2453125" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_settings.xml" value="0.3435185185185185" />
-        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_token_manager.xml" value="0.25" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_token_manager.xml" value="0.33" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_transaction_explorer.xml" value="0.5" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_transaction_portfolio_explorer.xml" value="0.33" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/activity_transaction_portfolio_viewer.xml" value="0.22291666666666668" />
@@ -70,6 +70,7 @@
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_problem.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_problem_info.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_qr_code.xml" value="0.28177083333333336" />
+        <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_address_scanner.xml" value="0.33" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize.xml" value="0.2972222222222222" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_exchange.xml" value="0.37083333333333335" />
         <entry key="..\:/MIKE/PROGRAMING/Android/Programs/CryptoBuddy/app/src/main/res/layout/dialog_authorize_exchange_web_view.xml" value="0.18611111111111112" />

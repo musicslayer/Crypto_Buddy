@@ -18,6 +18,7 @@ import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.crash.CrashView;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.data.persistent.app.PersistentAppDataStore;
+import com.musicslayer.cryptobuddy.dialog.AddressScannerDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ConfirmDeleteTokensDialog;
 import com.musicslayer.cryptobuddy.dialog.DeleteTokensDialog;
@@ -236,13 +237,21 @@ public class TokenManagerActivity extends BaseActivity {
                 }
             }
         });
-        downloadTokensDialogFragment.restoreListeners(this, "download");
+        downloadTokensDialogFragment.restoreListeners(this, "download_all_tokens");
 
         Button B_DOWNLOAD = findViewById(R.id.token_manager_downloadAllTokensButton);
         B_DOWNLOAD.setOnClickListener(new CrashView.CrashOnClickListener(this) {
             @Override
             public void onClickImpl(View view) {
-                downloadTokensDialogFragment.show(TokenManagerActivity.this, "download");
+                downloadTokensDialogFragment.show(TokenManagerActivity.this, "download_all_tokens");
+            }
+        });
+
+        Button B_SCAN = findViewById(R.id.token_manager_scanForTokensButton);
+        B_SCAN.setOnClickListener(new CrashView.CrashOnClickListener(this) {
+            @Override
+            public void onClickImpl(View view) {
+                BaseDialogFragment.newInstance(AddressScannerDialog.class).show(TokenManagerActivity.this, "scan_for_tokens");
             }
         });
 
@@ -252,9 +261,11 @@ public class TokenManagerActivity extends BaseActivity {
     public void updateLayout() {
         TableLayout tableLayout = findViewById(R.id.token_manager_tableLayout);
         TableRow firstRow = findViewById(R.id.token_manager_tableRow1);
+        TableRow secondRow = findViewById(R.id.token_manager_tableRow2);
 
         tableLayout.removeAllViews();
         tableLayout.addView(firstRow);
+        tableLayout.addView(secondRow);
 
         ArrayList<String> tokenTypes = TokenManager.tokenManagers_token_types;
         Collections.sort(tokenTypes, Comparator.comparing(String::toLowerCase));
