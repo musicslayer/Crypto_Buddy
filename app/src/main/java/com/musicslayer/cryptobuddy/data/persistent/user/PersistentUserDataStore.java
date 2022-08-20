@@ -55,7 +55,7 @@ abstract public class PersistentUserDataStore {
         }
 
         // Do not use null or an Unknown object here. The input class must exist.
-        throw new IllegalStateException();
+        throw new IllegalStateException("class = " + clazz.getSimpleName());
     }
 
     public static ArrayList<String> getAllVisibleDataTypes() {

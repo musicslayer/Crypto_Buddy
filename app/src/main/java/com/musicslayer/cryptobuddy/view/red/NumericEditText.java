@@ -24,7 +24,7 @@ public class NumericEditText extends RedEditText {
             new BigDecimal(this.getTextString());
             return true;
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             return false;
         }
     }

@@ -24,7 +24,7 @@ public class Int2EditText extends RedEditText {
             BigInteger value = new BigInteger(this.getTextString());
             return value.compareTo(BigInteger.ZERO) >= 0 && value.compareTo(BigInteger.valueOf(99)) <= 0;
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             return false;
         }
     }

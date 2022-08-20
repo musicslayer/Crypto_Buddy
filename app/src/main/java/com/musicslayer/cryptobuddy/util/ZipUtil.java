@@ -29,7 +29,7 @@ public class ZipUtil {
             StreamUtil.safeFlushAndClose(fin);
             StreamUtil.safeFlushAndClose(zin);
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             StreamUtil.safeFlushAndClose(fin);
             StreamUtil.safeFlushAndClose(zin);
         }

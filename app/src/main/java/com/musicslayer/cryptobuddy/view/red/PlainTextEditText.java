@@ -21,7 +21,7 @@ public class PlainTextEditText extends RedEditText {
         try {
             return !this.getTextString().isEmpty();
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             return false;
         }
     }

@@ -36,7 +36,7 @@ public class FileEditText extends RedEditText {
             String text = this.getTextString();
             return !text.isEmpty() && isValidFile(this.getTextString());
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             return false;
         }
     }

@@ -206,7 +206,7 @@ public class WebUtil {
                 StreamUtil.safeFlushAndClose(responseStream);
                 data[0] = responseString;
             }
-            catch(IOException e) {
+            catch(IOException ignored) {
                 StreamUtil.safeFlushAndClose(responseStream);
                 data[0] = null;
             }
@@ -218,7 +218,7 @@ public class WebUtil {
         try {
             thread.join(TimeoutSetting.value);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
             data[0] = null;
         }
 

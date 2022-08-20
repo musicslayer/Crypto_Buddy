@@ -36,6 +36,7 @@ import com.musicslayer.cryptobuddy.util.MessageUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -217,7 +218,7 @@ public class DataManagementActivity extends BaseActivity {
                         fileText = universalFile.read();
                     }
                     else {
-                        throw new IllegalStateException();
+                        throw new IOException();
                     }
 
                     JSONWithNull.JSONObjectWithNull o = new JSONWithNull.JSONObjectWithNull(fileText);

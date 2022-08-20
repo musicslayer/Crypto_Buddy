@@ -85,7 +85,7 @@ public class App extends MultiDexApplication {
             this.getCacheDir();
         }
         catch(Exception e) {
-            // Try to proceed on in case the method is removed in a later Android version.
+            // Try to proceed on in case something above is no longer working in a later Android version.
             ThrowableUtil.processThrowable(e);
         }
     }

@@ -32,7 +32,7 @@ public class PageEditText extends RedEditText {
             int value = new BigInteger(this.getTextString()).intValue();
             return value >= pageMin && value <= pageMax;
         }
-        catch(Exception e) {
+        catch(Exception ignored) {
             return false;
         }
     }
