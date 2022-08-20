@@ -32,6 +32,9 @@ abstract public class BaseActivity extends CrashActivity {
     abstract public int getAdLayoutViewID();
     abstract public int getProgressViewID();
 
+    // An optional method that updates the activity's layout. This can be called by dialogs started from the activity.
+    public void updateLayout() {}
+
     public static BaseActivity getCurrentActivity() {
         return activity;
     }
