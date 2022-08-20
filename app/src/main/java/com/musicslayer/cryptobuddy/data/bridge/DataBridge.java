@@ -562,7 +562,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -581,7 +581,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -607,7 +607,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -632,7 +632,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -663,7 +663,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -680,7 +680,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -698,7 +698,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -724,7 +724,7 @@ public class DataBridge {
                 String nextKey = getName();
                 if(!key.equals(nextKey)) {
                     // Expected key was not found.
-                    throw new IllegalStateException("key = " + key + " nextKey = " + nextKey);
+                    throw new IllegalStateException("class = " + clazzT.getSimpleName() + " key = " + key + " nextKey = " + nextKey);
                 }
             }
 
@@ -786,7 +786,7 @@ public class DataBridge {
         }
         else {
             // Anything else is unsupported.
-            throw new IllegalStateException();
+            throw new IllegalStateException("class = " + obj.getClass().getSimpleName() + " obj = " + obj);
         }
     }
 
@@ -825,7 +825,7 @@ public class DataBridge {
         }
         else {
             // Anything else is unsupported.
-            throw new IllegalStateException();
+            throw new IllegalStateException("class = " + clazz.getSimpleName());
         }
     }
 
@@ -837,7 +837,7 @@ public class DataBridge {
         }
         else {
             // Anything else is unsupported.
-            throw new IllegalStateException();
+            throw new IllegalStateException("class = " + obj.getClass().getSimpleName() + " obj = " + obj);
         }
     }
 
@@ -849,7 +849,7 @@ public class DataBridge {
         }
         else {
             // Anything else is unsupported.
-            throw new IllegalStateException();
+            throw new IllegalStateException("class = " + obj.getClass().getSimpleName() + " obj = " + obj);
         }
     }
 
@@ -861,7 +861,7 @@ public class DataBridge {
         }
         else {
             // Anything else is unsupported.
-            throw new IllegalStateException();
+            throw new IllegalStateException("class = " + clazz.getSimpleName());
         }
     }
 
