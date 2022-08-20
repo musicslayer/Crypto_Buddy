@@ -61,7 +61,7 @@ public class AddressPortfolioObj implements DataBridge.SerializableToJSON {
             addressPortfolioObj.cryptoAddressArrayList = cryptoAddressArrayList;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return addressPortfolioObj;

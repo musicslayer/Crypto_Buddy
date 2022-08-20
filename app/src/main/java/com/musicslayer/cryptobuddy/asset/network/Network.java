@@ -152,7 +152,7 @@ abstract public class Network implements DataBridge.SerializableToJSON, Parcelab
             network = Network.getNetworkFromKey(key);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return network;

@@ -182,7 +182,7 @@ public class ExchangePortfolio extends PersistentUserDataStore implements DataBr
 
         String version = o.deserialize("!V!", String.class);
         if(!"1".equals(version)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());

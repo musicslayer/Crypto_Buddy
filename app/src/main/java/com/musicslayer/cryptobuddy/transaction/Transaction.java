@@ -308,7 +308,7 @@ public class Transaction implements DataBridge.SerializableToJSON {
             transaction = new Transaction(action, actionedAssetQuantity, otherAssetQuantity, timestamp, info);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return transaction;

@@ -432,7 +432,7 @@ abstract public class FiatManager implements DataBridge.SerializableToJSON {
             fiatManager.custom_fiats = custom_fiats;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return fiatManager;

@@ -41,7 +41,7 @@ abstract public class API implements DataBridge.SerializableToJSON {
             api = API.getAPI(apiType, key);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return api;

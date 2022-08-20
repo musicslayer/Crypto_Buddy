@@ -94,7 +94,7 @@ public class SettingList extends PersistentUserDataStore implements DataBridge.E
 
         String version = o.deserialize("!V!", String.class);
         if(!"1".equals(version)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         // Only import settings that currently exist.

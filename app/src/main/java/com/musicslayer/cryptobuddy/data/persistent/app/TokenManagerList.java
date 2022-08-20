@@ -101,7 +101,7 @@ public class TokenManagerList extends PersistentAppDataStore implements DataBrid
 
         String version = o.deserialize("!V!", String.class);
         if(!"1".equals(version)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         // Only import token managers that currently exist.

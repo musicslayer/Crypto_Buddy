@@ -110,7 +110,7 @@ public class CryptoExchange implements DataBridge.SerializableToJSON, Parcelable
             cryptoExchange = new CryptoExchange(exchange, exchangeAPI);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return cryptoExchange;

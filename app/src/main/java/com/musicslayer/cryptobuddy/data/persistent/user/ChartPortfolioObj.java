@@ -60,7 +60,7 @@ public class ChartPortfolioObj implements DataBridge.SerializableToJSON {
             chartPortfolioObj.cryptoChartArrayList = cryptoChartArrayList;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return chartPortfolioObj;

@@ -81,7 +81,7 @@ public class CryptoChart implements DataBridge.SerializableToJSON, Parcelable {
             cryptoChart = new CryptoChart(crypto, fiat);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return cryptoChart;

@@ -76,7 +76,7 @@ public class CryptoPrice implements DataBridge.SerializableToJSON, Parcelable {
             cryptoPrice = new CryptoPrice(assetArrayList, fiat);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return cryptoPrice;

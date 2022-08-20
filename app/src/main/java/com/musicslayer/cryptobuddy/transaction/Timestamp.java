@@ -63,7 +63,7 @@ public class Timestamp implements DataBridge.SerializableToJSON {
             timestamp = new Timestamp(date);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return timestamp;

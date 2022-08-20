@@ -51,7 +51,7 @@ public class TransactionPortfolioObj implements DataBridge.SerializableToJSON {
             transactionPortfolioObj.transactionArrayList = transactionArrayList;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return transactionPortfolioObj;

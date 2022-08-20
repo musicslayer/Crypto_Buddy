@@ -99,7 +99,7 @@ public class AssetQuantity implements DataBridge.SerializableToJSON {
             assetQuantity = new AssetQuantity(assetAmount, asset);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return assetQuantity;

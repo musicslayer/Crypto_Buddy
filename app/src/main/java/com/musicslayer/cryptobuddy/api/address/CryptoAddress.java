@@ -182,7 +182,7 @@ public class CryptoAddress implements DataBridge.SerializableToJSON, Parcelable 
             cryptoAddress = new CryptoAddress(address, network, includeTokens);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return cryptoAddress;

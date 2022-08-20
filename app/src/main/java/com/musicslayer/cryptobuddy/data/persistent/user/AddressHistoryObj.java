@@ -46,7 +46,7 @@ public class AddressHistoryObj implements DataBridge.SerializableToJSON {
             addressHistoryObj = new AddressHistoryObj(cryptoAddress);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return addressHistoryObj;

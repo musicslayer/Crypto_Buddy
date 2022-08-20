@@ -230,7 +230,7 @@ public class AssetAmount implements DataBridge.SerializableToJSON {
             assetAmount.isInfinity = isInfinity;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return assetAmount;

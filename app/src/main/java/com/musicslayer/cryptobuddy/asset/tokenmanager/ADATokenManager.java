@@ -46,7 +46,7 @@ public class ADATokenManager extends TokenManager {
             ZipUtil.unzip(file, new ZipUtil.UnzipListener() {
                 @Override
                 public void onUnzip(ZipEntry zipEntry, ZipInputStream zin) throws IOException {
-                    // If we have already cancelled, throw exception to stop unzip process.
+                    // If we have already cancelled, throw an exception just to stop the unzip process.
                     if(ProgressDialogFragment.isCancelled()) {
                         throw new IOException();
                     }
@@ -65,6 +65,7 @@ public class ADATokenManager extends TokenManager {
                             tokenJSON.remove("logo");
                         }
                         catch(Exception e) {
+                            // Something went wrong. Just throw this exception because we already handle it.
                             throw new IOException(e);
                         }
 

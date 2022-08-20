@@ -487,7 +487,7 @@ abstract public class TokenManager implements DataBridge.SerializableToJSON {
             tokenManager.custom_tokens = custom_tokens;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return tokenManager;

@@ -181,7 +181,7 @@ public class TransactionPortfolio extends PersistentUserDataStore implements Dat
 
         String version = o.deserialize("!V!", String.class);
         if(!"1".equals(version)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         SharedPreferences sharedPreferences = SharedPreferencesUtil.getSharedPreferences(getSharedPreferencesKey());

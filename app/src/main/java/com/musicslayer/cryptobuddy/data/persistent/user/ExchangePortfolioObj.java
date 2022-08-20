@@ -60,7 +60,7 @@ public class ExchangePortfolioObj implements DataBridge.SerializableToJSON {
             exchangePortfolioObj.cryptoExchangeArrayList = cryptoExchangeArrayList;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return exchangePortfolioObj;

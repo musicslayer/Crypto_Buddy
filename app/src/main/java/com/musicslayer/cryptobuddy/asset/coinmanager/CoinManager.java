@@ -432,7 +432,7 @@ abstract public class CoinManager implements DataBridge.SerializableToJSON  {
             coinManager.custom_coins = custom_coins;
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return coinManager;

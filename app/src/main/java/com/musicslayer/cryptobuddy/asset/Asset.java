@@ -162,7 +162,7 @@ abstract public class Asset implements DataBridge.SerializableToJSON, DataBridge
             asset = createAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return asset;
@@ -204,7 +204,7 @@ abstract public class Asset implements DataBridge.SerializableToJSON, DataBridge
             asset = lookupAsset(assetKind, key, name, displayName, scale, assetType, additionalInfo);
         }
         else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("version = " + version);
         }
 
         return asset;
