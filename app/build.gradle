@@ -36,8 +36,8 @@ android {
         applicationId "com.musicslayer.cryptobuddy"
         minSdkVersion 16 // Minimum needed for some libraries we depend on.
         targetSdkVersion 32
-        versionCode 16
-        versionName "1.7"
+        versionCode 17
+        versionName "1.8"
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -61,7 +61,7 @@ android {
     }
 
     buildTypes {
-
+/*
         // TEST
         debug {
         }
@@ -71,7 +71,9 @@ android {
         }
 
 
-/*
+ */
+
+
         // REAL
         debug {
             minifyEnabled true
@@ -86,8 +88,8 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
-        
- */
+
+
 
     }
     compileOptions {
