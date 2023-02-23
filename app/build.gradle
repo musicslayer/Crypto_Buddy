@@ -62,17 +62,15 @@ android {
 
     buildTypes {
         // TEST
-        /*
         debug {
         }
         release {
             signingConfig signingConfigs.release
             debuggable true
         }
-*/
 
 
-
+/*
         // REAL
         debug {
             minifyEnabled true
@@ -87,7 +85,7 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
-
+*/
 
 
 
