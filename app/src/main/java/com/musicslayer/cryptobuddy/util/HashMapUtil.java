@@ -26,6 +26,8 @@ public class HashMapUtil {
         for(T key : new ArrayList<>(map.keySet())) {
             if(key.equals(desiredKey)) {
                 map.remove(key);
+
+                // TODO Can we "break" here?
             }
         }
     }

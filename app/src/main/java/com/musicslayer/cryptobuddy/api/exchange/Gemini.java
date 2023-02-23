@@ -27,7 +27,7 @@ public class Gemini extends ExchangeAPI {
         String tokenURLBase = "https://exchange.gemini.com/auth/token";
         String client_id = BuildConfig.gemini_client_id;
         String client_secret = BuildConfig.gemini_client_secret;
-        String redirect_uri = "https://musicslayer.github.io/";
+        String redirect_uri = "https://musicslayer.github.io/Crypto_Buddy_Hosted/";
         String response_type = "code";
         String grant_type = "authorization_code";
         String[] scopes = new String[] {"account:read", "addresses:read", "balances:read", "history:read"};
