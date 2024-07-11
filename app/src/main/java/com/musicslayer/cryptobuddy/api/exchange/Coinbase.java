@@ -33,8 +33,8 @@ public class Coinbase extends ExchangeAPI {
     }
 
     private AuthUtil.OAuthInfo getOAuthInfo() {
-        String authURLBase = "https://www.coinbase.com/oauth/authorize/";
-        String tokenURLBase = "https://api.coinbase.com/oauth/token/";
+        String authURLBase = "https://login.coinbase.com/oauth2/auth";
+        String tokenURLBase = "https://login.coinbase.com/oauth2/token";
         String client_id = BuildConfig.coinbase_client_id;
         String client_secret = BuildConfig.coinbase_client_secret;
         String redirect_uri = "https://musicslayer.github.io/Crypto_Buddy_Hosted/";
@@ -186,7 +186,7 @@ public class Coinbase extends ExchangeAPI {
         return transactionArrayList;
     }
 
-    // Return null for error/no data, DONE to stop and any other non-null string to keep going.
+    // Return ERROR for error/no data, DONE to stop and any other string to keep going.
     private String processAllTransactions(String url, ArrayList<Transaction> transactionArrayList) {
         String addressDataJSON = getWithToken(url);
         if(addressDataJSON == null) {
@@ -236,7 +236,7 @@ public class Coinbase extends ExchangeAPI {
                     transactionUrl = processTransaction(transactionUrl, transactionArrayList, asset);
 
                     if(ERROR.equals(transactionUrl)) {
-                        return null;
+                        return ERROR;
                     }
                     else if(DONE.equals(transactionUrl)) {
                         break;
@@ -271,11 +271,6 @@ public class Coinbase extends ExchangeAPI {
             for(int i = 0; i < transactions.length(); i++) {
                 JSONObject transaction = transactions.getJSONObject(i);
 
-                JSONObject details = transaction.getJSONObject("details");
-                String infoTitle = details.getString("title");
-                String infoSubtitle = details.getString("subtitle");
-                String info = infoTitle + " (" + infoSubtitle + ")";
-
                 String block_time = transaction.getString("created_at");
                 Date block_time_date = DateTimeUtil.parseStandard(block_time);
 
@@ -295,7 +290,7 @@ public class Coinbase extends ExchangeAPI {
                     continue;
                 }
 
-                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(value.toPlainString(), asset), null, new Timestamp(block_time_date),info));
+                transactionArrayList.add(new Transaction(new Action(action), new AssetQuantity(value.toPlainString(), asset), null, new Timestamp(block_time_date), null));
                 if(transactionArrayList.size() == getMaxTransactions()) { return DONE; }
             }
 

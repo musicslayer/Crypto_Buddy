@@ -5,14 +5,12 @@ import android.content.DialogInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.crash.CrashDialogInterface;
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
 import com.musicslayer.cryptobuddy.dialog.OAuthBrowserDialog;
 import com.musicslayer.cryptobuddy.dialog.BaseDialogFragment;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialog;
 import com.musicslayer.cryptobuddy.dialog.ProgressDialogFragment;
-import com.musicslayer.cryptobuddy.encryption.Encryption;
 
 import org.json.JSONObject;
 
@@ -23,7 +21,7 @@ import java.util.Date;
 // Handles common authentication cases.
 
 public class AuthUtil {
-    public static byte[] code_e; // Only encrypted code should be stored.
+    public static String code;
 
     public static void authorizeOAuthBrowser(Context context, OAuthInfo oAuthInfo, OAuthAuthorizationListener L) {
         restoreListenersBrowser(context, oAuthInfo, L).show(context, "oauth_browser");
@@ -39,19 +37,16 @@ public class AuthUtil {
                 // Use the code to get access token that we can use to request user info.
                 OAuthToken oAuthToken = null;
 
-                String body = "{" +
-                        "\"grant_type\": \"" + oAuthInfo.grant_type + "\"," +
-                        "\"code\": \"" + Encryption.decrypt(code_e, BuildConfig.key_oauth_code) + "\"," +
-                        "\"client_id\": \"" + oAuthInfo.client_id + "\"," +
-                        "\"client_secret\": \"" + oAuthInfo.client_secret + "\"," +
-                        "\"redirect_uri\": \"" + oAuthInfo.redirect_uri + "\"" +
-                        "}";
+                String body = "grant_type=authorization_code&code=" + code +
+                        "&client_id=" + oAuthInfo.client_id +
+                        "&client_secret=" + oAuthInfo.client_secret +
+                        "&redirect_uri=" + oAuthInfo.redirect_uri;
 
-                String authResponse = WebUtil.post(oAuthInfo.tokenURLBase, body);
+                String authResponse = WebUtil.postCurl(oAuthInfo.tokenURLBase, body);
                 if(authResponse != null) {
                     try {
                         JSONObject authResponseJSON = new JSONObject(authResponse);
-                        byte[] token_e = Encryption.encrypt(authResponseJSON.getString("access_token"), BuildConfig.key_oauth_token);
+                        String token = authResponseJSON.getString("access_token");
 
                         // These times are all in seconds. Note that some APIs do not return them in the response.
                         BigDecimal created_at;
@@ -77,7 +72,7 @@ public class AuthUtil {
                         BigDecimal expires_at = created_at.add(expires_in);
 
                         long expiryTime = expires_at.longValue();
-                        oAuthToken = new OAuthToken(token_e, expiryTime);
+                        oAuthToken = new OAuthToken(token, expiryTime);
                     }
                     catch(Exception ignored) {
                     }
@@ -109,7 +104,7 @@ public class AuthUtil {
             @Override
             public void onDismissImpl(DialogInterface dialog) {
                 if(((OAuthBrowserDialog)dialog).isComplete) {
-                    code_e = ((OAuthBrowserDialog)dialog).user_CODE_E;
+                    code = ((OAuthBrowserDialog)dialog).user_CODE;
                     progressDialogFragment.show(activity, "progress");
                 }
             }
@@ -184,56 +179,38 @@ public class AuthUtil {
     }
 
     public static class OAuthToken implements DataBridge.SerializableToJSON {
-        private final byte[] token_e; // Only encrypted token should be stored.
+        private String token;
         private final long expiryTime;
 
         @Override
         public void serializeToJSON(DataBridge.Writer o) throws IOException {
             o.beginObject()
-                    .serializeArray("token_e", toObjectArray(token_e), Byte.class)
+                    .serialize("token", token, String.class)
                     .serialize("expiryTime", expiryTime, Long.class)
                     .endObject();
         }
 
         public static OAuthToken deserializeFromJSON(DataBridge.Reader o) throws IOException {
             o.beginObject();
-            byte[] token_e = toPrimitiveArray(o.deserializeArray("token_e", Byte.class));
+            String token = o.deserialize("token", String.class);
             long expiryTime = o.deserialize("expiryTime", Long.class);
             o.endObject();
 
-            return new OAuthToken(token_e, expiryTime);
+            return new OAuthToken(token, expiryTime);
         }
 
-        private static Byte[] toObjectArray(byte[] primtiveArray) {
-            Byte[] objectArray = new Byte[primtiveArray.length];
-            int i = 0;
-            for(byte b : primtiveArray) {
-                objectArray[i++] = b;
-            }
-            return objectArray;
-        }
-
-        private static byte[] toPrimitiveArray(Byte[] objectArray) {
-            byte[] primtiveArray = new byte[objectArray.length];
-            int i = 0;
-            for(Byte b : objectArray) {
-                primtiveArray[i++] = b;
-            }
-            return primtiveArray;
-        }
-
-        private OAuthToken(byte[] token_e, long expiryTime) {
-            this.token_e = token_e;
+        private OAuthToken(String token, long expiryTime) {
+            this.token = token;
             this.expiryTime = expiryTime;
         }
 
         public String getToken() {
-            return Encryption.decrypt(token_e, BuildConfig.key_oauth_token);
+            return token;
         }
 
         public boolean isAuthorized() {
-            // Tokens that are null or expired cannot be used to query data.
-            return token_e != null && isTokenValid();
+            // Tokens that are null, empty, or expired cannot be used to query data.
+            return token != null && !token.isEmpty() && isTokenValid();
         }
 
         public boolean isTokenValid() {
@@ -244,7 +221,6 @@ public class AuthUtil {
         public String getSafeInfo() {
             // Return info that does not include anything that could be insecure.
             return "Token Length = " + (getToken() == null ? "[Null]" : getToken().length()) + "\n" +
-                    "Encrypted Token Length = " + (token_e == null ? "[Null]" : token_e.length) + "\n" +
                     "Expiry Time = " + expiryTime + "\n" +
                     "Is Authorized = " + isAuthorized() + "\n" +
                     "Is Token Valid = " + isTokenValid() + "\n";

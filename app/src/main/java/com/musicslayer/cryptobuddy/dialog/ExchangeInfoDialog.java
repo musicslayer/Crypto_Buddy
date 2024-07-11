@@ -108,7 +108,7 @@ public class ExchangeInfoDialog extends BaseDialog {
                 ExchangeData exchangeData = HashMapUtil.getValueFromMap(exchangeDataMap, cryptoExchange);
                 ArrayList<AssetQuantity> deltaArray = exchangeData.currentBalanceArrayList;
 
-                if(deltaArray.isEmpty()) {
+                if(deltaArray == null || deltaArray.isEmpty()) {
                     ToastUtil.showToast("no_balances_found");
                     return;
                 }

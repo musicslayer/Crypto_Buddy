@@ -156,6 +156,49 @@ public class WebUtil {
         return result;
     }
 
+    public static String postCurl(String urlString, String body) {
+        String result = null;
+
+        for(int r = 0; r < numRetries; r++) {
+            ProgressDialogFragment.checkForInterrupt();
+            rateLimit();
+            result = postCurl_impl(urlString, body);
+            if(result != null) { break; }
+        }
+
+        return result;
+    }
+
+    private static String postCurl_impl(String urlString, String body) {
+        String result = null;
+
+        OutputStream stream = null;
+        HttpURLConnection connection = null;
+
+        try {
+            URL url = new URL(urlString);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            stream = connection.getOutputStream();
+            StreamUtil.writeFromString(stream, body);
+            StreamUtil.safeFlushAndClose(stream);
+
+            result = WebUtil.request(connection);
+
+            safeDisconnect(connection);
+        }
+        catch(Exception e) {
+            ThrowableUtil.processThrowable(e);
+            StreamUtil.safeFlushAndClose(stream);
+            safeDisconnect(connection);
+        }
+
+        return result;
+    }
+
     public static boolean download(String urlString, File file) {
         // Returns whether or not the file was successfully written to.
         boolean result = false;

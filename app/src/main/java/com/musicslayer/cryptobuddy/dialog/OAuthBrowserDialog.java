@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.musicslayer.cryptobuddy.BuildConfig;
 import com.musicslayer.cryptobuddy.R;
 import com.musicslayer.cryptobuddy.activity.CallbackActivity;
 import com.musicslayer.cryptobuddy.decode.Alphanumeric;
-import com.musicslayer.cryptobuddy.encryption.Encryption;
 import com.musicslayer.cryptobuddy.util.AuthUtil;
 import com.musicslayer.cryptobuddy.util.ToastUtil;
 import com.musicslayer.cryptobuddy.util.URLUtil;
@@ -21,7 +19,7 @@ import java.util.HashMap;
 // Dialog that allows user to grant OAuth authorization using a Browser App.
 
 public class OAuthBrowserDialog extends BaseDialog {
-    public byte[] user_CODE_E;
+    public String user_CODE;
 
     String state;
 
@@ -65,7 +63,7 @@ public class OAuthBrowserDialog extends BaseDialog {
                     // Now extract the code and return it.
                     String code = parameters.get("code");
                     if(isValidCode(code)) {
-                        user_CODE_E = Encryption.encrypt(code, BuildConfig.key_oauth_code);
+                        user_CODE = code;
 
                         isComplete = true;
                         dismiss();
@@ -99,9 +97,9 @@ public class OAuthBrowserDialog extends BaseDialog {
     }
 
     private boolean isValidCode(String code) {
-        // Valid codes are alphanumeric and have at least one character.
+        // Valid codes have at least one character.
         try {
-            return code != null && code.length() > 0 && Alphanumeric.isAlphanumeric(code);
+            return code != null && !code.isEmpty();
         }
         catch(Exception ignored) {
             return false;
