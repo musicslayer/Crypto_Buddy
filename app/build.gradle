@@ -35,8 +35,8 @@ android {
         applicationId "com.musicslayer.cryptobuddy"
         minSdkVersion 16 // Minimum needed for some libraries we depend on.
         targetSdkVersion 35
-        versionCode 18
-        versionName "1.9"
+        versionCode 19
+        versionName "1.95"
 
         android.buildFeatures.buildConfig true
         multiDexEnabled true
@@ -55,6 +55,7 @@ android {
 
     buildTypes {
         // TEST
+        /*
         debug {
         }
         release {
@@ -62,12 +63,12 @@ android {
             debuggable true
         }
 
+         */
 
-/*
+
+
         // REAL
         debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
@@ -78,7 +79,6 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
-*/
 
 
 
