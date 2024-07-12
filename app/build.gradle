@@ -111,7 +111,7 @@ dependencies {
     //noinspection GradleDependency
     implementation 'commons-io:commons-io:2.4' // Keep this at 2.4 so we can support older android versions.
     //noinspection GradleDependency
-    implementation 'com.android.billingclient:billing:6.0.0' // Keep this at 6.0.0 so we can support older android versions.
+    implementation 'com.android.billingclient:billing:6.0.1' // Keep this at 6.0.1 so we can support older android versions.
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.kenglxn.QRGen:android:2.6.0'
     implementation 'com.github.stellar:java-stellar-sdk:0.26.0'
