@@ -387,7 +387,7 @@ public class TraditionalChartView extends CrashLinearLayout {
         int width = canvasScreen.getWidth();
         int height = canvasScreen.getHeight();
 
-        // At this point, draw a white background to the screen no matter what.
+        // At this point, draw a background to the screen no matter what.
         Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setColor(AppearanceUtil.getPrimaryColor(getContext()));
         canvasScreen.drawRect(0, 0, width, height, backgroundPaint);

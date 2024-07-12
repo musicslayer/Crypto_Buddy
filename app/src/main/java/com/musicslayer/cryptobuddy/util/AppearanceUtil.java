@@ -7,7 +7,7 @@ import android.util.TypedValue;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.musicslayer.cryptobuddy.R;
+import com.google.android.material.R;
 import com.musicslayer.cryptobuddy.settings.setting.DarkModeSetting;
 import com.musicslayer.cryptobuddy.settings.setting.OrientationSetting;
 

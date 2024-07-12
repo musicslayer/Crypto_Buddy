@@ -40,18 +40,18 @@ public class CoinGecko extends ChartAPI {
             Coin coin = (Coin)crypto;
             String coinString = coin.getCoinGeckoID();
 
-            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05&interval=minutely");
-            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
-            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
+            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05");
+            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=1");
+            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + coinString + "/market_chart?vs_currency=" + priceFiatName + "&days=30");
         }
         else if(crypto instanceof Token) {
             Token token = (Token)crypto;
             String tokenString = token.getCoinGeckoID();
             String blockchainID = token.getCoinGeckoBlockchainID();
 
-            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05&interval=minutely");
-            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=1&interval=hourly");
-            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=30&interval=daily");
+            priceData60MJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=0.05");
+            priceData24HJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=1");
+            priceData30DJSON = WebUtil.get("https://api.coingecko.com/api/v3/coins/" + blockchainID + "/contract/" + tokenString + "/market_chart?vs_currency=" + priceFiatName + "&days=30");
         }
         else {
             return null;
