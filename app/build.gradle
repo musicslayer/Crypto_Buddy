@@ -55,7 +55,6 @@ android {
 
     buildTypes {
         // TEST
-        /*
         debug {
         }
         release {
@@ -63,11 +62,10 @@ android {
             debuggable true
         }
 
-         */
-
 
 
         // REAL
+        /*
         debug {
         }
         release {
@@ -80,9 +78,7 @@ android {
             }
         }
 
-
-
-
+         */
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
