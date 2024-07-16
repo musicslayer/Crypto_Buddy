@@ -43,7 +43,6 @@ public class ChooseTimeDialog extends BaseDialog {
             public void onClickImpl(View v) {
                 isComplete = true;
 
-                // These methods are deprecated, but needed to support older Android versions.
                 user_HOUR = timePicker.getCurrentHour();
                 user_MINUTE = timePicker.getCurrentMinute();
 

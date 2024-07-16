@@ -15,7 +15,7 @@
         <!-- Customize your theme here. -->
         <item name="android:fadeScrollbars">false</item>
         <item name="android:freezesText">true</item>
-        <item name="android:navigationBarColor" tools:targetApi="21">@color/light_background</item>
+        <item name="android:navigationBarColor">@color/light_background</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColorPrimary">@color/light_feature</item>
         <item name="android:textColorSecondary">@color/light_feature</item>
@@ -66,7 +66,7 @@
         <item name="android:paddingRight">16dp</item>
         <item name="android:background">@drawable/border_round</item>
         <item name="cornerRadius">4dp</item>
-        <item name="android:letterSpacing" tools:targetApi="21">0.09</item>
+        <item name="android:letterSpacing">0.09</item>
         <item name="materialButtonStyle">@style/MaterialButtonTheme</item>
     </style>
 
@@ -96,7 +96,7 @@
         <item name="android:paddingTop">16dp</item>
         <item name="android:background">@drawable/border_round</item>
         <item name="cornerRadius">4dp</item>
-        <item name="android:letterSpacing" tools:targetApi="21">0.09</item>
+        <item name="android:letterSpacing">0.09</item>
         <item name="materialButtonStyle">@style/MaterialButtonTheme</item>
     </style>
 

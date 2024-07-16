@@ -40,8 +40,6 @@ android {
 
         android.buildFeatures.buildConfig true
         multiDexEnabled true
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
 
         buildConfigField("String", "ad_application_id", secretProperties['ad_application_id'])
         manifestPlaceholders = [ad_application_id: secretProperties["ad_application_id"].substring(1, secretProperties["ad_application_id"].length() - 1)] // Trim off extra quotes

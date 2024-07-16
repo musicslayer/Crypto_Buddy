@@ -3,7 +3,6 @@ package com.musicslayer.cryptobuddy.app;
 import android.content.ContentResolver;
 import android.content.Context;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -52,9 +51,6 @@ public class App extends MultiDexApplication {
         }
 
         try {
-            // Needed for older Android versions.
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-
             cacheDir = this.getCacheDir().getAbsolutePath();
 
             // For now, there is only one of these internal folders.

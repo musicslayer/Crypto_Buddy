@@ -42,7 +42,7 @@
         android:fullBackupContent="false"
         android:hasFragileUserData="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        tools:targetApi="s">
+        tools:targetApi="29">
 
         <provider
             android:name="com.musicslayer.cryptobuddy.provider.CachedFileProvider"

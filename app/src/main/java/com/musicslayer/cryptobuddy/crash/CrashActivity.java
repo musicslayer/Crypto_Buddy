@@ -1,5 +1,6 @@
 package com.musicslayer.cryptobuddy.crash;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 abstract public class CrashActivity extends AppCompatActivity {
     public ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onActivityResult);
 
+    @SuppressLint("MissingSuperCall")
     @Override
     final public void onBackPressed() {
         try {

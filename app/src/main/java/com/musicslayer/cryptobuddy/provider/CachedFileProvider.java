@@ -34,7 +34,7 @@ public class CachedFileProvider extends ContentProvider {
             case 1:
                 // File is valid and has correct authority.
                 String fileLocation = new File(App.cacheDir) + File.separator + uri.getLastPathSegment();
-                return ParcelFileDescriptor.open(new File(fileLocation), getMode(mode));
+                return ParcelFileDescriptor.open(new File(fileLocation), ParcelFileDescriptor.parseMode(mode));
 
             case 2:
                 // File is valid but does not have the correct authority.
@@ -43,32 +43,6 @@ public class CachedFileProvider extends ContentProvider {
             default:
                 // Completely unrecognised Uri (for example, if Uri is empty or has invalid characters).
                 throw new FileNotFoundException("Invalid uri: " + uri.toString());
-        }
-    }
-
-    // In newer Android versions, we could just use "ParcelFileDescriptor.parseMode".
-    private int getMode(String mode) {
-        switch(mode) {
-            case "r":
-                return ParcelFileDescriptor.MODE_READ_ONLY;
-
-            case "w":
-                return ParcelFileDescriptor.MODE_WRITE_ONLY | ParcelFileDescriptor.MODE_CREATE;
-
-            case "wt":
-                return ParcelFileDescriptor.MODE_WRITE_ONLY | ParcelFileDescriptor.MODE_CREATE | ParcelFileDescriptor.MODE_TRUNCATE;
-
-            case "wa":
-                return ParcelFileDescriptor.MODE_WRITE_ONLY | ParcelFileDescriptor.MODE_CREATE | ParcelFileDescriptor.MODE_APPEND;
-
-            case "rw":
-                return ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_CREATE;
-
-            case "rwt":
-                return ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_CREATE | ParcelFileDescriptor.MODE_TRUNCATE;
-
-            default:
-                throw new IllegalArgumentException("Bad mode: " + mode);
         }
     }
 
