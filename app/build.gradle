@@ -52,7 +52,7 @@ android {
     }
 
     buildTypes {
-        /*
+
         // TEST
         debug {
         }
@@ -60,10 +60,11 @@ android {
             signingConfig signingConfigs.release
             debuggable true
         }
-*/
+
 
 
         // REAL
+        /*
         debug {
         }
         release {
@@ -75,6 +76,8 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
+
+         */
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
