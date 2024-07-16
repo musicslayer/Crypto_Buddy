@@ -35,8 +35,8 @@ android {
         applicationId "com.musicslayer.cryptobuddy"
         minSdkVersion 21 // Minimum needed for some libraries we depend on.
         targetSdkVersion 35
-        versionCode 20
-        versionName "2.0"
+        versionCode 21
+        versionName "2.1"
 
         android.buildFeatures.buildConfig true
         multiDexEnabled true
@@ -52,6 +52,7 @@ android {
     }
 
     buildTypes {
+        /*
         // TEST
         debug {
         }
@@ -59,11 +60,10 @@ android {
             signingConfig signingConfigs.release
             debuggable true
         }
-
+*/
 
 
         // REAL
-        /*
         debug {
         }
         release {
@@ -75,8 +75,6 @@ android {
                 debugSymbolLevel 'FULL'
             }
         }
-
-         */
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
