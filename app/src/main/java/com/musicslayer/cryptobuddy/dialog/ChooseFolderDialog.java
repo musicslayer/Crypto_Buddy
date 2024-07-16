@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TableLayout;
@@ -12,7 +11,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -84,7 +82,7 @@ public class ChooseFolderDialog extends BaseDialog {
 
         for(String folderName : App.externalFilesDirs) {
             // Add in the subfolder if one was supplied.
-            if(subfolder != null && !"".equals(subfolder)) {
+            if(subfolder != null && !subfolder.isEmpty()) {
                 folderName = folderName + subfolder;
             }
 
@@ -114,43 +112,35 @@ public class ChooseFolderDialog extends BaseDialog {
         TableLayout tableOther = findViewById(R.id.choose_folder_dialog_otherFolderTableLayout);
         tableOther.removeAllViews();
 
-        // The ability to choose a folder is only available on API 21 and above
-        if(Build.VERSION.SDK_INT >= 21) {
-            TOther.setVisibility(View.VISIBLE);
-            tableOther.setVisibility(View.VISIBLE);
+        TOther.setVisibility(View.VISIBLE);
+        tableOther.setVisibility(View.VISIBLE);
 
-            AppCompatButton B = new AppCompatButton(activity);
-            B.setText("(Choose Other Folder)");
-            B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
-            B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
-                @Override
-                public void onClickImpl(View view) {
-                    Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        AppCompatButton B = new AppCompatButton(activity);
+        B.setText("(Choose Other Folder)");
+        B.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_folder_24, 0, 0, 0);
+        B.setOnClickListener(new CrashView.CrashOnClickListener(activity) {
+            @Override
+            public void onClickImpl(View view) {
+                Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 
-                    ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
-                    ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
-                    if(documentApp != null && !documentApp.equals(unsupportedAction)) {
-                        ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
-                    }
-                    else {
-                        ToastUtil.showToast("document");
-                    }
+                ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
+                ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
+                if(documentApp != null && !documentApp.equals(unsupportedAction)) {
+                    ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
                 }
-            });
+                else {
+                    ToastUtil.showToast("document");
+                }
+            }
+        });
 
-            TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams TRP = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
-            TableRow TR = new TableRow(activity);
-            TR.addView(B, TRP);
-            tableOther.addView(TR);
-        }
-        else {
-            TOther.setVisibility(View.GONE);
-            tableOther.setVisibility(View.GONE);
-        }
+        TableRow TR = new TableRow(activity);
+        TR.addView(B, TRP);
+        tableOther.addView(TR);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResultImpl(ActivityResult result) {
         boolean isSuccess = true;

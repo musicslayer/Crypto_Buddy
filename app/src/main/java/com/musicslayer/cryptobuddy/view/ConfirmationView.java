@@ -1,6 +1,5 @@
 package com.musicslayer.cryptobuddy.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -89,7 +88,6 @@ public class ConfirmationView extends CrashLinearLayout {
         // This view should not be visible in the "None" case.
     }
 
-    @SuppressLint("SetTextI18n")
     public void makeLayoutCode() {
         this.setOrientation(LinearLayout.VERTICAL);
 

@@ -1,12 +1,10 @@
 package com.musicslayer.cryptobuddy.file;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.DocumentsContract;
 
-import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.data.bridge.DataBridge;
@@ -67,7 +65,6 @@ public class UniversalFile implements Parcelable {
         return obj;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static UniversalFile fromDocumentFile(DocumentFile documentFile) {
         UniversalFile obj = new UniversalFile();
         obj.file = null;

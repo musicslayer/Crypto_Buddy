@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
-import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.musicslayer.cryptobuddy.R;
@@ -64,19 +62,16 @@ public class ExportDataFileDialog extends BaseDialog {
         Button B_OVERWRITE_EXISTING_FILE = findViewById(R.id.export_data_file_dialog_overwriteExistingFileButton);
         B_OVERWRITE_EXISTING_FILE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                // The ability to choose a file is only available on API 19 and above
-                if(Build.VERSION.SDK_INT >= 19) {
-                    Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    documentIntent.setType("*/*");
+                Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                documentIntent.setType("*/*");
 
-                    ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
-                    ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
-                    if(documentApp != null && !documentApp.equals(unsupportedAction)) {
-                        ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
-                    }
-                    else {
-                        ToastUtil.showToast("document");
-                    }
+                ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
+                ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
+                if(documentApp != null && !documentApp.equals(unsupportedAction)) {
+                    ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
+                }
+                else {
+                    ToastUtil.showToast("document");
                 }
             }
         });
@@ -84,19 +79,16 @@ public class ExportDataFileDialog extends BaseDialog {
         Button B_CREATE_NEW_FILE = findViewById(R.id.export_data_file_dialog_createNewFileButton);
         B_CREATE_NEW_FILE.setOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
             public void onClickImpl(View v) {
-                // The ability to choose a file is only available on API 19 and above
-                if(Build.VERSION.SDK_INT >= 19) {
-                    Intent documentIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    documentIntent.setType("*/*");
+                Intent documentIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                documentIntent.setType("*/*");
 
-                    ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
-                    ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
-                    if(documentApp != null && !documentApp.equals(unsupportedAction)) {
-                        ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
-                    }
-                    else {
-                        ToastUtil.showToast("document");
-                    }
+                ComponentName documentApp = documentIntent.resolveActivity(activity.getPackageManager());
+                ComponentName unsupportedAction = ComponentName.unflattenFromString("com.android.fallback/.Fallback");
+                if(documentApp != null && !documentApp.equals(unsupportedAction)) {
+                    ((BaseActivity)activity).activityResultLauncher.launch(documentIntent);
+                }
+                else {
+                    ToastUtil.showToast("document");
                 }
             }
         });
@@ -124,19 +116,12 @@ public class ExportDataFileDialog extends BaseDialog {
         ToggleButton B_TOGGLE = findViewById(R.id.export_data_file_dialog_toggleButton);
         B_TOGGLE.setOptions("File View", "Folder View");
 
-        if(Build.VERSION.SDK_INT >= 19) {
-            B_TOGGLE.setVisibility(View.VISIBLE);
-            B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
-                public void onClickImpl(View v) {
-                    updateLayout();
-                }
-            });
-        }
-        else {
-            // Older devices only have the folder option.
-            B_TOGGLE.setVisibility(View.GONE);
-            B_TOGGLE.toggleState = true;
-        }
+        B_TOGGLE.setVisibility(View.VISIBLE);
+        B_TOGGLE.setAdditionalOnClickListener(new CrashView.CrashOnClickListener(this.activity) {
+            public void onClickImpl(View v) {
+                updateLayout();
+            }
+        });
 
         updateLayout();
     }
@@ -292,7 +277,6 @@ public class ExportDataFileDialog extends BaseDialog {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResultImpl(ActivityResult result) {
         boolean isSuccess = true;

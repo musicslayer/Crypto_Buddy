@@ -2,7 +2,6 @@ package com.musicslayer.cryptobuddy.app;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.Build;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
@@ -48,9 +47,7 @@ public class App extends MultiDexApplication {
 
         try {
             ProviderInstaller.installIfNeeded(this);
-        } catch (GooglePlayServicesRepairableException ignored) {
-            isGooglePlayAvailable = false;
-        } catch (GooglePlayServicesNotAvailableException ignored) {
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException ignored) {
             isGooglePlayAvailable = false;
         }
 
@@ -60,20 +57,13 @@ public class App extends MultiDexApplication {
 
             cacheDir = this.getCacheDir().getAbsolutePath();
 
-            // For now, there is only one of these folders.
+            // For now, there is only one of these internal folders.
             internalFilesDirs = new ArrayList<>();
             internalFilesDirs.add(this.getFilesDir().getAbsolutePath() + File.separatorChar);
 
-            // Older APIs only support one external folder, but newer APIs may have more than one.
+            // There may be more than one external folder.
             externalFilesDirs = new ArrayList<>();
-            if(Build.VERSION.SDK_INT >= 19) {
-                for(File file : this.getExternalFilesDirs("documents")) {
-                    externalFilesDirs.add(file.getAbsolutePath() + File.separatorChar);
-                }
-            }
-            else {
-                externalFilesDirs.add(this.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
-            }
+            externalFilesDirs.add(this.getExternalFilesDir("documents").getAbsolutePath() + File.separatorChar);
 
             contentResolver = this.getContentResolver();
 
