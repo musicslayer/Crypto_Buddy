@@ -3,6 +3,7 @@ package com.musicslayer.cryptobuddy.dialog;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
@@ -29,6 +30,8 @@ abstract public class BaseDialog extends CrashDialog {
 
     @Override
     protected void onCreateImpl(Bundle savedInstanceState) {
+        // Needed for older versions of Android.
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         createLayout(savedInstanceState);
     }
 
